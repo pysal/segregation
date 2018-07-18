@@ -19,12 +19,14 @@ before_install:
 install:
   - conda install --yes pip nose
   - which pip
+  - pip install libpysal
   - conda install --yes --file requirements.txt;
 
 script:
   - pwd
   - ls -al
   - python setup.py sdist >/dev/null
+  - python setup.py install
   - nosetests -v inequality;
 
 notifications:
