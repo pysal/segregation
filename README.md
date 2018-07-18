@@ -1,5 +1,5 @@
-Exploratory Spatial Data Analysis in PySAL
-===================================================
+Spatial Inequality  Analysis in PySAL
+=====================================
 
 [![Build Status](https://travis-ci.org/pysal/inequality.svg?branch=master)](https://travis-ci.org/pysal/inequality)
 
