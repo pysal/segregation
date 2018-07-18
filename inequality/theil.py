@@ -3,7 +3,7 @@
 """
 __author__ = "Sergio J. Rey <srey@asu.edu> "
 
-from pysal.common import *
+from libpysal.common import *
 import numpy as np
 __all__ = ['Theil', 'TheilD', 'TheilDSim']
 
@@ -39,8 +39,8 @@ class Theil:
 
     Examples
     --------
-    >>> import pysal
-    >>> f=pysal.open(pysal.examples.get_path("mexico.csv"))
+    >>> import libpysal
+    >>> f=libpysal.open(libpysal.examples.get_path("mexico.csv"))
     >>> vnames=["pcgdp%d"%dec for dec in range(1940,2010,10)]
     >>> y=np.transpose(np.array([f.by_col[v] for v in vnames]))
     >>> theil_y=Theil(y)
@@ -87,8 +87,8 @@ class TheilD:
 
     Examples
     --------
-    >>> import pysal
-    >>> f=pysal.open(pysal.examples.get_path("mexico.csv"))
+    >>> import libpysal
+    >>> f=libpysal.open(libpysal.examples.get_path("mexico.csv"))
     >>> vnames=["pcgdp%d"%dec for dec in range(1940,2010,10)]
     >>> y=np.transpose(np.array([f.by_col[v] for v in vnames]))
     >>> regimes=np.array(f.by_col('hanson98'))
@@ -165,8 +165,8 @@ class TheilDSim:
 
     Examples
     --------
-    >>> import pysal
-    >>> f=pysal.open(pysal.examples.get_path("mexico.csv"))
+    >>> import libpysal
+    >>> f=libpysal.open(libpysal.examples.get_path("mexico.csv"))
     >>> vnames=["pcgdp%d"%dec for dec in range(1940,2010,10)]
     >>> y=np.transpose(np.array([f.by_col[v] for v in vnames]))
     >>> regimes=np.array(f.by_col('hanson98'))

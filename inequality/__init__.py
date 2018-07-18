@@ -4,5 +4,5 @@
 
 """
 
-import theil
-import gini
+from . import theil
+from . import gini

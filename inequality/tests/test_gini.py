@@ -1,14 +1,13 @@
 import unittest
-import pysal
 import numpy as np
-import pysal as ps
-from pysal.inequality.gini import Gini, Gini_Spatial
+import libpysal.api  as ps
+from inequality.gini import Gini, Gini_Spatial
 
 
 class Gini_Tester(unittest.TestCase):
 
     def setUp(self):
-        f = pysal.open(pysal.examples.get_path("mexico.csv"))
+        f = ps.open(ps.get_path("mexico.csv"))
         vnames = ["pcgdp%d" % dec for dec in range(1940, 2010, 10)]
         y = np.transpose(np.array([f.by_col[v] for v in vnames]))
         self.y = y[:, 0]
