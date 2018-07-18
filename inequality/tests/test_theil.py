@@ -1,7 +1,7 @@
 import unittest
-import pysal
+import libpysal as pysal
 import numpy as np
-from pysal.inequality.theil import *
+from inequality.theil import *
 
 
 class test_Theil(unittest.TestCase):

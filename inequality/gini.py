@@ -117,21 +117,21 @@ class Gini_Spatial:
 
     Examples
     --------
-    >>> import pysal
+    >>> import libpysal
     >>> import numpy as np
 
     Use data from the 32 Mexican States, Decade frequency 1940-2010
 
-    >>> f=pysal.open(pysal.examples.get_path("mexico.csv"))
+    >>> f=libpysal.open(libpysal.examples.get_path("mexico.csv"))
     >>> vnames=["pcgdp%d"%dec for dec in range(1940,2010,10)]
     >>> y=np.transpose(np.array([f.by_col[v] for v in vnames]))
 
     Define regime neighbors
 
     >>> regimes=np.array(f.by_col('hanson98'))
-    >>> w = pysal.block_weights(regimes)
+    >>> w = libpysal.weights.block_weights(regimes)
     >>> np.random.seed(12345)
-    >>> gs = pysal.inequality.gini.Gini_Spatial(y[:,0],w)
+    >>> gs = inequality.gini.Gini_Spatial(y[:,0],w)
     >>> gs.p_sim
     0.040000000000000001
     >>> gs.wcg
@@ -180,6 +180,6 @@ class Gini_Spatial:
 
     def _calc(self, x, w):
         sad_sum = 0.0
-        for i, js in w.neighbors.iteritems():
+        for i, js in w.neighbors.items():
             sad_sum += np.abs(x[i]-x[js]).sum()
         return sad_sum

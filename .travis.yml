@@ -1,0 +1,39 @@
+language: python
+sudo: false
+branches:
+only:
+  - master
+python:
+  - "3.5"
+  - "3.6"
+
+before_install:
+  - wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - chmod +x miniconda.sh
+  - ./miniconda.sh -b -p ./miniconda
+  - export PATH=`pwd`/miniconda/bin:$PATH
+  - conda update --yes conda
+  - conda create -y -q -n test-env python=$TRAVIS_PYTHON_VERSION
+  - source activate test-env
+
+install:
+  - conda install --yes pip nose
+  - which pip
+  - conda install --yes --file requirements.txt;
+
+script:
+  - pwd
+  - ls -al
+  - python setup.py sdist >/dev/null
+  - nosetests -v inequality;
+
+notifications:
+    email:
+        recipients:
+            - levi.john.wolf+travis@gmail.com
+            - sjsrey+travis@gmail.com
+        on_change: always
+        on_failure: always
+
+after_success:
+  - coveralls
