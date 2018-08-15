@@ -8,21 +8,15 @@ python:
   - 3.5
   - 3.6
 env:
-    - PYSAL_PYPI=true PYSAL_PLUS=true
-    - PYSAL_PYPI=true PYSAL_PLUS=false
-    - PYSAL_PYPI=false PYSAL_PLUS=true
-    - PYSAL_PYPI=false PYSAL_PLUS=false
+    - PYSAL_PYPI=true
+    - PYSAL_PYPI=false
       
 matrix:
   allow_failures:
       - python: 3.5
-        env: PYSAL_PYPI=false PYSAL_PLUS=false
-      - python: 3.5
-        env: PYSAL_PYPI=false PYSAL_PLUS=true
+        env: PYSAL_PYPI=false
       - python: 3.6
-        env: PYSAL_PYPI=false PYSAL_PLUS=false
-      - python: 3.6
-        env: PYSAL_PYPI=false PYSAL_PLUS=true
+        env: PYSAL_PYPI=false
 
 before_install:
   - wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
