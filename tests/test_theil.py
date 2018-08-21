@@ -1,14 +1,14 @@
 import unittest
-import libpysal as ps
+import libpysal.api as lp
 import numpy as np
-from inequality.theil import *
+from ..theil import Theil, TheilD, TheilDSim
 
 
 class test_Theil(unittest.TestCase):
 
     def test___init__(self):
         # theil = Theil(y)
-        f = ps.io.open(ps.examples.get_path("mexico.csv"))
+        f = lp.open(lp.get_path("mexico.csv"))
         vnames = ["pcgdp%d" % dec for dec in range(1940, 2010, 10)]
         y = np.transpose(np.array([f.by_col[v] for v in vnames]))
         theil_y = Theil(y)
@@ -18,7 +18,7 @@ class test_Theil(unittest.TestCase):
 class test_TheilD(unittest.TestCase):
     def test___init__(self):
         # theil_d = TheilD(y, partition)
-        f = ps.io.open(ps.examples.get_path("mexico.csv"))
+        f = lp.open(lp.get_path("mexico.csv"))
         vnames = ["pcgdp%d" % dec for dec in range(1940, 2010, 10)]
         y = np.transpose(np.array([f.by_col[v] for v in vnames]))
         regimes = np.array(f.by_col('hanson98'))
@@ -28,7 +28,7 @@ class test_TheilD(unittest.TestCase):
 
 class test_TheilDSim(unittest.TestCase):
     def test___init__(self):
-        f = ps.io.open(ps.examples.get_path("mexico.csv"))
+        f = lp.open(lp.get_path("mexico.csv"))
         vnames = ["pcgdp%d" % dec for dec in range(1940, 2010, 10)]
         y = np.transpose(np.array([f.by_col[v] for v in vnames]))
         regimes = np.array(f.by_col('hanson98'))

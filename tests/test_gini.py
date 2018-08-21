@@ -1,18 +1,18 @@
 import unittest
+import libpysal.api as lp
 import numpy as np
-import libpysal as ps
-from inequality.gini import Gini, Gini_Spatial
+from ..gini import Gini, Gini_Spatial
 
 
 class Gini_Tester(unittest.TestCase):
 
     def setUp(self):
-        f = ps.io.open(ps.examples.get_path("mexico.csv"))
+        f = lp.open(lp.get_path("mexico.csv"))
         vnames = ["pcgdp%d" % dec for dec in range(1940, 2010, 10)]
         y = np.transpose(np.array([f.by_col[v] for v in vnames]))
         self.y = y[:, 0]
         regimes = np.array(f.by_col('hanson98'))
-        self.w = ps.weights.block_weights(regimes)
+        self.w = lp.block_weights(regimes)
 
     def test_Gini(self):
         g = Gini(self.y)
