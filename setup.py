@@ -9,11 +9,10 @@ import os
 with open('README.md', 'r', encoding='utf8') as file:
     long_description = file.read()
 
-MAJOR = 1
-MINOR = 0
-MICRO = 0
-ISRELEASED = False
-VERSION = '%d.%d.%d' % (MAJOR, MINOR, MICRO)
+# Get __version__ from PACKAGE_NAME/__init__.py without importing the package
+# __version__ has to be defined in the first line
+with open('inequality/__init__.py', 'r') as f:
+    exec(f.readline())
 
 
 # BEFORE importing distutils, remove MANIFEST. distutils doesn't properly
@@ -49,7 +48,7 @@ def setup_package():
 
     setup(
         name='inequality',
-        version=VERSION,
+        version=__version__,
         description="Spatial inequality analysis for PySAL A library of spatial analysis functions.",
         long_description=long_description,
         maintainer="PySAL Developers",
