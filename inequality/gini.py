@@ -122,7 +122,7 @@ class Gini_Spatial:
 
     Use data from the 32 Mexican States, Decade frequency 1940-2010
 
-    >>> f=libpysal.open(libpysal.examples.get_path("mexico.csv"))
+    >>> f=libpysal.io.open(libpysal.examples.get_path("mexico.csv"))
     >>> vnames=["pcgdp%d"%dec for dec in range(1940,2010,10)]
     >>> y=np.transpose(np.array([f.by_col[v] for v in vnames]))
 
@@ -131,9 +131,9 @@ class Gini_Spatial:
     >>> regimes=np.array(f.by_col('hanson98'))
     >>> w = libpysal.weights.block_weights(regimes)
     >>> np.random.seed(12345)
-    >>> gs = inequality.gini.Gini_Spatial(y[:,0],w)
+    >>> gs = Gini_Spatial(y[:,0],w)
     >>> gs.p_sim
-    0.040000000000000001
+    0.04
     >>> gs.wcg
     4353856.0
     >>> gs.e_wcg
