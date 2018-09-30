@@ -1,0 +1,4 @@
+"""
+segregation indices
+
+"""
