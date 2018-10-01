@@ -34,10 +34,13 @@ def calculate_segregation(data, group_pop_var, total_pop_var):
     # Isolation
     data['xi'] = data.group_pop_var
     X = data['xi'].sum()
+    data['yi'] = data.total_pop_var - data.group_pop_var
     xPx = ((data.xi / X) * (data.xi / data.ti)).sum()
+    xPy = ((data.xi / X) * (data.yi / data.ti)).sum()
+    
+    CISO = xPx - X/T
     
     # Clustering
-    data['yi'] = data.total_pop_var - data.group_pop_var
     Y = data.yi.sum()
     data['c_lons'] = data.centroid.map(lambda p: p.x)
     data['c_lats'] = data.centroid.map(lambda p: p.y)
@@ -46,11 +49,31 @@ def calculate_segregation(data, group_pop_var, total_pop_var):
     c = np.exp(-dist)
     Pxx = ((np.array(data.xi) * c).T * np.array(data.xi)).sum() / X**2
     Pyy = ((np.array(data.yi) * c).T * np.array(data.yi)).sum() / Y**2
+    Ptt = ((np.array(data.ti) * c).T * np.array(data.ti)).sum() / T**2
+    
+    SP = (X*Pxx + Y*Pyy)/(T*Ptt)
     RCL = Pxx / Pyy - 1
 
     # Concentration
     A = data.area.sum()
     DEL = 1/2 * abs(data.xi / X - data.area / A).sum()
+    
+    df_mp_sort_area = data
+    df_mp_sort_area['area'] = df_mp_sort_area.area
+    df_mp_sort_area_asc = df_mp_sort_area.sort_values('area')
+    n1 = np.where(((np.cumsum(df_mp_sort_area_asc.ti) / T) < X/T) == False)[0][0]
+    
+    df_mp_sort_area_des = df_mp_sort_area.sort_values('area', ascending=False)
+    n2 = np.where(((np.cumsum(df_mp_sort_area_des.ti) / T) < X/T) == False)[0][0]
+    
+    n = df_mp_sort_area_asc.shape[0]
+    T1 =  df_mp_sort_area_asc.ti[0:(n1+1)].sum()
+    T2 =  df_mp_sort_area_asc.ti[n2:n].sum()
+
+    RCO = ((((df_mp_sort_area_asc.xi*df_mp_sort_area_asc.area/X).sum()) / ((df_mp_sort_area_asc.yi*df_mp_sort_area_asc.area/Y).sum())) - 1) / \
+          ((((df_mp_sort_area_asc.ti*df_mp_sort_area_asc.area)[0:(n1+1)].sum() / T1) / ((df_mp_sort_area_asc.ti*df_mp_sort_area_asc.area)[n2:n].sum() / T2)) - 1)
+
+
     
     # Centralization
     data['center_lon']  = data.c_lons.mean()
@@ -65,7 +88,21 @@ def calculate_segregation(data, group_pop_var, total_pop_var):
     ACE = (shift(data_sort_cent.Xi, 1, cval=np.NaN) * data_sort_cent.Ai).sum() - \
           (data_sort_cent.Xi * shift(data_sort_cent.Ai, 1, cval=np.NaN)).sum()
     
-    # Aggregating
-    SM = np.mean([D, xPx, RCL, DEL, ACE])
+    RCE = (shift(data_sort_cent.Xi, 1, cval=np.NaN) * data_sort_cent.Yi).sum() - \
+          (data_sort_cent.Xi * shift(data_sort_cent.Yi, 1, cval=np.NaN)).sum()
     
-    return SM
+    # Aggregating
+    SM = np.mean([D, CISO, RCL, RCO, RCE])
+    
+    return {'Uneveness': D, 
+            'Isolation (xPx)': xPx, 
+            'Isolation (xPy)': xPy, 
+            'Centralized Isolation': CISO,
+            'Spatial Proximity (clustering)': SP, 
+            'Relative Clustering': RCL, 
+            'Delta (concentration)': DEL,
+            'Relative Concentration': RCO,
+            'Absolute Centralization': ACE,
+            'Relative Centralization': RCE,
+            'Overall Segregation Measure': SM
+           }
