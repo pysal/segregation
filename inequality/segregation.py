@@ -185,23 +185,23 @@ def calculate_only_segregation(data, group_pop_var, total_pop_var):
 	
 	
 # Function that calculates the overall segregation measure under the null hyphotesis multiple times
-def infer_segregation(data, group_pop_var, total_pop_var, permutations = 1000):
+def infer_segregation(data, group_pop_var, total_pop_var, iterations = 1000):
     '''
     data: a geopandas DataFrame that contains a geometry column
     group_pop_var: the name of variable that contains the population size of the group of interest
     total_pop_var: the name of variable that contains the total population of the unit
-    permutations: number of permutation to compute inference on pseudo p-values
+    iterations: number of iterations to compute inference on pseudo p-values
     '''
     
     data = data.rename(columns={group_pop_var: 'group_pop_var', total_pop_var: 'total_pop_var'})
     p_null = data.group_pop_var.sum() / data.total_pop_var.sum()
     
     result_t = []
-    for i in range(permutations):
+    for i in range(iterations):
         freq_sim = np.random.binomial(n = np.array([data.total_pop_var.tolist()]), 
                                       p = np.array([[p_null]*data.shape[0]]), 
                                       size = (1, data.shape[0])).tolist()[0]
-        data['group_pop_var'] = freq_sim
+        data = data.assign(group_pop_var = freq_sim)
         val = calculate_only_segregation(data, 'group_pop_var', 'total_pop_var')
         result_t.append(val)
     
