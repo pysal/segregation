@@ -33,15 +33,28 @@ def calculate_segregation(data, group_pop_var, total_pop_var):
                        pi = data.group_pop_var / data.total_pop_var)
     D = (((data.total_pop_var * abs(data.pi - P)))/ (2 * T * P * (1 - P))).sum()
     
+    
+    num = (np.matmul(np.array(data.ti)[np.newaxis].T, np.array(data.ti)[np.newaxis]) * abs(np.array(data.pi)[np.newaxis].T - np.array(data.pi)[np.newaxis])).sum()
+    den = (2 * T**2 * P * (1-P))
+    G = num / den
+    G
+    
+    E = P * np.log(1 / P) + (1 - P) * np.log(1 / (1 - P))
+    Ei = data.pi * np.log(1 / data.pi) + (1 - data.pi) * np.log(1 / (1 - data.pi))
+    H = (data.ti * (E - Ei) / (E * T)).sum()
+    H
+    
     # Isolation
-    X = data['xi'].sum()
+    X = data.xi.sum()
+    Y = data.yi.sum()
     xPx = ((data.xi / X) * (data.xi / data.ti)).sum()
     xPy = ((data.xi / X) * (data.yi / data.ti)).sum()
+    yPy = ((data.yi / Y) * (data.yi / data.ti)).sum()
     
     CISO = xPx - X/T
+    RI = xPx/yPy
     
     # Clustering
-    Y = data.yi.sum()
     data = data.assign(c_lons = data.centroid.map(lambda p: p.x),
                        c_lats = data.centroid.map(lambda p: p.y))
     dist = euclidean_distances(data[['c_lons','c_lats']])
@@ -94,16 +107,24 @@ def calculate_segregation(data, group_pop_var, total_pop_var):
     # Aggregating
     SM = np.mean([D, CISO, RCL, RCO, RCE])
     
-    return {'Uneveness (D)': D, 
+    return {'Dissimilarity (D)': D, 
+            'Gini (G)': G,
+            'Entropy (H)': H,
+            
             'Isolation (xPx)': xPx, 
-            'Isolation (xPy)': xPy, 
+            'Exposure (xPy)': xPy, 
             'Centralized Isolation (CISO)': CISO,
+            'Relative Isolation (RI)': RI,
+            
             'Spatial Proximity (clustering) (SP)': SP, 
             'Relative Clustering (RCL)': RCL, 
+            
             'Delta (concentration) (DEL)': DEL,
             'Relative Concentration (RCO)': RCO,
+            
             'Absolute Centralization (ACE)': ACE,
             'Relative Centralization (RCE)': RCE,
+            
             'Overall Segregation Measure (SM)': SM
            }
 		   
@@ -185,25 +206,128 @@ def calculate_only_segregation(data, group_pop_var, total_pop_var):
 	
 	
 # Function that calculates the overall segregation measure under the null hyphotesis multiple times
-def infer_segregation(data, group_pop_var, total_pop_var, iterations = 1000):
+def infer_segregation(data, 
+                      group_pop_var, 
+                      total_pop_var, 
+                      iterations = 1000,
+                      null_approach = "eveness"):
     '''
     data: a geopandas DataFrame that contains a geometry column
     group_pop_var: the name of variable that contains the population size of the group of interest
     total_pop_var: the name of variable that contains the total population of the unit
     iterations: number of iterations to compute inference on pseudo p-values
+    null_approach: argument that specifies which type of null hyphotesis the inference will iterate. 
+        "eveness": establish that each spatial unit would have the same global probability of drawing elements from the minority group of the fixed total unit population. 
+        "permutation": randomly allocates the units over space keeping the sample values fixed.
+        "even_permutation": randomly allocates the units over space and assuming the same global probability of drawning elements from the minority group in each spatial unit.
     '''
     
     data = data.rename(columns={group_pop_var: 'group_pop_var', total_pop_var: 'total_pop_var'})
     p_null = data.group_pop_var.sum() / data.total_pop_var.sum()
     
-    result_t = []
-    for i in range(iterations):
-        freq_sim = np.random.binomial(n = np.array([data.total_pop_var.tolist()]), 
-                                      p = np.array([[p_null]*data.shape[0]]), 
-                                      size = (1, data.shape[0])).tolist()[0]
-        data = data.assign(group_pop_var = freq_sim)
-        val = calculate_only_segregation(data, 'group_pop_var', 'total_pop_var')
-        result_t.append(val)
+    Ds    = []
+    Gs    = []
+    Hs    = []
     
-    return result_t
+    xPxs  = []
+    xPys  = []
+    CISOs = []
+    RIs   = []
+    
+    SPs   = []
+    RCLs  = []
+    
+    DELs  = []
+    RCOs  = []
+    
+    ACEs  = []
+    RCEs  = []
+    
+    SMs   = []
+    
+    if (null_approach == "eveness"):
+        for i in range(iterations):
+            
+            freq_sim = np.random.binomial(n = np.array([data.total_pop_var.tolist()]), 
+                                          p = np.array([[p_null]*data.shape[0]]), 
+                                          size = (1, data.shape[0])).tolist()[0]
+            data = data.assign(group_pop_var = freq_sim)
+            test = calculate_segregation(data, 'group_pop_var', 'total_pop_var')
+            Ds.append(list(test.values())[0])
+            Gs.append(list(test.values())[1])
+            Hs.append(list(test.values())[2])
+
+            xPxs.append(list(test.values())[3])
+            xPys.append(list(test.values())[4])
+            CISOs.append(list(test.values())[5])
+            RIs.append(list(test.values())[6])
+
+            SPs.append(list(test.values())[7])
+            RCLs.append(list(test.values())[8])
+
+            DELs.append(list(test.values())[9])
+            RCOs.append(list(test.values())[10])
+
+            ACEs.append(list(test.values())[11])
+            RCEs.append(list(test.values())[12])
+
+            SMs.append(list(test.values())[13])
+            
+
+    if (null_approach == "permutation"):
+        for i in range(iterations):
+
+            data = data.assign(geometry = data.geometry[list(np.random.choice(data.shape[0], data.shape[0], replace = False))].reset_index()['geometry'])
+            test = calculate_segregation(data, 'group_pop_var', 'total_pop_var')
+            Ds.append(list(test.values())[0])
+            Gs.append(list(test.values())[1])
+            Hs.append(list(test.values())[2])
+
+            xPxs.append(list(test.values())[3])
+            xPys.append(list(test.values())[4])
+            CISOs.append(list(test.values())[5])
+            RIs.append(list(test.values())[6])
+
+            SPs.append(list(test.values())[7])
+            RCLs.append(list(test.values())[8])
+
+            DELs.append(list(test.values())[9])
+            RCOs.append(list(test.values())[10])
+
+            ACEs.append(list(test.values())[11])
+            RCEs.append(list(test.values())[12])
+
+            SMs.append(list(test.values())[13])
+            
+    if (null_approach == "even_permutation"):
+        for i in range(iterations):
+            
+            freq_sim = np.random.binomial(n = np.array([data.total_pop_var.tolist()]), 
+                                          p = np.array([[p_null]*data.shape[0]]), 
+                                          size = (1, data.shape[0])).tolist()[0]
+            data = data.assign(group_pop_var = freq_sim,
+                               geometry = data.geometry[list(np.random.choice(data.shape[0], data.shape[0], replace = False))].reset_index()['geometry'])
+            test = calculate_segregation(data, 'group_pop_var', 'total_pop_var')
+            Ds.append(list(test.values())[0])
+            Gs.append(list(test.values())[1])
+            Hs.append(list(test.values())[2])
+
+            xPxs.append(list(test.values())[3])
+            xPys.append(list(test.values())[4])
+            CISOs.append(list(test.values())[5])
+            RIs.append(list(test.values())[6])
+
+            SPs.append(list(test.values())[7])
+            RCLs.append(list(test.values())[8])
+
+            DELs.append(list(test.values())[9])
+            RCOs.append(list(test.values())[10])
+
+            ACEs.append(list(test.values())[11])
+            RCEs.append(list(test.values())[12])
+
+            SMs.append(list(test.values())[13])
+    
+    
+    return Ds, Gs, Hs, xPxs, xPys, CISOs, RIs, SPs, RCLs, DELs, RCOs, ACEs, RCEs, SMs
     
