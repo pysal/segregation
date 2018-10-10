@@ -97,7 +97,7 @@ class Entropy:
     
     >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','nhblk10']]
     
-    The estimated value is estimated below.
+    The value is estimated below.
     
     >>> entropy_index = Entropy(df, 'nhblk10', 'pop10')
     >>> entropy_index.h

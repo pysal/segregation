@@ -94,7 +94,7 @@ class Dissim:
     
     >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','nhblk10']]
     
-    The estimated value is estimated below.
+    The value is estimated below.
     
     >>> dissim_index = Dissim(df, 'nhblk10', 'pop10')
     >>> dissim_index.d

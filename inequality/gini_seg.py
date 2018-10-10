@@ -97,7 +97,7 @@ class Gini_Seg:
     
     >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','nhblk10']]
     
-    The estimated value is estimated below.
+    The value is estimated below.
     
     >>> gini_seg_index = Gini_Seg(df, 'nhblk10', 'pop10')
     >>> gini_seg_index.g
