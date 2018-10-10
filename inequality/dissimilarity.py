@@ -36,17 +36,17 @@ def _dissim(data, group_pop_var, total_pop_var):
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
 
     """
-    if ((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
-        TypeError('group_pop_var and total_pop_var must be strings')
+    if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
+        raise TypeError('group_pop_var and total_pop_var must be strings')
     
     if ((group_pop_var not in data.columns) or (total_pop_var not in data.columns)):    
-        ValueError('group_pop_var and total_pop_var must be variables of data')
+        raise ValueError('group_pop_var and total_pop_var must be variables of data')
 
-    try:
-        data = data.rename(columns={group_pop_var: 'group_pop_var', total_pop_var: 'total_pop_var'})
-    except AttributeError:
-        print('data must be a pandas DataFrame')
+    data = data.rename(columns={group_pop_var: 'group_pop_var', total_pop_var: 'total_pop_var'})
     
+    if (data.total_pop_var < data.group_pop_var):    
+        raise ValueError('Group of interest population must equal or lower than the total population of the units.')
+   
     T = data.total_pop_var.sum()
     P = data.group_pop_var.sum() / T
     
