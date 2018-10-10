@@ -1,5 +1,5 @@
 """
-Dissimilarity based Segregation Metrics
+Exposure Segregation Metrics
 """
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr.edu>"
@@ -7,12 +7,12 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr
 import numpy as np
 import pandas as pd
 
-__all__ = ['Dissim']
+__all__ = ['Exposure']
 
 
-def _dissim(data, group_pop_var, total_pop_var):
+def _exposure(data, group_pop_var, total_pop_var):
     """
-    Calculation of Dissimilarity index
+    Calculation of Exposure index
 
     Parameters
     ----------
@@ -20,7 +20,7 @@ def _dissim(data, group_pop_var, total_pop_var):
     data          : a pandas DataFrame
     
     group_pop_var : string
-                    The name of variable in data that contains the population size of the group of interest
+                    The name of variable in data that contains the population size of the group of interest (X)
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
@@ -28,11 +28,13 @@ def _dissim(data, group_pop_var, total_pop_var):
     Attributes
     ----------
 
-    d : float
-        Dissimilarity Index
+    xPy : float
+          Exposure Index
 
     Notes
     -----
+    The group of interest is labelled as group X, whilst Y is the complementary group. Groups X and Y are mutually excludent.
+    
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
 
     """
@@ -48,20 +50,18 @@ def _dissim(data, group_pop_var, total_pop_var):
     if any(data.total_pop_var < data.group_pop_var):    
         raise ValueError('Group of interest population must equal or lower than the total population of the units.')
    
-    T = data.total_pop_var.sum()
-    P = data.group_pop_var.sum() / T
+    data = data.assign(xi = data.group_pop_var,
+                       yi = data.total_pop_var - data.group_pop_var,
+                       ti = data.total_pop_var)
+    X = data.xi.sum()
+    xPy = ((data.xi / X) * (data.yi / data.ti)).sum()
     
-    # If a unit has zero population, the group of interest frequency is zero
-    data = data.assign(pi = np.where(data.total_pop_var == 0, 0, data.group_pop_var/data.total_pop_var))
-    
-    D = (((data.total_pop_var * abs(data.pi - P)))/ (2 * T * P * (1 - P))).sum()
-    
-    return D
+    return xPy
 
 
-class Dissim:
+class Exposure:
     """
-    Classic Dissimilarity Index
+    Classic Exposure Index
 
     Parameters
     ----------
@@ -69,7 +69,7 @@ class Dissim:
     data          : a pandas DataFrame
     
     group_pop_var : string
-                    The name of variable in data that contains the population size of the group of interest
+                    The name of variable in data that contains the population size of the group of interest (X)
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
@@ -77,13 +77,13 @@ class Dissim:
     Attributes
     ----------
 
-    d : float
-        Dissimilarity Index
+    xPy : float
+          Exposure Index
         
     Examples
     --------
-    In this example, we will calculate the degree of dissimilarity (D) for the Riverside County using the census tract data of 2010.
-    The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
+    In this example, we will calculate the Exposure Index (xPy) for the Riverside County using the census tract data of 2010.
+    The group of interest (X) is non-hispanic black people which is the variable nhblk10 in the dataset and the Y group is the other part of the population.
     
     Firstly, we need to read the data:
     
@@ -96,20 +96,22 @@ class Dissim:
     
     The estimated value is estimated below.
     
-    >>> dissim_index = Dissim(df, 'nhblk10', 'pop10')
-    >>> dissim_index.d
-    0.31565682496226544
+    >>> exposure_index = exposure(df, 'nhblk10', 'pop10')
+    >>> exposure_index.xPy
+    0.886785172226587
     
-    The interpretation of this value is that 31.57% of the non-hispanic black population would have to move to reach eveness in the Riverside County.
-        
+    The interpretation of this number is that if you randomly pick a X member of a specific area, there is 88.68% of probability that this member shares a unit with a Y member.
+    
     Notes
     -----
+    The group of interest is labelled as group X, whilst Y is the complementary group. Groups X and Y are mutually excludent.
+    
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
 
     """
 
     def __init__(self, data, group_pop_var, total_pop_var):
 
-        self.d = _dissim(data, group_pop_var, total_pop_var)
+        self.xPy = _exposure(data, group_pop_var, total_pop_var)
 
 

@@ -1,5 +1,5 @@
 """
-Dissimilarity based Segregation Metrics
+Gini Segregation Metrics
 """
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr.edu>"
@@ -7,12 +7,12 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr
 import numpy as np
 import pandas as pd
 
-__all__ = ['Dissim']
+__all__ = ['Gini_Seg']
 
 
-def _dissim(data, group_pop_var, total_pop_var):
+def _gini_seg(data, group_pop_var, total_pop_var):
     """
-    Calculation of Dissimilarity index
+    Calculation of Gini Segregation index
 
     Parameters
     ----------
@@ -28,8 +28,8 @@ def _dissim(data, group_pop_var, total_pop_var):
     Attributes
     ----------
 
-    d : float
-        Dissimilarity Index
+    g : float
+        Gini Segregation Index
 
     Notes
     -----
@@ -52,16 +52,19 @@ def _dissim(data, group_pop_var, total_pop_var):
     P = data.group_pop_var.sum() / T
     
     # If a unit has zero population, the group of interest frequency is zero
-    data = data.assign(pi = np.where(data.total_pop_var == 0, 0, data.group_pop_var/data.total_pop_var))
+    data = data.assign(ti = data.total_pop_var,
+                       pi = np.where(data.total_pop_var == 0, 0, data.group_pop_var/data.total_pop_var))
     
-    D = (((data.total_pop_var * abs(data.pi - P)))/ (2 * T * P * (1 - P))).sum()
+    num = (np.matmul(np.array(data.ti)[np.newaxis].T, np.array(data.ti)[np.newaxis]) * abs(np.array(data.pi)[np.newaxis].T - np.array(data.pi)[np.newaxis])).sum()
+    den = (2 * T**2 * P * (1-P))
+    G = num / den
     
-    return D
+    return G
 
 
-class Dissim:
+class Gini_Seg:
     """
-    Classic Dissimilarity Index
+    Classic Gini Segregation Index
 
     Parameters
     ----------
@@ -77,12 +80,12 @@ class Dissim:
     Attributes
     ----------
 
-    d : float
-        Dissimilarity Index
+    g : float
+        Gini Segregation Index
         
     Examples
     --------
-    In this example, we will calculate the degree of dissimilarity (D) for the Riverside County using the census tract data of 2010.
+    In this example, we will calculate the Gini Segregation Index (G) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
     Firstly, we need to read the data:
@@ -96,12 +99,10 @@ class Dissim:
     
     The estimated value is estimated below.
     
-    >>> dissim_index = Dissim(df, 'nhblk10', 'pop10')
-    >>> dissim_index.d
-    0.31565682496226544
-    
-    The interpretation of this value is that 31.57% of the non-hispanic black population would have to move to reach eveness in the Riverside County.
-        
+    >>> gini_seg_index = Gini_Seg(df, 'nhblk10', 'pop10')
+    >>> gini_seg_index.g
+    0.44620350030600087
+       
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
@@ -110,6 +111,6 @@ class Dissim:
 
     def __init__(self, data, group_pop_var, total_pop_var):
 
-        self.d = _dissim(data, group_pop_var, total_pop_var)
+        self.g = _gini_seg(data, group_pop_var, total_pop_var)
 
 

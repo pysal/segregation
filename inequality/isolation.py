@@ -1,5 +1,5 @@
 """
-Dissimilarity based Segregation Metrics
+Isolation Segregation Metrics
 """
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr.edu>"
@@ -7,12 +7,12 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr
 import numpy as np
 import pandas as pd
 
-__all__ = ['Dissim']
+__all__ = ['Isolation']
 
 
-def _dissim(data, group_pop_var, total_pop_var):
+def _isolation(data, group_pop_var, total_pop_var):
     """
-    Calculation of Dissimilarity index
+    Calculation of Isolation index
 
     Parameters
     ----------
@@ -20,7 +20,7 @@ def _dissim(data, group_pop_var, total_pop_var):
     data          : a pandas DataFrame
     
     group_pop_var : string
-                    The name of variable in data that contains the population size of the group of interest
+                    The name of variable in data that contains the population size of the group of interest (X)
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
@@ -28,11 +28,13 @@ def _dissim(data, group_pop_var, total_pop_var):
     Attributes
     ----------
 
-    d : float
-        Dissimilarity Index
+    xPx : float
+          Isolation Index
 
     Notes
     -----
+    The group of interest is labelled as group X.
+    
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
 
     """
@@ -48,20 +50,17 @@ def _dissim(data, group_pop_var, total_pop_var):
     if any(data.total_pop_var < data.group_pop_var):    
         raise ValueError('Group of interest population must equal or lower than the total population of the units.')
    
-    T = data.total_pop_var.sum()
-    P = data.group_pop_var.sum() / T
+    data = data.assign(xi = data.group_pop_var,
+                       ti = data.total_pop_var)
+    X = data.xi.sum()
+    xPx = ((data.xi / X) * (data.xi / data.ti)).sum()
     
-    # If a unit has zero population, the group of interest frequency is zero
-    data = data.assign(pi = np.where(data.total_pop_var == 0, 0, data.group_pop_var/data.total_pop_var))
-    
-    D = (((data.total_pop_var * abs(data.pi - P)))/ (2 * T * P * (1 - P))).sum()
-    
-    return D
+    return xPx
 
 
-class Dissim:
+class Isolation:
     """
-    Classic Dissimilarity Index
+    Classic Isolation Index
 
     Parameters
     ----------
@@ -69,7 +68,7 @@ class Dissim:
     data          : a pandas DataFrame
     
     group_pop_var : string
-                    The name of variable in data that contains the population size of the group of interest
+                    The name of variable in data that contains the population size of the group of interest (X)
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
@@ -77,12 +76,12 @@ class Dissim:
     Attributes
     ----------
 
-    d : float
-        Dissimilarity Index
+    xPx : float
+          Isolation Index
         
     Examples
     --------
-    In this example, we will calculate the degree of dissimilarity (D) for the Riverside County using the census tract data of 2010.
+    In this example, we will calculate the Isolation Index (xPx) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
     Firstly, we need to read the data:
@@ -96,20 +95,22 @@ class Dissim:
     
     The estimated value is estimated below.
     
-    >>> dissim_index = Dissim(df, 'nhblk10', 'pop10')
-    >>> dissim_index.d
-    0.31565682496226544
+    >>> isolation_index = Isolation(df, 'nhblk10', 'pop10')
+    >>> isolation_index.xPx
+    0.11321482777341298
     
-    The interpretation of this value is that 31.57% of the non-hispanic black population would have to move to reach eveness in the Riverside County.
-        
+    The interpretation of this number is that if you randomly pick a X member of a specific area, there is 11.32% of probability that this member shares a unit with another X member.
+    
     Notes
     -----
+    The group of interest is labelled as group X.
+    
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
 
     """
 
     def __init__(self, data, group_pop_var, total_pop_var):
 
-        self.d = _dissim(data, group_pop_var, total_pop_var)
+        self.xPx = _isolation(data, group_pop_var, total_pop_var)
 
 

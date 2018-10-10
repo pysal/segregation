@@ -1,5 +1,5 @@
 """
-Dissimilarity based Segregation Metrics
+Entropy Segregation Metrics
 """
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr.edu>"
@@ -7,12 +7,12 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr
 import numpy as np
 import pandas as pd
 
-__all__ = ['Dissim']
+__all__ = ['Entropy']
 
 
-def _dissim(data, group_pop_var, total_pop_var):
+def _entropy(data, group_pop_var, total_pop_var):
     """
-    Calculation of Dissimilarity index
+    Calculation of Entropy index
 
     Parameters
     ----------
@@ -28,8 +28,8 @@ def _dissim(data, group_pop_var, total_pop_var):
     Attributes
     ----------
 
-    d : float
-        Dissimilarity Index
+    h : float
+        Entropy Index
 
     Notes
     -----
@@ -52,16 +52,19 @@ def _dissim(data, group_pop_var, total_pop_var):
     P = data.group_pop_var.sum() / T
     
     # If a unit has zero population, the group of interest frequency is zero
-    data = data.assign(pi = np.where(data.total_pop_var == 0, 0, data.group_pop_var/data.total_pop_var))
+    data = data.assign(ti = data.total_pop_var,
+                       pi = np.where(data.total_pop_var == 0, 0, data.group_pop_var/data.total_pop_var))
     
-    D = (((data.total_pop_var * abs(data.pi - P)))/ (2 * T * P * (1 - P))).sum()
+    E = P * np.log(1 / P) + (1 - P) * np.log(1 / (1 - P))
+    Ei = data.pi * np.log(1 / data.pi) + (1 - data.pi) * np.log(1 / (1 - data.pi))
+    H = (data.ti * (E - Ei) / (E * T)).sum()
     
-    return D
+    return H
 
 
-class Dissim:
+class Entropy:
     """
-    Classic Dissimilarity Index
+    Classic Entropy Index
 
     Parameters
     ----------
@@ -77,12 +80,12 @@ class Dissim:
     Attributes
     ----------
 
-    d : float
-        Dissimilarity Index
+    h : float
+        Entropy Index
         
     Examples
     --------
-    In this example, we will calculate the degree of dissimilarity (D) for the Riverside County using the census tract data of 2010.
+    In this example, we will calculate the Entropy (H) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
     Firstly, we need to read the data:
@@ -96,12 +99,10 @@ class Dissim:
     
     The estimated value is estimated below.
     
-    >>> dissim_index = Dissim(df, 'nhblk10', 'pop10')
-    >>> dissim_index.d
-    0.31565682496226544
-    
-    The interpretation of this value is that 31.57% of the non-hispanic black population would have to move to reach eveness in the Riverside County.
-        
+    >>> entropy_index = Entropy(df, 'nhblk10', 'pop10')
+    >>> entropy_index.h
+    0.08636489348167173
+       
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
@@ -110,6 +111,6 @@ class Dissim:
 
     def __init__(self, data, group_pop_var, total_pop_var):
 
-        self.d = _dissim(data, group_pop_var, total_pop_var)
+        self.h = _entropy(data, group_pop_var, total_pop_var)
 
 
