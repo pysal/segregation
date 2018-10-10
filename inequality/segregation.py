@@ -202,7 +202,7 @@ def infer_segregation(data,
             
 
     if (null_approach == "permutation"):
-        for i in range(iterations):
+        for i in np.array(range(iterations)):
 
             data = data.assign(geometry = data.geometry[list(np.random.choice(data.shape[0], data.shape[0], replace = False))].reset_index()['geometry'])
             test = calculate_segregation(data, 'group_pop_var', 'total_pop_var')
@@ -227,7 +227,7 @@ def infer_segregation(data,
             SMs[i] = list(test.values())[13]
             
     if (null_approach == "even_permutation"):
-        for i in range(iterations):
+        for i in np.array(range(iterations)):
             
             freq_sim = np.random.binomial(n = np.array([data.total_pop_var.tolist()]), 
                                           p = np.array([[p_null]*data.shape[0]]), 
