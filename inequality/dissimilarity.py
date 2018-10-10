@@ -44,7 +44,7 @@ def _dissim(data, group_pop_var, total_pop_var):
 
     data = data.rename(columns={group_pop_var: 'group_pop_var', total_pop_var: 'total_pop_var'})
     
-    if (data.total_pop_var < data.group_pop_var):    
+    if any(data.total_pop_var < data.group_pop_var):    
         raise ValueError('Group of interest population must equal or lower than the total population of the units.')
    
     T = data.total_pop_var.sum()
