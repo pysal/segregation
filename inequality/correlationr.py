@@ -1,5 +1,5 @@
 """
-Correlation Segregation Metrics
+Correlation Ratio Segregation Metrics
 """
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr.edu>"
