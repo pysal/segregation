@@ -1,5 +1,5 @@
 """
-Atkinson Segregation Metrics
+Concentration Profile based Segregation Metrics
 """
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr.edu>"
@@ -7,12 +7,12 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr
 import numpy as np
 import pandas as pd
 
-__all__ = ['Atkinson']
+__all__ = ['ConProf']
 
 
-def _atkinson(data, group_pop_var, total_pop_var, b = 0.5):
+def _conprof(data, group_pop_var, total_pop_var, m = 1000):
     """
-    Calculation of Entropy index
+    Calculation of Concentration Profile
 
     Parameters
     ----------
@@ -25,26 +25,27 @@ def _atkinson(data, group_pop_var, total_pop_var, b = 0.5):
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
                     
-    b             : float
-                    The shape parameter, between 0 and 1, that determines how to weight the increments to segregation contributed by different portions of the Lorenz curve.
+    m             : int
+                    a numeric value indicating the number of thresholds to be used. Default value is 1000. 
+                    A large value of m creates a smoother-looking graph and a more precise concentration profile value but slows down the calculation speed.
 
     Attributes
     ----------
 
-    a : float
-        Atkinson Index
+    r : float
+        Concentration Profile Index
 
     Notes
     -----
-    Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
+    Hong, Seong-Yun, and Yukio Sadahiro. "Measuring geographic segregation: a graph-based approach." Journal of Geographical Systems 16.2 (2014): 211-231.
 
     """
-    if (not isinstance(b, float)):
-        raise ValueError('The parameter b must be a float.')
+    if(type(m) is not int):
+        raise TypeError('m must be a string.')
         
-    if ((b < 0) or (b > 1)):
-        raise ValueError('The parameter b must be between 0 and 1.')
-        
+    if(m < 2):
+        raise ValueError('m must be greater than 1.')
+    
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
     
@@ -57,21 +58,23 @@ def _atkinson(data, group_pop_var, total_pop_var, b = 0.5):
     if any(data.total_pop_var < data.group_pop_var):    
         raise ValueError('Group of interest population must equal or lower than the total population of the units.')
    
-    T = data.total_pop_var.sum()
-    P = data.group_pop_var.sum() / T
+    def calculate_vt(t):
+        g_t_i = np.where(data.group_pop_var / data.total_pop_var >= t, 1, 0)
+        v_t = (g_t_i * data.group_pop_var).sum() / data.group_pop_var.sum()
+        return v_t
     
-    # If a unit has zero population, the group of interest frequency is zero
-    data = data.assign(ti = data.total_pop_var,
-                       pi = np.where(data.total_pop_var == 0, 0, data.group_pop_var/data.total_pop_var))
+    grid = np.linspace(0, 1, m)
+    curve = np.array(list(map(calculate_vt, grid)))
     
-    A = 1 - (P / (1-P)) * abs((((1 - data.pi) ** (1-b) * data.pi ** b * data.ti) / (P * T)).sum()) ** (1 / (1 - b))
+    threshold = data.group_pop_var.sum() / data.total_pop_var.sum()
+    R = ((threshold - ((curve[grid < threshold]).sum() / m - (curve[grid >= threshold]).sum()/ m)) / (1 - threshold))
     
-    return A
+    return R
 
 
-class Atkinson:
+class ConProf:
     """
-    Classic Atkinson Index
+    Concentration Profile Index
 
     Parameters
     ----------
@@ -83,19 +86,20 @@ class Atkinson:
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-
-    b             : float
-                    The shape parameter, between 0 and 1, that determines how to weight the increments to segregation contributed by different portions of the Lorenz curve.
+                    
+    m             : int
+                    a numeric value indicating the number of thresholds to be used. 
+                    A large value of m creates a smoother-looking graph and a more precise concentration profile value but slows down the calculation speed.
 
     Attributes
     ----------
 
-    a : float
-        Atkison Index
+    r : float
+        Concentration Profile Index
         
     Examples
     --------
-    In this example, we will calculate the Atkinson Index (A) with the shape parameter (b) equals to 0.5 for the Riverside County using the census tract data of 2010.
+    In this example, we will calculate the concentration profile (R) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
     Firstly, we need to read the data:
@@ -109,18 +113,18 @@ class Atkinson:
     
     The value is estimated below.
     
-    >>> atkinson_index = Atkinson(df, 'nhblk10', 'pop10', b = 0.5)
-    >>> atkinson_index.a
-    0.16722406110274002
-       
+    >>> conprof_index = ConProf(df, 'nhblk10', 'pop10')
+    >>> conprof_index.r
+    0.06393365660089256
+        
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, b = 0.5):
+    def __init__(self, data, group_pop_var, total_pop_var, m = 1000):
 
-        self.a = _atkinson(data, group_pop_var, total_pop_var, b)
+        self.r = _conprof(data, group_pop_var, total_pop_var, m)
 
 
