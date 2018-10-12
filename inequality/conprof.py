@@ -6,6 +6,7 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr
 
 import numpy as np
 import pandas as pd
+import warnings
 
 __all__ = ['ConProf']
 
@@ -69,7 +70,7 @@ def _conprof(data, group_pop_var, total_pop_var, m = 1000):
     threshold = data.group_pop_var.sum() / data.total_pop_var.sum()
     R = ((threshold - ((curve[grid < threshold]).sum() / m - (curve[grid >= threshold]).sum()/ m)) / (1 - threshold))
     
-    return R
+    return R, grid, curve
 
 
 class ConProf:
@@ -116,6 +117,10 @@ class ConProf:
     >>> conprof_index = ConProf(df, 'nhblk10', 'pop10')
     >>> conprof_index.r
     0.06393365660089256
+    
+    You can plot the profile curve with the plot method.
+    
+    >>> conprof_index.plot()
         
     Notes
     -----
@@ -125,6 +130,18 @@ class ConProf:
 
     def __init__(self, data, group_pop_var, total_pop_var, m = 1000):
 
-        self.r = _conprof(data, group_pop_var, total_pop_var, m)
+        self.r     = _conprof(data, group_pop_var, total_pop_var, m)[0]
+        self.grid  = _conprof(data, group_pop_var, total_pop_var, m)[1]
+        self.curve = _conprof(data, group_pop_var, total_pop_var, m)[2]
 
+    def plot(self):
+        """
+        Plot the Concentration Profile
+        """
+        try:
+            import matplotlib.pyplot as plt
+        except ImportError:
+            warnings.warn('This method relies on importing `matplotlib`')
+        graph = plt.scatter(self.grid, self.curve, s = 0.1)
+        return graph
 
