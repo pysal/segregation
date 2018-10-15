@@ -41,7 +41,7 @@ def _dissim(data, group_pop_var, total_pop_var):
     
     if ((group_pop_var not in data.columns) or (total_pop_var not in data.columns)):    
         raise ValueError('group_pop_var and total_pop_var must be variables of data')
-
+        
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
     
