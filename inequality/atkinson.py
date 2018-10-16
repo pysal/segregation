@@ -123,4 +123,7 @@ class Atkinson:
 
         self.a = _atkinson(data, group_pop_var, total_pop_var, b)
 
-
+    @property
+    def _statistic(self):
+        """More consistent hidden attribute to access Segregation statistics"""
+        return self.a

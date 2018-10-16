@@ -112,4 +112,7 @@ class Dissim:
 
         self.d = _dissim(data, group_pop_var, total_pop_var)
 
-
+    @property
+    def _statistic(self):
+        """More consistent hidden attribute to access Segregation statistics"""
+        return self.d

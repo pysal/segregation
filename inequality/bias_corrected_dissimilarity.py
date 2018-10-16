@@ -132,3 +132,9 @@ class Bias_Corrected_Dissim:
     def __init__(self, data, group_pop_var, total_pop_var, B = 500):
 
         self.dbc = _bias_corrected_dissim(data, group_pop_var, total_pop_var, B)
+        
+        
+    @property
+    def _statistic(self):
+        """More consistent hidden attribute to access Segregation statistics"""
+        return self.dbc

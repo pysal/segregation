@@ -113,4 +113,7 @@ class Gini_Seg:
 
         self.g = _gini_seg(data, group_pop_var, total_pop_var)
 
-
+    @property
+    def _statistic(self):
+        """More consistent hidden attribute to access Segregation statistics"""
+        return self.g

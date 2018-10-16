@@ -145,3 +145,7 @@ class ConProf:
         graph = plt.scatter(self.grid, self.curve, s = 0.1)
         return graph
 
+    @property
+    def _statistic(self):
+        """More consistent hidden attribute to access Segregation statistics"""
+        return self.r

@@ -130,3 +130,8 @@ class Modified_Dissim:
     def __init__(self, data, group_pop_var, total_pop_var, iterations = 500):
 
         self.dct = _modified_dissim(data, group_pop_var, total_pop_var, iterations)
+        
+    @property
+    def _statistic(self):
+        """More consistent hidden attribute to access Segregation statistics"""
+        return self.dct

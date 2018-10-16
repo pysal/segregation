@@ -130,3 +130,8 @@ class Modified_Gini_Seg:
     def __init__(self, data, group_pop_var, total_pop_var, iterations = 500):
 
         self.gct = _modified_gini_seg(data, group_pop_var, total_pop_var, iterations)
+        
+    @property
+    def _statistic(self):
+        """More consistent hidden attribute to access Segregation statistics"""
+        return self.gct

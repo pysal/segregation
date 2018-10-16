@@ -133,3 +133,8 @@ class Density_Corrected_Dissim:
     def __init__(self, data, group_pop_var, total_pop_var):
 
         self.ddc = _density_corrected_dissim(data, group_pop_var, total_pop_var)
+    
+    @property
+    def _statistic(self):
+        """More consistent hidden attribute to access Segregation statistics"""
+        return self.ddc
