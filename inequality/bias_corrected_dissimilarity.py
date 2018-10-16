@@ -1,5 +1,5 @@
 """
-Bias-Corrected Dissimilarity based Segregation Metrics
+Bias-Corrected Dissimilarity Segregation Index
 """
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr.edu>"
