@@ -28,8 +28,8 @@ def _correlationr(data, group_pop_var, total_pop_var):
     Attributes
     ----------
 
-    v : float
-        Correlation Ratio Index
+    statistic : float
+                Correlation Ratio Index
 
     Notes
     -----
@@ -80,8 +80,8 @@ class CorrelationR:
     Attributes
     ----------
 
-    v : float
-        Correlation Ratio Index
+    statistic : float
+                Correlation Ratio Index
         
     Examples
     --------
@@ -100,7 +100,7 @@ class CorrelationR:
     The value is estimated below.
     
     >>> correlationr_index = CorrelationR(df, 'nhblk10', 'pop10')
-    >>> correlationr_index.v
+    >>> correlationr_index.statistic
     0.048716810856363923
     
     Notes
@@ -112,9 +112,5 @@ class CorrelationR:
 
     def __init__(self, data, group_pop_var, total_pop_var):
 
-        self.v = _correlationr(data, group_pop_var, total_pop_var)
+        self.statistic = _correlationr(data, group_pop_var, total_pop_var)
 
-    @property
-    def _statistic(self):
-        """More consistent hidden attribute to access Segregation statistics"""
-        return self.v

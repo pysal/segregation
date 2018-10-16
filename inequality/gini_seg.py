@@ -28,8 +28,8 @@ def _gini_seg(data, group_pop_var, total_pop_var):
     Attributes
     ----------
 
-    g : float
-        Gini Segregation Index
+    statistic : float
+                Gini Segregation Index
 
     Notes
     -----
@@ -80,8 +80,8 @@ class Gini_Seg:
     Attributes
     ----------
 
-    g : float
-        Gini Segregation Index
+    statistic : float
+                Gini Segregation Index
         
     Examples
     --------
@@ -100,7 +100,7 @@ class Gini_Seg:
     The value is estimated below.
     
     >>> gini_seg_index = Gini_Seg(df, 'nhblk10', 'pop10')
-    >>> gini_seg_index.g
+    >>> gini_seg_index.statistic
     0.44620350030600087
        
     Notes
@@ -111,9 +111,5 @@ class Gini_Seg:
 
     def __init__(self, data, group_pop_var, total_pop_var):
 
-        self.g = _gini_seg(data, group_pop_var, total_pop_var)
+        self.statistic = _gini_seg(data, group_pop_var, total_pop_var)
 
-    @property
-    def _statistic(self):
-        """More consistent hidden attribute to access Segregation statistics"""
-        return self.g

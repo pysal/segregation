@@ -32,8 +32,8 @@ def _bias_corrected_dissim(data, group_pop_var, total_pop_var, B = 500):
     Attributes
     ----------
 
-    dbc : float
-          Dissimilarity with Bias-Correction (bias correction from Allen, Rebecca et al. (2015))
+    statistic : float
+                Dissimilarity with Bias-Correction (bias correction from Allen, Rebecca et al. (2015))
 
     Notes
     -----
@@ -99,8 +99,8 @@ class Bias_Corrected_Dissim:
     Attributes
     ----------
 
-    dbc : float
-          Dissimilarity with Bias-Correction (bias correction from Allen, Rebecca et al. (2015))
+    statistic : float
+                Dissimilarity with Bias-Correction (bias correction from Allen, Rebecca et al. (2015))
         
     Examples
     --------
@@ -120,7 +120,7 @@ class Bias_Corrected_Dissim:
     
     >>> np.random.seed(1234)
     >>> bias_corrected_dissim_index = Bias_Corrected_Dissim(df, 'nhblk10', 'pop10')
-    >>> bias_corrected_dissim_index.dbc
+    >>> bias_corrected_dissim_index.statistic
     0.31484636081876954
      
     Notes
@@ -131,10 +131,6 @@ class Bias_Corrected_Dissim:
 
     def __init__(self, data, group_pop_var, total_pop_var, B = 500):
 
-        self.dbc = _bias_corrected_dissim(data, group_pop_var, total_pop_var, B)
+        self.statistic = _bias_corrected_dissim(data, group_pop_var, total_pop_var, B)
         
         
-    @property
-    def _statistic(self):
-        """More consistent hidden attribute to access Segregation statistics"""
-        return self.dbc

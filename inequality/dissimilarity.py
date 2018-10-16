@@ -28,8 +28,8 @@ def _dissim(data, group_pop_var, total_pop_var):
     Attributes
     ----------
 
-    d : float
-        Dissimilarity Index
+    statistic : float
+                Dissimilarity Index
 
     Notes
     -----
@@ -77,8 +77,8 @@ class Dissim:
     Attributes
     ----------
 
-    d : float
-        Dissimilarity Index
+    statistic : float
+                Dissimilarity Index
         
     Examples
     --------
@@ -97,7 +97,7 @@ class Dissim:
     The value is estimated below.
     
     >>> dissim_index = Dissim(df, 'nhblk10', 'pop10')
-    >>> dissim_index.d
+    >>> dissim_index.statistic
     0.31565682496226544
     
     The interpretation of this value is that 31.57% of the non-hispanic black population would have to move to reach eveness in the Riverside County.
@@ -110,9 +110,5 @@ class Dissim:
 
     def __init__(self, data, group_pop_var, total_pop_var):
 
-        self.d = _dissim(data, group_pop_var, total_pop_var)
+        self.statistic = _dissim(data, group_pop_var, total_pop_var)
 
-    @property
-    def _statistic(self):
-        """More consistent hidden attribute to access Segregation statistics"""
-        return self.d

@@ -28,8 +28,8 @@ def _exposure(data, group_pop_var, total_pop_var):
     Attributes
     ----------
 
-    xPy : float
-          Exposure Index
+    statistic : float
+                Exposure Index
 
     Notes
     -----
@@ -77,8 +77,8 @@ class Exposure:
     Attributes
     ----------
 
-    xPy : float
-          Exposure Index
+    statistic : float
+                Exposure Index
         
     Examples
     --------
@@ -97,7 +97,7 @@ class Exposure:
     The value is estimated below.
     
     >>> exposure_index = exposure(df, 'nhblk10', 'pop10')
-    >>> exposure_index.xPy
+    >>> exposure_index.statistic
     0.886785172226587
     
     The interpretation of this number is that if you randomly pick a X member of a specific area, there is 88.68% of probability that this member shares a unit with a Y member.
@@ -112,9 +112,5 @@ class Exposure:
 
     def __init__(self, data, group_pop_var, total_pop_var):
 
-        self.xPy = _exposure(data, group_pop_var, total_pop_var)
+        self.statistic = _exposure(data, group_pop_var, total_pop_var)
 
-    @property
-    def _statistic(self):
-        """More consistent hidden attribute to access Segregation statistics"""
-        return self.xPy

@@ -31,8 +31,8 @@ def _atkinson(data, group_pop_var, total_pop_var, b = 0.5):
     Attributes
     ----------
 
-    a : float
-        Atkinson Index
+    statistic : float
+                Atkinson Index
 
     Notes
     -----
@@ -90,8 +90,8 @@ class Atkinson:
     Attributes
     ----------
 
-    a : float
-        Atkison Index
+    statistic : float
+                Atkison Index
         
     Examples
     --------
@@ -110,7 +110,7 @@ class Atkinson:
     The value is estimated below.
     
     >>> atkinson_index = Atkinson(df, 'nhblk10', 'pop10', b = 0.5)
-    >>> atkinson_index.a
+    >>> atkinson_index.statistic
     0.16722406110274002
        
     Notes
@@ -121,9 +121,5 @@ class Atkinson:
 
     def __init__(self, data, group_pop_var, total_pop_var, b = 0.5):
 
-        self.a = _atkinson(data, group_pop_var, total_pop_var, b)
+        self.statistic = _atkinson(data, group_pop_var, total_pop_var, b)
 
-    @property
-    def _statistic(self):
-        """More consistent hidden attribute to access Segregation statistics"""
-        return self.a

@@ -32,8 +32,8 @@ def _modified_dissim(data, group_pop_var, total_pop_var, iterations = 500):
     Attributes
     ----------
 
-    dct : float
-          Modified Dissimilarity Index (Dissimilarity from Carrington and Troske (1997))
+    statistic : float
+                Modified Dissimilarity Index (Dissimilarity from Carrington and Troske (1997))
 
     Notes
     -----
@@ -97,8 +97,8 @@ class Modified_Dissim:
     Attributes
     ----------
 
-    dct : float
-          Modified Dissimilarity Index (Dissimilarity from Carrington and Troske (1997))
+    statistic : float
+                Modified Dissimilarity Index (Dissimilarity from Carrington and Troske (1997))
         
     Examples
     --------
@@ -118,7 +118,7 @@ class Modified_Dissim:
     
     >>> np.random.seed(1234)
     >>> modified_dissim_index = Modified_Dissim(df, 'nhblk10', 'pop10')
-    >>> modified_dissim_index.dct
+    >>> modified_dissim_index.statistic
     0.30009504639081996
      
     Notes
@@ -129,9 +129,5 @@ class Modified_Dissim:
 
     def __init__(self, data, group_pop_var, total_pop_var, iterations = 500):
 
-        self.dct = _modified_dissim(data, group_pop_var, total_pop_var, iterations)
+        self.statistic = _modified_dissim(data, group_pop_var, total_pop_var, iterations)
         
-    @property
-    def _statistic(self):
-        """More consistent hidden attribute to access Segregation statistics"""
-        return self.dct

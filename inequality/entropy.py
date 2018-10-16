@@ -28,8 +28,8 @@ def _entropy(data, group_pop_var, total_pop_var):
     Attributes
     ----------
 
-    h : float
-        Entropy Index
+    statistic : float
+                Entropy Index
 
     Notes
     -----
@@ -80,8 +80,8 @@ class Entropy:
     Attributes
     ----------
 
-    h : float
-        Entropy Index
+    statistic : float
+                Entropy Index
         
     Examples
     --------
@@ -100,7 +100,7 @@ class Entropy:
     The value is estimated below.
     
     >>> entropy_index = Entropy(df, 'nhblk10', 'pop10')
-    >>> entropy_index.h
+    >>> entropy_index.statistic
     0.08636489348167173
        
     Notes
@@ -111,9 +111,5 @@ class Entropy:
 
     def __init__(self, data, group_pop_var, total_pop_var):
 
-        self.h = _entropy(data, group_pop_var, total_pop_var)
+        self.statistic = _entropy(data, group_pop_var, total_pop_var)
 
-    @property
-    def _statistic(self):
-        """More consistent hidden attribute to access Segregation statistics"""
-        return self.h

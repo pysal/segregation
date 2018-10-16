@@ -32,8 +32,8 @@ def _modified_gini_seg(data, group_pop_var, total_pop_var, iterations = 500):
     Attributes
     ----------
 
-    gct : float
-          Modified Gini Segregation Index (Gini from Carrington and Troske (1997))
+    statistic : float
+                Modified Gini Segregation Index (Gini from Carrington and Troske (1997))
 
     Notes
     -----
@@ -97,8 +97,8 @@ class Modified_Gini_Seg:
     Attributes
     ----------
 
-    gct : float
-          Modified Gini Segregation Index (Gini from Carrington and Troske (1997))
+    statistic : float
+                Modified Gini Segregation Index (Gini from Carrington and Troske (1997))
         
     Examples
     --------
@@ -118,7 +118,7 @@ class Modified_Gini_Seg:
     
     >>> np.random.seed(1234)
     >>> modified_gini_seg_index = Modified_Gini_Seg(df, 'nhblk10', 'pop10')
-    >>> modified_gini_seg_index.gct
+    >>> modified_gini_seg_index.statistic
     0.4280279611418648
      
     Notes
@@ -129,9 +129,5 @@ class Modified_Gini_Seg:
 
     def __init__(self, data, group_pop_var, total_pop_var, iterations = 500):
 
-        self.gct = _modified_gini_seg(data, group_pop_var, total_pop_var, iterations)
+        self.statistic = _modified_gini_seg(data, group_pop_var, total_pop_var, iterations)
         
-    @property
-    def _statistic(self):
-        """More consistent hidden attribute to access Segregation statistics"""
-        return self.gct

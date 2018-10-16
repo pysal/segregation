@@ -28,8 +28,8 @@ def _isolation(data, group_pop_var, total_pop_var):
     Attributes
     ----------
 
-    xPx : float
-          Isolation Index
+    statistic : float
+                Isolation Index
 
     Notes
     -----
@@ -76,8 +76,8 @@ class Isolation:
     Attributes
     ----------
 
-    xPx : float
-          Isolation Index
+    statistic : float
+                Isolation Index
         
     Examples
     --------
@@ -96,7 +96,7 @@ class Isolation:
     The value is estimated below.
     
     >>> isolation_index = Isolation(df, 'nhblk10', 'pop10')
-    >>> isolation_index.xPx
+    >>> isolation_index.statistic
     0.11321482777341298
     
     The interpretation of this number is that if you randomly pick a X member of a specific area, there is 11.32% of probability that this member shares a unit with another X member.
@@ -111,9 +111,5 @@ class Isolation:
 
     def __init__(self, data, group_pop_var, total_pop_var):
 
-        self.xPx = _isolation(data, group_pop_var, total_pop_var)
+        self.statistic = _isolation(data, group_pop_var, total_pop_var)
 
-    @property
-    def _statistic(self):
-        """More consistent hidden attribute to access Segregation statistics"""
-        return self.xPx

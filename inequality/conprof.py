@@ -33,8 +33,8 @@ def _conprof(data, group_pop_var, total_pop_var, m = 1000):
     Attributes
     ----------
 
-    r : float
-        Concentration Profile Index
+    statistic : float
+                Concentration Profile Index
 
     Notes
     -----
@@ -95,8 +95,8 @@ class ConProf:
     Attributes
     ----------
 
-    r : float
-        Concentration Profile Index
+    statistic : float
+                Concentration Profile Index
         
     Examples
     --------
@@ -115,7 +115,7 @@ class ConProf:
     The value is estimated below.
     
     >>> conprof_index = ConProf(df, 'nhblk10', 'pop10')
-    >>> conprof_index.r
+    >>> conprof_index.statistic
     0.06393365660089256
     
     You can plot the profile curve with the plot method.
@@ -130,9 +130,9 @@ class ConProf:
 
     def __init__(self, data, group_pop_var, total_pop_var, m = 1000):
 
-        self.r     = _conprof(data, group_pop_var, total_pop_var, m)[0]
-        self.grid  = _conprof(data, group_pop_var, total_pop_var, m)[1]
-        self.curve = _conprof(data, group_pop_var, total_pop_var, m)[2]
+        self.statistic = _conprof(data, group_pop_var, total_pop_var, m)[0]
+        self.grid      = _conprof(data, group_pop_var, total_pop_var, m)[1]
+        self.curve     = _conprof(data, group_pop_var, total_pop_var, m)[2]
 
     def plot(self):
         """
@@ -144,8 +144,3 @@ class ConProf:
             warnings.warn('This method relies on importing `matplotlib`')
         graph = plt.scatter(self.grid, self.curve, s = 0.1)
         return graph
-
-    @property
-    def _statistic(self):
-        """More consistent hidden attribute to access Segregation statistics"""
-        return self.r
