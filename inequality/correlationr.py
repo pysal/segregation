@@ -7,7 +7,7 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr
 import numpy as np
 import pandas as pd
 
-__all__ = ['CorrelationR']
+__all__ = ['Correlation_R']
 
 
 def _correlationr(data, group_pop_var, total_pop_var):
@@ -62,7 +62,7 @@ def _correlationr(data, group_pop_var, total_pop_var):
     return V
 
 
-class CorrelationR:
+class Correlation_R:
     """
     Classic Correlation Ratio Index
 
@@ -99,7 +99,7 @@ class CorrelationR:
     
     The value is estimated below.
     
-    >>> correlationr_index = CorrelationR(df, 'nhblk10', 'pop10')
+    >>> correlationr_index = Correlation_R(df, 'nhblk10', 'pop10')
     >>> correlationr_index.statistic
     0.048716810856363923
     

@@ -7,7 +7,7 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr
 import numpy as np
 import pandas as pd
 
-__all__ = ['GiniSeg']
+__all__ = ['Gini_Seg']
 
 
 def _gini_seg(data, group_pop_var, total_pop_var):
@@ -62,7 +62,7 @@ def _gini_seg(data, group_pop_var, total_pop_var):
     return G
 
 
-class GiniSeg:
+class Gini_Seg:
     """
     Classic Gini Segregation Index
 
@@ -99,7 +99,7 @@ class GiniSeg:
     
     The value is estimated below.
     
-    >>> gini_seg_index = GiniSeg(df, 'nhblk10', 'pop10')
+    >>> gini_seg_index = Gini_Seg(df, 'nhblk10', 'pop10')
     >>> gini_seg_index.statistic
     0.44620350030600087
        

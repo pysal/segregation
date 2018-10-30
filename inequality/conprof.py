@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import warnings
 
-__all__ = ['ConProf']
+__all__ = ['Con_Prof']
 
 
 def _conprof(data, group_pop_var, total_pop_var, m = 1000):
@@ -73,7 +73,7 @@ def _conprof(data, group_pop_var, total_pop_var, m = 1000):
     return R, grid, curve
 
 
-class ConProf:
+class Con_Prof:
     """
     Concentration Profile Index
 
@@ -114,7 +114,7 @@ class ConProf:
     
     The value is estimated below.
     
-    >>> conprof_index = ConProf(df, 'nhblk10', 'pop10')
+    >>> conprof_index = Con_Prof(df, 'nhblk10', 'pop10')
     >>> conprof_index.statistic
     0.06393365660089256
     
