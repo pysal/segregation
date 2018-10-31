@@ -145,8 +145,8 @@ class Spatial_Proximity:
     
     The value is estimated below.
     
-    >>> spatial_dissim_index = Spatial_Proximity(gdf, 'nhblk10', 'pop10')
-    >>> spatial_dissim_index.statistic
+    >>> spatial_prox_index = Spatial_Proximity(gdf, 'nhblk10', 'pop10')
+    >>> spatial_prox_index.statistic
     1.002191883006537
             
     Notes
