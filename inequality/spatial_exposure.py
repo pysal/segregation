@@ -40,7 +40,7 @@ def _spatial_exposure(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0.
 
     Notes
     -----
-    This measure is also called the distance decay exposure.
+    This measure is also called the distance decay exposure. It may be interpreted as the probability that the next person a group member meets anywhere in space is from the other group.
     
     Based on Morgan, Barrie S. "A distance-decay based interaction index to measure residential segregation." Area (1983): 211-217.
     
@@ -148,7 +148,7 @@ class Spatial_Exposure:
             
     Notes
     -----
-    This measure is also called the distance decay exposure.
+    This measure is also called the distance decay exposure. It may be interpreted as the probability that the next person a group member meets anywhere in space is from the other group.
     
     Based on Morgan, Barrie S. "A distance-decay based interaction index to measure residential segregation." Area (1983): 211-217.
     
