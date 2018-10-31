@@ -6,6 +6,7 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr
 
 import numpy as np
 import pandas as pd
+import libpysal
 from libpysal.weights import Queen
 from sklearn.metrics.pairwise import manhattan_distances
 
@@ -51,7 +52,10 @@ def _spatial_dissim(data, group_pop_var, total_pop_var, w = None):
         w_object = Queen.from_dataframe(data)
     else:
         w_object = w
-        
+    
+    if (not issubclass(type(w_object), libpysal.weights.W)):
+        raise TypeError('w is not a PySAL weights object')
+    
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
     
