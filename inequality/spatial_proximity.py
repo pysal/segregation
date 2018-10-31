@@ -65,7 +65,6 @@ def _spatial_proximity(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0
    
     T = data.total_pop_var.sum()
     
-    # If a unit has zero population, the group of interest frequency is zero
     data = data.assign(xi = data.group_pop_var,
                        yi = data.total_pop_var - data.group_pop_var,
                        ti = data.total_pop_var,

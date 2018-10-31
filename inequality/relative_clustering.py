@@ -63,7 +63,6 @@ def _relative_clustering(data, group_pop_var, total_pop_var, alpha = 0.6, beta =
     if any(data.total_pop_var < data.group_pop_var):    
         raise ValueError('Group of interest population must equal or lower than the total population of the units.')
     
-    # If a unit has zero population, the group of interest frequency is zero
     data = data.assign(xi = data.group_pop_var,
                        yi = data.total_pop_var - data.group_pop_var,
                        c_lons = data.centroid.map(lambda p: p.x),

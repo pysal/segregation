@@ -49,7 +49,6 @@ def _absolute_centralization(data, group_pop_var, total_pop_var):
     if any(data.total_pop_var < data.group_pop_var):    
         raise ValueError('Group of interest population must equal or lower than the total population of the units.')
     
-    # If a unit has zero population, the group of interest frequency is zero
     data = data.assign(xi = data.group_pop_var,
                        yi = data.total_pop_var - data.group_pop_var,
                        ti = data.total_pop_var,
