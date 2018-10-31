@@ -1,5 +1,5 @@
 """
-Spatial Proximity based Segregation Metrics
+Relative Clustering based Segregation Metrics
 """
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr.edu>"
