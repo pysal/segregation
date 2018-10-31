@@ -107,8 +107,11 @@ class Modified_Gini_Seg:
     
     Firstly, we need to read the data:
     
-    >>> url = 'https://raw.githubusercontent.com/renanxcortes/inequality-segregation-supplementary-files/master/data/std_2010_fullcount.csv'
-    >>> census_2010 = pd.read_csv(url, encoding = "ISO-8859-1", sep = ",")
+	>>> This example uses all census data that the user must provide your own copy of the external database.
+	>>> A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+	>>>	After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
+    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
