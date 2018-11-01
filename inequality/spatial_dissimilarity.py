@@ -7,6 +7,7 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr
 import numpy as np
 import pandas as pd
 import libpysal
+from dissimilarity import _dissim
 from libpysal.weights import Queen
 from sklearn.metrics.pairwise import manhattan_distances
 
@@ -48,11 +49,8 @@ def _spatial_dissim(data, group_pop_var, total_pop_var, w = None, std = False):
     Based on Morrill, R. L. (1991) "On the Measure of Geographic Segregation". Geography Research Forum.
 
     """
-    if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
-        raise TypeError('group_pop_var and total_pop_var must be strings')
-    
-    if ((group_pop_var not in data.columns) or (total_pop_var not in data.columns)):    
-        raise ValueError('group_pop_var and total_pop_var must be variables of data')
+    if (type(std) is not bool):
+        raise TypeError('std is not a boolean object')
         
     if w is None:    
         w_object = Queen.from_dataframe(data)
@@ -62,22 +60,13 @@ def _spatial_dissim(data, group_pop_var, total_pop_var, w = None, std = False):
     if (not issubclass(type(w_object), libpysal.weights.W)):
         raise TypeError('w is not a PySAL weights object')
     
-    if (type(std) is not bool):
-        raise TypeError('std is not a boolean object')
+    D = _dissim(data, group_pop_var, total_pop_var)
     
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
     
-    if any(data.total_pop_var < data.group_pop_var):    
-        raise ValueError('Group of interest population must equal or lower than the total population of the units.')
-   
-    T = data.total_pop_var.sum()
-    P = data.group_pop_var.sum() / T
-    
     # If a unit has zero population, the group of interest frequency is zero
     data = data.assign(pi = np.where(data.total_pop_var == 0, 0, data.group_pop_var/data.total_pop_var))
-    
-    D = (((data.total_pop_var * abs(data.pi - P)))/ (2 * T * P * (1 - P))).sum()
     
     if not std:
         cij = w_object.full()[0]
