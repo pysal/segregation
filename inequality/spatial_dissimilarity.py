@@ -13,7 +13,7 @@ from sklearn.metrics.pairwise import manhattan_distances
 __all__ = ['Spatial_Dissim']
 
 
-def _spatial_dissim(data, group_pop_var, total_pop_var, w = None):
+def _spatial_dissim(data, group_pop_var, total_pop_var, w = None, std = False):
     """
     Calculation of Spatial Dissimilarity index
 
@@ -30,6 +30,12 @@ def _spatial_dissim(data, group_pop_var, total_pop_var, w = None):
                     
     w             : W
                     A PySAL weights object. If not provided, Queen contiguity matrix is used.
+                    
+    std           : boolean
+                    A condition for row standardisation of the weights matrices. If True, the values of cij in the formulas gets row standardized.
+                    For the sake of comparison, the seg R package of Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
+                    works by default with row standardization.
+        
 
     Attributes
     ----------
@@ -56,6 +62,9 @@ def _spatial_dissim(data, group_pop_var, total_pop_var, w = None):
     if (not issubclass(type(w_object), libpysal.weights.W)):
         raise TypeError('w is not a PySAL weights object')
     
+    if (type(std) is not bool):
+        raise TypeError('std is not a boolean object')
+    
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
     
@@ -70,7 +79,11 @@ def _spatial_dissim(data, group_pop_var, total_pop_var, w = None):
     
     D = (((data.total_pop_var * abs(data.pi - P)))/ (2 * T * P * (1 - P))).sum()
     
-    cij = w_object.full()[0]
+    if not std:
+        cij = w_object.full()[0]
+    else:
+        cij = w_object.full()[0]
+        cij = cij / cij.sum(axis = 1).reshape((cij.shape[0], 1))
 
     # manhattan_distances used to compute absolute distances
     num = np.multiply(manhattan_distances(data[['pi']]), cij).sum()
@@ -164,6 +177,6 @@ class Spatial_Dissim:
     
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, w = None):
+    def __init__(self, data, group_pop_var, total_pop_var, w = None, std = False):
 
-        self.statistic = _spatial_dissim(data, group_pop_var, total_pop_var, w)
+        self.statistic = _spatial_dissim(data, group_pop_var, total_pop_var, w, std)
