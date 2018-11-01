@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 #import libpysal
 from util import _return_length_weighted_w
+from dissimilarity import _dissim
 from sklearn.metrics.pairwise import manhattan_distances
 
 __all__ = ['Boundary_Spatial_Dissim']
@@ -47,29 +48,17 @@ def _boundary_spatial_dissim(data, group_pop_var, total_pop_var, std = False):
     Original paper by Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
 
     """
-    if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
-        raise TypeError('group_pop_var and total_pop_var must be strings')
-    
-    if ((group_pop_var not in data.columns) or (total_pop_var not in data.columns)):    
-        raise ValueError('group_pop_var and total_pop_var must be variables of data')
-    
     if (type(std) is not bool):
         raise TypeError('std is not a boolean object')
+    
+    D = _dissim(data, group_pop_var, total_pop_var)
     
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
     
-    if any(data.total_pop_var < data.group_pop_var):    
-        raise ValueError('Group of interest population must equal or lower than the total population of the units.')
-   
-    T = data.total_pop_var.sum()
-    P = data.group_pop_var.sum() / T
-    
     # If a unit has zero population, the group of interest frequency is zero
     data = data.assign(pi = np.where(data.total_pop_var == 0, 0, data.group_pop_var/data.total_pop_var))
-    
-    D = (((data.total_pop_var * abs(data.pi - P)))/ (2 * T * P * (1 - P))).sum()
-    
+
     if not std:
         cij = _return_length_weighted_w(data).full()[0]
     else:
