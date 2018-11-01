@@ -104,7 +104,7 @@ class Boundary_Spatial_Dissim:
     Examples
     --------
     In this example, we will calculate the degree of boundary spatial dissimilarity (D) for the Riverside County using the census tract data of 2010.
-    The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset. The neighborhood contiguity matrix is used.
+    The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
     Firstly, we need to read the data:
     
