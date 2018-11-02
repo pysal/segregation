@@ -41,9 +41,7 @@ def _perimeter_area_ratio_spatial_dissim(data, group_pop_var, total_pop_var, std
 
     Notes
     -----
-    The formula is based on Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
-    
-    Original paper by Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
+    Based on Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
 
     """
     if (type(std) is not bool):
@@ -141,9 +139,7 @@ class Perimeter_Area_Ratio_Spatial_Dissim:
             
     Notes
     -----
-    The formula is based on Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
-    
-    Original paper by Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
+    Based on Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
     
     """
 
