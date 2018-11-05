@@ -38,7 +38,7 @@ def _conprof(data, group_pop_var, total_pop_var, m = 1000):
 
     Notes
     -----
-    Hong, Seong-Yun, and Yukio Sadahiro. "Measuring geographic segregation: a graph-based approach." Journal of Geographical Systems 16.2 (2014): 211-231.
+    Based on Hong, Seong-Yun, and Yukio Sadahiro. "Measuring geographic segregation: a graph-based approach." Journal of Geographical Systems 16.2 (2014): 211-231.
 
     """
     if(type(m) is not int):
@@ -127,7 +127,7 @@ class Con_Prof:
         
     Notes
     -----
-    Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
+    Based on Hong, Seong-Yun, and Yukio Sadahiro. "Measuring geographic segregation: a graph-based approach." Journal of Geographical Systems 16.2 (2014): 211-231.
 
     """
 
