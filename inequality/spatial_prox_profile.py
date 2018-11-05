@@ -145,7 +145,7 @@ class Spatial_Prox_Prof:
     
     You can plot the profile curve with the plot method.
     
-    >>> conprof_index.plot()
+    >>> spat_prox_index.plot()
         
     Notes
     -----
