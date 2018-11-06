@@ -14,7 +14,7 @@ from sklearn.metrics.pairwise import manhattan_distances
 __all__ = ['Boundary_Spatial_Dissim']
 
 
-def _boundary_spatial_dissim(data, group_pop_var, total_pop_var, std = False):
+def _boundary_spatial_dissim(data, group_pop_var, total_pop_var, standardize = False):
     """
     Calculation of Boundary Spatial Dissimilarity index
 
@@ -29,7 +29,7 @@ def _boundary_spatial_dissim(data, group_pop_var, total_pop_var, std = False):
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
                     
-    std           : boolean
+    standardize   : boolean
                     A condition for row standardisation of the weights matrices. If True, the values of cij in the formulas gets row standardized.
                     For the sake of comparison, the seg R package of Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
                     works by default without row standardization. That is, directly with border length.
@@ -48,7 +48,7 @@ def _boundary_spatial_dissim(data, group_pop_var, total_pop_var, std = False):
     Original paper by Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
 
     """
-    if (type(std) is not bool):
+    if (type(standardize) is not bool):
         raise TypeError('std is not a boolean object')
     
     D = _dissim(data, group_pop_var, total_pop_var)
@@ -59,7 +59,7 @@ def _boundary_spatial_dissim(data, group_pop_var, total_pop_var, std = False):
     # If a unit has zero population, the group of interest frequency is zero
     data = data.assign(pi = np.where(data.total_pop_var == 0, 0, data.group_pop_var/data.total_pop_var))
 
-    if not std:
+    if not standardize:
         cij = _return_length_weighted_w(data).full()[0]
     else:
         cij = _return_length_weighted_w(data).full()[0]
@@ -89,7 +89,7 @@ class Boundary_Spatial_Dissim:
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
                     
-    std           : boolean
+    standardize   : boolean
                     A condition for row standardisation of the weights matrices. If True, the values of cij in the formulas gets row standardized.
                     For the sake of comparison, the seg R package of Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
                     works by default without row standardization. That is, directly with border length.
@@ -144,6 +144,6 @@ class Boundary_Spatial_Dissim:
     
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, std = False):
+    def __init__(self, data, group_pop_var, total_pop_var, standardize = False):
 
-        self.statistic = _boundary_spatial_dissim(data, group_pop_var, total_pop_var, std)
+        self.statistic = _boundary_spatial_dissim(data, group_pop_var, total_pop_var, standardize)

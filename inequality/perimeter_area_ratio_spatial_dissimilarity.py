@@ -14,7 +14,7 @@ from sklearn.metrics.pairwise import manhattan_distances
 __all__ = ['Perimeter_Area_Ratio_Spatial_Dissim']
 
 
-def _perimeter_area_ratio_spatial_dissim(data, group_pop_var, total_pop_var, std = True):
+def _perimeter_area_ratio_spatial_dissim(data, group_pop_var, total_pop_var, standardize = True):
     """
     Calculation of Perimeter/Area Ratio Spatial Dissimilarity index
 
@@ -29,7 +29,7 @@ def _perimeter_area_ratio_spatial_dissim(data, group_pop_var, total_pop_var, std
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
                     
-    std           : boolean
+    standardize   : boolean
                     A condition for standardisation of the weights matrices. 
                     If True, the values of cij in the formulas gets standardized and the overall sum is 1.
 
@@ -44,7 +44,7 @@ def _perimeter_area_ratio_spatial_dissim(data, group_pop_var, total_pop_var, std
     Based on Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
 
     """
-    if (type(std) is not bool):
+    if (type(standardize) is not bool):
         raise TypeError('std is not a boolean object')
     
     D = _dissim(data, group_pop_var, total_pop_var)
@@ -55,7 +55,7 @@ def _perimeter_area_ratio_spatial_dissim(data, group_pop_var, total_pop_var, std
     # If a unit has zero population, the group of interest frequency is zero
     data = data.assign(pi = np.where(data.total_pop_var == 0, 0, data.group_pop_var/data.total_pop_var))
 
-    if not std:
+    if not standardize:
         cij = _return_length_weighted_w(data).full()[0]
     else:
         cij = _return_length_weighted_w(data).full()[0]
@@ -92,7 +92,7 @@ class Perimeter_Area_Ratio_Spatial_Dissim:
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
                     
-    std           : boolean
+    standardize   : boolean
                     A condition for standardisation of the weights matrices. 
                     If True, the values of cij in the formulas gets standardized and the overall sum is 1.
         
@@ -143,6 +143,6 @@ class Perimeter_Area_Ratio_Spatial_Dissim:
     
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, std = True):
+    def __init__(self, data, group_pop_var, total_pop_var, standardize = True):
 
-        self.statistic = _perimeter_area_ratio_spatial_dissim(data, group_pop_var, total_pop_var, std)
+        self.statistic = _perimeter_area_ratio_spatial_dissim(data, group_pop_var, total_pop_var, standardize)
