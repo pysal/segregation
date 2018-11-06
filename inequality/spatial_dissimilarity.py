@@ -14,7 +14,7 @@ from sklearn.metrics.pairwise import manhattan_distances
 __all__ = ['Spatial_Dissim']
 
 
-def _spatial_dissim(data, group_pop_var, total_pop_var, w = None, std = False):
+def _spatial_dissim(data, group_pop_var, total_pop_var, w = None, standardize = False):
     """
     Calculation of Spatial Dissimilarity index
 
@@ -32,7 +32,7 @@ def _spatial_dissim(data, group_pop_var, total_pop_var, w = None, std = False):
     w             : W
                     A PySAL weights object. If not provided, Queen contiguity matrix is used.
                     
-    std           : boolean
+    standardize   : boolean
                     A condition for row standardisation of the weights matrices. If True, the values of cij in the formulas gets row standardized.
                     For the sake of comparison, the seg R package of Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
                     works by default with row standardization.
@@ -49,7 +49,7 @@ def _spatial_dissim(data, group_pop_var, total_pop_var, w = None, std = False):
     Based on Morrill, R. L. (1991) "On the Measure of Geographic Segregation". Geography Research Forum.
 
     """
-    if (type(std) is not bool):
+    if (type(standardize) is not bool):
         raise TypeError('std is not a boolean object')
         
     if w is None:    
@@ -68,7 +68,7 @@ def _spatial_dissim(data, group_pop_var, total_pop_var, w = None, std = False):
     # If a unit has zero population, the group of interest frequency is zero
     data = data.assign(pi = np.where(data.total_pop_var == 0, 0, data.group_pop_var/data.total_pop_var))
     
-    if not std:
+    if not standardize:
         cij = w_object.full()[0]
     else:
         cij = w_object.full()[0]
@@ -100,6 +100,11 @@ class Spatial_Dissim:
                     
     w             : W
                     A PySAL weights object. If not provided, Queen contiguity matrix is used.
+    
+    standardize   : boolean
+                    A condition for row standardisation of the weights matrices. If True, the values of cij in the formulas gets row standardized.
+                    For the sake of comparison, the seg R package of Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
+                    works by default with row standardization.
 
     Attributes
     ----------
@@ -166,6 +171,6 @@ class Spatial_Dissim:
     
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, w = None, std = False):
+    def __init__(self, data, group_pop_var, total_pop_var, w = None, standardize = False):
 
-        self.statistic = _spatial_dissim(data, group_pop_var, total_pop_var, w, std)
+        self.statistic = _spatial_dissim(data, group_pop_var, total_pop_var, w, standardize)
