@@ -32,6 +32,9 @@ def _density_corrected_dissim(data, group_pop_var, total_pop_var):
 
     statistic : float
                 Dissimilarity with Density-Correction (density correction from Allen, Rebecca et al. (2015))
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate. 
 
     Notes
     -----
@@ -80,7 +83,9 @@ def _density_corrected_dissim(data, group_pop_var, total_pop_var):
     optimal_thetas = theta_hat_j.apply(return_optimal_theta)
     Ddc = (sigma_hat_j * optimal_thetas).sum() / 2
     
-    return Ddc
+    core_data = data[['group_pop_var', 'total_pop_var']]
+    
+    return Ddc, core_data
 
 
 class Density_Corrected_Dissim:
@@ -103,6 +108,9 @@ class Density_Corrected_Dissim:
 
     statistic : float
                 Dissimilarity with Density-Correction (density correction from Allen, Rebecca et al. (2015))
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate. 
         
     Examples
     --------
@@ -134,6 +142,10 @@ class Density_Corrected_Dissim:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var):
+        
+        aux = _density_corrected_dissim(data, group_pop_var, total_pop_var)
 
-        self.statistic = _density_corrected_dissim(data, group_pop_var, total_pop_var)
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _density_corrected_dissim
     

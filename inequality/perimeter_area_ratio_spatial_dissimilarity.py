@@ -38,7 +38,10 @@ def _perimeter_area_ratio_spatial_dissim(data, group_pop_var, total_pop_var, sta
 
     statistic : float
                 Perimeter/Area Ratio Spatial Dissimilarity Index
-
+                
+    core_data : a geopandas DataFrame
+                A geopandas DataFrame that contains the columns used to perform the estimate.
+                
     Notes
     -----
     Based on Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
@@ -47,7 +50,7 @@ def _perimeter_area_ratio_spatial_dissim(data, group_pop_var, total_pop_var, sta
     if (type(standardize) is not bool):
         raise TypeError('std is not a boolean object')
     
-    D = _dissim(data, group_pop_var, total_pop_var)
+    D = _dissim(data, group_pop_var, total_pop_var)[0]
     
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
@@ -74,7 +77,9 @@ def _perimeter_area_ratio_spatial_dissim(data, group_pop_var, total_pop_var, sta
     PARD = D - (num / den)
     PARD
     
-    return PARD
+    core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
+    
+    return PARD, core_data
 
 
 class Perimeter_Area_Ratio_Spatial_Dissim:
@@ -101,7 +106,10 @@ class Perimeter_Area_Ratio_Spatial_Dissim:
 
     statistic : float
                 Perimeter/Area Ratio Spatial Dissimilarity Index
-        
+                
+    core_data : a geopandas DataFrame
+                A geopandas DataFrame that contains the columns used to perform the estimate.      
+                
     Examples
     --------
     In this example, we will calculate the degree of perimeter/area ratio spatial dissimilarity (PARD) for the Riverside County using the census tract data of 2010.
@@ -144,5 +152,9 @@ class Perimeter_Area_Ratio_Spatial_Dissim:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var, standardize = True):
+        
+        aux = _perimeter_area_ratio_spatial_dissim(data, group_pop_var, total_pop_var, standardize)
 
-        self.statistic = _perimeter_area_ratio_spatial_dissim(data, group_pop_var, total_pop_var, standardize)
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _perimeter_area_ratio_spatial_dissim

@@ -38,6 +38,9 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, m = 1000):
 
     statistic : float
                 Spatial Proximity Index
+                
+    core_data : a geopandas DataFrame
+                A geopandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
@@ -82,7 +85,9 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, m = 1000):
     threshold = data.group_pop_var.sum() / data.total_pop_var.sum()
     SPP = ((threshold - ((curve[grid < threshold]).sum() / m - (curve[grid >= threshold]).sum()/ m)) / (1 - threshold))
     
-    return SPP, grid, curve
+    core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
+    
+    return SPP, grid, curve, core_data
 
 
 class Spatial_Prox_Prof:
@@ -109,6 +114,9 @@ class Spatial_Prox_Prof:
 
     statistic : float
                 Spatial Proximity Index
+                
+    core_data : a geopandas DataFrame
+                A geopandas DataFrame that contains the columns used to perform the estimate.
         
     Examples
     --------
@@ -154,10 +162,14 @@ class Spatial_Prox_Prof:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var, m = 1000):
+        
+        aux = _spatial_prox_profile(data, group_pop_var, total_pop_var, m)
 
-        self.statistic = _spatial_prox_profile(data, group_pop_var, total_pop_var, m)[0]
-        self.grid      = _spatial_prox_profile(data, group_pop_var, total_pop_var, m)[1]
-        self.curve     = _spatial_prox_profile(data, group_pop_var, total_pop_var, m)[2]
+        self.statistic = aux[0]
+        self.grid      = aux[1]
+        self.curve     = aux[2]
+        self.core_data = aux[3]
+        self._function = _spatial_prox_profile
 
     def plot(self):
         """

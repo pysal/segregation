@@ -34,7 +34,10 @@ def _modified_gini_seg(data, group_pop_var, total_pop_var, iterations = 500):
 
     statistic : float
                 Modified Gini Segregation Index (Gini from Carrington and Troske (1997))
-
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate. 
+                
     Notes
     -----
     Based on Carrington, William J., and Kenneth R. Troske. "On measuring segregation in samples with small units." Journal of Business & Economic Statistics 15.4 (1997): 402-409.
@@ -46,7 +49,7 @@ def _modified_gini_seg(data, group_pop_var, total_pop_var, iterations = 500):
     if(iterations < 2):
         raise TypeError('iterations must be greater than 1.')
    
-    G = _gini_seg(data, group_pop_var, total_pop_var)
+    G = _gini_seg(data, group_pop_var, total_pop_var)[0]
     
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
@@ -63,7 +66,7 @@ def _modified_gini_seg(data, group_pop_var, total_pop_var, iterations = 500):
                                       p = np.array([[p_null] * data.shape[0]]), 
                                       size = (1, data.shape[0])).tolist()[0]
         data = data.assign(group_pop_var = freq_sim)
-        aux = _gini_seg(data, 'group_pop_var', 'total_pop_var')
+        aux = _gini_seg(data, 'group_pop_var', 'total_pop_var')[0]
         Gs[i] = aux
         
     G_star = Gs.mean()
@@ -72,8 +75,10 @@ def _modified_gini_seg(data, group_pop_var, total_pop_var, iterations = 500):
         Gct = (G - G_star)/(1 - G_star)
     else:
         Gct = (G - G_star)/G_star
-        
-    return Gct
+
+    core_data = data[['group_pop_var', 'total_pop_var']]
+
+    return Gct, core_data
 
 
 class Modified_Gini_Seg:
@@ -99,7 +104,10 @@ class Modified_Gini_Seg:
 
     statistic : float
                 Modified Gini Segregation Index (Gini from Carrington and Troske (1997))
-        
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate.     
+                
     Examples
     --------
     In this example, we will calculate the Modified Gini Segregation Index (Gct) for the Riverside County using the census tract data of 2010.
@@ -131,6 +139,10 @@ class Modified_Gini_Seg:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var, iterations = 500):
+        
+        aux = _modified_gini_seg(data, group_pop_var, total_pop_var, iterations)
 
-        self.statistic = _modified_gini_seg(data, group_pop_var, total_pop_var, iterations)
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _modified_gini_seg
         

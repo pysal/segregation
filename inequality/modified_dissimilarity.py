@@ -34,7 +34,10 @@ def _modified_dissim(data, group_pop_var, total_pop_var, iterations = 500):
 
     statistic : float
                 Modified Dissimilarity Index (Dissimilarity from Carrington and Troske (1997))
-
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate. 
+                
     Notes
     -----
     Based on Carrington, William J., and Kenneth R. Troske. "On measuring segregation in samples with small units." Journal of Business & Economic Statistics 15.4 (1997): 402-409.
@@ -46,7 +49,7 @@ def _modified_dissim(data, group_pop_var, total_pop_var, iterations = 500):
     if(iterations < 2):
         raise TypeError('iterations must be greater than 1.')
    
-    D = _dissim(data, group_pop_var, total_pop_var)
+    D = _dissim(data, group_pop_var, total_pop_var)[0]
     
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
@@ -63,7 +66,7 @@ def _modified_dissim(data, group_pop_var, total_pop_var, iterations = 500):
                                       p = np.array([[p_null] * data.shape[0]]), 
                                       size = (1, data.shape[0])).tolist()[0]
         data = data.assign(group_pop_var = freq_sim)
-        aux = _dissim(data, 'group_pop_var', 'total_pop_var')
+        aux = _dissim(data, 'group_pop_var', 'total_pop_var')[0]
         Ds[i] = aux
         
     D_star = Ds.mean()
@@ -72,8 +75,10 @@ def _modified_dissim(data, group_pop_var, total_pop_var, iterations = 500):
         Dct = (D - D_star)/(1 - D_star)
     else:
         Dct = (D - D_star)/D_star
-        
-    return Dct
+    
+    core_data = data[['group_pop_var', 'total_pop_var']]
+    
+    return Dct, core_data
 
 
 class Modified_Dissim:
@@ -99,7 +104,10 @@ class Modified_Dissim:
 
     statistic : float
                 Modified Dissimilarity Index (Dissimilarity from Carrington and Troske (1997))
-        
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate.    
+                
     Examples
     --------
     In this example, we will calculate the Modified Dissimilarity Index (Dct) for the Riverside County using the census tract data of 2010.
@@ -131,6 +139,10 @@ class Modified_Dissim:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var, iterations = 500):
+        
+        aux = _modified_dissim(data, group_pop_var, total_pop_var, iterations)
 
-        self.statistic = _modified_dissim(data, group_pop_var, total_pop_var, iterations)
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _modified_dissim
         

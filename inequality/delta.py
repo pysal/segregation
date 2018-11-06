@@ -30,6 +30,9 @@ def _delta(data, group_pop_var, total_pop_var):
 
     statistic : float
                 Delta Index
+                
+    core_data : a geopandas DataFrame
+                A geopandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
@@ -55,7 +58,9 @@ def _delta(data, group_pop_var, total_pop_var):
     
     DEL = 1/2 * abs(data.xi / X - data.area / A).sum()
     
-    return DEL
+    core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
+    
+    return DEL, core_data
 
 
 class Delta:
@@ -78,6 +83,9 @@ class Delta:
 
     statistic : float
                 Delta Index
+                
+    core_data : a geopandas DataFrame
+                A geopandas DataFrame that contains the columns used to perform the estimate.
         
     Examples
     --------
@@ -121,5 +129,9 @@ class Delta:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var):
+        
+        aux = _delta(data, group_pop_var, total_pop_var)
 
-        self.statistic = _delta(data, group_pop_var, total_pop_var)
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _delta

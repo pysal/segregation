@@ -30,7 +30,10 @@ def _isolation(data, group_pop_var, total_pop_var):
 
     statistic : float
                 Isolation Index
-
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate. 
+                
     Notes
     -----
     The group of interest is labelled as group X.
@@ -55,7 +58,9 @@ def _isolation(data, group_pop_var, total_pop_var):
     X = data.xi.sum()
     xPx = ((data.xi / X) * (data.xi / data.ti)).sum()
     
-    return xPx
+    core_data = data[['group_pop_var', 'total_pop_var']]
+    
+    return xPx, core_data
 
 
 class Isolation:
@@ -78,7 +83,10 @@ class Isolation:
 
     statistic : float
                 Isolation Index
-        
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate.   
+                
     Examples
     --------
     In this example, we will calculate the Isolation Index (xPx) for the Riverside County using the census tract data of 2010.
@@ -113,6 +121,10 @@ class Isolation:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var):
+        
+        aux = _isolation(data, group_pop_var, total_pop_var)
 
-        self.statistic = _isolation(data, group_pop_var, total_pop_var)
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _isolation
 

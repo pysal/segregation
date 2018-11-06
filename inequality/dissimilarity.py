@@ -30,6 +30,9 @@ def _dissim(data, group_pop_var, total_pop_var):
 
     statistic : float
                 Dissimilarity Index
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
@@ -56,7 +59,9 @@ def _dissim(data, group_pop_var, total_pop_var):
     
     D = (((data.total_pop_var * abs(data.pi - P)))/ (2 * T * P * (1 - P))).sum()
     
-    return D
+    core_data = data[['group_pop_var', 'total_pop_var']]
+    
+    return D, core_data
 
 
 class Dissim:
@@ -79,6 +84,9 @@ class Dissim:
 
     statistic : float
                 Dissimilarity Index
+        
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate. 
         
     Examples
     --------
@@ -112,6 +120,9 @@ class Dissim:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var):
+        
+        aux = _dissim(data, group_pop_var, total_pop_var)
 
-        self.statistic = _dissim(data, group_pop_var, total_pop_var)
-
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _dissim

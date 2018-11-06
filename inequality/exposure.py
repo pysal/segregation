@@ -30,6 +30,9 @@ def _exposure(data, group_pop_var, total_pop_var):
 
     statistic : float
                 Exposure Index
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate. 
 
     Notes
     -----
@@ -56,7 +59,9 @@ def _exposure(data, group_pop_var, total_pop_var):
     X = data.xi.sum()
     xPy = ((data.xi / X) * (data.yi / data.ti)).sum()
     
-    return xPy
+    core_data = data[['group_pop_var', 'total_pop_var']]
+    
+    return xPy, core_data
 
 
 class Exposure:
@@ -79,7 +84,10 @@ class Exposure:
 
     statistic : float
                 Exposure Index
-        
+
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate. 
+                
     Examples
     --------
     In this example, we will calculate the Exposure Index (xPy) for the Riverside County using the census tract data of 2010.
@@ -99,7 +107,7 @@ class Exposure:
     
     The value is estimated below.
     
-    >>> exposure_index = exposure(df, 'nhblk10', 'pop10')
+    >>> exposure_index = Exposure(df, 'nhblk10', 'pop10')
     >>> exposure_index.statistic
     0.886785172226587
     
@@ -114,6 +122,10 @@ class Exposure:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var):
+        
+        aux = _exposure(data, group_pop_var, total_pop_var)
 
-        self.statistic = _exposure(data, group_pop_var, total_pop_var)
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _exposure
 

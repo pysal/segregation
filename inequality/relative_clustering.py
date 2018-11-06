@@ -37,6 +37,9 @@ def _relative_clustering(data, group_pop_var, total_pop_var, alpha = 0.6, beta =
 
     statistic : float
                 Relative Clustering Index
+                
+    core_data : a geopandas DataFrame
+                A geopandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
@@ -79,7 +82,9 @@ def _relative_clustering(data, group_pop_var, total_pop_var, alpha = 0.6, beta =
     Pyy = ((np.array(data.yi) * c).T * np.array(data.yi)).sum() / Y**2
     RCL = Pxx / Pyy - 1
     
-    return RCL
+    core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
+    
+    return RCL, core_data
 
 
 class Relative_Clustering:
@@ -108,6 +113,9 @@ class Relative_Clustering:
 
     statistic : float
                 Relative Clustering Index
+                
+    core_data : a geopandas DataFrame
+                A geopandas DataFrame that contains the columns used to perform the estimate.
         
     Examples
     --------
@@ -153,5 +161,9 @@ class Relative_Clustering:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0.5):
+        
+        aux = _relative_clustering(data, group_pop_var, total_pop_var, alpha, beta)
 
-        self.statistic = _relative_clustering(data, group_pop_var, total_pop_var, alpha, beta)
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _relative_clustering

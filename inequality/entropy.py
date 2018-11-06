@@ -30,6 +30,9 @@ def _entropy(data, group_pop_var, total_pop_var):
 
     statistic : float
                 Entropy Index
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate. 
 
     Notes
     -----
@@ -59,7 +62,9 @@ def _entropy(data, group_pop_var, total_pop_var):
     Ei = data.pi * np.log(1 / data.pi) + (1 - data.pi) * np.log(1 / (1 - data.pi))
     H = (data.ti * (E - Ei) / (E * T)).sum()
     
-    return H
+    core_data = data[['group_pop_var', 'total_pop_var']]
+    
+    return H, core_data
 
 
 class Entropy:
@@ -82,6 +87,9 @@ class Entropy:
 
     statistic : float
                 Entropy Index
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate. 
         
     Examples
     --------
@@ -113,6 +121,10 @@ class Entropy:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var):
+        
+        aux = _entropy(data, group_pop_var, total_pop_var)
 
-        self.statistic = _entropy(data, group_pop_var, total_pop_var)
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _entropy
 

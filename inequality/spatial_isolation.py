@@ -37,6 +37,9 @@ def _spatial_isolation(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0
 
     statistic : float
                 Spatial Isolation Index
+                
+    core_data : a geopandas DataFrame
+                A geopandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
@@ -79,7 +82,9 @@ def _spatial_isolation(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0
     Pij  = np.multiply(c, np.array(data['ti'])) / np.sum(np.multiply(c, np.array(data['ti'])), axis = 1)
     SxPx = (np.array(data['xi'] / X) * np.sum(np.multiply(Pij, np.array(data['xi'] / data['ti'])), axis = 1)).sum()
     
-    return SxPx
+    core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
+    
+    return SxPx, core_data
 
 
 class Spatial_Isolation:
@@ -108,6 +113,9 @@ class Spatial_Isolation:
 
     statistic : float
                 Spatial Isolation Index
+                
+    core_data : a geopandas DataFrame
+                A geopandas DataFrame that contains the columns used to perform the estimate.
         
     Examples
     --------
@@ -155,5 +163,9 @@ class Spatial_Isolation:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0.5):
+        
+        aux = _spatial_isolation(data, group_pop_var, total_pop_var, alpha, beta)
 
-        self.statistic = _spatial_isolation(data, group_pop_var, total_pop_var, alpha, beta)
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _spatial_isolation

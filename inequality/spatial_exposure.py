@@ -37,6 +37,9 @@ def _spatial_exposure(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0.
 
     statistic : float
                 Spatial Exposure Index
+                
+    core_data : a geopandas DataFrame
+                A geopandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
@@ -80,7 +83,9 @@ def _spatial_exposure(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0.
     Pij  = np.multiply(c, np.array(data['ti'])) / np.sum(np.multiply(c, np.array(data['ti'])), axis = 1)
     SxPy = (np.array(data['xi'] / X) * np.sum(np.multiply(Pij, np.array(data['yi'] / data['ti'])), axis = 1)).sum()
     
-    return SxPy
+    core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
+    
+    return SxPy, core_data
 
 
 class Spatial_Exposure:
@@ -109,6 +114,9 @@ class Spatial_Exposure:
 
     statistic : float
                 Spatial Exposure Index
+                
+    core_data : a geopandas DataFrame
+                A geopandas DataFrame that contains the columns used to perform the estimate.
         
     Examples
     --------
@@ -156,5 +164,9 @@ class Spatial_Exposure:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0.5):
+        
+        aux = _spatial_exposure(data, group_pop_var, total_pop_var, alpha, beta)
 
-        self.statistic = _spatial_exposure(data, group_pop_var, total_pop_var, alpha, beta)
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _spatial_exposure

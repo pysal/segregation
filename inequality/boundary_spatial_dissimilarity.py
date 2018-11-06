@@ -40,7 +40,10 @@ def _boundary_spatial_dissim(data, group_pop_var, total_pop_var, standardize = F
 
     statistic : float
                 Boundary Spatial Dissimilarity Index
-
+                
+    core_data : a geopandas DataFrame
+                A geopandas DataFrame that contains the columns used to perform the estimate.
+                
     Notes
     -----
     The formula is based on Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
@@ -51,7 +54,7 @@ def _boundary_spatial_dissim(data, group_pop_var, total_pop_var, standardize = F
     if (type(standardize) is not bool):
         raise TypeError('std is not a boolean object')
     
-    D = _dissim(data, group_pop_var, total_pop_var)
+    D = _dissim(data, group_pop_var, total_pop_var)[0]
     
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
@@ -71,7 +74,9 @@ def _boundary_spatial_dissim(data, group_pop_var, total_pop_var, standardize = F
     BSD = D - num / den
     BSD
     
-    return BSD
+    core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
+    
+    return BSD, core_data
 
 
 class Boundary_Spatial_Dissim:
@@ -100,7 +105,10 @@ class Boundary_Spatial_Dissim:
 
     statistic : float
                 Boundary Spatial Dissimilarity Index
-        
+                
+    core_data : a geopandas DataFrame
+                A geopandas DataFrame that contains the columns used to perform the estimate.
+         
     Examples
     --------
     In this example, we will calculate the degree of boundary spatial dissimilarity (D) for the Riverside County using the census tract data of 2010.
@@ -145,5 +153,9 @@ class Boundary_Spatial_Dissim:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var, standardize = False):
+        
+        aux = _boundary_spatial_dissim(data, group_pop_var, total_pop_var, standardize)
 
-        self.statistic = _boundary_spatial_dissim(data, group_pop_var, total_pop_var, standardize)
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _boundary_spatial_dissim

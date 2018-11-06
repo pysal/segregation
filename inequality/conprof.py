@@ -35,6 +35,9 @@ def _conprof(data, group_pop_var, total_pop_var, m = 1000):
 
     statistic : float
                 Concentration Profile Index
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate. 
 
     Notes
     -----
@@ -70,7 +73,9 @@ def _conprof(data, group_pop_var, total_pop_var, m = 1000):
     threshold = data.group_pop_var.sum() / data.total_pop_var.sum()
     R = ((threshold - ((curve[grid < threshold]).sum() / m - (curve[grid >= threshold]).sum()/ m)) / (1 - threshold))
     
-    return R, grid, curve
+    core_data = data[['group_pop_var', 'total_pop_var']]
+    
+    return R, grid, curve, core_data
 
 
 class Con_Prof:
@@ -97,6 +102,9 @@ class Con_Prof:
 
     statistic : float
                 Concentration Profile Index
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate. 
         
     Examples
     --------
@@ -132,10 +140,14 @@ class Con_Prof:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var, m = 1000):
+        
+        aux = _conprof(data, group_pop_var, total_pop_var, m)
 
-        self.statistic = _conprof(data, group_pop_var, total_pop_var, m)[0]
-        self.grid      = _conprof(data, group_pop_var, total_pop_var, m)[1]
-        self.curve     = _conprof(data, group_pop_var, total_pop_var, m)[2]
+        self.statistic = aux[0]
+        self.grid      = aux[1]
+        self.curve     = aux[2]
+        self.core_data = aux[3]
+        self._function = _conprof
 
     def plot(self):
         """

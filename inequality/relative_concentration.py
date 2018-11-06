@@ -30,6 +30,9 @@ def _relative_concentration(data, group_pop_var, total_pop_var):
 
     statistic : float
                 Relative Concentration Index
+                
+    core_data : a geopandas DataFrame
+                A geopandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
@@ -73,7 +76,9 @@ def _relative_concentration(data, group_pop_var, total_pop_var):
     RCO = ((((df_mp_sort_area_asc.xi*df_mp_sort_area_asc.area/X).sum()) / ((df_mp_sort_area_asc.yi*df_mp_sort_area_asc.area/Y).sum())) - 1) / \
           ((((df_mp_sort_area_asc.ti*df_mp_sort_area_asc.area)[0:(n1+1)].sum() / T1) / ((df_mp_sort_area_asc.ti*df_mp_sort_area_asc.area)[n2:n].sum() / T2)) - 1)
     
-    return RCO
+    core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
+    
+    return RCO, core_data
 
 
 class Relative_Concentration:
@@ -96,7 +101,10 @@ class Relative_Concentration:
 
     statistic : float
                 Relative Concentration Index
-        
+                
+    core_data : a geopandas DataFrame
+                A geopandas DataFrame that contains the columns used to perform the estimate.
+       
     Examples
     --------
     In this example, we will calculate the relative concentration index (RCO) for the Riverside County using the census tract data of 2010.
@@ -139,5 +147,9 @@ class Relative_Concentration:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var):
+        
+        aux = _relative_concentration(data, group_pop_var, total_pop_var)
 
-        self.statistic = _relative_concentration(data, group_pop_var, total_pop_var)
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _relative_concentration

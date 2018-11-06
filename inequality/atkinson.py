@@ -33,6 +33,9 @@ def _atkinson(data, group_pop_var, total_pop_var, b = 0.5):
 
     statistic : float
                 Atkinson Index
+    
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
@@ -66,7 +69,9 @@ def _atkinson(data, group_pop_var, total_pop_var, b = 0.5):
     
     A = 1 - (P / (1-P)) * abs((((1 - data.pi) ** (1-b) * data.pi ** b * data.ti) / (P * T)).sum()) ** (1 / (1 - b))
     
-    return A
+    core_data = data[['group_pop_var', 'total_pop_var']]
+    
+    return A, core_data
 
 
 class Atkinson:
@@ -92,6 +97,9 @@ class Atkinson:
 
     statistic : float
                 Atkison Index
+    
+    core_data : a pandas DataFrame
+            A pandas DataFrame that contains the columns used to perform the estimate.
         
     Examples
     --------
@@ -123,6 +131,10 @@ class Atkinson:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var, b = 0.5):
+        
+        aux = _atkinson(data, group_pop_var, total_pop_var, b)
 
-        self.statistic = _atkinson(data, group_pop_var, total_pop_var, b)
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _atkinson
 

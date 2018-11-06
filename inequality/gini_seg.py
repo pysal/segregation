@@ -30,7 +30,10 @@ def _gini_seg(data, group_pop_var, total_pop_var):
 
     statistic : float
                 Gini Segregation Index
-
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate. 
+                
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
@@ -59,7 +62,9 @@ def _gini_seg(data, group_pop_var, total_pop_var):
     den = (2 * T**2 * P * (1-P))
     G = num / den
     
-    return G
+    core_data = data[['group_pop_var', 'total_pop_var']]
+    
+    return G, core_data
 
 
 class Gini_Seg:
@@ -82,7 +87,10 @@ class Gini_Seg:
 
     statistic : float
                 Gini Segregation Index
-        
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate. 
+                
     Examples
     --------
     In this example, we will calculate the Gini Segregation Index (G) for the Riverside County using the census tract data of 2010.
@@ -113,6 +121,10 @@ class Gini_Seg:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var):
+        
+        aux = _gini_seg(data, group_pop_var, total_pop_var)
 
-        self.statistic = _gini_seg(data, group_pop_var, total_pop_var)
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _gini_seg
 

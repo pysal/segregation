@@ -34,6 +34,9 @@ def _bias_corrected_dissim(data, group_pop_var, total_pop_var, B = 500):
 
     statistic : float
                 Dissimilarity with Bias-Correction (bias correction from Allen, Rebecca et al. (2015))
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate. 
 
     Notes
     -----
@@ -46,7 +49,7 @@ def _bias_corrected_dissim(data, group_pop_var, total_pop_var, B = 500):
     if(B < 2):
         raise TypeError('B must be greater than 1.')
    
-    D = _dissim(data, group_pop_var, total_pop_var)
+    D = _dissim(data, group_pop_var, total_pop_var)[0]
     
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
@@ -68,14 +71,16 @@ def _bias_corrected_dissim(data, group_pop_var, total_pop_var, B = 500):
     for i in np.array(range(B)):
         data_aux = {'simul_group': sim0[i].tolist(), 'simul_tot': (sim0[i] + sim1[i]).tolist()}
         df_aux = pd.DataFrame.from_dict(data_aux)
-        Dbcs[i] = _dissim(df_aux, 'simul_group', 'simul_tot')
+        Dbcs[i] = _dissim(df_aux, 'simul_group', 'simul_tot')[0]
         
     Db = Dbcs.mean()
     
     Dbc = 2 * D - Db
     Dbc # It expected to be lower than D, because D is upwarded biased
+    
+    core_data = data[['group_pop_var', 'total_pop_var']]
         
-    return Dbc
+    return Dbc, core_data
 
 
 class Bias_Corrected_Dissim:
@@ -101,6 +106,9 @@ class Bias_Corrected_Dissim:
 
     statistic : float
                 Dissimilarity with Bias-Correction (bias correction from Allen, Rebecca et al. (2015))
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate. 
         
     Examples
     --------
@@ -133,7 +141,11 @@ class Bias_Corrected_Dissim:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var, B = 500):
+        
+        aux = _bias_corrected_dissim(data, group_pop_var, total_pop_var, B)
 
-        self.statistic = _bias_corrected_dissim(data, group_pop_var, total_pop_var, B)
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _bias_corrected_dissim
         
         

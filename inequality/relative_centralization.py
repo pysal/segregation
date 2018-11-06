@@ -31,6 +31,9 @@ def _relative_centralization(data, group_pop_var, total_pop_var):
 
     statistic : float
                 Relative Centralization Index
+                
+    core_data : a geopandas DataFrame
+                A geopandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
@@ -72,8 +75,10 @@ def _relative_centralization(data, group_pop_var, total_pop_var):
     
     RCE = (shift(data_sort_cent.Xi, 1, cval=np.NaN) * data_sort_cent.Yi).sum() - \
           (data_sort_cent.Xi * shift(data_sort_cent.Yi, 1, cval=np.NaN)).sum()
-    
-    return RCE
+
+    core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
+
+    return RCE, core_data
 
 
 class Relative_Centralization:
@@ -96,6 +101,9 @@ class Relative_Centralization:
 
     statistic : float
                 Relative Centralization Index
+                
+    core_data : a geopandas DataFrame
+                A geopandas DataFrame that contains the columns used to perform the estimate.
         
     Examples
     --------
@@ -139,5 +147,9 @@ class Relative_Centralization:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var):
+        
+        aux = _relative_centralization(data, group_pop_var, total_pop_var)
 
-        self.statistic = _relative_centralization(data, group_pop_var, total_pop_var)
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _relative_centralization

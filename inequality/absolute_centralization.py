@@ -31,7 +31,10 @@ def _absolute_centralization(data, group_pop_var, total_pop_var):
 
     statistic : float
                 Absolute Centralization Index
-
+                
+    core_data : a geopandas DataFrame
+                A geopandas DataFrame that contains the columns used to perform the estimate.
+                
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
@@ -73,7 +76,9 @@ def _absolute_centralization(data, group_pop_var, total_pop_var):
     ACE = (shift(data_sort_cent.Xi, 1, cval=np.NaN) * data_sort_cent.Ai).sum() - \
           (data_sort_cent.Xi * shift(data_sort_cent.Ai, 1, cval=np.NaN)).sum()
     
-    return ACE
+    core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
+    
+    return ACE, core_data
 
 
 class Absolute_Centralization:
@@ -96,7 +101,10 @@ class Absolute_Centralization:
 
     statistic : float
                 Absolute Centralization Index
-        
+                
+    core_data : a geopandas DataFrame
+                A geopandas DataFrame that contains the columns used to perform the estimate.
+                
     Examples
     --------
     In this example, we will calculate the absolute centralization index (ACE) for the Riverside County using the census tract data of 2010.
@@ -139,5 +147,9 @@ class Absolute_Centralization:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var):
+        
+        aux = _absolute_centralization(data, group_pop_var, total_pop_var)
 
-        self.statistic = _absolute_centralization(data, group_pop_var, total_pop_var)
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _absolute_centralization

@@ -43,7 +43,10 @@ def _spatial_dissim(data, group_pop_var, total_pop_var, w = None, standardize = 
 
     statistic : float
                 Spatial Dissimilarity Index
-
+                
+    core_data : a geopandas DataFrame
+                A geopandas DataFrame that contains the columns used to perform the estimate.
+                
     Notes
     -----
     Based on Morrill, R. L. (1991) "On the Measure of Geographic Segregation". Geography Research Forum.
@@ -60,7 +63,7 @@ def _spatial_dissim(data, group_pop_var, total_pop_var, w = None, standardize = 
     if (not issubclass(type(w_object), libpysal.weights.W)):
         raise TypeError('w is not a PySAL weights object')
     
-    D = _dissim(data, group_pop_var, total_pop_var)
+    D = _dissim(data, group_pop_var, total_pop_var)[0]
     
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
@@ -80,7 +83,9 @@ def _spatial_dissim(data, group_pop_var, total_pop_var, w = None, standardize = 
     SD = D - num / den
     SD
     
-    return SD
+    core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
+    
+    return SD, core_data
 
 
 class Spatial_Dissim:
@@ -111,7 +116,10 @@ class Spatial_Dissim:
 
     statistic : float
                 Spatial Dissimilarity Index
-        
+                
+    core_data : a geopandas DataFrame
+                A geopandas DataFrame that contains the columns used to perform the estimate.   
+                
     Examples
     --------
     In this example, we will calculate the degree of spatial dissimilarity (D) for the Riverside County using the census tract data of 2010.
@@ -172,5 +180,9 @@ class Spatial_Dissim:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var, w = None, standardize = False):
+        
+        aux = _spatial_dissim(data, group_pop_var, total_pop_var, w, standardize)
 
-        self.statistic = _spatial_dissim(data, group_pop_var, total_pop_var, w, standardize)
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _spatial_dissim

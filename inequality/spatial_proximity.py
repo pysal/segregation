@@ -37,6 +37,9 @@ def _spatial_proximity(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0
 
     statistic : float
                 Spatial Proximity Index
+                
+    core_data : a geopandas DataFrame
+                A geopandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
@@ -83,7 +86,9 @@ def _spatial_proximity(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0
     Ptt = ((np.array(data.ti) * c).T * np.array(data.ti)).sum() / T**2
     SP = (X * Pxx + Y * Pyy) / (T * Ptt)
     
-    return SP
+    core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]   
+    
+    return SP, core_data
 
 
 class Spatial_Proximity:
@@ -112,6 +117,9 @@ class Spatial_Proximity:
 
     statistic : float
                 Spatial Proximity Index
+                
+    core_data : a geopandas DataFrame
+                A geopandas DataFrame that contains the columns used to perform the estimate.
         
     Examples
     --------
@@ -157,5 +165,9 @@ class Spatial_Proximity:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0.5):
+        
+        aux = _spatial_proximity(data, group_pop_var, total_pop_var, alpha, beta)
 
-        self.statistic = _spatial_proximity(data, group_pop_var, total_pop_var, alpha, beta)
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _spatial_proximity
