@@ -85,6 +85,11 @@ def _infer_segregation(seg_class, iterations = 500, null_approach = "systematic"
         for i in np.array(range(iterations)):
             data_aux = {'simul_group': sim0[i].tolist(), 'simul_tot': (sim0[i] + sim1[i]).tolist()}
             df_aux = pd.DataFrame.from_dict(data_aux)
+            
+            if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+                df_aux = gpd.GeoDataFrame(df_aux)
+                df_aux['geometry'] = data['geometry']
+                
             df_aux = gpd.GeoDataFrame(df_aux)
             df_aux['geometry'] = data['geometry']
             Estimates_Stars[i] = seg_class._function(df_aux, 'simul_group', 'simul_tot', **kwargs)[0]
@@ -104,8 +109,11 @@ def _infer_segregation(seg_class, iterations = 500, null_approach = "systematic"
                                      p = p_null)
             data_aux = {'simul_group': sim[0], 'simul_tot': data['total_pop_var'].tolist()}
             df_aux = pd.DataFrame.from_dict(data_aux)
-            df_aux = gpd.GeoDataFrame(df_aux)
-            df_aux['geometry'] = data['geometry']
+            
+            if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+                df_aux = gpd.GeoDataFrame(df_aux)
+                df_aux['geometry'] = data['geometry']
+            
             Estimates_Stars[i] = seg_class._function(df_aux, 'simul_group', 'simul_tot', **kwargs)[0]
             
         # One-Tailed p-value
@@ -229,6 +237,8 @@ class Infer_Segregation:
     '''
 
     def __init__(self, seg_class, iterations = 500, null_approach = "systematic", **kwargs):
+        
+        aux = _infer_segregation(seg_class, iterations, null_approach, **kwargs)
 
-        self.p_value = _infer_segregation(seg_class, iterations, null_approach, **kwargs)[0]
-        self.est_sim = _infer_segregation(seg_class, iterations, null_approach, **kwargs)[1]
+        self.p_value = aux[0]
+        self.est_sim = aux[1]
