@@ -11,19 +11,6 @@ import geopandas as gpd
 
 __all__ = ['Compare_Segregation']
 
-"""
-Inference Wrappers for Segregation measures
-"""
-
-__author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr.edu>"
-
-
-import numpy as np
-import pandas as pd
-import geopandas as gpd
-
-__all__ = ['Infer_Segregation']
-
 def _compare_segregation(seg_class_1, seg_class_2, iterations = 500, null_approach = "random_data", **kwargs):
     '''
     Perform inference comparison for a two segregation measures

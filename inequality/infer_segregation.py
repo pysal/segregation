@@ -11,19 +11,6 @@ import geopandas as gpd
 
 __all__ = ['Infer_Segregation']
 
-"""
-Inference Wrappers for Segregation measures
-"""
-
-__author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr.edu>"
-
-
-import numpy as np
-import pandas as pd
-import geopandas as gpd
-
-__all__ = ['Infer_Segregation']
-
 def _infer_segregation(seg_class, iterations = 500, null_approach = "systematic", two_tailed = True, **kwargs):
     '''
     Perform inference for a single segregation measure
