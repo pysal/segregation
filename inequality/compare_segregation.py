@@ -135,7 +135,7 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations = 500, null_approa
 
 
 
-class Infer_Segregation:
+class Compare_Segregation:
     '''
     Perform inference comparison for a two segregation measures
 
