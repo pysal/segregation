@@ -8,6 +8,7 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr
 import numpy as np
 import pandas as pd
 import geopandas as gpd
+import warnings
 
 __all__ = ['Infer_Segregation']
 
@@ -61,6 +62,8 @@ def _infer_segregation(seg_class, iterations = 500, null_approach = "systematic"
     point_estimation = seg_class.statistic
     data             = seg_class.core_data
     
+    _class_name       = str(type(seg_class))
+    
     if (null_approach == "systematic"):
     
         data['other_group_pop'] = data['total_pop_var'] - data['group_pop_var']
@@ -86,8 +89,6 @@ def _infer_segregation(seg_class, iterations = 500, null_approach = "systematic"
                 df_aux = gpd.GeoDataFrame(df_aux)
                 df_aux['geometry'] = data['geometry']
                 
-            df_aux = gpd.GeoDataFrame(df_aux)
-            df_aux['geometry'] = data['geometry']
             Estimates_Stars[i] = seg_class._function(df_aux, 'simul_group', 'simul_tot', **kwargs)[0]
     
     
@@ -177,7 +178,7 @@ def _infer_segregation(seg_class, iterations = 500, null_approach = "systematic"
     else:
         p_value = (sum(Estimates_Stars > abs(point_estimation)) + sum(Estimates_Stars < -abs(point_estimation))) / iterations
         
-    return p_value, Estimates_Stars, point_estimation
+    return p_value, Estimates_Stars, point_estimation, _class_name
 
 
 
@@ -229,6 +230,28 @@ class Infer_Segregation:
         
         aux = _infer_segregation(seg_class, iterations, null_approach, two_tailed, **kwargs)
 
-        self.p_value   = aux[0]
-        self.est_sim   = aux[1]
-        self.statistic = aux[2]
+        self.p_value      = aux[0]
+        self.est_sim      = aux[1]
+        self.statistic    = aux[2]
+        self._class_name  = aux[3]
+        
+    def plot(self):
+        """
+        Plot the Infer_Segregation class
+        """
+        try:
+            import matplotlib.pyplot as plt
+            import seaborn as sns
+        except ImportError:
+            warnings.warn('This method relies on importing `matplotlib` and `seaborn`')
+        #graph = plt.scatter(self.grid, self.curve, s = 0.1)
+        #return graph
+    
+        sns.distplot(self.est_sim, 
+                     hist = True, 
+                     color = 'darkblue', 
+                     hist_kws={'edgecolor':'black'},
+                     kde_kws={'linewidth': 2})
+        plt.axvline(self.statistic, color = 'red')
+        plt.title(self._class_name)
+        return plt.show()
