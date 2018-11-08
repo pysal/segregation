@@ -8,6 +8,7 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr
 import numpy as np
 import pandas as pd
 import geopandas as gpd
+import warnings
 
 __all__ = ['Compare_Segregation']
 
@@ -61,6 +62,8 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations = 500, null_approa
     data_2 = seg_class_2.core_data
     
     point_estimation = seg_class_1.statistic - seg_class_2.statistic
+    
+    _class_name = str(type(seg_class_1))
     
     # This step is just to make sure the each frequecy column is from the same type in order to stack them
     data_1['group_pop_var'] = round(data_1['group_pop_var']).astype(int)
@@ -118,7 +121,7 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations = 500, null_approa
     # Two-Tailed p-value
     p_value = (sum(est_sim > abs(point_estimation)) + sum(est_sim < -abs(point_estimation))) / iterations
         
-    return p_value, est_sim, point_estimation
+    return p_value, est_sim, point_estimation, _class_name
 
 
 
@@ -172,3 +175,23 @@ class Compare_Segregation:
         self.p_value        = aux[0]
         self.est_sim        = aux[1]
         self.est_point_diff = aux[2]
+        self._class_name    = aux[3]
+        
+    def plot(self):
+        """
+        Plot the Compare_Segregation class
+        """
+        try:
+            import matplotlib.pyplot as plt
+            import seaborn as sns
+        except ImportError:
+            warnings.warn('This method relies on importing `matplotlib` and `seaborn`')
+    
+        sns.distplot(self.est_sim, 
+                     hist = True, 
+                     color = 'darkblue', 
+                     hist_kws={'edgecolor':'black'},
+                     kde_kws={'linewidth': 2})
+        plt.axvline(self.est_point_diff, color = 'red')
+        plt.title(self._class_name)
+        return plt.show()
