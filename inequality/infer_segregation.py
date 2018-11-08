@@ -244,8 +244,6 @@ class Infer_Segregation:
             import seaborn as sns
         except ImportError:
             warnings.warn('This method relies on importing `matplotlib` and `seaborn`')
-        #graph = plt.scatter(self.grid, self.curve, s = 0.1)
-        #return graph
     
         sns.distplot(self.est_sim, 
                      hist = True, 
