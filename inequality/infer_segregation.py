@@ -22,7 +22,7 @@ def _infer_segregation(seg_class, iterations = 500, null_approach = "systematic"
     
     iterations    : number of iterations under null hyphothesis
     
-    null_approach : argument that specifies which type of null hyphotesis the inference will iterate.
+    null_approach : argument that specifies which type of null hypothesis the inference will iterate.
     
         "systematic"             : assumes that every group has the same probability with restricted conditional probabilities p_0_j = p_1_j = p_j = n_j/n (multinomial distribution).
         "eveness"                : assumes that each spatial unit has the same global probability of drawing elements from the minority group of the fixed total unit population (binomial distribution).
@@ -192,7 +192,7 @@ class Infer_Segregation:
     
     iterations    : number of iterations under null hyphothesis
     
-    null_approach : argument that specifies which type of null hyphotesis the inference will iterate.
+    null_approach : argument that specifies which type of null hypothesis the inference will iterate.
     
         "systematic"             : assumes that every group has the same probability with restricted conditional probabilities p_0_j = p_1_j = p_j = n_j/n (multinomial distribution).
         "eveness"                : assumes that each spatial unit has the same global probability of drawing elements from the minority group of the fixed total unit population (binomial distribution).

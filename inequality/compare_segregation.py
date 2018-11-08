@@ -24,7 +24,7 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations = 500, null_approa
     
     iterations: number of iterations under null hyphothesis
     
-    null_approach: argument that specifies which type of null hyphotesis the inference will iterate.
+    null_approach: argument that specifies which type of null hypothesis the inference will iterate.
     
         "random_data"            : random label the data in each iteration
         
@@ -135,7 +135,7 @@ class Compare_Segregation:
     
     iterations: number of iterations under null hyphothesis
     
-    null_approach: argument that specifies which type of null hyphotesis the inference will iterate.
+    null_approach: argument that specifies which type of null hypothesis the inference will iterate.
     
         "random_data"            : random label the data in each iteration
         
