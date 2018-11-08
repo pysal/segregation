@@ -29,7 +29,7 @@ def _infer_segregation(seg_class, iterations = 500, null_approach = "systematic"
         
         "permutation"            : randomly allocates the units over space keeping the original values.
         
-        "systematic_permutation" : assumes absence os systematic segregation and randomly allocates the units over space.
+        "systematic_permutation" : assumes absence of systematic segregation and randomly allocates the units over space.
         "even_permutation"       : assumes the same global probability of drawning elements from the minority group in each spatial unit and randomly allocates the units over space.
     
     two_tailed    : boolean
@@ -199,7 +199,7 @@ class Infer_Segregation:
         
         "permutation"            : randomly allocates the units over space keeping the original values.
         
-        "systematic_permutation" : assumes absence os systematic segregation and randomly allocates the units over space.
+        "systematic_permutation" : assumes absence of systematic segregation and randomly allocates the units over space.
         "even_permutation"       : assumes the same global probability of drawning elements from the minority group in each spatial unit and randomly allocates the units over space.
     
     two_tailed    : boolean
