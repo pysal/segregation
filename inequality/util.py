@@ -40,7 +40,7 @@ def _return_length_weighted_w(data):
         warn('There are some islands in the GeoDataFrame. They are going to be attached to its closest neighbors to calculate shared border.')
         w_knn1 = libpysal.weights.KNN.from_dataframe(data, ids = data.index.tolist(), k = 1)
         w = attach_islands(w, w_knn1)
-    
+        
     
     adjlist = w.to_adjlist().merge(data[['index', 'geometry']], left_on='focal', right_on='index', how='left')\
               .drop('index', axis=1)\
