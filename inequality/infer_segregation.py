@@ -62,7 +62,9 @@ def _infer_segregation(seg_class, iterations = 500, null_approach = "systematic"
     point_estimation = seg_class.statistic
     data             = seg_class.core_data
     
-    _class_name       = str(type(seg_class))
+    aux = str(type(seg_class))
+    _class_name = aux[1 + aux.find('.'):-2]
+
     
     if (null_approach == "systematic"):
     

@@ -63,7 +63,8 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations = 500, null_approa
     
     point_estimation = seg_class_1.statistic - seg_class_2.statistic
     
-    _class_name = str(type(seg_class_1))
+    aux = str(type(seg_class_1))
+    _class_name = aux[1 + aux.find('.'):-2]
     
     # This step is just to make sure the each frequecy column is from the same type in order to stack them
     data_1['group_pop_var'] = round(data_1['group_pop_var']).astype(int)
