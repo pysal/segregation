@@ -251,5 +251,5 @@ class Infer_Segregation:
                      hist_kws={'edgecolor':'black'},
                      kde_kws={'linewidth': 2})
         plt.axvline(self.statistic, color = 'red')
-        plt.title(self._class_name)
+        plt.title('{} (Value = {})'.format(self._class_name, round(self.statistic, 3)))
         return plt.show()

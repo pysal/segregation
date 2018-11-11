@@ -193,5 +193,5 @@ class Compare_Segregation:
                      hist_kws={'edgecolor':'black'},
                      kde_kws={'linewidth': 2})
         plt.axvline(self.est_point_diff, color = 'red')
-        plt.title(self._class_name)
+        plt.title('{} (Diff. value = {})'.format(self._class_name, round(self.est_point_diff, 3)))
         return plt.show()
