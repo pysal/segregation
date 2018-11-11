@@ -55,6 +55,9 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations = 500, null_approa
 
     '''
     
+    if not null_approach in ['random_data', 'random_spatial']:
+        raise ValueError('null_approach must one of \'random_data\', \'random_spatial\'')
+    
     if(type(seg_class_1) != type(seg_class_2)):
         raise TypeError('seg_class_1 and seg_class_2 must be the same type/class.')
     
