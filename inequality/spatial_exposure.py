@@ -85,7 +85,7 @@ def _spatial_exposure(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0.
     c = np.exp(-dist)
     
     Pij  = np.multiply(c, np.array(data['ti'])) / np.sum(np.multiply(c, np.array(data['ti'])), axis = 1)
-    SxPy = (np.array(data['xi'] / X) * np.sum(np.multiply(Pij, np.array(data['yi'] / data['ti'])), axis = 1)).sum()
+    SxPy = (np.array(data['xi'] / X) * np.nansum(np.multiply(Pij, np.array(data['yi'] / data['ti'])), axis = 1)).sum()
     
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
     
