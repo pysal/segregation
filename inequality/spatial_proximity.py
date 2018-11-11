@@ -48,6 +48,10 @@ def _spatial_proximity(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
 
     """
+    
+    if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
+      
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
     

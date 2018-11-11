@@ -47,6 +47,10 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, m = 1000):
     Based on Hong, Seong-Yun, and Yukio Sadahiro. "Measuring geographic segregation: a graph-based approach." Journal of Geographical Systems 16.2 (2014): 211-231.
 
     """
+    
+    if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
+      
     if(type(m) is not int):
         raise TypeError('m must be a string.')
         

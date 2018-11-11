@@ -52,6 +52,10 @@ def _spatial_dissim(data, group_pop_var, total_pop_var, w = None, standardize = 
     Based on Morrill, R. L. (1991) "On the Measure of Geographic Segregation". Geography Research Forum.
 
     """
+    
+    if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
+        
     if (type(standardize) is not bool):
         raise TypeError('std is not a boolean object')
         

@@ -40,6 +40,10 @@ def _relative_centralization(data, group_pop_var, total_pop_var):
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
 
     """
+    
+    if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
+        
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
     

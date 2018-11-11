@@ -51,6 +51,10 @@ def _boundary_spatial_dissim(data, group_pop_var, total_pop_var, standardize = F
     Original paper by Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
 
     """
+    
+    if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
+        
     if (type(standardize) is not bool):
         raise TypeError('std is not a boolean object')
     
