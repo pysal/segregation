@@ -12,7 +12,7 @@ __all__ = ['Dissim']
 
 def _dissim(data, group_pop_var, total_pop_var):
     """
-    Calculation of Dissimilarity index
+    Calculation of Dissimilarity indexx
 
     Parameters
     ----------
