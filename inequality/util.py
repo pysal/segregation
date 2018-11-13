@@ -2,7 +2,7 @@
 Useful functions for segregation metrics
 """
 
-__author__ = "Levi Wolf <levi.john.wolf@bristol.ac.uk> and Renan X. Cortes <renanc@ucr.edu>"
+__author__ = "Levi Wolf <levi.john.wolf@gmail.com> and Renan X. Cortes <renanc@ucr.edu>"
 
 import numpy as np
 import pandas as pd
