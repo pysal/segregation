@@ -28,35 +28,36 @@ def _return_length_weighted_w(data):
 
     """
     
-    if ('geometry' not in data.columns):    
-        raise ValueError('The input data has to have a column named \'geometry\'')
-    
-    data['index'] = data.index
-    w = libpysal.weights.Queen.from_dataframe(data, ids = data.index.tolist())
+    w = libpysal.weights.Rook.from_dataframe(data, ids = data.index.tolist(),
+                                              geom_col=data._geometry_column_name)
     
     if not len(w.islands):
         w = w
     else:
-        warn('There are some islands in the GeoDataFrame. They are going to be attached to its closest neighbors to calculate shared border.')
-        w_knn1 = libpysal.weights.KNN.from_dataframe(data, ids = data.index.tolist(), k = 1)
-        w = attach_islands(w, w_knn1)
-        
+        warn('There are some islands in the GeoDataFrame.')
     
-    adjlist = w.to_adjlist().merge(data[['index', 'geometry']], left_on='focal', right_on='index', how='left')\
-              .drop('index', axis=1)\
-              .merge(data[['index', 'geometry']], left_on='neighbor', right_on='index', 
-                     how='left', suffixes=("_focal", "_neighbor"))\
-              .drop('index', axis=1)
+    adjlist = w.to_adjlist()
+    merged = adjlist.merge(data.geometry.to_frame('geometry'), left_on='focal',
+                           right_index=True, how='left')\
+                    .merge(data.geometry.to_frame('geometry'), left_on='neighbor',
+                           right_index=True, how='left', suffixes=("_focal", "_neighbor"))\
     
     # Transforming from pandas to geopandas
-    adjlist = gpd.GeoDataFrame(adjlist, geometry='geometry_focal')
-    adjlist['geometry_neighbor'] = gpd.GeoSeries(adjlist.geometry_neighbor)
+    merged = gpd.GeoDataFrame(merged, geometry='geometry_focal')
+    merged['geometry_neighbor'] = gpd.GeoSeries(merged.geometry_neighbor)
     
     # Getting the shared boundaries
-    adjlist['shared_boundary'] = adjlist.geometry_focal.intersection(adjlist.set_geometry('geometry_neighbor'))
+    merged['shared_boundary'] = merged.geometry_focal.intersection(merged.set_geometry('geometry_neighbor'))
     
     # Putting it back to a matrix
-    adjlist['weight'] = adjlist.set_geometry('shared_boundary').length
-    length_weighted_w = libpysal.weights.W.from_adjlist(adjlist[['focal', 'neighbor', 'weight']])
+    merged['weight'] = merged.set_geometry('shared_boundary').length
+    merged_with_islands = pd.concat((merged, islands))
+    length_weighted_w = libpysal.weights.W.from_adjlist(merged_with_islands[['focal', 'neighbor', 'weight']])
+    neighbors, weights = length_weighted_w.neighbors, length_weighted_w.weights
+    for island in w.islands:
+        length_weighted_w.neighbors[island] = []
+        del length_weighted_w.weights[island]
+    
+    length_weighted_w._reset()
     
     return length_weighted_w
