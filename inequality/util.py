@@ -37,6 +37,7 @@ def _return_length_weighted_w(data):
         warn('There are some islands in the GeoDataFrame.')
     
     adjlist = w.to_adjlist()
+    islands = pd.DataFrame.from_records([{'focal':island, 'neighbor':island, 'weight':0} for island in w.islands])
     merged = adjlist.merge(data.geometry.to_frame('geometry'), left_on='focal',
                            right_index=True, how='left')\
                     .merge(data.geometry.to_frame('geometry'), left_on='neighbor',
@@ -53,7 +54,6 @@ def _return_length_weighted_w(data):
     merged['weight'] = merged.set_geometry('shared_boundary').length
     merged_with_islands = pd.concat((merged, islands))
     length_weighted_w = libpysal.weights.W.from_adjlist(merged_with_islands[['focal', 'neighbor', 'weight']])
-    neighbors, weights = length_weighted_w.neighbors, length_weighted_w.weights
     for island in w.islands:
         length_weighted_w.neighbors[island] = []
         del length_weighted_w.weights[island]
