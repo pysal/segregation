@@ -7,8 +7,8 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr
 import numpy as np
 import pandas as pd
 #import libpysal
-from util import _return_length_weighted_w
-from dissimilarity import _dissim
+from inequality.util import _return_length_weighted_w
+from inequality.dissimilarity import _dissim
 from sklearn.metrics.pairwise import manhattan_distances
 
 __all__ = ['Boundary_Spatial_Dissim']

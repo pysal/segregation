@@ -7,7 +7,7 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr
 import numpy as np
 import pandas as pd
 import libpysal
-from dissimilarity import _dissim
+from inequality.dissimilarity import _dissim
 from libpysal.weights import Queen
 from sklearn.metrics.pairwise import manhattan_distances
 
