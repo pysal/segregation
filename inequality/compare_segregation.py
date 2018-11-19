@@ -31,6 +31,8 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations = 500, null_approa
         
         "random_spatial"         : random label the spatial unit context (geometries) in each iteration
         
+        "pseudo_cumulative"      : randomizes the number of minority population according to both cumulative distribution function of a variable that represents the unit percentage of the minority group
+        
     **kwargs: customizable parameters to pass to the segregation measures. Usually they need to be the same as both seg_class_1 and seg_class_2  was built.
     
     Attributes
@@ -55,8 +57,8 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations = 500, null_approa
 
     '''
     
-    if not null_approach in ['random_data', 'random_spatial']:
-        raise ValueError('null_approach must one of \'random_data\', \'random_spatial\'')
+    if not null_approach in ['random_data', 'random_spatial', 'pseudo_cumulative']:
+        raise ValueError('null_approach must one of \'random_data\', \'random_spatial\', \'pseudo_cumulative\'')
     
     if(type(seg_class_1) != type(seg_class_2)):
         raise TypeError('seg_class_1 and seg_class_2 must be the same type/class.')
@@ -104,24 +106,93 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations = 500, null_approa
             
             est_sim[i] = simulations_1 - simulations_2
     
-    
     if (null_approach == "random_spatial"):
-        
+
         for i in np.array(range(iterations)):
-            
+
             aux_rand = list(np.random.choice(stacked_data.shape[0], stacked_data.shape[0], replace = False))
 
             stacked_data['rand_grouping'] = stacked_data.grouping_variable[aux_rand].reset_index()['grouping_variable']
-            
+
             stacked_data_1 = stacked_data.loc[stacked_data['rand_grouping'] == 'Group_1']
             stacked_data_2 = stacked_data.loc[stacked_data['rand_grouping'] == 'Group_2']
 
             simulations_1 = seg_class_1._function(stacked_data_1, 'group_pop_var', 'total_pop_var', **kwargs)[0]
             simulations_2 = seg_class_2._function(stacked_data_2, 'group_pop_var', 'total_pop_var', **kwargs)[0]
-            
+
             est_sim[i] = simulations_1 - simulations_2
+    
+    if (null_approach == "pseudo_cumulative"):
+        
+        del data_1
+        del data_2
+        
+        data_1 = seg_class_1.core_data
+        data_2 = seg_class_2.core_data
+
+        data_1['rel'] = np.where(data_1['total_pop_var'] == 0, 0, data_1['group_pop_var'] / data_1['total_pop_var'])
+        data_2['rel'] = np.where(data_2['total_pop_var'] == 0, 0, data_2['group_pop_var'] / data_2['total_pop_var'])
+
+        # Both appends are to force both distribution to have values in all space between 0 and 1
+        x_1_pre = np.sort(data_1['rel'])
+        y_1_pre = np.arange(0, len(x_1_pre)) / (len(x_1_pre))
+
+        x_2_pre = np.sort(data_2['rel'])
+        y_2_pre = np.arange(0, len(x_2_pre)) / (len(x_2_pre))
+
+        x_1 = np.append(np.append(0, x_1_pre), 1)
+        y_1 = np.append(np.append(0, y_1_pre), 1)
+
+        x_2 = np.append(np.append(0, x_2_pre), 1)
+        y_2 = np.append(np.append(0, y_2_pre), 1)
+
+        def inverse_cdf_1(pct):
+            return x_1[np.where(y_1 > pct)[0][0] - 1]
+
+        def inverse_cdf_2(pct):
+            return x_2[np.where(y_2 > pct)[0][0] - 1]
+
+        # Adding the pseudo columns for FIRST spatial context
+        data_1['cumulative_percentage'] = (data_1['rel'].rank() - 1) / len(data_1) # It has to be a minus 1 in the rank, in order to avoid 100% percentile in the max
+        data_1['pseudo_rel'] = data_1['cumulative_percentage'].apply(inverse_cdf_2)
+        data_1['pseudo_group_pop_var'] = data_1['pseudo_rel'] * data_1['total_pop_var']
+
+        # Adding the pseudo columns for SECOND spatial context
+        data_2['cumulative_percentage'] = (data_2['rel'].rank() - 1) / len(data_2) # It has to be a minus 1 in the rank, in order to avoid 100% percentile in the max
+        data_2['pseudo_rel'] = data_2['cumulative_percentage'].apply(inverse_cdf_1)
+        data_2['pseudo_group_pop_var'] = data_2['pseudo_rel'] * data_2['total_pop_var']
+
+        for i in np.array(range(iterations)):
+
+            data_1['fair_coin'] = np.random.uniform(size = len(data_1))
+            data_1['test_group_pop_var'] = np.where(data_1['fair_coin'] > 0.5, data_1['group_pop_var'], data_1['pseudo_group_pop_var'])
+            
+            # Dropping to avoid confusion in the internal function
+            data_1_test = data_1.drop(['group_pop_var'], axis = 1)
+            
+            
+            simulations_1 = seg_class_1._function(data_1_test, 'test_group_pop_var', 'total_pop_var', **kwargs)[0]
+
+            # Dropping to avoid confusion in the next iteration
+            data_1 = data_1.drop(['fair_coin', 'test_group_pop_var'], axis = 1)
+            
 
             
+            data_2['fair_coin'] = np.random.uniform(size = len(data_2))
+            data_2['test_group_pop_var'] = np.where(data_2['fair_coin'] > 0.5, data_2['group_pop_var'], data_2['pseudo_group_pop_var'])
+            
+            # Dropping to avoid confusion in the internal function
+            data_2_test = data_2.drop(['group_pop_var'], axis = 1)
+            
+            simulations_2 = seg_class_2._function(data_2_test, 'test_group_pop_var', 'total_pop_var', **kwargs)[0]
+
+            # Dropping to avoid confusion in the next iteration
+            data_2 = data_2.drop(['fair_coin', 'test_group_pop_var'], axis = 1)
+            
+            
+            est_sim[i] = simulations_1 - simulations_2
+            
+
     # Two-Tailed p-value
     p_value = (sum(est_sim > abs(point_estimation)) + sum(est_sim < -abs(point_estimation))) / iterations
         
@@ -147,6 +218,9 @@ class Compare_Segregation:
         "random_data"            : random label the data in each iteration
         
         "random_spatial"         : random label the spatial unit context (geometries) in each iteration
+        
+        "pseudo_cumulative"      : randomizes the number of minority population according to both cumulative distribution function of a variable that represents the unit percentage of the minority group
+
         
     **kwargs: customizable parameters to pass to the segregation measures. Usually they need to be the same as both seg_class_1 and seg_class_2  was built.
     
