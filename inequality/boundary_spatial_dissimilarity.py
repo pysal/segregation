@@ -21,7 +21,7 @@ def _boundary_spatial_dissim(data, group_pop_var, total_pop_var, standardize = F
     Parameters
     ----------
 
-    data          : a geopandas DataFrame with a 'geometry' column.
+    data          : a geopandas DataFrame with a geometry column.
     
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
@@ -54,6 +54,11 @@ def _boundary_spatial_dissim(data, group_pop_var, total_pop_var, standardize = F
     
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
+        
+    if ('geometry' not in data.columns):
+        data['geometry'] = data[data._geometry_column_name]
+        data = data.drop([data._geometry_column_name], axis = 1)
+        data = data.set_geometry('geometry')
         
     if (type(standardize) is not bool):
         raise TypeError('std is not a boolean object')
@@ -90,7 +95,7 @@ class Boundary_Spatial_Dissim:
     Parameters
     ----------
 
-    data          : a geopandas DataFrame with a 'geometry' column.
+    data          : a geopandas DataFrame with a geometry column.
     
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest

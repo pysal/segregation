@@ -21,7 +21,7 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, m = 1000):
     Parameters
     ----------
 
-    data          : a geopandas DataFrame with a 'geometry' column.
+    data          : a geopandas DataFrame with a geometry column.
     
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
@@ -50,7 +50,12 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, m = 1000):
     
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
-      
+        
+    if ('geometry' not in data.columns):
+        data['geometry'] = data[data._geometry_column_name]
+        data = data.drop([data._geometry_column_name], axis = 1)
+        data = data.set_geometry('geometry')
+        
     if(type(m) is not int):
         raise TypeError('m must be a string.')
         
@@ -101,7 +106,7 @@ class Spatial_Prox_Prof:
     Parameters
     ----------
 
-    data          : a geopandas DataFrame with a 'geometry' column.
+    data          : a geopandas DataFrame with a geometry column.
     
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest

@@ -18,7 +18,7 @@ def _spatial_proximity(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0
     Parameters
     ----------
 
-    data          : a geopandas DataFrame with a 'geometry' column.
+    data          : a geopandas DataFrame with a geometry column.
     
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
@@ -51,7 +51,12 @@ def _spatial_proximity(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0
     
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
-      
+        
+    if ('geometry' not in data.columns):
+        data['geometry'] = data[data._geometry_column_name]
+        data = data.drop([data._geometry_column_name], axis = 1)
+        data = data.set_geometry('geometry')
+        
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
     
@@ -102,7 +107,7 @@ class Spatial_Proximity:
     Parameters
     ----------
 
-    data          : a geopandas DataFrame with a 'geometry' column.
+    data          : a geopandas DataFrame with a geometry column.
     
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
