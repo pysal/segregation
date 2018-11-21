@@ -29,8 +29,6 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations = 500, null_approa
     
         "random_data"            : random label the data in each iteration
         
-        "random_spatial"         : random label the spatial unit context (geometries) in each iteration
-        
         "pseudo_cumulative"      : randomizes the number of minority population according to both cumulative distribution function of a variable that represents the unit percentage of the minority group
         
     **kwargs: customizable parameters to pass to the segregation measures. Usually they need to be the same as both seg_class_1 and seg_class_2  was built.
@@ -57,8 +55,8 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations = 500, null_approa
 
     '''
     
-    if not null_approach in ['random_data', 'random_spatial', 'pseudo_cumulative']:
-        raise ValueError('null_approach must one of \'random_data\', \'random_spatial\', \'pseudo_cumulative\'')
+    if not null_approach in ['random_data', 'pseudo_cumulative']:
+        raise ValueError('null_approach must one of \'random_data\', \'pseudo_cumulative\'')
     
     if(type(seg_class_1) != type(seg_class_2)):
         raise TypeError('seg_class_1 and seg_class_2 must be the same type/class.')
@@ -104,22 +102,6 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations = 500, null_approa
             simulations_1 = seg_class_1._function(stacked_data_1, 'rand_group_pop', 'rand_total_pop', **kwargs)[0]
             simulations_2 = seg_class_2._function(stacked_data_2, 'rand_group_pop', 'rand_total_pop', **kwargs)[0]
             
-            est_sim[i] = simulations_1 - simulations_2
-    
-    if (null_approach == "random_spatial"):
-
-        for i in np.array(range(iterations)):
-
-            aux_rand = list(np.random.choice(stacked_data.shape[0], stacked_data.shape[0], replace = False))
-
-            stacked_data['rand_grouping'] = stacked_data.grouping_variable[aux_rand].reset_index()['grouping_variable']
-
-            stacked_data_1 = stacked_data.loc[stacked_data['rand_grouping'] == 'Group_1']
-            stacked_data_2 = stacked_data.loc[stacked_data['rand_grouping'] == 'Group_2']
-
-            simulations_1 = seg_class_1._function(stacked_data_1, 'group_pop_var', 'total_pop_var', **kwargs)[0]
-            simulations_2 = seg_class_2._function(stacked_data_2, 'group_pop_var', 'total_pop_var', **kwargs)[0]
-
             est_sim[i] = simulations_1 - simulations_2
     
     if (null_approach == "pseudo_cumulative"):
@@ -216,8 +198,6 @@ class Compare_Segregation:
     null_approach: argument that specifies which type of null hypothesis the inference will iterate.
     
         "random_data"            : random label the data in each iteration
-        
-        "random_spatial"         : random label the spatial unit context (geometries) in each iteration
         
         "pseudo_cumulative"      : randomizes the number of minority population according to both cumulative distribution function of a variable that represents the unit percentage of the minority group
 
