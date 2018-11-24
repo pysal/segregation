@@ -6,7 +6,7 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr
 
 import numpy as np
 import pandas as pd
-from inequality.gini_seg import _gini_seg
+from gini_seg import _gini_seg
 
 __all__ = ['Modified_Gini_Seg']
 
