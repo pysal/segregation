@@ -177,11 +177,16 @@ def _infer_segregation(seg_class, iterations = 500, null_approach = "systematic"
             Estimates_Stars[i] = seg_class._function(df_aux, 'simul_group', 'simul_tot', **kwargs)[0]
 
     
+    # Check and, if the case, remove iterations that resulted in nan or infinite values
+    if any((np.isinf(Estimates_Stars) | np.isnan(Estimates_Stars))):
+        warnings.warn('Some estimates resulted in NaN or infinite values for estimations under null hypothesis. These values will be removed for the final results.')
+        Estimates_Stars = Estimates_Stars[~(np.isinf(Estimates_Stars) | np.isnan(Estimates_Stars))]
+    
     if not two_tailed:
         p_value = sum(Estimates_Stars > point_estimation) / iterations
     else:
         p_value = (sum(Estimates_Stars > abs(point_estimation)) + sum(Estimates_Stars < -abs(point_estimation))) / iterations
-        
+    
     return p_value, Estimates_Stars, point_estimation, _class_name
 
 

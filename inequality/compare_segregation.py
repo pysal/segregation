@@ -175,9 +175,14 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations = 500, null_approa
             est_sim[i] = simulations_1 - simulations_2
             
 
+    # Check and, if the case, remove iterations that resulted in nan or infinite values
+    if any((np.isinf(est_sim) | np.isnan(est_sim))):
+        warnings.warn('Some estimates resulted in NaN or infinite values for estimations under null hypothesis. These values will be removed for the final results.')
+        est_sim = est_sim[~(np.isinf(est_sim) | np.isnan(est_sim))]
+
     # Two-Tailed p-value
     p_value = (sum(est_sim > abs(point_estimation)) + sum(est_sim < -abs(point_estimation))) / iterations
-        
+    
     return p_value, est_sim, point_estimation, _class_name
 
 
