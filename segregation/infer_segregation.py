@@ -65,7 +65,7 @@ def _infer_segregation(seg_class, iterations = 500, null_approach = "systematic"
     data             = seg_class.core_data
     
     aux = str(type(seg_class))
-    _class_name = aux[1 + aux.find('.'):-2]
+    _class_name = aux[1 + aux.rfind('.'):-2] # 'rfind' finds the last occurence of a pattern in a string
 
     
     if (null_approach == "systematic"):
