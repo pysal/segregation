@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from inequality.entropy import Entropy
+from segregation.entropy import Entropy
 
 
 class Entropy_Tester(unittest.TestCase):

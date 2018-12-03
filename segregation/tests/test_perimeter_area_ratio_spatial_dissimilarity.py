@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from inequality.perimeter_area_ratio_spatial_dissimilarity import Perimeter_Area_Ratio_Spatial_Dissim
+from segregation.perimeter_area_ratio_spatial_dissimilarity import Perimeter_Area_Ratio_Spatial_Dissim
 
 
 class Perimeter_Area_Ratio_Spatial_Dissim_Tester(unittest.TestCase):

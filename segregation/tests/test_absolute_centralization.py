@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from inequality.absolute_centralization import Absolute_Centralization
+from segregation.absolute_centralization import Absolute_Centralization
 
 
 class Absolute_Centralization_Tester(unittest.TestCase):

@@ -7,8 +7,8 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr
 import numpy as np
 import pandas as pd
 #import libpysal
-from util import _return_length_weighted_w
-from dissimilarity import _dissim
+from segregation.util import _return_length_weighted_w
+from segregation.dissimilarity import _dissim
 from sklearn.metrics.pairwise import manhattan_distances
 
 __all__ = ['Perimeter_Area_Ratio_Spatial_Dissim']

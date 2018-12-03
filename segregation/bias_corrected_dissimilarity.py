@@ -6,7 +6,7 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr
 
 import numpy as np
 import pandas as pd
-from dissimilarity import _dissim
+from segregation.dissimilarity import _dissim
 
 __all__ = ['Bias_Corrected_Dissim']
 

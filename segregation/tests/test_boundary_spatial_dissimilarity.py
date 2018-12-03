@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from inequality.boundary_spatial_dissimilarity import Boundary_Spatial_Dissim
+from segregation.boundary_spatial_dissimilarity import Boundary_Spatial_Dissim
 
 
 class Boundary_Spatial_Dissim_Tester(unittest.TestCase):

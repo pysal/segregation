@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from inequality.dissimilarity import Dissim
+from segregation.dissimilarity import Dissim
 
 
 class Dissim_Tester(unittest.TestCase):

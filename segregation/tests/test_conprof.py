@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from inequality.conprof import Con_Prof
+from segregation.conprof import Con_Prof
 
 
 class Con_Prof_Tester(unittest.TestCase):

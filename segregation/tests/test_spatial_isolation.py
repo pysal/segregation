@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from inequality.spatial_isolation import Spatial_Isolation
+from segregation.spatial_isolation import Spatial_Isolation
 
 
 class Spatial_Isolation_Tester(unittest.TestCase):

@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from inequality.spatial_prox_profile import Spatial_Prox_Prof
+from segregation.spatial_prox_profile import Spatial_Prox_Prof
 
 
 class Spatial_Prox_Prof_Tester(unittest.TestCase):

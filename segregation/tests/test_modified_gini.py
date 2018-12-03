@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from inequality.modified_gini_seg import Modified_Gini_Seg
+from segregation.modified_gini_seg import Modified_Gini_Seg
 
 
 class Modified_Gini_Seg_Tester(unittest.TestCase):

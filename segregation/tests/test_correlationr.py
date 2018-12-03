@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from inequality.correlationr import Correlation_R
+from segregation.correlationr import Correlation_R
 
 
 class Correlation_R_Tester(unittest.TestCase):

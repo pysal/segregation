@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from inequality.exposure import Exposure
+from segregation.exposure import Exposure
 
 
 class Exposure_Tester(unittest.TestCase):

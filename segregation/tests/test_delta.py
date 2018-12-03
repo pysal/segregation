@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from inequality.delta import Delta
+from segregation.delta import Delta
 
 
 class Delta_Tester(unittest.TestCase):
