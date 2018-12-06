@@ -133,7 +133,7 @@ class Density_Corrected_Dissim:
     
     >>> density_corrected_dissim_index = Density_Corrected_Dissim(df, 'nhblk10', 'pop10')
     >>> density_corrected_dissim_index.statistic
-    0.2954881746588274
+    0.29350642339135236
      
     Notes
     -----
