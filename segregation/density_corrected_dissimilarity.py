@@ -70,7 +70,7 @@ def _density_corrected_dissim(data, group_pop_var, total_pop_var):
     def return_optimal_theta(theta_j):
         
         def fold_norm(x):
-            y = (-1) * norm.pdf(x - theta_j) + norm.pdf(x + theta_j)
+            y = (-1) * (norm.pdf(x - theta_j) + norm.pdf(x + theta_j))
             return y
         
         initial_guesses = np.array(0)
