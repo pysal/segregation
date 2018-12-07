@@ -35,9 +35,7 @@ $ pip install segregation
 
 ## Getting started
 
-All input data for this module rely on [pandas](https://github.com/pandas-dev/pandas) DataFrames for the non-spatial measures and [geopandas](https://github.com/geopandas/geopandas) DataFrames for spatial ones.  
-
-In a nutshell, the user needs to pass the pandasDataFrame as its first argument and then two string that represent the variable name of population frequency of the group of interest (variable *group_pop_var*) and the total populationof the unit (variable *total_pop_var*).
+All input data for this module rely on [pandas](https://github.com/pandas-dev/pandas) DataFrames for the non-spatial measures and [geopandas](https://github.com/geopandas/geopandas) DataFrames for spatial ones. In a nutshell, the user needs to pass the pandasDataFrame as its first argument and then two string that represent the variable name of population frequency of the group of interest (variable *group_pop_var*) and the total populationof the unit (variable *total_pop_var*).
 
 So, for example, if a user would want to fit a dissimilarity index (D) to a DataFrame called *df* to a specific group with frequency *freq* with each total population *population*, a usual call would be something like this:
 
