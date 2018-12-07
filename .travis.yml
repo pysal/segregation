@@ -41,12 +41,12 @@ script:
   - ls -al
   - python setup.py sdist >/dev/null
   - python setup.py install
-  - nosetests -v inequality;
+  - nosetests -v segregation;
 
 notifications:
     email:
         recipients:
-            - levi.john.wolf+travis@gmail.com
+            - renanxcortes+travis@gmail.com
             - sjsrey+travis@gmail.com
         on_change: always
         on_failure: always
