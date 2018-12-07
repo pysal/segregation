@@ -13,7 +13,7 @@ Segregation Measures Framework in PySAL
 
 The PySAL **segregation** module allow users to estimate several segregation measures and perform inference for single measures and comparative inference in a concise way. 
 
-It can be divided into two frameworks: point estimation and inference.  The first framework could be, in turn, subdivided in non-spatial indexes and spatial indexes.  The inference approach present functions to perform inference for asingle measure or for comparison between two measures.
+It can be divided into two frameworks: point estimation and inference.  The first framework could be, in turn, subdivided in non-spatial indexes and spatial indexes.  The inference approach present functions to perform inference for a single measure or for comparison between two measures.
 
 
 For point estimation, all the measures available can be summarized in the following table:
@@ -49,6 +49,19 @@ For point estimation, all the measures available can be summarized in the follow
 
 
 
+
+The inference
+
+<span id="inference_table" label="inference_table">\[inference\_table\]</span>
+
+| **Inference Type** | **Class/Function**   |                 **Function main Inputs**                 |         **Function Outputs**         |
+| :----------------- | :------------------- | :------------------------------------------------------: | :----------------------------------: |
+| Single Measure     | Infer\_Segregation   |   seg\_class, iterations, null\_approach, two\_tailed    |    p\_value, est\_sim, statistic     |
+| Two Measures       | Compare\_Segregation | seg\_class\_1, seg\_class\_2, iterations, null\_approach | p\_value, est\_sim, est\_point\_diff |
+
+Inference framework available in PySAL `segregation` module  
+  
+  
 If you are new to segregation and PySAL you will best get started with our documentation!
 
 Installation
