@@ -15,6 +15,36 @@ The PySAL **segregation** module allow users to estimate several segregation mea
 
 It can be divided into two frameworks: point estimation and inference.  The first framework could be, in turn, subdivided in non-spatial indexes and spatial indexes.  The inference approach present functions to perform inference for a single measure or for comparison between two measures.
 
+Installation
+------------
+
+Install segregation by running:
+
+```
+$ pip install segregation 
+```
+
+#### Segregation uses:
+
+- libpysal
+- pandas
+- geopandas
+- numpy
+- scipy
+- scikit-learn
+
+## Getting started
+
+All input data for this module rely on [pandas](https://github.com/pandas-dev/pandas) DataFrames for the non-spatial measures and [geopandas](https://github.com/geopandas/geopandas) DataFrames.  
+
+In a nutshell, the user needs to pass the pandasDataFrame as its first argument and then two string that represent the variable name of population frequency of the group of interest (variable *group_pop_var*) and the total populationof the unit (variable *total_pop_var*).
+
+So, for example, if a user would want to fit a dissimilarity index (D) to a DataFrame called *df* to a specific group with frequency *freq* with each total population *population*, a usual call would be something like this:
+
+```
+import segregation
+index = Dissim(df, "freq", "population")
+```
 
 For point estimation, all the measures available can be summarized in the following table:
 
@@ -60,23 +90,6 @@ Once the segregation indexes are fitted, the user can perform inference to shed 
   
 If you are new to segregation and PySAL you will best get started with our documentation!
 
-Installation
-------------
-
-Install segregation by running:
-
-```
-$ pip install segregation 
-```
-
-#### Segregation uses:
-
-- libpysal
-- pandas
-- geopandas
-- numpy
-- scipy
-- scikit-learn
 
 Contribute
 ----------
