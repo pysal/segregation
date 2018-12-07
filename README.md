@@ -19,44 +19,37 @@ It can be divided into two frameworks: point estimation and inference.  The firs
 For point estimation, all the measures available can be summarized in the following table:
 
 
-\begin{table}[h]%[H]%[htbp]
-\begin{scriptsize}
-  \caption{Segregation Measures available in PySAL \texttt{segregation} module}
-   \label{functions_table}
-  \begin{tabular*}{\hsize}{llcc}
-\hline
-    \textbf{Measure} & \textbf{Class/Function} & \textbf{Spatial?} & \textbf{Function Inputs} \\
-\hline
-Dissimilarity (D) & Dissim  & No & - \\
-Gini (G) & Gini\_Seg & No & - \\
-Entropy (H) & Entropy & No & - \\
-Isolation (xPx) & Isolation & No & -  \\
-Exposure (xPy) & Exposure & No & -  \\
-Atkinson (A) & Atkinson & No & b \\
-Correlation Ratio (V) & Correlation\_R & No & - \\
-Concentration Profile (R) & Con\_Prof & No & m \\
-Modified Dissimilarity (Dct) & Modified\_Dissim & No & iterations \\
-Modified Gini (Gct) & Modified\_Gini\_Seg & No & iterations \\
-Bias-Corrected Dissimilarity (Dbc) & Bias\_Corrected\_Dissim & No & B \\
-Density-Corrected Dissimilarity (Ddc) & Density\_Corrected\_Dissim & No & - \\
+[\[functions\_table\]]{#functions_table label="functions_table"}
 
-Spatial Proximity Profile (SPP) & Spatial\_Prox\_Prof & Yes & m \\
-Spatial Dissimilarity (SD) & Spatial\_Dissim & Yes & w, standardize \\
-Boundary Spatial Dissimilarity (BSD) & Boundary\_Spatial\_Dissim & Yes & standardize \\
-Perimeter Area Ratio Spatial Dissimilarity (PARD) & Perimeter\_Area\_Ratio\_Spatial\_Dissim & Yes & standardize \\  
-Spatial Isolation (SxPx) & Spatial\_Isolation & Yes & alpha, beta \\
-Spatial Exposure (SxPy) & Spatial\_Exposure & Yes & alpha, beta \\
-Spatial Proximity (SP) & Spatial\_Proximity & Yes & alpha, beta \\
-Relative Clustering (RCL) & Relative\_Clustering & Yes & alpha, beta \\
-Delta (DEL) & Delta & Yes & - \\
-Absolute Concentration (ACO) & Absolute\_Concentration & Yes & - \\
-Relative Concentration (RCO) & Relative\_Concentration & Yes & - \\
-Absolute Centralization (ACE) & Absolute\_Centralization & Yes & - \\
-Relative Centralization (RCE) & Relative\_Centralization & Yes & - \\
-\hline
-  \end{tabular*}
-\end{scriptsize}
-\end{table}
+  **Measure**                                         **Class/Function**                         **Spatial?**   **Function Inputs**
+  --------------------------------------------------- ----------------------------------------- -------------- ---------------------
+  Dissimilarity (D)                                   Dissim                                          No                \-
+  Gini (G)                                            Gini\_Seg                                       No                \-
+  Entropy (H)                                         Entropy                                         No                \-
+  Isolation (xPx)                                     Isolation                                       No                \-
+  Exposure (xPy)                                      Exposure                                        No                \-
+  Atkinson (A)                                        Atkinson                                        No                 b
+  Correlation Ratio (V)                               Correlation\_R                                  No                \-
+  Concentration Profile (R)                           Con\_Prof                                       No                 m
+  Modified Dissimilarity (Dct)                        Modified\_Dissim                                No            iterations
+  Modified Gini (Gct)                                 Modified\_Gini\_Seg                             No            iterations
+  Bias-Corrected Dissimilarity (Dbc)                  Bias\_Corrected\_Dissim                         No                 B
+  Density-Corrected Dissimilarity (Ddc)               Density\_Corrected\_Dissim                      No                \-
+  Spatial Proximity Profile (SPP)                     Spatial\_Prox\_Prof                            Yes                 m
+  Spatial Dissimilarity (SD)                          Spatial\_Dissim                                Yes          w, standardize
+  Boundary Spatial Dissimilarity (BSD)                Boundary\_Spatial\_Dissim                      Yes            standardize
+  Perimeter Area Ratio Spatial Dissimilarity (PARD)   Perimeter\_Area\_Ratio\_Spatial\_Dissim        Yes            standardize
+  Spatial Isolation (SxPx)                            Spatial\_Isolation                             Yes            alpha, beta
+  Spatial Exposure (SxPy)                             Spatial\_Exposure                              Yes            alpha, beta
+  Spatial Proximity (SP)                              Spatial\_Proximity                             Yes            alpha, beta
+  Relative Clustering (RCL)                           Relative\_Clustering                           Yes            alpha, beta
+  Delta (DEL)                                         Delta                                          Yes                \-
+  Absolute Concentration (ACO)                        Absolute\_Concentration                        Yes                \-
+  Relative Concentration (RCO)                        Relative\_Concentration                        Yes                \-
+  Absolute Centralization (ACE)                       Absolute\_Centralization                       Yes                \-
+  Relative Centralization (RCE)                       Relative\_Centralization                       Yes                \-
+
+  : Segregation Measures available in PySAL `segregation` module
 
 
 If you are new to segregation and PySAL you will best get started with our documentation!
