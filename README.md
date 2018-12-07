@@ -5,7 +5,7 @@ Segregation Measures Framework in PySAL
 
 [![Build Status](https://travis-ci.org/pysal/inequality.svg?branch=master)](https://travis-ci.org/pysal/inequality)
 
-**Methods for estimating and perform inference for spatial and non-spatial segregation.**
+**Methods for estimating and performing inference for spatial and non-spatial segregation.**
 
 ![Segregation Measures comparisons inference for Riverside county between 2000 and 2010](figs/riverside2000_versus_riverside2010_random_data.png)
 
@@ -35,14 +35,14 @@ $ pip install segregation
 
 ## Getting started
 
-All input data for this module rely on [pandas](https://github.com/pandas-dev/pandas) DataFrames for the non-spatial measures and [geopandas](https://github.com/geopandas/geopandas) DataFrames.  
+All input data for this module rely on [pandas](https://github.com/pandas-dev/pandas) DataFrames for the non-spatial measures and [geopandas](https://github.com/geopandas/geopandas) DataFrames for spatial ones.  
 
 In a nutshell, the user needs to pass the pandasDataFrame as its first argument and then two string that represent the variable name of population frequency of the group of interest (variable *group_pop_var*) and the total populationof the unit (variable *total_pop_var*).
 
 So, for example, if a user would want to fit a dissimilarity index (D) to a DataFrame called *df* to a specific group with frequency *freq* with each total population *population*, a usual call would be something like this:
 
 ```
-import segregation
+from segregation.dissimilarity import Dissim
 index = Dissim(df, "freq", "population")
 ```
 
