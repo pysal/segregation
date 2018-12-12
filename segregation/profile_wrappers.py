@@ -133,7 +133,7 @@ class Profile_Non_Spatial_Segregation:
 
 def _profile_spatial_segregation(data, group_pop_var, total_pop_var, **kwargs):
     '''
-    Perform point estimation of selected non spatial segregation measures at once
+    Perform point estimation of selected spatial segregation measures at once
 
     Parameters
     ----------
@@ -191,7 +191,7 @@ def _profile_spatial_segregation(data, group_pop_var, total_pop_var, **kwargs):
 
 class Profile_Spatial_Segregation:
     '''
-    Perform point estimation of selected non spatial segregation measures at once
+    Perform point estimation of selected spatial segregation measures at once
 
     Parameters
     ----------
