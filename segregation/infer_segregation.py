@@ -26,7 +26,7 @@ def _infer_segregation(seg_class, iterations = 500, null_approach = "systematic"
     null_approach : argument that specifies which type of null hypothesis the inference will iterate.
     
         "systematic"             : assumes that every group has the same probability with restricted conditional probabilities p_0_j = p_1_j = p_j = n_j/n (multinomial distribution).
-        "evenness"                : assumes that each spatial unit has the same global probability of drawing elements from the minority group of the fixed total unit population (binomial distribution).
+        "evenness"               : assumes that each spatial unit has the same global probability of drawing elements from the minority group of the fixed total unit population (binomial distribution).
         
         "permutation"            : randomly allocates the units over space keeping the original values.
         
@@ -36,7 +36,7 @@ def _infer_segregation(seg_class, iterations = 500, null_approach = "systematic"
     two_tailed    : boolean
                     If True, p_value is two-tailed. Otherwise, it is right one-tailed.
     
-    **kwargs: customizable parameters to pass to the segregation measures. Usually they need to be the same input that the seg_class was built.
+    **kwargs      : customizable parameters to pass to the segregation measures. Usually they need to be the same input that the seg_class was built.
     
     Attributes
     ----------
