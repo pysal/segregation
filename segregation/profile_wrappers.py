@@ -32,7 +32,7 @@ from segregation.spatial_isolation import Spatial_Isolation
 from segregation.spatial_prox_profile import Spatial_Prox_Prof
 from segregation.spatial_proximity import Spatial_Proximity
 
-__all__ = ['Profile_Non_Spatial_Segregation']
+__all__ = ['Profile_Non_Spatial_Segregation', 'Profile_Spatial_Segregation', 'Profile_Segregation']
 
 def _profile_non_spatial_segregation(data, group_pop_var, total_pop_var, **kwargs):
     '''
@@ -217,6 +217,88 @@ class Profile_Spatial_Segregation:
     def __init__(self, data, group_pop_var, total_pop_var, **kwargs):
         
         aux = _profile_spatial_segregation(data, group_pop_var, total_pop_var, **kwargs)
+
+        self.profile = aux
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def _profile_segregation(data, group_pop_var, total_pop_var, **kwargs):
+    '''
+    Perform point estimation of selected segregation measures at once
+
+    Parameters
+    ----------
+
+    data          : a geopandas DataFrame with a geometry column.
+    
+    group_pop_var : string
+                    The name of variable in data that contains the population size of the group of interest
+                    
+    total_pop_var : string
+                    The name of variable in data that contains the total population of the unit
+    
+    **kwargs      : customizable parameters to pass to the segregation measures
+    
+    Attributes
+    ----------
+
+    profile     : dict
+                  A dictionary containing the name of the measure and the point estimation.
+    
+    '''
+    
+    x = Profile_Non_Spatial_Segregation(data, group_pop_var, total_pop_var, **kwargs).profile
+    y = Profile_Spatial_Segregation(data, group_pop_var, total_pop_var, **kwargs).profile
+    
+    x.update(y)
+    
+    return x
+
+
+
+class Profile_Segregation:
+    '''
+    Perform point estimation of selected segregation measures at once
+
+    Parameters
+    ----------
+
+    data          : a pandas DataFrame
+    
+    group_pop_var : string
+                    The name of variable in data that contains the population size of the group of interest
+                    
+    total_pop_var : string
+                    The name of variable in data that contains the total population of the unit
+    
+    **kwargs      : customizable parameters to pass to the segregation measures
+    
+    Attributes
+    ----------
+
+    profile     : dict
+                  A dictionary containing the name of the measure and the point estimation.
+    
+    '''
+
+    def __init__(self, data, group_pop_var, total_pop_var, **kwargs):
+        
+        aux = _profile_segregation(data, group_pop_var, total_pop_var, **kwargs)
 
         self.profile = aux
         
