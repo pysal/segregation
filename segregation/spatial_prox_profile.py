@@ -182,7 +182,7 @@ class Spatial_Prox_Prof:
 
     def plot(self):
         """
-        Plot the Concentration Profile
+        Plot the Spatial Proximity Profile
         """
         try:
             import matplotlib.pyplot as plt
