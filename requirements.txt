@@ -1,2 +1,9 @@
-scipy>=0.11
-numpy>=1.3
+pandas
+geopandas
+matplotlib
+scikit-learn
+seaborn
+numpy
+scipy
+warnings
+libpysal
