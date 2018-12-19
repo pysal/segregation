@@ -18,10 +18,12 @@ It can be divided into two frameworks: point estimation and inference.  The firs
 Installation
 ------------
 
-Install segregation by running:
+The recommended method for installing segregation is with [anaconda](https://www.anaconda.com/download/). To get started with the development version, clone this repository or download it manually then `cd` into the directory and run the following commands:
 
 ```
-$ pip install segregation 
+conda env create -f environment.yml
+source activate segregation
+python setup.py develop
 ```
 
 #### Segregation uses:
