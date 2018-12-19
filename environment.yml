@@ -10,7 +10,6 @@ dependencies:
   - seaborn
   - numpy
   - scipy
-  - warnings
   - pip
   - pip:
-    - libpysal
+    - git+git://github.com/pysal/libpysal.git
