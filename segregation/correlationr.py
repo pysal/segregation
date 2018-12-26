@@ -49,17 +49,17 @@ def _correlationr(data, group_pop_var, total_pop_var):
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
     
-    g = np.array(data.group_pop_var)
+    x = np.array(data.group_pop_var)
     t = np.array(data.total_pop_var)
     
-    if any(t < g):    
+    if any(t < x):    
         raise ValueError('Group of interest population must equal or lower than the total population of the units.')
 
-    X = g.sum()
+    X = x.sum()
     T = t.sum()
     P = X / T
     
-    xPx = ((g / X) * (g / t)).sum()
+    xPx = ((x / X) * (x / t)).sum()
 
     V = (xPx - P) / (1 - P)
     
