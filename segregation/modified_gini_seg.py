@@ -54,15 +54,16 @@ def _modified_gini_seg(data, group_pop_var, total_pop_var, iterations = 500):
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
     
-    p_null = data.group_pop_var.sum() / data.total_pop_var.sum()
+    x = np.array(data.group_pop_var)
+    t = np.array(data.total_pop_var)
     
-    
+    p_null = x.sum() / t.sum()
     
     Gs = np.empty(iterations)
     
     for i in np.array(range(iterations)):
 
-        freq_sim = np.random.binomial(n = np.array([data.total_pop_var.tolist()]), 
+        freq_sim = np.random.binomial(n = np.array([t.tolist()]), 
                                       p = np.array([[p_null] * data.shape[0]]), 
                                       size = (1, data.shape[0])).tolist()[0]
         data = data.assign(group_pop_var = freq_sim)
