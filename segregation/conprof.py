@@ -59,18 +59,21 @@ def _conprof(data, group_pop_var, total_pop_var, m = 1000):
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
     
-    if any(data.total_pop_var < data.group_pop_var):    
+    g = np.array(data.group_pop_var)
+    t = np.array(data.total_pop_var)
+    
+    if any(t < g):    
         raise ValueError('Group of interest population must equal or lower than the total population of the units.')
    
-    def calculate_vt(t):
-        g_t_i = np.where(data.group_pop_var / data.total_pop_var >= t, 1, 0)
-        v_t = (g_t_i * data.group_pop_var).sum() / data.group_pop_var.sum()
+    def calculate_vt(th):
+        g_t_i = np.where(g / t >= th, 1, 0)
+        v_t = (g_t_i * g).sum() / g.sum()
         return v_t
     
     grid = np.linspace(0, 1, m)
     curve = np.array(list(map(calculate_vt, grid)))
     
-    threshold = data.group_pop_var.sum() / data.total_pop_var.sum()
+    threshold = g.sum() / t.sum()
     R = ((threshold - ((curve[grid < threshold]).sum() / m - (curve[grid >= threshold]).sum()/ m)) / (1 - threshold))
     
     core_data = data[['group_pop_var', 'total_pop_var']]
