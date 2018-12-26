@@ -48,16 +48,19 @@ def _dissim(data, group_pop_var, total_pop_var):
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
     
-    if any(data.total_pop_var < data.group_pop_var):    
+    t = np.array(data.total_pop_var)
+    g = np.array(data.group_pop_var)
+    
+    if any(t < g):    
         raise ValueError('Group of interest population must equal or lower than the total population of the units.')
    
-    T = data.total_pop_var.sum()
-    P = data.group_pop_var.sum() / T
+    T = t.sum()
+    P = g.sum() / T
     
     # If a unit has zero population, the group of interest frequency is zero
-    data = data.assign(pi = np.where(data.total_pop_var == 0, 0, data.group_pop_var/data.total_pop_var))
+    pi = np.where(t == 0, 0, g/t)
     
-    D = (((data.total_pop_var * abs(data.pi - P)))/ (2 * T * P * (1 - P))).sum()
+    D = (((t * abs(pi - P)))/ (2 * T * P * (1 - P))).sum()
     
     core_data = data[['group_pop_var', 'total_pop_var']]
     
