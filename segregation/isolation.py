@@ -50,13 +50,14 @@ def _isolation(data, group_pop_var, total_pop_var):
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
     
-    if any(data.total_pop_var < data.group_pop_var):    
+    x = np.array(data.group_pop_var)
+    t = np.array(data.total_pop_var)
+    
+    if any(t < x):    
         raise ValueError('Group of interest population must equal or lower than the total population of the units.')
    
-    data = data.assign(xi = data.group_pop_var,
-                       ti = data.total_pop_var)
-    X = data.xi.sum()
-    xPx = ((data.xi / X) * (data.xi / data.ti)).sum()
+    X = x.sum()
+    xPx = ((x / X) * (x / t)).sum()
     
     core_data = data[['group_pop_var', 'total_pop_var']]
     
