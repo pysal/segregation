@@ -48,19 +48,21 @@ def _entropy(data, group_pop_var, total_pop_var):
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
     
-    if any(data.total_pop_var < data.group_pop_var):    
+    g = np.array(data.group_pop_var)
+    t = np.array(data.total_pop_var)
+    
+    if any(t < g):    
         raise ValueError('Group of interest population must equal or lower than the total population of the units.')
    
-    T = data.total_pop_var.sum()
-    P = data.group_pop_var.sum() / T
+    T = t.sum()
+    P = g.sum() / T
     
     # If a unit has zero population, the group of interest frequency is zero
-    data = data.assign(ti = data.total_pop_var,
-                       pi = np.where(data.total_pop_var == 0, 0, data.group_pop_var/data.total_pop_var))
+    pi = np.where(t == 0, 0, g / t)
     
     E = P * np.log(1 / P) + (1 - P) * np.log(1 / (1 - P))
-    Ei = data.pi * np.log(1 / data.pi) + (1 - data.pi) * np.log(1 / (1 - data.pi))
-    H = (data.ti * (E - Ei) / (E * T)).sum()
+    Ei = pi * np.log(1 / pi) + (1 - pi) * np.log(1 / (1 - pi))
+    H = np.nansum(t * (E - Ei) / (E * T)) # If some pi is zero, numpy will treat as zero
     
     core_data = data[['group_pop_var', 'total_pop_var']]
     
