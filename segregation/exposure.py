@@ -50,14 +50,16 @@ def _exposure(data, group_pop_var, total_pop_var):
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
     
-    if any(data.total_pop_var < data.group_pop_var):    
+    x = np.array(data.group_pop_var)
+    t = np.array(data.total_pop_var)
+    
+    if any(t < x):    
         raise ValueError('Group of interest population must equal or lower than the total population of the units.')
    
-    data = data.assign(xi = data.group_pop_var,
-                       yi = data.total_pop_var - data.group_pop_var,
-                       ti = data.total_pop_var)
-    X = data.xi.sum()
-    xPy = ((data.xi / X) * (data.yi / data.ti)).sum()
+    yi = t - x
+    
+    X = x.sum()
+    xPy = ((x / X) * (yi / t)).sum()
     
     core_data = data[['group_pop_var', 'total_pop_var']]
     
