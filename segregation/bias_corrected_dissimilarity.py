@@ -54,18 +54,21 @@ def _bias_corrected_dissim(data, group_pop_var, total_pop_var, B = 500):
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
     
-    data['other_group_pop'] = data.total_pop_var - data.group_pop_var
+    x = np.array(data.group_pop_var)
+    t = np.array(data.total_pop_var)
+    
+    other_group_pop = t - x
     
     # Group 0: minority group
-    p0_i = (data.group_pop_var / data.group_pop_var.sum())
-    n0 = data.group_pop_var.sum()
+    p0_i = x / x.sum()
+    n0   = x.sum()
     sim0 = np.random.multinomial(n0, p0_i, size = B)
     
     # Group 1: complement group
-    p1_i = (data.other_group_pop / data.other_group_pop.sum())
-    n1 = data.other_group_pop.sum()
+    p1_i = other_group_pop / other_group_pop.sum()
+    n1   = other_group_pop.sum()
     sim1 = np.random.multinomial(n1, p1_i, size = B)
-    
+
     
     Dbcs = np.empty(B)
     for i in np.array(range(B)):
