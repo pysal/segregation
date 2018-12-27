@@ -39,7 +39,6 @@ def _relative_concentration(data, group_pop_var, total_pop_var):
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
 
     """
-    
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
         
@@ -57,33 +56,33 @@ def _relative_concentration(data, group_pop_var, total_pop_var):
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
     
-    if any(data.total_pop_var < data.group_pop_var):    
+    x = np.array(data.group_pop_var)
+    t = np.array(data.total_pop_var)
+    
+    area = np.array(data.area)
+    
+    if any(t < x):    
         raise ValueError('Group of interest population must equal or lower than the total population of the units.')
     
-    data = data.assign(xi = data.group_pop_var,
-                       yi = data.total_pop_var - data.group_pop_var,
-                       ti = data.total_pop_var)
+    y = t - x
     
-    X = data.xi.sum()
-    Y = data.yi.sum()
-    T = data.ti.sum()
+    X = x.sum()
+    Y = y.sum()
+    T = t.sum()
     
-    df_mp_sort_area = data
-    df_mp_sort_area = df_mp_sort_area.assign(area = df_mp_sort_area.area)
-    df_mp_sort_area_asc = df_mp_sort_area.sort_values('area')
+    # Create the indexes according to the area ordering
+    des_ind = (-area).argsort()
+    asc_ind = area.argsort()
     
-    n1 = np.where(((np.cumsum(df_mp_sort_area_asc.ti) / T) < X/T) == False)[0][0]
+    n1 = np.where(((np.cumsum(t[asc_ind]) / T) < X/T) == False)[0][0]
+    n2 = np.where(((np.cumsum(t[des_ind]) / T) < X/T) == False)[0][0]
     
-    df_mp_sort_area_des = df_mp_sort_area.sort_values('area', ascending=False)
+    n  = data.shape[0]
+    T1 = t[asc_ind][0:(n1+1)].sum()
+    T2 = t[asc_ind][n2:n].sum()
     
-    n2 = np.where(((np.cumsum(df_mp_sort_area_des.ti) / T) < X/T) == False)[0][0]
-    
-    n = df_mp_sort_area_asc.shape[0]
-    T1 =  df_mp_sort_area_asc.ti[0:(n1+1)].sum()
-    T2 =  df_mp_sort_area_asc.ti[n2:n].sum()
-    
-    RCO = ((((df_mp_sort_area_asc.xi*df_mp_sort_area_asc.area/X).sum()) / ((df_mp_sort_area_asc.yi*df_mp_sort_area_asc.area/Y).sum())) - 1) / \
-          ((((df_mp_sort_area_asc.ti*df_mp_sort_area_asc.area)[0:(n1+1)].sum() / T1) / ((df_mp_sort_area_asc.ti*df_mp_sort_area_asc.area)[n2:n].sum() / T2)) - 1)
+    RCO = ((((x[asc_ind] * area[asc_ind] / X).sum()) / ((y[asc_ind] * area[asc_ind] / Y).sum())) - 1) / \
+          ((((t[asc_ind] * area[asc_ind])[0:(n1+1)].sum() / T1) / ((t[asc_ind] * area[asc_ind])[n2:n].sum() / T2)) - 1)
     
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
     
