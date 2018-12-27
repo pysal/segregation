@@ -48,7 +48,6 @@ def _relative_clustering(data, group_pop_var, total_pop_var, alpha = 0.6, beta =
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
 
     """
-    
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
         
@@ -72,23 +71,28 @@ def _relative_clustering(data, group_pop_var, total_pop_var, alpha = 0.6, beta =
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
     
-    if any(data.total_pop_var < data.group_pop_var):    
+    x = np.array(data.group_pop_var)
+    t = np.array(data.total_pop_var)
+    
+    if any(t < x):    
         raise ValueError('Group of interest population must equal or lower than the total population of the units.')
     
-    data = data.assign(xi = data.group_pop_var,
-                       yi = data.total_pop_var - data.group_pop_var,
-                       c_lons = data.centroid.map(lambda p: p.x),
-                       c_lats = data.centroid.map(lambda p: p.y))
+    area = np.array(data.area)
     
-    X = data.xi.sum()
-    Y = data.yi.sum()
+    y = t - x
+
+    c_lons = np.array(data.centroid.x)
+    c_lats = np.array(data.centroid.y)
     
-    dist = euclidean_distances(data[['c_lons','c_lats']])
-    np.fill_diagonal(dist, val = (alpha * data.area) ** (beta))
+    X = x.sum()
+    Y = y.sum()
+    
+    dist = euclidean_distances(pd.DataFrame({'c_lons': c_lons, 'c_lats': c_lats}))
+    np.fill_diagonal(dist, val = (alpha * area) ** (beta))
     c = np.exp(-dist)
     
-    Pxx = ((np.array(data.xi) * c).T * np.array(data.xi)).sum() / X**2
-    Pyy = ((np.array(data.yi) * c).T * np.array(data.yi)).sum() / Y**2
+    Pxx = ((x * c).T * x).sum() / X**2
+    Pyy = ((y * c).T * y).sum() / Y**2
     RCL = Pxx / Pyy - 1
     
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
