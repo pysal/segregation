@@ -75,7 +75,6 @@ def _absolute_centralization(data, group_pop_var, total_pop_var):
     center_lat = c_lats.mean()
     
     X = x.sum()
-    Y = y.sum()
     A = area.sum()
 
     center_dist = np.sqrt((c_lons - center_lon) ** 2 + (c_lats - center_lat) ** 2)
@@ -83,7 +82,6 @@ def _absolute_centralization(data, group_pop_var, total_pop_var):
     asc_ind = center_dist.argsort() 
     
     Xi = np.cumsum(x[asc_ind]) / X
-    Yi = np.cumsum(y[asc_ind]) / Y
     Ai = np.cumsum(area[asc_ind]) / A
     
     ACE = np.nansum(shift(Xi, 1, cval=np.NaN) * Ai) - \
