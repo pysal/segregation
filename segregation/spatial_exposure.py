@@ -50,7 +50,6 @@ def _spatial_exposure(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0.
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
 
     """
-    
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
         
@@ -73,24 +72,26 @@ def _spatial_exposure(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0.
     
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
+
+    x = np.array(data.group_pop_var)
+    t = np.array(data.total_pop_var)
     
-    if any(data.total_pop_var < data.group_pop_var):    
+    if any(t < x):    
         raise ValueError('Group of interest population must equal or lower than the total population of the units.')
     
-    data = data.assign(xi = data.group_pop_var,
-                       yi = data.total_pop_var - data.group_pop_var,
-                       ti = data.total_pop_var,
-                       c_lons = data.centroid.map(lambda p: p.x),
-                       c_lats = data.centroid.map(lambda p: p.y))
+    y = t - x
     
-    X = data.xi.sum()
+    c_lons = np.array(data.centroid.x)
+    c_lats = np.array(data.centroid.y)
     
-    dist = euclidean_distances(data[['c_lons','c_lats']])
+    X = x.sum()
+    
+    dist = euclidean_distances(pd.DataFrame({'c_lons': c_lons, 'c_lats': c_lats}))
     np.fill_diagonal(dist, val = (alpha * data.area) ** (beta))
     c = np.exp(-dist)
     
-    Pij  = np.multiply(c, np.array(data['ti'])) / np.sum(np.multiply(c, np.array(data['ti'])), axis = 1)
-    SxPy = (np.array(data['xi'] / X) * np.nansum(np.multiply(Pij, np.array(data['yi'] / data['ti'])), axis = 1)).sum()
+    Pij  = np.multiply(c, t) / np.sum(np.multiply(c, t), axis = 1)
+    SxPy = (x / X * np.nansum(np.multiply(Pij, y / t), axis = 1)).sum()
     
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
     
