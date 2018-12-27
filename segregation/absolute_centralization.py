@@ -58,32 +58,40 @@ def _absolute_centralization(data, group_pop_var, total_pop_var):
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
     
-    if any(data.total_pop_var < data.group_pop_var):    
+    x = np.array(data.group_pop_var)
+    t = np.array(data.total_pop_var)
+    
+    if any(t < x):    
         raise ValueError('Group of interest population must equal or lower than the total population of the units.')
+        
+    y = t - x
     
-    data = data.assign(xi = data.group_pop_var,
-                       yi = data.total_pop_var - data.group_pop_var,
-                       ti = data.total_pop_var,
-                       area = data.area,
-                       c_lons = data.centroid.map(lambda p: p.x),
-                       c_lats = data.centroid.map(lambda p: p.y))
+    area = np.array(data.area)
     
-    data = data.assign(center_lon = data.c_lons.mean(),
-                       center_lat = data.c_lats.mean())
+    c_lons = np.array(data.centroid.x)
+    c_lats = np.array(data.centroid.y)
     
-    X = data.xi.sum()
-    Y = data.yi.sum()
-    A = data.area.sum()
+    center_lon = c_lons.mean()
+    center_lat = c_lats.mean()
+    
+    X = x.sum()
+    Y = y.sum()
+    A = area.sum()
 
-    data['center_dist'] = np.sqrt((data.c_lons - data.center_lon)**2 + (data.c_lats - data.center_lat)**2)
-    data_sort_cent = data.sort_values('center_dist')
+    center_dist = np.sqrt((c_lons - center_lon) ** 2 + (c_lats - center_lat) ** 2)
     
-    data_sort_cent['Xi'] = np.cumsum(data_sort_cent.xi) / X
-    data_sort_cent['Yi'] = np.cumsum(data_sort_cent.yi) / Y
-    data_sort_cent['Ai'] = np.cumsum(data_sort_cent.area) / A
+    asc_ind = center_dist.argsort() 
     
-    ACE = (shift(data_sort_cent.Xi, 1, cval=np.NaN) * data_sort_cent.Ai).sum() - \
-          (data_sort_cent.Xi * shift(data_sort_cent.Ai, 1, cval=np.NaN)).sum()
+    Xi = np.cumsum(x[asc_ind]) / X
+    Yi = np.cumsum(y[asc_ind]) / Y
+    Ai = np.cumsum(area[asc_ind]) / A
+    
+    ACE = np.nansum(shift(Xi, 1, cval=np.NaN) * Ai) - \
+          np.nansum(Xi * shift(Ai, 1, cval=np.NaN))
+    
+    core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
+    
+    return ACE, core_data
     
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
     
