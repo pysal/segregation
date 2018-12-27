@@ -59,10 +59,10 @@ def _relative_concentration(data, group_pop_var, total_pop_var):
     x = np.array(data.group_pop_var)
     t = np.array(data.total_pop_var)
     
-    area = np.array(data.area)
-    
     if any(t < x):    
         raise ValueError('Group of interest population must equal or lower than the total population of the units.')
+    
+    area = np.array(data.area)
     
     y = t - x
     
