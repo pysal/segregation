@@ -9,7 +9,6 @@ import pandas as pd
 import libpysal
 from segregation.dissimilarity import _dissim
 from libpysal.weights import Queen
-from sklearn.metrics.pairwise import manhattan_distances
 
 __all__ = ['Spatial_Dissim']
 
@@ -52,7 +51,6 @@ def _spatial_dissim(data, group_pop_var, total_pop_var, w = None, standardize = 
     Based on Morrill, R. L. (1991) "On the Measure of Geographic Segregation". Geography Research Forum.
 
     """
-    
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
         
@@ -77,8 +75,11 @@ def _spatial_dissim(data, group_pop_var, total_pop_var, w = None, standardize = 
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
     
+    x = np.array(data.group_pop_var)
+    t = np.array(data.total_pop_var)
+    
     # If a unit has zero population, the group of interest frequency is zero
-    data = data.assign(pi = np.where(data.total_pop_var == 0, 0, data.group_pop_var/data.total_pop_var))
+    pi = np.where(t == 0, 0, x / t)
     
     if not standardize:
         cij = w_object.full()[0]
@@ -86,8 +87,12 @@ def _spatial_dissim(data, group_pop_var, total_pop_var, w = None, standardize = 
         cij = w_object.full()[0]
         cij = cij / cij.sum(axis = 1).reshape((cij.shape[0], 1))
 
+    # Inspired in (second solution): https://stackoverflow.com/questions/22720864/efficiently-calculating-a-euclidean-distance-matrix-using-numpy
+    # Distance Matrix
+    abs_dist = abs(pi[..., np.newaxis] - pi)
+        
     # manhattan_distances used to compute absolute distances
-    num = np.multiply(manhattan_distances(data[['pi']]), cij).sum()
+    num = np.multiply(abs_dist, cij).sum()
     den = cij.sum()
     SD = D - num / den
     SD
