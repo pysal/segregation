@@ -63,8 +63,6 @@ def _absolute_centralization(data, group_pop_var, total_pop_var):
     
     if any(t < x):    
         raise ValueError('Group of interest population must equal or lower than the total population of the units.')
-        
-    y = t - x
     
     area = np.array(data.area)
     
