@@ -40,7 +40,6 @@ def _relative_centralization(data, group_pop_var, total_pop_var):
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
 
     """
-    
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
         
@@ -57,35 +56,40 @@ def _relative_centralization(data, group_pop_var, total_pop_var):
     
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
-    
-    if any(data.total_pop_var < data.group_pop_var):    
-        raise ValueError('Group of interest population must equal or lower than the total population of the units.')
-    
-    data = data.assign(xi = data.group_pop_var,
-                       yi = data.total_pop_var - data.group_pop_var,
-                       ti = data.total_pop_var,
-                       area = data.area,
-                       c_lons = data.centroid.map(lambda p: p.x),
-                       c_lats = data.centroid.map(lambda p: p.y))
-    
-    data = data.assign(center_lon = data.c_lons.mean(),
-                       center_lat = data.c_lats.mean())
-    
-    X = data.xi.sum()
-    Y = data.yi.sum()
-    A = data.area.sum()
 
-    data['center_dist'] = np.sqrt((data.c_lons - data.center_lon)**2 + (data.c_lats - data.center_lat)**2)
-    data_sort_cent = data.sort_values('center_dist')
+    x = np.array(data.group_pop_var)
+    t = np.array(data.total_pop_var)
     
-    data_sort_cent['Xi'] = np.cumsum(data_sort_cent.xi) / X
-    data_sort_cent['Yi'] = np.cumsum(data_sort_cent.yi) / Y
-    data_sort_cent['Ai'] = np.cumsum(data_sort_cent.area) / A
+    if any(t < x):    
+        raise ValueError('Group of interest population must equal or lower than the total population of the units.')
+
+    y = t - x
+    area = np.array(data.area)
     
-    RCE = (shift(data_sort_cent.Xi, 1, cval=np.NaN) * data_sort_cent.Yi).sum() - \
-          (data_sort_cent.Xi * shift(data_sort_cent.Yi, 1, cval=np.NaN)).sum()
+    c_lons = np.array(data.centroid.x)
+    c_lats = np.array(data.centroid.y)
+    
+    center_lon = c_lons.mean()
+    center_lat = c_lats.mean()
+    
+    X = x.sum()
+    Y = y.sum()
+    A = area.sum()
+
+    center_dist = np.sqrt((c_lons - center_lon) ** 2 + (c_lats - center_lat) ** 2)
+    
+    asc_ind = center_dist.argsort() 
+    
+    Xi = np.cumsum(x[asc_ind]) / X
+    Yi = np.cumsum(y[asc_ind]) / Y
+    Ai = np.cumsum(area[asc_ind]) / A
+    
+    RCE = np.nansum(shift(Xi, 1, cval=np.NaN) * Yi) - \
+          np.nansum(Xi * shift(Yi, 1, cval=np.NaN))
 
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
+
+    return RCE, core_data
 
     return RCE, core_data
 
