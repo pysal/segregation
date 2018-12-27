@@ -67,6 +67,7 @@ def _absolute_concentration(data, group_pop_var, total_pop_var):
     X = x.sum()
     T = t.sum()
     
+    # Create the indexes according to the area ordering
     des_ind = (-area).argsort()
     asc_ind = area.argsort()
     
