@@ -109,10 +109,9 @@ class Density_Corrected_Dissim:
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-									
-
-	xtol          : float
-					The degree of tolerance in the optimization process of returning optimal theta_j
+                    
+    xtol          : float
+                    The degree of tolerance in the optimization process of returning optimal theta_j
                                   
     Attributes
     ----------
