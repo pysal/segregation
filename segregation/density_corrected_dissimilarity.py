@@ -12,7 +12,7 @@ from scipy.optimize import minimize
 __all__ = ['Density_Corrected_Dissim']
 
 
-def _density_corrected_dissim(data, group_pop_var, total_pop_var):
+def _density_corrected_dissim(data, group_pop_var, total_pop_var, xtol = 1e-5):
     """
     Calculation of Density Corrected Dissimilarity index
 
@@ -26,7 +26,10 @@ def _density_corrected_dissim(data, group_pop_var, total_pop_var):
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-                                  
+    
+    xtol          : float
+                    The degree of tolerance in the optimization process of returning optimal theta_j
+
     Attributes
     ----------
 
@@ -50,18 +53,21 @@ def _density_corrected_dissim(data, group_pop_var, total_pop_var):
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
     
-    if any(data.total_pop_var < data.group_pop_var):    
+    g = np.array(data.group_pop_var)
+    t = np.array(data.total_pop_var)
+    
+    if any(t < g):    
         raise ValueError('Group of interest population must equal or lower than the total population of the units.')
     
-    data['other_group_pop'] = data.total_pop_var - data.group_pop_var
+    other_group_pop = t - g
     
     # Group 0: minority group
-    p0_i = (data.group_pop_var / data.group_pop_var.sum())
-    n0 = data.group_pop_var.sum()
+    p0_i = g / g.sum()
+    n0 = g.sum()
     
     # Group 1: complement group
-    p1_i = (data.other_group_pop / data.other_group_pop.sum())
-    n1 = data.other_group_pop.sum()
+    p1_i = other_group_pop / other_group_pop.sum()
+    n1 = other_group_pop.sum()
     
     sigma_hat_j = np.sqrt(((p1_i * (1 - p1_i)) / n1) + ((p0_i * (1 - p0_i)) / n0))
     theta_hat_j = abs(p1_i - p0_i) / sigma_hat_j
@@ -77,11 +83,12 @@ def _density_corrected_dissim(data, group_pop_var, total_pop_var):
         res = minimize(fold_norm, 
                        initial_guesses, 
                        method='nelder-mead',
-                       options = {'xtol': 1e-8})
+                       options = {'xtol': xtol})
         return res.final_simplex[0][1][0]
         
-    optimal_thetas = theta_hat_j.apply(return_optimal_theta)
-    Ddc = (sigma_hat_j * optimal_thetas).sum() / 2
+    optimal_thetas = pd.Series(data = theta_hat_j).apply(return_optimal_theta)
+
+    Ddc = np.multiply(sigma_hat_j, optimal_thetas).sum() / 2
     
     core_data = data[['group_pop_var', 'total_pop_var']]
     
@@ -133,7 +140,7 @@ class Density_Corrected_Dissim:
     
     >>> density_corrected_dissim_index = Density_Corrected_Dissim(df, 'nhblk10', 'pop10')
     >>> density_corrected_dissim_index.statistic
-    0.29350642339135236
+    0.29350643204887517
      
     Notes
     -----
