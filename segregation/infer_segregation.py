@@ -205,7 +205,7 @@ class Infer_Segregation:
     null_approach : argument that specifies which type of null hypothesis the inference will iterate.
     
         "systematic"             : assumes that every group has the same probability with restricted conditional probabilities p_0_j = p_1_j = p_j = n_j/n (multinomial distribution).
-        "evenness"                : assumes that each spatial unit has the same global probability of drawing elements from the minority group of the fixed total unit population (binomial distribution).
+        "evenness"               : assumes that each spatial unit has the same global probability of drawing elements from the minority group of the fixed total unit population (binomial distribution).
         
         "permutation"            : randomly allocates the units over space keeping the original values.
         
