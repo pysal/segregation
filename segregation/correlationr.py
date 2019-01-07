@@ -59,7 +59,7 @@ def _correlationr(data, group_pop_var, total_pop_var):
     T = t.sum()
     P = X / T
     
-    xPx = ((x / X) * (x / t)).sum()
+    xPx = np.nansum((x / X) * (x / t))
 
     V = (xPx - P) / (1 - P)
     

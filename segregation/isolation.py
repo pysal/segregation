@@ -57,7 +57,7 @@ def _isolation(data, group_pop_var, total_pop_var):
         raise ValueError('Group of interest population must equal or lower than the total population of the units.')
    
     X = x.sum()
-    xPx = ((x / X) * (x / t)).sum()
+    xPx = np.nansum((x / X) * (x / t))
     
     core_data = data[['group_pop_var', 'total_pop_var']]
     

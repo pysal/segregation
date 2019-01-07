@@ -59,7 +59,7 @@ def _exposure(data, group_pop_var, total_pop_var):
     yi = t - x
     
     X = x.sum()
-    xPy = ((x / X) * (yi / t)).sum()
+    xPy = np.nansum((x / X) * (yi / t))
     
     core_data = data[['group_pop_var', 'total_pop_var']]
     
