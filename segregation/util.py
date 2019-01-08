@@ -28,13 +28,19 @@ def _return_length_weighted_w(data):
 
     """
     
-    w = libpysal.weights.Rook.from_dataframe(data, ids = data.index.tolist(),
-                                              geom_col=data._geometry_column_name)
+    w = libpysal.weights.Rook.from_dataframe(data, 
+                                             ids = data.index.tolist(),
+                                             geom_col = data._geometry_column_name)
     
-    if not len(w.islands):
+    if (len(w.islands) == 0):
         w = w
     else:
         warn('There are some islands in the GeoDataFrame.')
+        w_aux = libpysal.weights.KNN.from_dataframe(data, 
+                                                    ids = data.index.tolist(),
+                                                    geom_col = data._geometry_column_name,
+                                                    k = 1)
+        w = attach_islands(w, w_aux)
     
     adjlist = w.to_adjlist()
     islands = pd.DataFrame.from_records([{'focal':island, 'neighbor':island, 'weight':0} for island in w.islands])
