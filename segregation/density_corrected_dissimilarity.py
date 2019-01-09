@@ -151,9 +151,9 @@ class Density_Corrected_Dissim:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var):
+    def __init__(self, data, group_pop_var, total_pop_var, xtol = 1e-5):
         
-        aux = _density_corrected_dissim(data, group_pop_var, total_pop_var)
+        aux = _density_corrected_dissim(data, group_pop_var, total_pop_var, xtol)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
