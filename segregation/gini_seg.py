@@ -13,10 +13,8 @@ __all__ = ['Gini_Seg']
 def _gini_seg(data, group_pop_var, total_pop_var):
     """
     Calculation of Gini Segregation index
-
     Parameters
     ----------
-
     data          : a pandas DataFrame
     
     group_pop_var : string
@@ -24,10 +22,8 @@ def _gini_seg(data, group_pop_var, total_pop_var):
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-
     Attributes
     ----------
-
     statistic : float
                 Gini Segregation Index
                 
@@ -37,30 +33,27 @@ def _gini_seg(data, group_pop_var, total_pop_var):
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
-
     """
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
     
     if ((group_pop_var not in data.columns) or (total_pop_var not in data.columns)):    
         raise ValueError('group_pop_var and total_pop_var must be variables of data')
-    
+
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
     
-    x = np.array(data.group_pop_var)
-    t = np.array(data.total_pop_var)
-    
-    if any(t < x):    
+    if any(data.total_pop_var < data.group_pop_var):    
         raise ValueError('Group of interest population must equal or lower than the total population of the units.')
    
-    T = t.sum()
-    P = x.sum() / T
+    T = data.total_pop_var.sum()
+    P = data.group_pop_var.sum() / T
     
-    # If a unit has zero population, the group of interest frequency is zero   
-    pi = np.where(t == 0, 0, x / t)
+    # If a unit has zero population, the group of interest frequency is zero
+    data = data.assign(ti = data.total_pop_var,
+                       pi = np.where(data.total_pop_var == 0, 0, data.group_pop_var/data.total_pop_var))
     
-    num = (np.matmul(t[np.newaxis].T, t[np.newaxis]) * abs(pi[np.newaxis].T - pi[np.newaxis])).sum()
+    num = (np.matmul(np.array(data.ti)[np.newaxis].T, np.array(data.ti)[np.newaxis]) * abs(np.array(data.pi)[np.newaxis].T - np.array(data.pi)[np.newaxis])).sum()
     den = (2 * T**2 * P * (1-P))
     G = num / den
     
@@ -72,10 +65,8 @@ def _gini_seg(data, group_pop_var, total_pop_var):
 class Gini_Seg:
     """
     Classic Gini Segregation Index
-
     Parameters
     ----------
-
     data          : a pandas DataFrame
     
     group_pop_var : string
@@ -83,10 +74,8 @@ class Gini_Seg:
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-
     Attributes
     ----------
-
     statistic : float
                 Gini Segregation Index
                 
@@ -119,7 +108,6 @@ class Gini_Seg:
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
-
     """
 
     def __init__(self, data, group_pop_var, total_pop_var):
@@ -129,4 +117,3 @@ class Gini_Seg:
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _gini_seg
-
