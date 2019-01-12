@@ -14,10 +14,8 @@ __all__ = ['Relative_Clustering']
 def _relative_clustering(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0.5):
     """
     Calculation of Relative Clustering index
-
     Parameters
     ----------
-
     data          : a geopandas DataFrame with a geometry column.
     
     group_pop_var : string
@@ -31,23 +29,20 @@ def _relative_clustering(data, group_pop_var, total_pop_var, alpha = 0.6, beta =
     
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
-
     Attributes
     ----------
-
     statistic : float
                 Relative Clustering Index
                 
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
-
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
     
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
-
     """
+    
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
         
@@ -71,28 +66,23 @@ def _relative_clustering(data, group_pop_var, total_pop_var, alpha = 0.6, beta =
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
     
-    x = np.array(data.group_pop_var)
-    t = np.array(data.total_pop_var)
-    
-    if any(t < x):    
+    if any(data.total_pop_var < data.group_pop_var):    
         raise ValueError('Group of interest population must equal or lower than the total population of the units.')
     
-    area = np.array(data.area)
+    data = data.assign(xi = data.group_pop_var,
+                       yi = data.total_pop_var - data.group_pop_var,
+                       c_lons = data.centroid.map(lambda p: p.x),
+                       c_lats = data.centroid.map(lambda p: p.y))
     
-    y = t - x
-
-    c_lons = np.array(data.centroid.x)
-    c_lats = np.array(data.centroid.y)
+    X = data.xi.sum()
+    Y = data.yi.sum()
     
-    X = x.sum()
-    Y = y.sum()
-    
-    dist = euclidean_distances(pd.DataFrame({'c_lons': c_lons, 'c_lats': c_lats}))
-    np.fill_diagonal(dist, val = (alpha * area) ** (beta))
+    dist = euclidean_distances(data[['c_lons','c_lats']])
+    np.fill_diagonal(dist, val = (alpha * data.area) ** (beta))
     c = np.exp(-dist)
     
-    Pxx = ((x * c).T * x).sum() / X**2
-    Pyy = ((y * c).T * y).sum() / Y**2
+    Pxx = ((np.array(data.xi) * c).T * np.array(data.xi)).sum() / X**2
+    Pyy = ((np.array(data.yi) * c).T * np.array(data.yi)).sum() / Y**2
     RCL = Pxx / Pyy - 1
     
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
@@ -103,10 +93,8 @@ def _relative_clustering(data, group_pop_var, total_pop_var, alpha = 0.6, beta =
 class Relative_Clustering:
     """
     Calculation of Relative Clustering index
-
     Parameters
     ----------
-
     data          : a geopandas DataFrame with a geometry column.
     
     group_pop_var : string
@@ -120,10 +108,8 @@ class Relative_Clustering:
     
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
-
     Attributes
     ----------
-
     statistic : float
                 Relative Clustering Index
                 

@@ -14,10 +14,8 @@ __all__ = ['Spatial_Proximity']
 def _spatial_proximity(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0.5):
     """
     Calculation of Spatial Proximity index
-
     Parameters
     ----------
-
     data          : a geopandas DataFrame with a geometry column.
     
     group_pop_var : string
@@ -31,23 +29,20 @@ def _spatial_proximity(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0
     
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
-
     Attributes
     ----------
-
     statistic : float
                 Spatial Proximity Index
                 
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
-
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
     
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
-
     """
+    
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
         
@@ -71,28 +66,27 @@ def _spatial_proximity(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
     
-    x = np.array(data.group_pop_var)
-    t = np.array(data.total_pop_var)
-    
-    if any(t < x):    
+    if any(data.total_pop_var < data.group_pop_var):    
         raise ValueError('Group of interest population must equal or lower than the total population of the units.')
    
-    T = t.sum()
+    T = data.total_pop_var.sum()
     
-    y = t - x
-    c_lons = np.array(data.centroid.x)
-    c_lats = np.array(data.centroid.y)
+    data = data.assign(xi = data.group_pop_var,
+                       yi = data.total_pop_var - data.group_pop_var,
+                       ti = data.total_pop_var,
+                       c_lons = data.centroid.map(lambda p: p.x),
+                       c_lats = data.centroid.map(lambda p: p.y))
     
-    X = x.sum()
-    Y = y.sum()
+    X = data.xi.sum()
+    Y = data.yi.sum()
     
-    dist = euclidean_distances(pd.DataFrame({'c_lons': c_lons, 'c_lats': c_lats}))
+    dist = euclidean_distances(data[['c_lons','c_lats']])
     np.fill_diagonal(dist, val = (alpha * data.area) ** (beta))
     c = np.exp(-dist)
     
-    Pxx = ((x * c).T * x).sum() / X**2
-    Pyy = ((y * c).T * y).sum() / Y**2
-    Ptt = ((t * c).T * t).sum() / T**2
+    Pxx = ((np.array(data.xi) * c).T * np.array(data.xi)).sum() / X**2
+    Pyy = ((np.array(data.yi) * c).T * np.array(data.yi)).sum() / Y**2
+    Ptt = ((np.array(data.ti) * c).T * np.array(data.ti)).sum() / T**2
     SP = (X * Pxx + Y * Pyy) / (T * Ptt)
     
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]   
@@ -103,10 +97,8 @@ def _spatial_proximity(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0
 class Spatial_Proximity:
     """
     Calculation of Spatial Proximity index
-
     Parameters
     ----------
-
     data          : a geopandas DataFrame with a geometry column.
     
     group_pop_var : string
@@ -120,10 +112,8 @@ class Spatial_Proximity:
     
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
-
     Attributes
     ----------
-
     statistic : float
                 Spatial Proximity Index
                 
