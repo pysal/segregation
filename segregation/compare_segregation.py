@@ -181,10 +181,10 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations = 500, null_approa
         est_sim = est_sim[~(np.isinf(est_sim) | np.isnan(est_sim))]
 
     # Two-Tailed p-value
-	# Obs.: the null distribution can be located far from zero. Therefore, this is the the appropriate way to calculate the two tailed p-value.
-	aux1 = (point_estimation < est_sim).sum()
-	aux2 = (point_estimation > est_sim).sum()
-	p_value = 2 * np.array([aux1, aux2]).min() / len(est_sim)
+    # Obs.: the null distribution can be located far from zero. Therefore, this is the the appropriate way to calculate the two tailed p-value.
+    aux1 = (point_estimation < est_sim).sum()
+    aux2 = (point_estimation > est_sim).sum()
+    p_value = 2 * np.array([aux1, aux2]).min() / len(est_sim)
     
     return p_value, est_sim, point_estimation, _class_name
 

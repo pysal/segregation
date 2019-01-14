@@ -185,9 +185,9 @@ def _infer_segregation(seg_class, iterations = 500, null_approach = "systematic"
     if not two_tailed:
         p_value = sum(Estimates_Stars > point_estimation) / iterations
     else:
-		aux1 = (point_estimation < Estimates_Stars).sum()
-		aux1 = (point_estimation > Estimates_Stars).sum()
-		p_value = 2 * np.array([aux1, aux2]).min() / len(Estimates_Stars)
+        aux1 = (point_estimation < Estimates_Stars).sum()
+        aux2 = (point_estimation > Estimates_Stars).sum()
+        p_value = 2 * np.array([aux1, aux2]).min() / len(Estimates_Stars)
     
     return p_value, Estimates_Stars, point_estimation, _class_name
 
