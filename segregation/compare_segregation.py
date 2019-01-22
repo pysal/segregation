@@ -7,7 +7,6 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr
 
 import numpy as np
 import pandas as pd
-import geopandas as gpd
 import warnings
 
 __all__ = ['Compare_Segregation']
@@ -61,29 +60,29 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations = 500, null_approa
     if(type(seg_class_1) != type(seg_class_2)):
         raise TypeError('seg_class_1 and seg_class_2 must be the same type/class.')
     
-    data_1 = seg_class_1.core_data
-    data_2 = seg_class_2.core_data
-    
     point_estimation = seg_class_1.statistic - seg_class_2.statistic
     
     aux = str(type(seg_class_1))
     _class_name = aux[1 + aux.rfind('.'):-2]  # 'rfind' finds the last occurence of a pattern in a string
+	
+    data_1 = seg_class_1.core_data
+    data_2 = seg_class_2.core_data
     
-    # This step is just to make sure the each frequecy column is from the same type in order to stack them
+    # This step is just to make sure the each frequecy column is integer for the approaches and from the same type in order to stack them for the random data approach
     data_1['group_pop_var'] = round(data_1['group_pop_var']).astype(int)
     data_1['total_pop_var'] = round(data_1['total_pop_var']).astype(int)
     
     data_2['group_pop_var'] = round(data_2['group_pop_var']).astype(int)
     data_2['total_pop_var'] = round(data_2['total_pop_var']).astype(int)
     
-    data_1['grouping_variable'] = 'Group_1'
-    data_2['grouping_variable'] = 'Group_2'
-    
-    stacked_data = pd.concat([data_1, data_2], ignore_index=True)
-    
     est_sim = np.empty(iterations)
     
     if (null_approach == "random_data"):
+	
+        data_1['grouping_variable'] = 'Group_1'
+        data_2['grouping_variable'] = 'Group_2'
+		
+        stacked_data = pd.concat([data_1, data_2], ignore_index=True)
         
         for i in np.array(range(iterations)):
             
@@ -105,12 +104,6 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations = 500, null_approa
             est_sim[i] = simulations_1 - simulations_2
     
     if (null_approach == "pseudo_cumulative"):
-        
-        del data_1
-        del data_2
-        
-        data_1 = seg_class_1.core_data
-        data_2 = seg_class_2.core_data
 
         data_1['rel'] = np.where(data_1['total_pop_var'] == 0, 0, data_1['group_pop_var'] / data_1['total_pop_var'])
         data_2['rel'] = np.where(data_2['total_pop_var'] == 0, 0, data_2['group_pop_var'] / data_2['total_pop_var'])
@@ -182,7 +175,7 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations = 500, null_approa
 
     # Two-Tailed p-value
     # Obs.: the null distribution can be located far from zero. Therefore, this is the the appropriate way to calculate the two tailed p-value.
-    aux1 = (point_estimation < est_sim).sum()
+    aux1 = (point_estimation =< est_sim).sum()
     aux2 = (point_estimation > est_sim).sum()
     p_value = 2 * np.array([aux1, aux2]).min() / len(est_sim)
     
