@@ -85,8 +85,8 @@ Once the segregation indexes are fitted, the user can perform inference to shed 
 
 | **Inference Type** | **Class/Function**   |                 **Function main Inputs**                 |         **Function Outputs**         |
 | :----------------- | :------------------- | :------------------------------------------------------: | :----------------------------------: |
-| Single Value       | Infer\_Segregation   |   seg\_class, iterations, null\_approach, two\_tailed    |    p\_value, est\_sim, statistic     |
-| Two Value          | Compare\_Segregation | seg\_class\_1, seg\_class\_2, iterations, null\_approach | p\_value, est\_sim, est\_point\_diff |
+| Single Value       | Infer\_Segregation   |   seg\_class, iterations\_under\_null, null\_approach, two\_tailed    |    p\_value, est\_sim, statistic     |
+| Two Value          | Compare\_Segregation | seg\_class\_1, seg\_class\_2, iterations\_under\_null, null\_approach | p\_value, est\_sim, est\_point\_diff |
 
   
   
