@@ -64,7 +64,6 @@ def _relative_centralization(data, group_pop_var, total_pop_var):
         raise ValueError('Group of interest population must equal or lower than the total population of the units.')
 
     y = t - x
-    area = np.array(data.area)
     
     c_lons = np.array(data.centroid.x)
     c_lats = np.array(data.centroid.y)
@@ -74,7 +73,6 @@ def _relative_centralization(data, group_pop_var, total_pop_var):
     
     X = x.sum()
     Y = y.sum()
-    A = area.sum()
 
     center_dist = np.sqrt((c_lons - center_lon) ** 2 + (c_lats - center_lat) ** 2)
     
@@ -82,7 +80,6 @@ def _relative_centralization(data, group_pop_var, total_pop_var):
     
     Xi = np.cumsum(x[asc_ind]) / X
     Yi = np.cumsum(y[asc_ind]) / Y
-    Ai = np.cumsum(area[asc_ind]) / A
     
     RCE = np.nansum(shift(Xi, 1, cval=np.NaN) * Yi) - \
           np.nansum(Xi * shift(Yi, 1, cval=np.NaN))
