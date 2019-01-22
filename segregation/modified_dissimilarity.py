@@ -54,6 +54,9 @@ def _modified_dissim(data, group_pop_var, total_pop_var, iterations = 500):
     data = data.rename(columns={group_pop_var: 'group_pop_var', 
                                 total_pop_var: 'total_pop_var'})
     
+    # core_data has to be in the beggining of the call because assign methods will be used later
+    core_data = data[['group_pop_var', 'total_pop_var']]
+    
     x = np.array(data.group_pop_var)
     t = np.array(data.total_pop_var)
     
@@ -76,8 +79,6 @@ def _modified_dissim(data, group_pop_var, total_pop_var, iterations = 500):
         Dct = (D - D_star)/(1 - D_star)
     else:
         Dct = (D - D_star)/D_star
-    
-    core_data = data[['group_pop_var', 'total_pop_var']]
     
     return Dct, core_data
 
