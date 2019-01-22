@@ -12,16 +12,16 @@ import warnings
 
 __all__ = ['Infer_Segregation']
 
-def _infer_segregation(seg_class, iterations = 500, null_approach = "systematic", two_tailed = True, **kwargs):
+def _infer_segregation(seg_class, iterations_under_null = 500, null_approach = "systematic", two_tailed = True, **kwargs):
     '''
     Perform inference for a single segregation measure
 
     Parameters
     ----------
 
-    seg_class     : a PySAL segregation object
+    seg_class                    : a PySAL segregation object
     
-    iterations    : number of iterations under null hyphothesis
+    iterations_under_null        : number of iterations under null hyphothesis
     
     null_approach : argument that specifies which type of null hypothesis the inference will iterate.
     
@@ -76,16 +76,16 @@ def _infer_segregation(seg_class, iterations = 500, null_approach = "systematic"
         # Group 0: minority group
         p0_i = p_j
         n0 = data['group_pop_var'].sum()
-        sim0 = np.random.multinomial(n0, p0_i, size = iterations)
+        sim0 = np.random.multinomial(n0, p0_i, size = iterations_under_null)
 
         # Group 1: complement group
         p1_i = p_j
         n1 = data['other_group_pop'].sum()
-        sim1 = np.random.multinomial(n1, p1_i, size = iterations)
+        sim1 = np.random.multinomial(n1, p1_i, size = iterations_under_null)
 
-        Estimates_Stars = np.empty(iterations)
+        Estimates_Stars = np.empty(iterations_under_null)
         
-        for i in np.array(range(iterations)):
+        for i in np.array(range(iterations_under_null)):
             data_aux = {'simul_group': sim0[i].tolist(), 'simul_tot': (sim0[i] + sim1[i]).tolist()}
             df_aux = pd.DataFrame.from_dict(data_aux)
             
@@ -100,9 +100,9 @@ def _infer_segregation(seg_class, iterations = 500, null_approach = "systematic"
         
         p_null = data['group_pop_var'].sum() / data['total_pop_var'].sum()
         
-        Estimates_Stars = np.empty(iterations)
+        Estimates_Stars = np.empty(iterations_under_null)
         
-        for i in np.array(range(iterations)):
+        for i in np.array(range(iterations_under_null)):
             sim = np.random.binomial(n = np.array([data['total_pop_var'].tolist()]), 
                                      p = p_null)
             data_aux = {'simul_group': sim[0], 'simul_tot': data['total_pop_var'].tolist()}
@@ -120,9 +120,9 @@ def _infer_segregation(seg_class, iterations = 500, null_approach = "systematic"
         if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
             raise TypeError('data is not a GeoDataFrame, therefore, this null approach does not apply.')
         
-        Estimates_Stars = np.empty(iterations)
+        Estimates_Stars = np.empty(iterations_under_null)
         
-        for i in np.array(range(iterations)):
+        for i in np.array(range(iterations_under_null)):
             data = data.assign(geometry = data['geometry'][list(np.random.choice(data.shape[0], data.shape[0], replace = False))].reset_index()['geometry'])
             df_aux = data
             Estimates_Stars[i] = seg_class._function(df_aux, 'group_pop_var', 'total_pop_var', **kwargs)[0]
@@ -139,16 +139,16 @@ def _infer_segregation(seg_class, iterations = 500, null_approach = "systematic"
         # Group 0: minority group
         p0_i = p_j
         n0 = data['group_pop_var'].sum()
-        sim0 = np.random.multinomial(n0, p0_i, size = iterations)
+        sim0 = np.random.multinomial(n0, p0_i, size = iterations_under_null)
 
         # Group 1: complement group
         p1_i = p_j
         n1 = data['other_group_pop'].sum()
-        sim1 = np.random.multinomial(n1, p1_i, size = iterations)
+        sim1 = np.random.multinomial(n1, p1_i, size = iterations_under_null)
 
-        Estimates_Stars = np.empty(iterations)
+        Estimates_Stars = np.empty(iterations_under_null)
         
-        for i in np.array(range(iterations)):
+        for i in np.array(range(iterations_under_null)):
             data_aux = {'simul_group': sim0[i].tolist(), 'simul_tot': (sim0[i] + sim1[i]).tolist()}
             df_aux = pd.DataFrame.from_dict(data_aux)
             df_aux = gpd.GeoDataFrame(df_aux)
@@ -164,9 +164,9 @@ def _infer_segregation(seg_class, iterations = 500, null_approach = "systematic"
         
         p_null = data['group_pop_var'].sum() / data['total_pop_var'].sum()
         
-        Estimates_Stars = np.empty(iterations)
+        Estimates_Stars = np.empty(iterations_under_null)
         
-        for i in np.array(range(iterations)):
+        for i in np.array(range(iterations_under_null)):
             sim = np.random.binomial(n = np.array([data['total_pop_var'].tolist()]), 
                                      p = p_null)
             data_aux = {'simul_group': sim[0], 'simul_tot': data['total_pop_var'].tolist()}
@@ -177,13 +177,13 @@ def _infer_segregation(seg_class, iterations = 500, null_approach = "systematic"
             Estimates_Stars[i] = seg_class._function(df_aux, 'simul_group', 'simul_tot', **kwargs)[0]
 
     
-    # Check and, if the case, remove iterations that resulted in nan or infinite values
+    # Check and, if the case, remove iterations_under_null that resulted in nan or infinite values
     if any((np.isinf(Estimates_Stars) | np.isnan(Estimates_Stars))):
         warnings.warn('Some estimates resulted in NaN or infinite values for estimations under null hypothesis. These values will be removed for the final results.')
         Estimates_Stars = Estimates_Stars[~(np.isinf(Estimates_Stars) | np.isnan(Estimates_Stars))]
     
     if not two_tailed:
-        p_value = sum(Estimates_Stars > point_estimation) / iterations
+        p_value = sum(Estimates_Stars > point_estimation) / iterations_under_null
     else:
         aux1 = (point_estimation < Estimates_Stars).sum()
         aux2 = (point_estimation > Estimates_Stars).sum()
@@ -200,9 +200,9 @@ class Infer_Segregation:
     Parameters
     ----------
 
-    seg_class     : a PySAL segregation object
+    seg_class                    : a PySAL segregation object
     
-    iterations    : number of iterations under null hyphothesis
+    iterations_under_null        : number of iterations under null hyphothesis
     
     null_approach : argument that specifies which type of null hypothesis the inference will iterate.
     
@@ -217,7 +217,7 @@ class Infer_Segregation:
     two_tailed    : boolean
                     If True, p_value is two-tailed. Otherwise, it is right one-tailed.
     
-    **kwargs: customizable parameters to pass to the segregation measures. Usually they need to be the same input that the seg_class was built.
+    **kwargs      : customizable parameters to pass to the segregation measures. Usually they need to be the same input that the seg_class was built.
     
     Attributes
     ----------
@@ -237,9 +237,9 @@ class Infer_Segregation:
     
     '''
 
-    def __init__(self, seg_class, iterations = 500, null_approach = "systematic", two_tailed = True, **kwargs):
+    def __init__(self, seg_class, iterations_under_null = 500, null_approach = "systematic", two_tailed = True, **kwargs):
         
-        aux = _infer_segregation(seg_class, iterations, null_approach, two_tailed, **kwargs)
+        aux = _infer_segregation(seg_class, iterations_under_null, null_approach, two_tailed, **kwargs)
 
         self.p_value      = aux[0]
         self.est_sim      = aux[1]
