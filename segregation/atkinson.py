@@ -12,7 +12,7 @@ __all__ = ['Atkinson']
 
 def _atkinson(data, group_pop_var, total_pop_var, b = 0.5):
     """
-    Calculation of Entropy index
+    Calculation of Atkinson index
 
     Parameters
     ----------
