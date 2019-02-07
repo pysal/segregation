@@ -130,12 +130,12 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations_under_null = 500, 
         # Adding the pseudo columns for FIRST spatial context
         data_1['cumulative_percentage'] = (data_1['rel'].rank() - 1) / len(data_1) # It has to be a minus 1 in the rank, in order to avoid 100% percentile in the max
         data_1['pseudo_rel'] = data_1['cumulative_percentage'].apply(inverse_cdf_2)
-        data_1['pseudo_group_pop_var'] = data_1['pseudo_rel'] * data_1['total_pop_var']
+        data_1['pseudo_group_pop_var'] = round(data_1['pseudo_rel'] * data_1['total_pop_var']).astype(int)
 
         # Adding the pseudo columns for SECOND spatial context
         data_2['cumulative_percentage'] = (data_2['rel'].rank() - 1) / len(data_2) # It has to be a minus 1 in the rank, in order to avoid 100% percentile in the max
         data_2['pseudo_rel'] = data_2['cumulative_percentage'].apply(inverse_cdf_1)
-        data_2['pseudo_group_pop_var'] = data_2['pseudo_rel'] * data_2['total_pop_var']
+        data_2['pseudo_group_pop_var'] = round(data_2['pseudo_rel'] * data_2['total_pop_var']).astype(int)
 
         for i in np.array(range(iterations_under_null)):
 
