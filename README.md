@@ -114,3 +114,4 @@ Funding
 -------
 
 <img src="figs/nsf_logo.jpg" width="50"> Award #1831615 [RIDIR: Scalable Geospatial Analytics for Social Science Research](https://www.nsf.gov/awardsearch/showAward?AWD_ID=1831615)
+<img src="figs/capes_logo.jpg" width="50"> Process #88881.170553/2018-01
