@@ -18,19 +18,19 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations_under_null = 500, 
     Parameters
     ----------
 
-    seg_class_1			    : a PySAL segregation object to be compared to seg_class_2
+    seg_class_1           : a PySAL segregation object to be compared to seg_class_2
     
-    seg_class_2			    : a PySAL segregation object to be compared to seg_class_1
+    seg_class_2           : a PySAL segregation object to be compared to seg_class_1
     
     iterations_under_null : number of iterations under null hyphothesis
     
     null_approach: argument that specifies which type of null hypothesis the inference will iterate.
     
-        "random_data"            : random label the data in each iteration
+        "random_data"       : random label the data in each iteration
         
-        "pseudo_cumulative"      : randomizes the number of minority population according to both cumulative distribution function of a variable that represents the unit percentage of the minority group
-		
-    **kwargs			       : customizable parameters to pass to the segregation measures. Usually they need to be the same as both seg_class_1 and seg_class_2  was built.
+        "pseudo_cumulative" : randomizes the number of minority population according to both cumulative distribution function of a variable that represents the unit percentage of the minority group
+
+    **kwargs : customizable parameters to pass to the segregation measures. Usually they need to be the same as both seg_class_1 and seg_class_2  was built.
     
     Attributes
     ----------
@@ -64,7 +64,7 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations_under_null = 500, 
     
     aux = str(type(seg_class_1))
     _class_name = aux[1 + aux.rfind('.'):-2]  # 'rfind' finds the last occurence of a pattern in a string
-	
+
     data_1 = seg_class_1.core_data
     data_2 = seg_class_2.core_data
     
@@ -78,10 +78,10 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations_under_null = 500, 
     est_sim = np.empty(iterations_under_null)
     
     if (null_approach == "random_data"):
-	
+
         data_1['grouping_variable'] = 'Group_1'
         data_2['grouping_variable'] = 'Group_2'
-		
+
         stacked_data = pd.concat([data_1, data_2], ignore_index=True)
         
         for i in np.array(range(iterations_under_null)):
@@ -190,19 +190,19 @@ class Compare_Segregation:
     Parameters
     ----------
 
-    seg_class_1			    : a PySAL segregation object to be compared to seg_class_2
+    seg_class_1           : a PySAL segregation object to be compared to seg_class_2
     
-    seg_class_2			    : a PySAL segregation object to be compared to seg_class_1
+    seg_class_2           : a PySAL segregation object to be compared to seg_class_1
     
     iterations_under_null : number of iterations under null hyphothesis
     
-    null_approach: argument that specifies which type of null hypothesis the inference will iterate.
+    null_approach : argument that specifies which type of null hypothesis the inference will iterate.
     
-        "random_data"            : random label the data in each iteration
+        "random_data"       : random label the data in each iteration
         
-        "pseudo_cumulative"      : randomizes the number of minority population according to both cumulative distribution function of a variable that represents the unit percentage of the minority group
-		
-    **kwargs			       : customizable parameters to pass to the segregation measures. Usually they need to be the same as both seg_class_1 and seg_class_2  was built.
+        "pseudo_cumulative" : randomizes the number of minority population according to both cumulative distribution function of a variable that represents the unit percentage of the minority group
+
+    **kwargs : customizable parameters to pass to the segregation measures. Usually they need to be the same as both seg_class_1 and seg_class_2  was built.
     
     Attributes
     ----------
