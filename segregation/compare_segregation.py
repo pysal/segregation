@@ -11,7 +11,7 @@ import warnings
 
 __all__ = ['Compare_Segregation']
 
-def _compare_segregation(seg_class_1, seg_class_2, iterations_under_null = 500, null_approach = "random_data", **kwargs):
+def _compare_segregation(seg_class_1, seg_class_2, iterations_under_null = 500, null_approach = "random_label", **kwargs):
     '''
     Perform inference comparison for a two segregation measures
 
@@ -26,9 +26,9 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations_under_null = 500, 
     
     null_approach: argument that specifies which type of null hypothesis the inference will iterate.
     
-        "random_data"       : random label the data in each iteration
+        "random_label"               : random label the data in each iteration
         
-        "pseudo_cumulative" : randomizes the number of minority population according to both cumulative distribution function of a variable that represents the unit percentage of the minority group
+        "counterfactual_composition" : randomizes the number of minority population according to both cumulative distribution function of a variable that represents the composition of the minority group. The composition is the division of the minority population of unit i divided by total population of tract i.
 
     **kwargs : customizable parameters to pass to the segregation measures. Usually they need to be the same as both seg_class_1 and seg_class_2  was built.
     
@@ -54,8 +54,8 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations_under_null = 500, 
 
     '''
     
-    if not null_approach in ['random_data', 'pseudo_cumulative']:
-        raise ValueError('null_approach must one of \'random_data\', \'pseudo_cumulative\'')
+    if not null_approach in ['random_label', 'counterfactual_composition']:
+        raise ValueError('null_approach must one of \'random_label\', \'counterfactual_composition\'')
     
     if(type(seg_class_1) != type(seg_class_2)):
         raise TypeError('seg_class_1 and seg_class_2 must be the same type/class.')
@@ -77,7 +77,7 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations_under_null = 500, 
     
     est_sim = np.empty(iterations_under_null)
     
-    if (null_approach == "random_data"):
+    if (null_approach == "random_label"):
 
         data_1['grouping_variable'] = 'Group_1'
         data_2['grouping_variable'] = 'Group_2'
@@ -103,7 +103,7 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations_under_null = 500, 
             
             est_sim[i] = simulations_1 - simulations_2
     
-    if (null_approach == "pseudo_cumulative"):
+    if (null_approach == "counterfactual_composition"):
 
         data_1['rel'] = np.where(data_1['total_pop_var'] == 0, 0, data_1['group_pop_var'] / data_1['total_pop_var'])
         data_2['rel'] = np.where(data_2['total_pop_var'] == 0, 0, data_2['group_pop_var'] / data_2['total_pop_var'])
@@ -198,9 +198,9 @@ class Compare_Segregation:
     
     null_approach : argument that specifies which type of null hypothesis the inference will iterate.
     
-        "random_data"       : random label the data in each iteration
+        "random_label"      : random label the data in each iteration
         
-        "pseudo_cumulative" : randomizes the number of minority population according to both cumulative distribution function of a variable that represents the unit percentage of the minority group
+        "counterfactual_composition" : randomizes the number of minority population according to both cumulative distribution function of a variable that represents the composition of the minority group. The composition is the division of the minority population of unit i divided by total population of tract i.
 
     **kwargs : customizable parameters to pass to the segregation measures. Usually they need to be the same as both seg_class_1 and seg_class_2  was built.
     
@@ -226,7 +226,7 @@ class Compare_Segregation:
 
     '''
 
-    def __init__(self, seg_class_1, seg_class_2, iterations_under_null = 500, null_approach = "random_data", **kwargs):
+    def __init__(self, seg_class_1, seg_class_2, iterations_under_null = 500, null_approach = "random_label", **kwargs):
         
         aux = _compare_segregation(seg_class_1, seg_class_2, iterations_under_null, null_approach, **kwargs)
 
