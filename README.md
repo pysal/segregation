@@ -7,6 +7,8 @@ Segregation Measures Framework in PySAL
 
 **Methods for estimating and performing inference for spatial and non-spatial segregation.**
 
+![Multiple Segregation Measures in Los Angeles in 2010](figs/la_nhblk_2010_profile_wrapper_example.png)
+
 ![Segregation Measures comparisons inference for Riverside county between 2000 and 2010](figs/riverside2000_versus_riverside2010_random_data.png)
 
 ## What is segregation?
