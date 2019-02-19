@@ -68,6 +68,9 @@ def _infer_segregation(seg_class, iterations_under_null = 500, null_approach = "
     _class_name = aux[1 + aux.rfind('.'):-2] # 'rfind' finds the last occurence of a pattern in a string
 
     
+    ##############
+    # SYSTEMATIC #
+    ##############
     if (null_approach == "systematic"):
     
         data['other_group_pop'] = data['total_pop_var'] - data['group_pop_var']
@@ -94,8 +97,12 @@ def _infer_segregation(seg_class, iterations_under_null = 500, null_approach = "
                 df_aux['geometry'] = data['geometry']
                 
             Estimates_Stars[i] = seg_class._function(df_aux, 'simul_group', 'simul_tot', **kwargs)[0]
+            
+            print('Processed {} iterations out of {}.'.format(i + 1, iterations_under_null), end = "\r")
     
-    
+    ############
+    # EVENNESS #
+    ############
     if (null_approach == "evenness"):
         
         p_null = data['group_pop_var'].sum() / data['total_pop_var'].sum()
@@ -113,8 +120,12 @@ def _infer_segregation(seg_class, iterations_under_null = 500, null_approach = "
                 df_aux['geometry'] = data['geometry']
             
             Estimates_Stars[i] = seg_class._function(df_aux, 'simul_group', 'simul_tot', **kwargs)[0]
+            
+            print('Processed {} iterations out of {}.'.format(i + 1, iterations_under_null), end = "\r")
         
-        
+    ###############
+    # PERMUTATION #
+    ###############
     if (null_approach == "permutation"):
         
         if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
@@ -126,8 +137,12 @@ def _infer_segregation(seg_class, iterations_under_null = 500, null_approach = "
             data = data.assign(geometry = data['geometry'][list(np.random.choice(data.shape[0], data.shape[0], replace = False))].reset_index()['geometry'])
             df_aux = data
             Estimates_Stars[i] = seg_class._function(df_aux, 'group_pop_var', 'total_pop_var', **kwargs)[0]
+            
+            print('Processed {} iterations out of {}.'.format(i + 1, iterations_under_null), end = "\r")
 
-    
+    ##########################
+    # SYSTEMATIC PERMUTATION #
+    ##########################
     if (null_approach == "systematic_permutation"):
         
         if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
@@ -155,8 +170,12 @@ def _infer_segregation(seg_class, iterations_under_null = 500, null_approach = "
             df_aux['geometry'] = data['geometry']
             df_aux = df_aux.assign(geometry = df_aux['geometry'][list(np.random.choice(df_aux.shape[0], df_aux.shape[0], replace = False))].reset_index()['geometry'])
             Estimates_Stars[i] = seg_class._function(df_aux, 'simul_group', 'simul_tot', **kwargs)[0]  
+            
+            print('Processed {} iterations out of {}.'.format(i + 1, iterations_under_null), end = "\r")
     
-    
+    ########################
+    # EVENNESS PERMUTATION #
+    ########################
     if (null_approach == "even_permutation"):
         
         if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
@@ -175,6 +194,8 @@ def _infer_segregation(seg_class, iterations_under_null = 500, null_approach = "
             df_aux['geometry'] = data['geometry']
             df_aux = df_aux.assign(geometry = df_aux['geometry'][list(np.random.choice(df_aux.shape[0], df_aux.shape[0], replace = False))].reset_index()['geometry'])
             Estimates_Stars[i] = seg_class._function(df_aux, 'simul_group', 'simul_tot', **kwargs)[0]
+            
+            print('Processed {} iterations out of {}.'.format(i + 1, iterations_under_null), end = "\r")
 
     
     # Check and, if the case, remove iterations_under_null that resulted in nan or infinite values
