@@ -5,7 +5,7 @@ Segregation Measures Framework in PySAL
 
 [![Build Status](https://travis-ci.org/pysal/inequality.svg?branch=master)](https://travis-ci.org/pysal/inequality)
 
-##Methods for estimating and performing inference for spatial and non-spatial segregation.
+## Methods for estimating and performing inference for spatial and non-spatial segregation.
 
 **Easily estimate several segregation measures:**
 
