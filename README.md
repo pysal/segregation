@@ -5,14 +5,15 @@ Segregation Measures Framework in PySAL
 
 [![Build Status](https://travis-ci.org/pysal/inequality.svg?branch=master)](https://travis-ci.org/pysal/inequality)
 
-**Methods for estimating and performing inference for spatial and non-spatial segregation.**
+##Methods for estimating and performing inference for spatial and non-spatial segregation.
 
-Easily estimate several segregation measure:
+**Easily estimate several segregation measures:**
 
 ![Multiple Segregation Measures in Los Angeles in 2010](figs/la_nhblk_2010_profile_wrapper_example.png)
 
 
-Perform comparative segregation:
+**Perform comparative segregation:**
+
 ![Los Angeles and New York Comparison Illustration](figs/la_vs_ny_comparison_illustration.png)
 
 ![Los Angeles and New York Comparison Results](figs/la_vs_ny_comparison_results.png)
