@@ -29,13 +29,21 @@ It can be divided into two frameworks: point estimation and inference.  The firs
 Installation
 ------------
 
-The recommended method for installing segregation is with [anaconda](https://www.anaconda.com/download/). To get started with the development version, clone this repository or download it manually then `cd` into the directory and run the following commands:
+The recommended method for installing segregation is with [anaconda](https://www.anaconda.com/download/). Either of the the two methods listed below can be used to get started with the development version.
+
+1. Clone this repository or download it manually then `cd` into the directory and run the following commands:
 
 ```
-conda env create -f environment.yml
-source activate segregation
-python setup.py develop
+$ conda env create -f environment.yml
+$ source activate segregation
+$ python setup.py develop
 ```
+
+2. `pip` directly from this repository:
+```
+$ pip install git+https://github.com/pysal/segregation
+```
+
 
 #### Segregation uses:
 
@@ -53,8 +61,8 @@ All input data for this module rely on [pandas](https://github.com/pandas-dev/pa
 So, for example, if a user would want to fit a dissimilarity index (D) to a DataFrame called <tt>df</tt> to a specific group with frequency <tt>freq</tt> with each total population <tt>population</tt>, a usual call would be something like this:
 
 ```
-from segregation.dissimilarity import Dissim
-index = Dissim(df, "freq", "population")
+>>> from segregation.dissimilarity import Dissim
+>>> index = Dissim(df, "freq", "population")
 ```
 
 Every class of **segregation** has a <tt>statistic</tt> and a <tt>core\_data</tt> attributes. The first is a direct access to the point estimation of the specific segregation measure and the second attribute gives access to the main data that the module uses internally to perform the estimates. To see the estimated D in the generic example above, the user would have just to run <tt>index.statistic</tt> to see the fitted value.
