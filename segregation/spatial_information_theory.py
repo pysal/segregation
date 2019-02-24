@@ -111,11 +111,11 @@ def _spatial_information_theory(data, group_pop_var, total_pop_var, w = None, un
     
     E_tilde_p = -1 * (pi_tilde_p_1 * np.log(pi_tilde_p_1) / np.log(2) + pi_tilde_p_2 * np.log(pi_tilde_p_2) / np.log(2))
     
-    H_Tilde = 1 - 1 / (T * E) * (tau_p * E_tilde_p).sum()
+    SIT = 1 - 1 / (T * E) * (tau_p * E_tilde_p).sum() # This is the H_Tilde according to Reardon, Sean F., and David O’Sullivan. "Measures of spatial segregation." Sociological methodology 34.1 (2004): 121-162.
     
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
     
-    return H_Tilde, core_data
+    return SIT, core_data
 
 
 class Spatial_Information_Theory:
