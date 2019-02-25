@@ -109,7 +109,7 @@ Once the segregation indexes are fitted, the user can perform inference to shed 
 | Two Value          | Compare\_Segregation | seg\_class\_1, seg\_class\_2, iterations\_under\_null, null\_approach | p\_value, est\_sim, est\_point\_diff |
 
 
-If you are new to segregation and PySAL you will best get started with our documentation! We encourage you to take a look at some examples of the *segregation* PySAL module in the <tt>notebooks</tt> repo!
+If you are new to segregation and PySAL you will best get started with our documentation! We encourage you to take a look at some examples of this module in the <tt>notebooks</tt> repo!
 
 
 Contribute
