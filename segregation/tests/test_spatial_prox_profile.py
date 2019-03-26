@@ -11,7 +11,7 @@ class Spatial_Prox_Prof_Tester(unittest.TestCase):
         s_map = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
         df = s_map[['geometry', 'HISP_', 'TOT_POP']]
         index = Spatial_Prox_Prof(df, 'HISP_', 'TOT_POP')
-        np.testing.assert_almost_equal(index.statistic, 0.20876837685147084)
+        np.testing.assert_almost_equal(index.statistic, 0.22847334404621394)
 
 if __name__ == '__main__':
     unittest.main()

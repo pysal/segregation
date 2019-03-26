@@ -7,7 +7,7 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr
 import numpy as np
 import pandas as pd
 import warnings
-from libpysal.weights import Queen
+from libpysal.weights import Queen, shimbel
 from numpy import inf
 from sklearn.metrics.pairwise import manhattan_distances
 
@@ -73,14 +73,16 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, m = 1000):
     
     if any(data.total_pop_var < data.group_pop_var):    
         raise ValueError('Group of interest population must equal or lower than the total population of the units.')
-        
-    wij = Queen.from_dataframe(data).full()[0]
-    delta = manhattan_distances(wij)
+
+    # Create the shortest distance path between two pair of units using Shimbel matrix. This step was discussed in https://github.com/pysal/segregation/issues/5.    
+    shimbel_w = shimbel(Queen.from_dataframe(data))
+    delta = np.array(list(shimbel_w.values()))
+    np.fill_diagonal(delta, 0)
     
     def calculate_etat(t):
         g_t_i = np.where(data.group_pop_var / data.total_pop_var >= t, True, False)
         k = g_t_i.sum()
-        sub_delta_ij = delta[g_t_i,:][:,g_t_i]
+        sub_delta_ij = delta[g_t_i,:][:,g_t_i] # i and j only varies in the units subset within the threshold in eta_t of Hong (2014).
         den = sub_delta_ij.sum()
         eta_t = (k**2 - k) / den
         return eta_t
@@ -158,7 +160,7 @@ class Spatial_Prox_Prof:
     
     >>> spat_prox_index = Spatial_Prox_Prof(gdf, 'nhblk10', 'pop10')
     >>> spat_prox_index.statistic
-    0.09112912525931849
+    0.11217269612149207
     
     You can plot the profile curve with the plot method.
     
