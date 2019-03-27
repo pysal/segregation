@@ -76,6 +76,7 @@ def decompose_index(index1, index2,
     Given two segregation indices of the same type, use Shapley decomposition
     to measure whether the differences between index measures arise from
     differences in spatial structure or population structure
+
     Parameters
     ----------
     index1 : segregation.SegIndex class

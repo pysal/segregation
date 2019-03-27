@@ -2,18 +2,17 @@ import matplotlib.pyplot as plt
 
 
 def plot_cdf(group_share1, group_share2, label1='', label2=''):
-    """Plot CDF for two series
+    """Plot CDF for two series.
+
     Convenience function for comparing inequality between two series by
     plotting their CDFs on the same graph
 
     Parameters
     ----------
     group_share1 : pd.Series
-        pandas series with variable of interest. This is typically a population
-        share such as percent native american
+        pandas series with variable of interest.
     group_share2 : pd.Series
-        pandas series with variable of interest. This is typically a population
-        share such as percent native american
+        pandas series with variable of interest.
 
     Returns
     -------
