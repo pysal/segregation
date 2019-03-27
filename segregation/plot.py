@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
-
+import numpy as np
+from scipy.interpolate import interp1d
 
 def plot_cdf(group_share1, group_share2, label1='', label2=''):
     """Plot CDF for two series.
@@ -27,3 +28,15 @@ def plot_cdf(group_share1, group_share2, label1='', label2=''):
     plt.show()
     fig = plt.gcf()
     return fig
+
+
+def lorenz(X):
+
+    fig, ax = plt.subplots(figsize=[6,6])
+
+    X = X.sort_values()
+    X_lorenz = X.cumsum() / X.sum()
+    ax.scatter(np.arange(X_lorenz.size)/(X_lorenz.size-1), X_lorenz,
+               marker='x', color='navy', s=10)
+    ax.plot([0,1], [0,1], color='k', linewidth=1)
+    return ax
