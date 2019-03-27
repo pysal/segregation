@@ -1,10 +1,10 @@
 import matplotlib.pyplot as plt
 
 
-def lorenz(group_share1, group_share2, label1='', label2=''):
-    """Plot Lorenz curves for two series
+def plot_cdf(group_share1, group_share2, label1='', label2=''):
+    """Plot CDF for two series
     Convenience function for comparing inequality between two series by
-    plotting their lorenz curves on the same graph
+    plotting their CDFs on the same graph
 
     Parameters
     ----------
