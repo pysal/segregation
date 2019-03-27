@@ -66,9 +66,6 @@ def generate_counterfactual(df1, df2, group_share, total_population,
         # TODO:
         raise NotImplementedError
 
-    df1.reset_index(inplace=True, drop=True)
-    df2.reset_index(inplace=True, drop=True)
-
     return df1, df2
 
 
