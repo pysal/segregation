@@ -22,7 +22,7 @@ def generate_counterfactual(df1, df2, group_share, total_population,
     total_population : str
         The variable (present on both dataframes) representing the total
         population of the area
-    approach : str
+    approach : str, ["unit_composition", "city_composition", "dual_composition"]
         Which approach to use for generating the counterfactual.
         Options include "unit_composition", "city_composition", or
         "dual_composition"
@@ -76,18 +76,22 @@ def decompose_index(index1, index2,
     Given two segregation indices of the same type, use Shapley decomposition
     to measure whether the differences between index measures arise from
     differences in spatial structure or population structure
-
     Parameters
     ----------
-    index1 : type
-        Description of parameter `index`.
-    index2 : type
-        Description of parameter `city1_df`.
+    index1 : segregation.SegIndex class
+        First SegIndex class to compare.
+    index2 : segregation.SegIndex class
+        Second SegIndex class to compare.
+    counterfactual_approach : str, one of
+                              ["unit_composition", "city_composition",
+                              "dual_composition"]
+        The technique used to generate the counterfactual population
+        distribution.
 
     Returns
     -------
-    type
-        Description of returned object.
+    tuple
+        (shapley spatial component, shapley attribute component)
 
     """
     df1 = index1.core_data.copy()
@@ -102,8 +106,6 @@ def decompose_index(index1, index2,
                                         approach=counterfactual_approach)
     df1.drop(columns=['group_pop_var'], inplace=True)
     df2.drop(columns=['group_pop_var'], inplace=True)
-
-
 
     seg_func = index1._function
 
