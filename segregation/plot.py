@@ -9,9 +9,11 @@ def lorenz(group_share1, group_share2, label1='', label2=''):
     Parameters
     ----------
     group_share1 : pd.Series
-        pandas series with 
+        pandas series with variable of interest. This is typically a population
+        share such as percent native american
     group_share2 : pd.Series
-        Description of parameter `group_share2`.
+        pandas series with variable of interest. This is typically a population
+        share such as percent native american
 
     Returns
     -------
