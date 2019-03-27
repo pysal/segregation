@@ -122,10 +122,10 @@ def decompose_index(index1, index2,
     # index for spatial 2 attribute 1 (counterfactual population for structure 2)
     G_S2_A1 = seg_func(df2, 'counterfactual_total', 'total_pop_var')[0]
 
-    # take the difference in spatial structure, holding attributes constant
+    # take the average difference in spatial structure, holding attributes constant
     C_S = 1 / 2 * (G_S1_A1 - G_S2_A1 + G_S1_A2 - G_S2_A2)
 
-    # take the difference in attributes, holding spatial structure constant
+    # take the average difference in attributes, holding spatial structure constant
     C_A = 1 / 2 * (G_S1_A1 - G_S1_A2 + G_S2_A1 - G_S2_A2)
 
     return C_S, C_A
