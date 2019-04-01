@@ -2,7 +2,7 @@
 Delta based Segregation Metrics
 """
 
-__author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr.edu>"
+__author__ = "Renan X. Cortess <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr.edu>"
 
 import numpy as np
 import pandas as pd
