@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from segregation.density_corrected_dissimilarity import Density_Corrected_Dissim
+from segregation.non_spatial_indexes import Density_Corrected_Dissim
 
 
 class Density_Corrected_Dissim_Tester(unittest.TestCase):

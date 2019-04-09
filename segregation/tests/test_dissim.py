@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from segregation.dissimilarity import Dissim
+from segregation.non_spatial_indexes import Dissim
 
 
 class Dissim_Tester(unittest.TestCase):

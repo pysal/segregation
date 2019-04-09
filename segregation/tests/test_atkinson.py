@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from segregation.atkinson import Atkinson
+from segregation.non_spatial_indexes import Atkinson
 
 
 class Atkinson_Tester(unittest.TestCase):

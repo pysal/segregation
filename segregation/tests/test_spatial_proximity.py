@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from segregation.spatial_proximity import Spatial_Proximity
+from segregation.spatial_indexes import Spatial_Proximity
 
 
 class Spatial_Proximity_Tester(unittest.TestCase):

@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from segregation.relative_concentration import Relative_Concentration
+from segregation.spatial_indexes import Relative_Concentration
 
 
 class Relative_Concentration_Tester(unittest.TestCase):

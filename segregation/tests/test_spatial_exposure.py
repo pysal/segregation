@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from segregation.spatial_exposure import Spatial_Exposure
+from segregation.spatial_indexes import Spatial_Exposure
 
 
 class Spatial_Exposure_Tester(unittest.TestCase):

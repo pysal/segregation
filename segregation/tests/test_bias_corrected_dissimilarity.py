@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from segregation.bias_corrected_dissimilarity import Bias_Corrected_Dissim
+from segregation.non_spatial_indexes import Bias_Corrected_Dissim
 
 
 class Bias_Corrected_Dissim_Tester(unittest.TestCase):

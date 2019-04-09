@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from segregation.isolation import Isolation
+from segregation.non_spatial_indexes import Isolation
 
 
 class Isolation_Tester(unittest.TestCase):

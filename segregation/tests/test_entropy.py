@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from segregation.entropy import Entropy
+from segregation.non_spatial_indexes import Entropy
 
 
 class Entropy_Tester(unittest.TestCase):

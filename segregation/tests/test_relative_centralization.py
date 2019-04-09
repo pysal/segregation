@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from segregation.relative_centralization import Relative_Centralization
+from segregation.spatial_indexes import Relative_Centralization
 
 
 class Relative_Centralization_Tester(unittest.TestCase):

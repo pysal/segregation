@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from segregation.spatial_information_theory import Spatial_Information_Theory
+from segregation.spatial_indexes import Spatial_Information_Theory
 
 
 class Spatial_Information_Theory_Tester(unittest.TestCase):

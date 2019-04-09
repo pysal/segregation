@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from segregation.relative_clustering import Relative_Clustering
+from segregation.spatial_indexes import Relative_Clustering
 
 
 class Relative_Clustering_Tester(unittest.TestCase):
