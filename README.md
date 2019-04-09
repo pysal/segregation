@@ -61,7 +61,7 @@ All input data for this module rely on [pandas](https://github.com/pandas-dev/pa
 So, for example, if a user would want to fit a dissimilarity index (D) to a DataFrame called <tt>df</tt> to a specific group with frequency <tt>freq</tt> with each total population <tt>population</tt>, a usual call would be something like this:
 
 ```
->>> from segregation.dissimilarity import Dissim
+>>> from segregation.non_spatial_indexes import Dissim
 >>> index = Dissim(df, "freq", "population")
 ```
 
