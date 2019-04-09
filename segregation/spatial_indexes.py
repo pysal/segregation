@@ -10,10 +10,13 @@ import warnings
 import libpysal
 import math
 
-from libpysal.weights import Queen, shimbel
+from libpysal.weights import Queen
 from numpy import inf
 from sklearn.metrics.pairwise import manhattan_distances, euclidean_distances
 from scipy.ndimage.interpolation import shift
+
+from scipy.sparse.csgraph import floyd_warshall
+from scipy.sparse import csr_matrix
 
 from segregation.util import _return_length_weighted_w
 from segregation.non_spatial_indexes import _dissim
@@ -95,10 +98,10 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, m = 1000):
     if any(data.total_pop_var < data.group_pop_var):    
         raise ValueError('Group of interest population must equal or lower than the total population of the units.')
 
-    # Create the shortest distance path between two pair of units using Shimbel matrix. This step was discussed in https://github.com/pysal/segregation/issues/5.    
-    shimbel_w = shimbel(Queen.from_dataframe(data))
-    delta = np.array(list(shimbel_w.values()))
-    np.fill_diagonal(delta, 0)
+    # Create the shortest distance path between two pair of units using Shimbel matrix. This step was well discussed in https://github.com/pysal/segregation/issues/5.    
+    w_libpysal = Queen.from_dataframe(data)
+    graph = csr_matrix(w_libpysal.full()[0])
+    delta = floyd_warshall(csgraph = graph, directed = False)
     
     def calculate_etat(t):
         g_t_i = np.where(data.group_pop_var / data.total_pop_var >= t, True, False)
