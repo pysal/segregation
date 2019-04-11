@@ -1,0 +1,22 @@
+segregation.spatial\_indexes.Absolute\_Centralization
+=====================================================
+
+.. currentmodule:: segregation.spatial_indexes
+
+.. autoclass:: Absolute_Centralization
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Absolute_Centralization.__init__
+   
+   
+
+   
+   
+   
