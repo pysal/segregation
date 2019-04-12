@@ -42,3 +42,20 @@ Spatial Indices
       spatial_indexes.Absolute_Centralization
       spatial_indexes.Relative_Centralization
       spatial_indexes.Spatial_Information_Theory
+	  
+Profile Wrappers
+---------------------
+.. autosummary::
+   :toctree: generated/
+   
+      profile_wrappers.Profile_Non_Spatial_Segregation
+	  profile_wrappers.Profile_Spatial_Segregation
+	  profile_wrappers.Profile_Segregation
+	  
+Inference Wrappers
+---------------------
+.. autosummary::
+   :toctree: generated/
+   
+      inference_wrappers.Infer_Segregation
+	  inference_wrappers.Compare_Segregation
