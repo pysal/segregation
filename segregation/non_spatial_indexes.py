@@ -151,6 +151,7 @@ class Dissim:
 def _gini_seg(data, group_pop_var, total_pop_var):
     """
     Calculation of Gini Segregation index
+    
     Parameters
     ----------
     data          : a pandas DataFrame
@@ -203,6 +204,7 @@ def _gini_seg(data, group_pop_var, total_pop_var):
 class Gini_Seg:
     """
     Classic Gini Segregation Index
+    
     Parameters
     ----------
     data          : a pandas DataFrame
