@@ -1,0 +1,22 @@
+segregation.spatial\_indexes.Spatial\_Isolation
+===============================================
+
+.. currentmodule:: segregation.spatial_indexes
+
+.. autoclass:: Spatial_Isolation
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Spatial_Isolation.__init__
+   
+   
+
+   
+   
+   
