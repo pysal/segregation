@@ -160,9 +160,9 @@ class Spatial_Prox_Prof:
     
     Firstly, we need to read the data:
     
-    >>> This example uses all census data that the user must provide your own copy of the external database.
-    >>> A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
-    >>> After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
+    >>> # This example uses all census data that the user must provide your own copy of the external database.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+    >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
@@ -347,9 +347,9 @@ class Spatial_Dissim:
     
     Firstly, we need to read the data:
     
-    >>> This example uses all census data that the user must provide your own copy of the external database.
-    >>> A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
-    >>> After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
+    >>> # This example uses all census data that the user must provide your own copy of the external database.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+    >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
@@ -521,9 +521,9 @@ class Boundary_Spatial_Dissim:
     
     Firstly, we need to read the data:
     
-    >>> This example uses all census data that the user must provide your own copy of the external database.
-    >>> A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
-    >>> After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
+    >>> # This example uses all census data that the user must provide your own copy of the external database.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+    >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
@@ -679,9 +679,9 @@ class Perimeter_Area_Ratio_Spatial_Dissim:
     
     Firstly, we need to read the data:
     
-    >>> This example uses all census data that the user must provide your own copy of the external database.
-    >>> A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
-    >>> After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
+    >>> # This example uses all census data that the user must provide your own copy of the external database.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+    >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
@@ -845,9 +845,9 @@ class Spatial_Isolation:
     
     Firstly, we need to read the data:
     
-    >>> This example uses all census data that the user must provide your own copy of the external database.
-    >>> A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
-    >>> After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
+    >>> # This example uses all census data that the user must provide your own copy of the external database.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+    >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
@@ -1017,9 +1017,9 @@ class Spatial_Exposure:
     
     Firstly, we need to read the data:
     
-    >>> This example uses all census data that the user must provide your own copy of the external database.
-    >>> A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
-    >>> After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
+    >>> # This example uses all census data that the user must provide your own copy of the external database.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+    >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
@@ -1182,9 +1182,9 @@ class Spatial_Proximity:
     
     Firstly, we need to read the data:
     
-    >>> This example uses all census data that the user must provide your own copy of the external database.
-    >>> A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
-    >>> After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
+    >>> # This example uses all census data that the user must provide your own copy of the external database.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+    >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
@@ -1341,9 +1341,9 @@ class Relative_Clustering:
     
     Firstly, we need to read the data:
     
-    >>> This example uses all census data that the user must provide your own copy of the external database.
-    >>> A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
-    >>> After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
+    >>> # This example uses all census data that the user must provide your own copy of the external database.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+    >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
@@ -1481,9 +1481,9 @@ class Delta:
     
     Firstly, we need to read the data:
     
-    >>> This example uses all census data that the user must provide your own copy of the external database.
-    >>> A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
-    >>> After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
+    >>> # This example uses all census data that the user must provide your own copy of the external database.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+    >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
@@ -1631,9 +1631,9 @@ class Absolute_Concentration:
     
     Firstly, we need to read the data:
     
-    >>> This example uses all census data that the user must provide your own copy of the external database.
-    >>> A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
-    >>> After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
+    >>> # This example uses all census data that the user must provide your own copy of the external database.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+    >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
@@ -1784,9 +1784,9 @@ class Relative_Concentration:
     
     Firstly, we need to read the data:
     
-    >>> This example uses all census data that the user must provide your own copy of the external database.
-    >>> A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
-    >>> After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
+    >>> # This example uses all census data that the user must provide your own copy of the external database.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+    >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
@@ -1942,9 +1942,9 @@ class Absolute_Centralization:
     
     Firstly, we need to read the data:
     
-    >>> This example uses all census data that the user must provide your own copy of the external database.
-    >>> A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
-    >>> After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
+    >>> # This example uses all census data that the user must provide your own copy of the external database.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+    >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
@@ -2097,9 +2097,9 @@ class Relative_Centralization:
     
     Firstly, we need to read the data:
     
-    >>> This example uses all census data that the user must provide your own copy of the external database.
-    >>> A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
-    >>> After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
+    >>> # This example uses all census data that the user must provide your own copy of the external database.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+    >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
@@ -2288,9 +2288,9 @@ class Spatial_Information_Theory:
     
     Firstly, we need to read the data:
     
-    >>> This example uses all census data that the user must provide your own copy of the external database.
-    >>> A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
-    >>> After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
+    >>> # This example uses all census data that the user must provide your own copy of the external database.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+    >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
