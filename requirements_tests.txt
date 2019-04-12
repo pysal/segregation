@@ -1,0 +1,9 @@
+nose
+nose-progressive
+nose-exclude
+coverage
+coveralls
+matplotlib
+pandas
+ipywidgets
+splot
