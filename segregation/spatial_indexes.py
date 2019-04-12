@@ -1067,6 +1067,7 @@ class Spatial_Exposure:
 def _spatial_proximity(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0.5):
     """
     Calculation of Spatial Proximity index
+    
     Parameters
     ----------
     data          : a geopandas DataFrame with a geometry column.
@@ -1150,6 +1151,7 @@ def _spatial_proximity(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0
 class Spatial_Proximity:
     """
     Calculation of Spatial Proximity index
+    
     Parameters
     ----------
     data          : a geopandas DataFrame with a geometry column.
@@ -1228,6 +1230,7 @@ class Spatial_Proximity:
 def _relative_clustering(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0.5):
     """
     Calculation of Relative Clustering index
+    
     Parameters
     ----------
     data          : a geopandas DataFrame with a geometry column.
@@ -1307,6 +1310,7 @@ def _relative_clustering(data, group_pop_var, total_pop_var, alpha = 0.6, beta =
 class Relative_Clustering:
     """
     Calculation of Relative Clustering index
+    
     Parameters
     ----------
     data          : a geopandas DataFrame with a geometry column.
