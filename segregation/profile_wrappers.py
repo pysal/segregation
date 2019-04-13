@@ -152,6 +152,35 @@ def _profile_spatial_segregation(data, group_pop_var, total_pop_var):
 
     profile     : dict
                   A dictionary containing the name of the measure and the point estimation.
+                  
+    Examples
+    --------
+    The Profile Wrappers comprises simple and quick functions to assess multiple segregation measures at once in a dataset. It uses all the default parameters and returns an object that has an attribute (.profile) of a dictionary with summary of all values fitted.
+
+    Firstly, we need to import the libraries and functions to be used.
+    
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> import libpysal
+    >>> from segregation.profile_wrappers import Profile_Spatial_Segregation
+    
+    Then it's time to load some data to estimate segregation. We use the data of 2000 Census Tract Data for the metropolitan area of Sacramento, CA, USA.
+
+    We use a geopandas dataframe available in PySAL examples repository.
+
+    For more information about the data: https://github.com/pysal/libpysal/tree/master/libpysal/examples/sacramento2
+    
+    >>> s_map = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
+    
+    The data have several demographic variables. We are going to assess the segregation of the Hispanic Population (variable 'HISP_'). For this, we only extract some columns of the geopandas dataframe.
+    
+    >>> gdf = s_map[['geometry', 'HISP_', 'TOT_POP']]
+    
+    Now the profile is fitted.
+    
+    >>> spatial_fit = Profile_Spatial_Segregation(gdf, 'HISP_', 'TOT_POP')
+    >>> spatial_fit.profile
+                  
     
     '''
     
