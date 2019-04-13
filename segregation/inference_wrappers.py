@@ -257,6 +257,10 @@ class Infer_Segregation:
     -----
     The one-tailed p_value attribute might not be appropriate for some measures, as the two-tailed. Therefore, it is better to rely on the est_sim attribute.
     
+    Examples
+    -----
+    Several examples can be found here https://github.com/pysal/segregation/blob/master/notebooks/inference_wrappers_example.ipynb.
+    
     '''
 
     def __init__(self, seg_class, iterations_under_null = 500, null_approach = "systematic", two_tailed = True, **kwargs):
@@ -658,6 +662,10 @@ class Compare_Segregation:
     The null hypothesis is H0: Segregation_1 is not different than Segregation_2.
     
     Based on Rey, Sergio J., and Myrna L. Sastré-Gutiérrez. "Interregional inequality dynamics in Mexico." Spatial Economic Analysis 5.3 (2010): 277-298.
+    
+    Examples
+    -----
+    Several examples can be found here https://github.com/pysal/segregation/blob/master/notebooks/inference_wrappers_example.ipynb.
 
     '''
 
