@@ -11,7 +11,7 @@ with open('README.md', 'r', encoding='utf8') as file:
 
 MAJOR = 1
 MINOR = 0
-MICRO = 1
+MICRO = 3
 ISRELEASED = False
 VERSION = '%d.%d.%d' % (MAJOR, MINOR, MICRO)
 
@@ -47,6 +47,7 @@ def setup_package():
         version = VERSION,
         description = "Methods for estimating and performing inference for spatial and non-spatial segregation in PySAL.",
         long_description = long_description,
+		long_description_content_type = "text/markdown",
         maintainer = "Renan Xavier Cortes",
         maintainer_email = 'renanc@ucr.edu',
         # url='http://osnap.org',
