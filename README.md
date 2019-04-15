@@ -27,9 +27,13 @@ It can be divided into two frameworks: point estimation and inference wrappers. 
 Installation
 ------------
 
-The recommended method for installing segregation is with [anaconda](https://www.anaconda.com/download/). Either of the the two methods listed below can be used to get started with the development version.
+1. `pip` directly running in the prompt:
+```
+pip install segregation
+```
 
-1. Clone this repository or download it manually then `cd` into the directory and run the following commands:
+
+2. Another recommended method for installing segregation is with [anaconda](https://www.anaconda.com/download/). Clone this repository or download it manually then `cd` into the directory and run the following commands (this will install the development version):
 
 ```
 $ conda env create -f environment.yml
@@ -37,7 +41,7 @@ $ source activate segregation
 $ python setup.py develop
 ```
 
-2. `pip` directly from this repository:
+3. `pip` directly from this repository running in the prompt:
 ```
 $ pip install git+https://github.com/pysal/segregation
 ```
