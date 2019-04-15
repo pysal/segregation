@@ -1,4 +1,4 @@
-__version__ = "1.0.3"
+__version__ = "1.0.4"
 
 """
 :mod:`segregation` --- Spatial/Non-Spatial Segregation Analysis
