@@ -41,7 +41,7 @@ $ source activate segregation
 $ python setup.py develop
 ```
 
-iii) `pip` directly from this repository running in the prompt:
+iii) `pip` directly from this repository running in the prompt (if you experience an issue trying to install this way, take a look at this discussion: https://github.com/pysal/segregation/issues/15):
 
 ```
 $ pip install git+https://github.com/pysal/segregation
