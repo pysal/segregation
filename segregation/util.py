@@ -99,7 +99,7 @@ def _generate_counterfactual(data1, data2, group_pop_var, total_pop_var, counter
     Returns
     -------
     two DataFrames
-        df1 and df2  with appended columns 'counterfactual_group_pop' and 'counterfactual_total_pop'
+        df1 and df2  with appended columns 'counterfactual_group_pop', 'counterfactual_total_pop', 'group_composition' and 'counterfactual_composition'
 
     """
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
