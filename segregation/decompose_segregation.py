@@ -109,6 +109,10 @@ class Decompose_Segregation:
         'cdfs' : visualize the cumulative distribution functions of the compositions/shares
         'maps' : visualize the spatial distributions for original data and counterfactuals generated and Shapley's components (only available for GeoDataFrames)
 
+    Examples
+    --------
+    Several examples can be found at https://github.com/pysal/segregation/blob/master/notebooks/decomposition_wrapper_example.ipynb.
+    
     """
 
     def __init__(self, index1, index2, counterfactual_approach = 'composition'):
