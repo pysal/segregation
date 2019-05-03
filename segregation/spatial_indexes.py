@@ -2063,8 +2063,6 @@ def _relative_centralization(data, group_pop_var, total_pop_var):
 
     return RCE, core_data
 
-    return RCE, core_data
-
 
 class Relative_Centralization:
     """
