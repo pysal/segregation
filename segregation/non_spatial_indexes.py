@@ -78,7 +78,11 @@ def _dissim(data, group_pop_var, total_pop_var):
     
     D = (((t * abs(pi - P)))/ (2 * T * P * (1 - P))).sum()
     
-    core_data = data[['group_pop_var', 'total_pop_var']]
+    if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        core_data = data[['group_pop_var', 'total_pop_var']]
+    
+    else:    
+        core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
     
     return D, core_data
 
@@ -115,7 +119,7 @@ class Dissim:
     Firstly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
-    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
@@ -196,7 +200,11 @@ def _gini_seg(data, group_pop_var, total_pop_var):
     den = (2 * T**2 * P * (1-P))
     G = num / den
     
-    core_data = data[['group_pop_var', 'total_pop_var']]
+    if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        core_data = data[['group_pop_var', 'total_pop_var']]
+    
+    else:    
+        core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
     
     return G, core_data
 
@@ -230,7 +238,7 @@ class Gini_Seg:
     Firstly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
-    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
@@ -314,7 +322,11 @@ def _entropy(data, group_pop_var, total_pop_var):
     Ei = pi * np.log(1 / pi) + (1 - pi) * np.log(1 / (1 - pi))
     H = np.nansum(t * (E - Ei) / (E * T)) # If some pi is zero, numpy will treat as zero
     
-    core_data = data[['group_pop_var', 'total_pop_var']]
+    if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        core_data = data[['group_pop_var', 'total_pop_var']]
+    
+    else:    
+        core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
     
     return H, core_data
 
@@ -351,7 +363,7 @@ class Entropy:
     Firstly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
-    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
@@ -432,7 +444,11 @@ def _isolation(data, group_pop_var, total_pop_var):
     X = x.sum()
     xPx = np.nansum((x / X) * (x / t))
     
-    core_data = data[['group_pop_var', 'total_pop_var']]
+    if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        core_data = data[['group_pop_var', 'total_pop_var']]
+    
+    else:    
+        core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
     
     return xPx, core_data
 
@@ -469,7 +485,7 @@ class Isolation:
     Firstly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
-    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
@@ -555,7 +571,11 @@ def _exposure(data, group_pop_var, total_pop_var):
     X = x.sum()
     xPy = np.nansum((x / X) * (yi / t))
     
-    core_data = data[['group_pop_var', 'total_pop_var']]
+    if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        core_data = data[['group_pop_var', 'total_pop_var']]
+    
+    else:    
+        core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
     
     return xPy, core_data
 
@@ -592,7 +612,7 @@ class Exposure:
     Firstly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
-    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
@@ -689,7 +709,11 @@ def _atkinson(data, group_pop_var, total_pop_var, b = 0.5):
     
     A = 1 - (P / (1-P)) * abs((((1 - pi) ** (1-b) * pi ** b * t) / (P * T)).sum()) ** (1 / (1 - b))
     
-    core_data = data[['group_pop_var', 'total_pop_var']]
+    if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        core_data = data[['group_pop_var', 'total_pop_var']]
+    
+    else:    
+        core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
     
     return A, core_data
 
@@ -729,7 +753,7 @@ class Atkinson:
     Firstly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
-    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
@@ -813,7 +837,11 @@ def _correlationr(data, group_pop_var, total_pop_var):
 
     V = (xPx - P) / (1 - P)
     
-    core_data = data[['group_pop_var', 'total_pop_var']]
+    if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        core_data = data[['group_pop_var', 'total_pop_var']]
+    
+    else:    
+        core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
     
     return V, core_data
 
@@ -850,7 +878,7 @@ class Correlation_R:
     Firstly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
-    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
@@ -946,7 +974,11 @@ def _conprof(data, group_pop_var, total_pop_var, m = 1000):
     threshold = x.sum() / t.sum()
     R = ((threshold - ((curve[grid < threshold]).sum() / m - (curve[grid >= threshold]).sum()/ m)) / (1 - threshold))
     
-    core_data = data[['group_pop_var', 'total_pop_var']]
+    if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        core_data = data[['group_pop_var', 'total_pop_var']]
+    
+    else:    
+        core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
     
     return R, grid, curve, core_data
 
@@ -987,7 +1019,7 @@ class Con_Prof:
     Firstly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
-    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
@@ -1080,7 +1112,11 @@ def _modified_dissim(data, group_pop_var, total_pop_var, iterations = 500):
                                 total_pop_var: 'total_pop_var'})
     
     # core_data has to be in the beggining of the call because assign methods will be used later
-    core_data = data[['group_pop_var', 'total_pop_var']]
+    if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        core_data = data[['group_pop_var', 'total_pop_var']]
+    
+    else:    
+        core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
     
     x = np.array(data.group_pop_var)
     t = np.array(data.total_pop_var)
@@ -1143,7 +1179,7 @@ class Modified_Dissim:
     Firstly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
-    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
@@ -1218,7 +1254,11 @@ def _modified_gini_seg(data, group_pop_var, total_pop_var, iterations = 500):
                                 total_pop_var: 'total_pop_var'})
     
     # core_data has to be in the beggining of the call because assign methods will be used later
-    core_data = data[['group_pop_var', 'total_pop_var']]
+    if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        core_data = data[['group_pop_var', 'total_pop_var']]
+    
+    else:    
+        core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
     
     x = np.array(data.group_pop_var)
     t = np.array(data.total_pop_var)
@@ -1281,7 +1321,7 @@ class Modified_Gini_Seg:
     Firstly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
-    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
@@ -1384,7 +1424,11 @@ def _bias_corrected_dissim(data, group_pop_var, total_pop_var, B = 500):
     Dbc = 2 * D - Db
     Dbc # It expected to be lower than D, because D is upwarded biased
     
-    core_data = data[['group_pop_var', 'total_pop_var']]
+    if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        core_data = data[['group_pop_var', 'total_pop_var']]
+    
+    else:    
+        core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
         
     return Dbc, core_data
 
@@ -1424,7 +1468,7 @@ class Bias_Corrected_Dissim:
     Firstly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
-    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
@@ -1533,7 +1577,11 @@ def _density_corrected_dissim(data, group_pop_var, total_pop_var, xtol = 1e-5):
 
     Ddc = np.multiply(sigma_hat_j, optimal_thetas).sum() / 2
     
-    core_data = data[['group_pop_var', 'total_pop_var']]
+    if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        core_data = data[['group_pop_var', 'total_pop_var']]
+    
+    else:    
+        core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
     
     return Ddc, core_data
 
@@ -1573,7 +1621,7 @@ class Density_Corrected_Dissim:
     Firstly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
-    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/osnap/tree/master/osnap/data.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")

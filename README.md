@@ -20,9 +20,9 @@ Segregation Measures Framework in PySAL
 
 ## What is segregation?
 
-The PySAL **segregation** module allow users to estimate several segregation measures and perform inference for single measures and comparative inference in a concise way. 
+The PySAL **segregation** module allows users to estimate several segregation measures and perform inference for single measures and comparative inference in a concise way. 
 
-It can be divided into two frameworks: point estimation and inference wrappers.  The first framework could be, in turn, subdivided in non-spatial indexes and spatial indexes.  The inference approach present functions to perform inference for a single measure or for comparison between two measures.
+It can be divided into two frameworks: point estimation and inference wrappers.  The first framework could be, in turn, subdivided into non-spatial indexes and spatial indexes.  The inference approach present functions to perform inference for a single measure or for comparison between two measures.
 
 Installation
 ------------
