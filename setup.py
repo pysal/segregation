@@ -9,11 +9,9 @@ import os
 with open('README.md', 'r', encoding='utf8') as file:
     long_description = file.read()
 
-MAJOR = 1
-MINOR = 0
-MICRO = 4
-ISRELEASED = False
-VERSION = '%d.%d.%d' % (MAJOR, MINOR, MICRO)
+with open('segregation/__init__.py', 'r') as f:
+    exec(f.readline())
+
 
 # BEFORE importing distutils, remove MANIFEST. distutils doesn't properly
 # update it when the contents of directories change.
@@ -44,7 +42,7 @@ def setup_package():
 
     setup(
         name = 'segregation',
-        version = VERSION,
+        version = __version__,
         description = "Methods for estimating and performing inference for spatial and non-spatial segregation in PySAL.",
         long_description = long_description,
 		long_description_content_type = "text/markdown",
