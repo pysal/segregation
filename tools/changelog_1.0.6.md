@@ -1,6 +1,6 @@
 # Changes
 
-Version 1.0.5 (2019-05-14)
+Version 1.0.6 (2019-05-14)
 
 We closed a total of 8 issues (enhancements and bug fixes) through 3 pull requests, since our last release on 2019-05-14.
 
