@@ -1828,7 +1828,7 @@ class Relative_Concentration:
         
         
         
-def _absolute_centralization(data, group_pop_var, total_pop_var):
+def _absolute_centralization(data, group_pop_var, total_pop_var, center = "mean"):
     """
     Calculation of Absolute Centralization index
 
@@ -1843,6 +1843,21 @@ def _absolute_centralization(data, group_pop_var, total_pop_var):
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
 
+    center        : string, tuple or integer.
+                    This defines what is considered to be the center of the spatial context under study.
+
+                    If string, this can be set to:
+                        
+                        "mean": the center longitude/latitude is the mean of longitudes/latitudes of all units. 
+                        "median": the center longitude/latitude is the median of longitudes/latitudes of all units. 
+                        "population_weighted_mean": the center longitude/latitude is the mean of longitudes/latitudes of all units weighted by the total population.
+                        "largest_population": the center longitude/latitude is the centroid of the unit with largest total population. If there is a tie in the maximum population, the mean of all coordinates will be taken.
+                    
+                    If tuple, this argument should be the coordinates of the desired center in the form (longitude, latitude).
+                    
+                    If integer, the center will be the centroid of the polygon from data corresponding to the integer interpreted as index. 
+                    For example, if `center = 0` the centroid of the first row of data is used as center, if `center = 1` the second row will be used, and so on.
+
     Attributes
     ----------
 
@@ -1855,6 +1870,8 @@ def _absolute_centralization(data, group_pop_var, total_pop_var):
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
+    
+    A discussion of defining the center in this function can be found in https://github.com/pysal/segregation/issues/18.
 
     """
     
@@ -1886,8 +1903,33 @@ def _absolute_centralization(data, group_pop_var, total_pop_var):
     c_lons = np.array(data.centroid.x)
     c_lats = np.array(data.centroid.y)
     
-    center_lon = c_lons.mean()
-    center_lat = c_lats.mean()
+    if isinstance(center, str):
+        
+        if (center == "mean"):
+            center_lon = c_lons.mean()
+            center_lat = c_lats.mean()
+    
+        if (center == "median"):
+            center_lon = np.median(c_lons)
+            center_lat = np.median(c_lats)
+            
+        if (center == "population_weighted_mean"):
+            center_lon = np.average(c_lons, weights = t)
+            center_lat = np.average(c_lats, weights = t)
+    
+        if (center == "largest_population"):
+            center_lon = c_lons[np.where(t == t.max())].mean()
+            center_lat = c_lats[np.where(t == t.max())].mean()
+
+    if isinstance(center, tuple):
+        
+        center_lon = center[0]
+        center_lat = center[1]
+    
+    if isinstance(center, int):
+        
+        center_lon = data.iloc[[center]].centroid.x.values[0]
+        center_lat = data.iloc[[center]].centroid.y.values[0]
     
     X = x.sum()
     A = area.sum()
@@ -1925,6 +1967,21 @@ class Absolute_Centralization:
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
+                    
+    center        : string, tuple or integer.
+                    This defines what is considered to be the center of the spatial context under study.
+
+                    If string, this can be set to:
+                        
+                        "mean": the center longitude/latitude is the mean of longitudes/latitudes of all units. 
+                        "median": the center longitude/latitude is the median of longitudes/latitudes of all units. 
+                        "population_weighted_mean": the center longitude/latitude is the mean of longitudes/latitudes of all units weighted by the total population.
+                        "largest_population": the center longitude/latitude is the centroid of the unit with largest total population. If there is a tie in the maximum population, the mean of all coordinates will be taken.
+                    
+                    If tuple, this argument should be the coordinates of the desired center in the form (longitude, latitude).
+                    
+                    If integer, the center will be the centroid of the polygon from data corresponding to the integer interpreted as index. 
+                    For example, if `center = 0` the centroid of the first row of data is used as center, if `center = 1` the second row will be used, and so on.
 
     Attributes
     ----------
@@ -1973,12 +2030,14 @@ class Absolute_Centralization:
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
+    
+    A discussion of defining the center in this function can be found in https://github.com/pysal/segregation/issues/18.
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var):
+    def __init__(self, data, group_pop_var, total_pop_var, center = "mean"):
         
-        aux = _absolute_centralization(data, group_pop_var, total_pop_var)
+        aux = _absolute_centralization(data, group_pop_var, total_pop_var, center)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -1986,7 +2045,7 @@ class Absolute_Centralization:
         
         
         
-def _relative_centralization(data, group_pop_var, total_pop_var):
+def _relative_centralization(data, group_pop_var, total_pop_var, center = "mean"):
     """
     Calculation of Relative Centralization index
 
@@ -2001,6 +2060,21 @@ def _relative_centralization(data, group_pop_var, total_pop_var):
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
 
+    center        : string, tuple or integer.
+                    This defines what is considered to be the center of the spatial context under study.
+
+                    If string, this can be set to:
+                        
+                        "mean": the center longitude/latitude is the mean of longitudes/latitudes of all units. 
+                        "median": the center longitude/latitude is the median of longitudes/latitudes of all units. 
+                        "population_weighted_mean": the center longitude/latitude is the mean of longitudes/latitudes of all units weighted by the total population.
+                        "largest_population": the center longitude/latitude is the centroid of the unit with largest total population. If there is a tie in the maximum population, the mean of all coordinates will be taken.
+                    
+                    If tuple, this argument should be the coordinates of the desired center in the form (longitude, latitude).
+                    
+                    If integer, the center will be the centroid of the polygon from data corresponding to the integer interpreted as index. 
+                    For example, if `center = 0` the centroid of the first row of data is used as center, if `center = 1` the second row will be used, and so on.
+
     Attributes
     ----------
 
@@ -2013,6 +2087,8 @@ def _relative_centralization(data, group_pop_var, total_pop_var):
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
+    
+    A discussion of defining the center in this function can be found in https://github.com/pysal/segregation/issues/18.
 
     """
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
@@ -2043,8 +2119,33 @@ def _relative_centralization(data, group_pop_var, total_pop_var):
     c_lons = np.array(data.centroid.x)
     c_lats = np.array(data.centroid.y)
     
-    center_lon = c_lons.mean()
-    center_lat = c_lats.mean()
+    if isinstance(center, str):
+        
+        if (center == "mean"):
+            center_lon = c_lons.mean()
+            center_lat = c_lats.mean()
+    
+        if (center == "median"):
+            center_lon = np.median(c_lons)
+            center_lat = np.median(c_lats)
+            
+        if (center == "population_weighted_mean"):
+            center_lon = np.average(c_lons, weights = t)
+            center_lat = np.average(c_lats, weights = t)
+    
+        if (center == "largest_population"):
+            center_lon = c_lons[np.where(t == t.max())].mean()
+            center_lat = c_lats[np.where(t == t.max())].mean()
+
+    if isinstance(center, tuple):
+        
+        center_lon = center[0]
+        center_lat = center[1]
+    
+    if isinstance(center, int):
+        
+        center_lon = data.iloc[[center]].centroid.x.values[0]
+        center_lat = data.iloc[[center]].centroid.y.values[0]
     
     X = x.sum()
     Y = y.sum()
@@ -2078,6 +2179,21 @@ class Relative_Centralization:
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
+
+    center        : string, tuple or integer.
+                    This defines what is considered to be the center of the spatial context under study.
+
+                    If string, this can be set to:
+                        
+                        "mean": the center longitude/latitude is the mean of longitudes/latitudes of all units. 
+                        "median": the center longitude/latitude is the median of longitudes/latitudes of all units. 
+                        "population_weighted_mean": the center longitude/latitude is the mean of longitudes/latitudes of all units weighted by the total population.
+                        "largest_population": the center longitude/latitude is the centroid of the unit with largest total population. If there is a tie in the maximum population, the mean of all coordinates will be taken.
+                    
+                    If tuple, this argument should be the coordinates of the desired center in the form (longitude, latitude).
+                    
+                    If integer, the center will be the centroid of the polygon from data corresponding to the integer interpreted as index. 
+                    For example, if `center = 0` the centroid of the first row of data is used as center, if `center = 1` the second row will be used, and so on.
 
     Attributes
     ----------
@@ -2126,12 +2242,14 @@ class Relative_Centralization:
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
+    
+    A discussion of defining the center in this function can be found in https://github.com/pysal/segregation/issues/18.
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var):
+    def __init__(self, data, group_pop_var, total_pop_var, center = "mean"):
         
-        aux = _relative_centralization(data, group_pop_var, total_pop_var)
+        aux = _relative_centralization(data, group_pop_var, total_pop_var, center)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
