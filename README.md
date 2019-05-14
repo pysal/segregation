@@ -3,7 +3,7 @@ Segregation Measures Framework in PySAL
 
 [![Build Status](https://travis-ci.com/pysal/segregation.svg?branch=master)](https://travis-ci.org/pysal/segregation)
 
-## Methods for estimating and performing inference for spatial and non-spatial segregation.
+## Analytics for spatial and non-spatial segregation in Python.
 
 **Easily estimate several segregation measures:**
 
@@ -20,9 +20,13 @@ Segregation Measures Framework in PySAL
 
 ## What is segregation?
 
-The PySAL **segregation** module allows users to estimate several segregation measures and perform inference for single measures and comparative inference in a concise way. 
+The PySAL **segregation** module allows users to estimate several segregation measures, perform inference for single values and for comparison between values and decompose comparative segregation.
 
-It can be divided into two frameworks: point estimation and inference wrappers.  The first framework could be, in turn, subdivided into non-spatial indexes and spatial indexes.  The inference approach present functions to perform inference for a single measure or for comparison between two measures.
+It can be divided into frameworks: 
+
+- Point Estimation: point estimation of many non-spatial and spatial segregation indexes.
+- Inference Wrappers: present functions to perform inference for a single measure or for comparison between two measures.
+- Decompose Segregation: decompose comparative segregation into spatial and attribute components.
 
 Installation
 ------------
@@ -117,6 +121,15 @@ Once the segregation indexes are fitted, the user can perform inference to shed 
 | :----------------- | :------------------- | :------------------------------------------------------: | :----------------------------------: |
 | Single Value       | Infer\_Segregation   |   seg\_class, iterations\_under\_null, null\_approach, two\_tailed    |    p\_value, est\_sim, statistic     |
 | Two Value          | Compare\_Segregation | seg\_class\_1, seg\_class\_2, iterations\_under\_null, null\_approach | p\_value, est\_sim, est\_point\_diff |
+
+
+Another useful analytics that can be performed with the **segregation** module is a decompositional approach where two different indexes can be brake down into spatial components (<tt>c_s</tt>) and attribute component (<tt>c_a</tt>). This framework is summarized in the table below:
+
+
+| **Framework** | **Class/Function**   |                 **Function main Inputs**                 |         **Function Outputs**         |
+| :----------------- | :------------------- | :------------------------------------------------------: | :----------------------------------: |
+| Decomposition       | Decompose\_Segregation   |   index1, index2, counterfactual\_approach    |    c\_a, c\_s     |
+
 
 
 If you are new to segregation and PySAL you will best get started with our documentation! We encourage you to take a look at some examples of this module in the <tt>notebooks</tt> repo!
