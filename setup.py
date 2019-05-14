@@ -53,8 +53,8 @@ def setup_package():
         license = 'BSD',
         py_modules = ['segregation'],
         packages = find_packages(),
-        setup_requires = ["pytest-runner"],
-        tests_require = ["pytest"],
+        # setup_requires = ["pytest-runner"],
+        # tests_require = ["pytest"],
         keywords = ['spatial statistics', 'demography'],
         classifiers = [
             #'Development Status :: 1 - Alpha',
