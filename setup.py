@@ -43,7 +43,7 @@ def setup_package():
     setup(
         name = 'segregation',
         version = __version__,
-        description = "Methods for estimating and performing inference for spatial and non-spatial segregation in PySAL.",
+        description = "Analytics for spatial and non-spatial segregation in Python.",
         long_description = long_description,
 		long_description_content_type = "text/markdown",
         maintainer = "Renan Xavier Cortes",
