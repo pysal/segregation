@@ -63,20 +63,20 @@ $ pip install git+https://github.com/pysal/segregation
 
 ## Getting started
 
-All input data for this module rely on [pandas](https://github.com/pandas-dev/pandas) DataFrames for the non-spatial measures and [geopandas](https://github.com/geopandas/geopandas) DataFrames for spatial ones. In a nutshell, the user needs to pass the pandasDataFrame as its first argument and then two string that represent the variable name of population frequency of the group of interest (variable <tt>group_pop_var</tt>) and the total populationof the unit (variable <tt>total_pop_var</tt>).
+All input data for this module rely on [pandas](https://github.com/pandas-dev/pandas) DataFrames for the non-spatial measures and [geopandas](https://github.com/geopandas/geopandas) DataFrames for spatial ones. In a nutshell, the user needs to pass the pandas DataFrame as its first argument and then two string that represent the variable name of population frequency of the group of interest (variable <tt>group_pop_var</tt>) and the total population of the unit (variable <tt>total_pop_var</tt>).
 
 So, for example, if a user would want to fit a dissimilarity index (D) to a DataFrame called <tt>df</tt> to a specific group with frequency <tt>freq</tt> with each total population <tt>population</tt>, a usual call would be something like this:
 
-```
->>> from segregation.non_spatial_indexes import Dissim
->>> index = Dissim(df, "freq", "population")
+```python
+from segregation.non_spatial_indexes import Dissim
+index = Dissim(df, "freq", "population")
 ```
 
 If a user would want to fit a spatial dissimilarity index (SD) to a geopandas DataFrame called <tt>gdf</tt> to a specific group with frequency <tt>freq</tt> with each total population <tt>population</tt>, a usual call would be something like this:
 
-```
->>> from segregation.spatial_indexes import Spatial_Dissim
->>> spatial_index = Spatial_Dissim(gdf, "freq", "population")
+```python
+from segregation.spatial_indexes import Spatial_Dissim
+spatial_index = Spatial_Dissim(gdf, "freq", "population")
 ```
 
 Every class of **segregation** has a <tt>statistic</tt> and a <tt>core\_data</tt> attributes. The first is a direct access to the point estimation of the specific segregation measure and the second attribute gives access to the main data that the module uses internally to perform the estimates. To see the estimated D in the first generic example above, the user would have just to run <tt>index.statistic</tt> to see the fitted value.
