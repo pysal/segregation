@@ -1861,12 +1861,15 @@ def _absolute_centralization(data, group_pop_var, total_pop_var, center = "mean"
     Attributes
     ----------
 
-    statistic : float
-                Absolute Centralization Index
+    statistic     : float
+                    Absolute Centralization Index
                 
-    core_data : a geopandas DataFrame
-                A geopandas DataFrame that contains the columns used to perform the estimate.
-                
+    core_data     : a geopandas DataFrame
+                    A geopandas DataFrame that contains the columns used to perform the estimate.
+    
+    center_values : list
+                    The center, in the form [longitude, latitude], values used for the calculation of the centralization distances.
+    
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
@@ -1952,7 +1955,9 @@ def _absolute_centralization(data, group_pop_var, total_pop_var, center = "mean"
     
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
     
-    return ACE, core_data
+    center_values = [center_lon, center_lat]
+    
+    return ACE, core_data, center_values
 
 
 class Absolute_Centralization:
@@ -1988,11 +1993,14 @@ class Absolute_Centralization:
     Attributes
     ----------
 
-    statistic : float
-                Absolute Centralization Index
+    statistic     : float
+                    Absolute Centralization Index
                 
-    core_data : a geopandas DataFrame
-                A geopandas DataFrame that contains the columns used to perform the estimate.
+    core_data     : a geopandas DataFrame
+                    A geopandas DataFrame that contains the columns used to perform the estimate.
+    
+    center_values : list
+                    The center, in the form [longitude, latitude], values used for the calculation of the centralization distances.
                 
     Examples
     --------
@@ -2041,9 +2049,10 @@ class Absolute_Centralization:
         
         aux = _absolute_centralization(data, group_pop_var, total_pop_var, center)
 
-        self.statistic = aux[0]
-        self.core_data = aux[1]
-        self._function = _absolute_centralization
+        self.statistic     = aux[0]
+        self.core_data     = aux[1]
+        self.center_values = aux[2]
+        self._function     = _absolute_centralization
         
         
         
@@ -2080,11 +2089,14 @@ def _relative_centralization(data, group_pop_var, total_pop_var, center = "mean"
     Attributes
     ----------
 
-    statistic : float
-                Relative Centralization Index
+    statistic     : float
+                    Absolute Centralization Index
                 
-    core_data : a geopandas DataFrame
-                A geopandas DataFrame that contains the columns used to perform the estimate.
+    core_data     : a geopandas DataFrame
+                    A geopandas DataFrame that contains the columns used to perform the estimate.
+    
+    center_values : list
+                    The center, in the form [longitude, latitude], values used for the calculation of the centralization distances.
 
     Notes
     -----
@@ -2169,8 +2181,10 @@ def _relative_centralization(data, group_pop_var, total_pop_var, center = "mean"
           np.nansum(Xi * shift(Yi, 1, cval=np.NaN))
 
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
+    
+    center_values = [center_lon, center_lat]
 
-    return RCE, core_data
+    return RCE, core_data, center_values
 
 
 class Relative_Centralization:
@@ -2206,11 +2220,14 @@ class Relative_Centralization:
     Attributes
     ----------
 
-    statistic : float
-                Relative Centralization Index
-                
-    core_data : a geopandas DataFrame
-                A geopandas DataFrame that contains the columns used to perform the estimate.
+    statistic     : float
+                    Absolute Centralization Index
+            
+    core_data     : a geopandas DataFrame
+                    A geopandas DataFrame that contains the columns used to perform the estimate.
+    
+    center_values : list
+                    The center, in the form [longitude, latitude], values used for the calculation of the centralization distances.
         
     Examples
     --------
@@ -2259,8 +2276,9 @@ class Relative_Centralization:
         
         aux = _relative_centralization(data, group_pop_var, total_pop_var, center)
 
-        self.statistic = aux[0]
-        self.core_data = aux[1]
+        self.statistic     = aux[0]
+        self.core_data     = aux[1]
+        self.center_values = aux[2]
         self._function = _relative_centralization
         
         
