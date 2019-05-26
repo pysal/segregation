@@ -41,7 +41,7 @@ def _dissim(data, group_pop_var, total_pop_var):
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
 
-    Attributes
+    Returns
     ----------
 
     statistic : float
@@ -165,7 +165,8 @@ def _gini_seg(data, group_pop_var, total_pop_var):
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-    Attributes
+                    
+    Returns
     ----------
     statistic : float
                 Gini Segregation Index
@@ -283,7 +284,7 @@ def _entropy(data, group_pop_var, total_pop_var):
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
 
-    Attributes
+    Returns
     ----------
 
     statistic : float
@@ -410,7 +411,7 @@ def _isolation(data, group_pop_var, total_pop_var):
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
 
-    Attributes
+    Returns
     ----------
 
     statistic : float
@@ -535,7 +536,7 @@ def _exposure(data, group_pop_var, total_pop_var):
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
 
-    Attributes
+    Returns
     ----------
 
     statistic : float
@@ -666,7 +667,7 @@ def _atkinson(data, group_pop_var, total_pop_var, b = 0.5):
     b             : float
                     The shape parameter, between 0 and 1, that determines how to weight the increments to segregation contributed by different portions of the Lorenz curve.
 
-    Attributes
+    Returns
     ----------
 
     statistic : float
@@ -799,7 +800,7 @@ def _correlationr(data, group_pop_var, total_pop_var):
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
 
-    Attributes
+    Returns
     ----------
 
     statistic : float
@@ -928,7 +929,7 @@ def _conprof(data, group_pop_var, total_pop_var, m = 1000):
                     a numeric value indicating the number of thresholds to be used. Default value is 1000. 
                     A large value of m creates a smoother-looking graph and a more precise concentration profile value but slows down the calculation speed.
 
-    Attributes
+    Returns
     ----------
 
     statistic : float
@@ -1086,7 +1087,7 @@ def _modified_dissim(data, group_pop_var, total_pop_var, iterations = 500):
     iterations    : int
                     The number of iterations the evaluate average classic dissimilarity under eveness. Default value is 500.
 
-    Attributes
+    Returns
     ----------
 
     statistic : float
@@ -1228,7 +1229,7 @@ def _modified_gini_seg(data, group_pop_var, total_pop_var, iterations = 500):
     iterations    : int
                     The number of iterations the evaluate average classic gini segregation under eveness. Default value is 500.
 
-    Attributes
+    Returns
     ----------
 
     statistic : float
@@ -1372,7 +1373,7 @@ def _bias_corrected_dissim(data, group_pop_var, total_pop_var, B = 500):
     B             : int
                     The number of iterations to calculate Dissimilarity simulating randomness with multinomial distributions. Default value is 500.
 
-    Attributes
+    Returns
     ----------
 
     statistic : float
@@ -1517,7 +1518,7 @@ def _density_corrected_dissim(data, group_pop_var, total_pop_var, xtol = 1e-5):
     xtol          : float
                     The degree of tolerance in the optimization process of returning optimal theta_j
 
-    Attributes
+    Returns
     ----------
 
     statistic : float
