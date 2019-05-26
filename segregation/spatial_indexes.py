@@ -1953,10 +1953,6 @@ def _absolute_centralization(data, group_pop_var, total_pop_var, center = "mean"
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
     
     return ACE, core_data
-    
-    core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
-    
-    return ACE, core_data
 
 
 class Absolute_Centralization:
