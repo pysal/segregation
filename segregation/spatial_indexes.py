@@ -57,7 +57,7 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, m = 1000):
                     a numeric value indicating the number of thresholds to be used. Default value is 1000. 
                     A large value of m creates a smoother-looking graph and a more precise spatial proximity profile value but slows down the calculation speed.
 
-    Attributes
+    Returns
     ----------
 
     statistic : float
@@ -242,8 +242,7 @@ def _spatial_dissim(data, group_pop_var, total_pop_var, w = None, standardize = 
                     For the sake of comparison, the seg R package of Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
                     works by default with row standardization.
         
-
-    Attributes
+    Returns
     ----------
 
     statistic : float
@@ -430,8 +429,7 @@ def _boundary_spatial_dissim(data, group_pop_var, total_pop_var, standardize = F
                     For the sake of comparison, the seg R package of Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
                     works by default without row standardization. That is, directly with border length.
         
-
-    Attributes
+    Returns
     ----------
 
     statistic : float
@@ -586,7 +584,7 @@ def _perimeter_area_ratio_spatial_dissim(data, group_pop_var, total_pop_var, sta
                     A condition for standardisation of the weights matrices. 
                     If True, the values of cij in the formulas gets standardized and the overall sum is 1.
 
-    Attributes
+    Returns
     ----------
 
     statistic : float
@@ -744,7 +742,7 @@ def _spatial_isolation(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
 
-    Attributes
+    Returns
     ----------
 
     statistic : float
@@ -914,7 +912,7 @@ def _spatial_exposure(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0.
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
 
-    Attributes
+    Returns
     ----------
 
     statistic : float
@@ -1083,7 +1081,8 @@ def _spatial_proximity(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0
     
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
-    Attributes
+                    
+    Returns
     ----------
     statistic : float
                 Spatial Proximity Index
@@ -1167,6 +1166,7 @@ class Spatial_Proximity:
     
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
+                    
     Attributes
     ----------
     statistic : float
@@ -1246,7 +1246,8 @@ def _relative_clustering(data, group_pop_var, total_pop_var, alpha = 0.6, beta =
     
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
-    Attributes
+                    
+    Returns
     ----------
     statistic : float
                 Relative Clustering Index
@@ -1326,6 +1327,7 @@ class Relative_Clustering:
     
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
+                    
     Attributes
     ----------
     statistic : float
@@ -1401,7 +1403,7 @@ def _delta(data, group_pop_var, total_pop_var):
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
 
-    Attributes
+    Returns
     ----------
 
     statistic : float
@@ -1539,7 +1541,7 @@ def _absolute_concentration(data, group_pop_var, total_pop_var):
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
 
-    Attributes
+    Returns
     ----------
 
     statistic : float
@@ -1689,7 +1691,7 @@ def _relative_concentration(data, group_pop_var, total_pop_var):
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
 
-    Attributes
+    Returns
     ----------
 
     statistic : float
@@ -1858,7 +1860,7 @@ def _absolute_centralization(data, group_pop_var, total_pop_var, center = "mean"
                     If integer, the center will be the centroid of the polygon from data corresponding to the integer interpreted as index. 
                     For example, if `center = 0` the centroid of the first row of data is used as center, if `center = 1` the second row will be used, and so on.
 
-    Attributes
+    Returns
     ----------
 
     statistic     : float
@@ -2086,7 +2088,7 @@ def _relative_centralization(data, group_pop_var, total_pop_var, center = "mean"
                     If integer, the center will be the centroid of the polygon from data corresponding to the integer interpreted as index. 
                     For example, if `center = 0` the centroid of the first row of data is used as center, if `center = 1` the second row will be used, and so on.
 
-    Attributes
+    Returns
     ----------
 
     statistic     : float
@@ -2309,7 +2311,7 @@ def _spatial_information_theory(data, group_pop_var, total_pop_var, w = None, un
                         This argument is also to avoid passing data without crs and, therefore, raising unusual results.
                         This index rely on the population density and we consider the area using squared kilometers. 
 
-    Attributes
+    Returns
     ----------
 
     statistic : float
