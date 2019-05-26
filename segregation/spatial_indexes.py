@@ -1843,7 +1843,7 @@ def _absolute_centralization(data, group_pop_var, total_pop_var, center = "mean"
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
 
-    center        : string, tuple or integer.
+    center        : string, two-dimension values (tuple, list, array) or integer.
                     This defines what is considered to be the center of the spatial context under study.
 
                     If string, this can be set to:
@@ -1853,7 +1853,7 @@ def _absolute_centralization(data, group_pop_var, total_pop_var, center = "mean"
                         "population_weighted_mean": the center longitude/latitude is the mean of longitudes/latitudes of all units weighted by the total population.
                         "largest_population": the center longitude/latitude is the centroid of the unit with largest total population. If there is a tie in the maximum population, the mean of all coordinates will be taken.
                     
-                    If tuple, this argument should be the coordinates of the desired center in the form (longitude, latitude).
+                    If tuple, list or array, this argument should be the coordinates of the desired center assuming longitude as first value and latitude second value. Therefore, in the form (longitude, latitude), if tuple, or [longitude, latitude] if list or numpy array.
                     
                     If integer, the center will be the centroid of the polygon from data corresponding to the integer interpreted as index. 
                     For example, if `center = 0` the centroid of the first row of data is used as center, if `center = 1` the second row will be used, and so on.
@@ -1904,6 +1904,8 @@ def _absolute_centralization(data, group_pop_var, total_pop_var, center = "mean"
     c_lats = np.array(data.centroid.y)
     
     if isinstance(center, str):
+        if not center in ['mean', 'median', 'population_weighted_mean', 'largest_population']:
+            raise ValueError('The center string must one of \'mean\', \'median\', \'population_weighted_mean\', \'largest_population\'')
         
         if (center == "mean"):
             center_lon = c_lons.mean()
@@ -1921,13 +1923,17 @@ def _absolute_centralization(data, group_pop_var, total_pop_var, center = "mean"
             center_lon = c_lons[np.where(t == t.max())].mean()
             center_lat = c_lats[np.where(t == t.max())].mean()
 
-    if isinstance(center, tuple):
+    if isinstance(center, tuple) or isinstance(center, list) or isinstance(center, np.ndarray):
+        if np.array(center).shape != (2,):
+            raise ValueError('The center tuple/list/array must have length 2.')
         
         center_lon = center[0]
         center_lat = center[1]
     
     if isinstance(center, int):
-        
+        if (center > len(data) - 1) or (center < 0):
+            raise ValueError('The center index must by in the range of data.')
+
         center_lon = data.iloc[[center]].centroid.x.values[0]
         center_lat = data.iloc[[center]].centroid.y.values[0]
     
@@ -1968,7 +1974,7 @@ class Absolute_Centralization:
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
                     
-    center        : string, tuple or integer.
+    center        : string, two-dimension values (tuple, list, array) or integer.
                     This defines what is considered to be the center of the spatial context under study.
 
                     If string, this can be set to:
@@ -1978,7 +1984,7 @@ class Absolute_Centralization:
                         "population_weighted_mean": the center longitude/latitude is the mean of longitudes/latitudes of all units weighted by the total population.
                         "largest_population": the center longitude/latitude is the centroid of the unit with largest total population. If there is a tie in the maximum population, the mean of all coordinates will be taken.
                     
-                    If tuple, this argument should be the coordinates of the desired center in the form (longitude, latitude).
+                    If tuple, list or array, this argument should be the coordinates of the desired center assuming longitude as first value and latitude second value. Therefore, in the form (longitude, latitude), if tuple, or [longitude, latitude] if list or numpy array.
                     
                     If integer, the center will be the centroid of the polygon from data corresponding to the integer interpreted as index. 
                     For example, if `center = 0` the centroid of the first row of data is used as center, if `center = 1` the second row will be used, and so on.
@@ -2060,7 +2066,7 @@ def _relative_centralization(data, group_pop_var, total_pop_var, center = "mean"
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
 
-    center        : string, tuple or integer.
+    center        : string, two-dimension values (tuple, list, array) or integer.
                     This defines what is considered to be the center of the spatial context under study.
 
                     If string, this can be set to:
@@ -2070,7 +2076,7 @@ def _relative_centralization(data, group_pop_var, total_pop_var, center = "mean"
                         "population_weighted_mean": the center longitude/latitude is the mean of longitudes/latitudes of all units weighted by the total population.
                         "largest_population": the center longitude/latitude is the centroid of the unit with largest total population. If there is a tie in the maximum population, the mean of all coordinates will be taken.
                     
-                    If tuple, this argument should be the coordinates of the desired center in the form (longitude, latitude).
+                    If tuple, list or array, this argument should be the coordinates of the desired center assuming longitude as first value and latitude second value. Therefore, in the form (longitude, latitude), if tuple, or [longitude, latitude] if list or numpy array.
                     
                     If integer, the center will be the centroid of the polygon from data corresponding to the integer interpreted as index. 
                     For example, if `center = 0` the centroid of the first row of data is used as center, if `center = 1` the second row will be used, and so on.
@@ -2120,6 +2126,8 @@ def _relative_centralization(data, group_pop_var, total_pop_var, center = "mean"
     c_lats = np.array(data.centroid.y)
     
     if isinstance(center, str):
+        if not center in ['mean', 'median', 'population_weighted_mean', 'largest_population']:
+            raise ValueError('The center string must one of \'mean\', \'median\', \'population_weighted_mean\', \'largest_population\'')
         
         if (center == "mean"):
             center_lon = c_lons.mean()
@@ -2137,13 +2145,17 @@ def _relative_centralization(data, group_pop_var, total_pop_var, center = "mean"
             center_lon = c_lons[np.where(t == t.max())].mean()
             center_lat = c_lats[np.where(t == t.max())].mean()
 
-    if isinstance(center, tuple):
+    if isinstance(center, tuple) or isinstance(center, list) or isinstance(center, np.ndarray):
+        if np.array(center).shape != (2,):
+            raise ValueError('The center tuple/list/array must have length 2.')
         
         center_lon = center[0]
         center_lat = center[1]
     
     if isinstance(center, int):
-        
+        if (center > len(data) - 1) or (center < 0):
+            raise ValueError('The center index must by in the range of data.')
+
         center_lon = data.iloc[[center]].centroid.x.values[0]
         center_lat = data.iloc[[center]].centroid.y.values[0]
     
@@ -2180,7 +2192,7 @@ class Relative_Centralization:
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
 
-    center        : string, tuple or integer.
+    center        : string, two-dimension values (tuple, list, array) or integer.
                     This defines what is considered to be the center of the spatial context under study.
 
                     If string, this can be set to:
@@ -2190,7 +2202,7 @@ class Relative_Centralization:
                         "population_weighted_mean": the center longitude/latitude is the mean of longitudes/latitudes of all units weighted by the total population.
                         "largest_population": the center longitude/latitude is the centroid of the unit with largest total population. If there is a tie in the maximum population, the mean of all coordinates will be taken.
                     
-                    If tuple, this argument should be the coordinates of the desired center in the form (longitude, latitude).
+                    If tuple, list or array, this argument should be the coordinates of the desired center assuming longitude as first value and latitude second value. Therefore, in the form (longitude, latitude), if tuple, or [longitude, latitude] if list or numpy array.
                     
                     If integer, the center will be the centroid of the polygon from data corresponding to the integer interpreted as index. 
                     For example, if `center = 0` the centroid of the first row of data is used as center, if `center = 1` the second row will be used, and so on.
