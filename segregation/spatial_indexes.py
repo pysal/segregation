@@ -148,7 +148,7 @@ class Spatial_Prox_Prof:
     ----------
 
     statistic : float
-                Spatial Proximity Index
+                Spatial Proximity Profile Index
                 
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
@@ -158,17 +158,24 @@ class Spatial_Prox_Prof:
     In this example, we will calculate the spatial proximity profile (SPP) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
-    Firstly, we need to read the data:
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import pandas as pd
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> from segregation.spatial_indexes import Spatial_Prox_Prof
+    
+    Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
-    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
-    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['trtid10', 'pop10','nhblk10']]
+    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
     
     Then, we read the Riverside map data using geopandas (the county id is 06065):
     
@@ -179,7 +186,7 @@ class Spatial_Prox_Prof:
     Later, we extract only the columns that will be used.
     
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
-    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'trtid10')
+    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
     
     >>> spat_prox_index = Spatial_Prox_Prof(gdf, 'nhblk10', 'pop10')
@@ -344,17 +351,24 @@ class Spatial_Dissim:
     In this example, we will calculate the degree of spatial dissimilarity (D) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset. The neighborhood contiguity matrix is used.
     
-    Firstly, we need to read the data:
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import pandas as pd
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> from segregation.spatial_indexes import Spatial_Dissim
+    
+    Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
-    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
-    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['trtid10', 'pop10','nhblk10']]
+    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
     
     Then, we read the Riverside map data using geopandas (the county id is 06065):
     
@@ -365,7 +379,7 @@ class Spatial_Dissim:
     Later, we extract only the columns that will be used.
     
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
-    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'trtid10')
+    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
     
     The value is estimated below.
@@ -517,17 +531,24 @@ class Boundary_Spatial_Dissim:
     In this example, we will calculate the degree of boundary spatial dissimilarity (D) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
-    Firstly, we need to read the data:
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import pandas as pd
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> from segregation.spatial_indexes import Boundary_Spatial_Dissim
+    
+    Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
-    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
-    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['trtid10', 'pop10','nhblk10']]
+    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
     
     Then, we read the Riverside map data using geopandas (the county id is 06065):
     
@@ -538,7 +559,7 @@ class Boundary_Spatial_Dissim:
     Later, we extract only the columns that will be used.
     
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
-    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'trtid10')
+    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
     
     The value is estimated below.
@@ -675,17 +696,24 @@ class Perimeter_Area_Ratio_Spatial_Dissim:
     In this example, we will calculate the degree of perimeter/area ratio spatial dissimilarity (PARD) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
-    Firstly, we need to read the data:
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import pandas as pd
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> from segregation.spatial_indexes import Perimeter_Area_Ratio_Spatial_Dissim
+    
+    Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
-    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
-    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['trtid10', 'pop10','nhblk10']]
+    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
     
     Then, we read the Riverside map data using geopandas (the county id is 06065):
     
@@ -696,7 +724,7 @@ class Perimeter_Area_Ratio_Spatial_Dissim:
     Later, we extract only the columns that will be used.
     
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
-    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'trtid10')
+    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
     
     The value is estimated below.
@@ -841,17 +869,24 @@ class Spatial_Isolation:
     In this example, we will calculate the spatial isolation index (SxPx) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
-    Firstly, we need to read the data:
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import pandas as pd
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> from segregation.spatial_indexes import Spatial_Isolation
+    
+    Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
-    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
-    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['trtid10', 'pop10','nhblk10']]
+    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
     
     Then, we read the Riverside map data using geopandas (the county id is 06065):
     
@@ -862,7 +897,7 @@ class Spatial_Isolation:
     Later, we extract only the columns that will be used.
     
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
-    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'trtid10')
+    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
     
     The value is estimated below.
@@ -1013,17 +1048,24 @@ class Spatial_Exposure:
     In this example, we will calculate the spatial exposure index (SxPy) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
-    Firstly, we need to read the data:
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import pandas as pd
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> from segregation.spatial_indexes import Spatial_Exposure
+    
+    Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
-    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
-    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['trtid10', 'pop10','nhblk10']]
+    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
     
     Then, we read the Riverside map data using geopandas (the county id is 06065):
     
@@ -1034,7 +1076,7 @@ class Spatial_Exposure:
     Later, we extract only the columns that will be used.
     
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
-    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'trtid10')
+    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
     
     The value is estimated below.
@@ -1180,17 +1222,24 @@ class Spatial_Proximity:
     In this example, we will calculate the degree of spatial proximity (SP) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
-    Firstly, we need to read the data:
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import pandas as pd
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> from segregation.spatial_indexes import Spatial_Proximity
+    
+    Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
-    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
-    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['trtid10', 'pop10','nhblk10']]
+    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
     
     Then, we read the Riverside map data using geopandas (the county id is 06065):
     
@@ -1201,7 +1250,7 @@ class Spatial_Proximity:
     Later, we extract only the columns that will be used.
     
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
-    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'trtid10')
+    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
     
     The value is estimated below.
@@ -1341,17 +1390,24 @@ class Relative_Clustering:
     In this example, we will calculate the relative clustering measure (RCL) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
-    Firstly, we need to read the data:
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import pandas as pd
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> from segregation.spatial_indexes import Relative_Clustering
+    
+    Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
-    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
-    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['trtid10', 'pop10','nhblk10']]
+    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
     
     Then, we read the Riverside map data using geopandas (the county id is 06065):
     
@@ -1362,7 +1418,7 @@ class Relative_Clustering:
     Later, we extract only the columns that will be used.
     
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
-    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'trtid10')
+    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
     
     The value is estimated below.
@@ -1481,17 +1537,24 @@ class Delta:
     In this example, we will calculate the delta index (D) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
-    Firstly, we need to read the data:
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import pandas as pd
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> from segregation.spatial_indexes import Delta
+    
+    Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
-    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
-    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['trtid10', 'pop10','nhblk10']]
+    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
     
     Then, we read the Riverside map data using geopandas (the county id is 06065):
     
@@ -1502,7 +1565,7 @@ class Delta:
     Later, we extract only the columns that will be used.
     
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
-    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'trtid10')
+    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
     
     The value is estimated below.
@@ -1631,17 +1694,24 @@ class Absolute_Concentration:
     In this example, we will calculate the absolute concentration index (ACO) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
-    Firstly, we need to read the data:
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import pandas as pd
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> from segregation.spatial_indexes import Absolute_Concentration
+    
+    Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
-    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
-    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['trtid10', 'pop10','nhblk10']]
+    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
     
     Then, we read the Riverside map data using geopandas (the county id is 06065):
     
@@ -1652,7 +1722,7 @@ class Absolute_Concentration:
     Later, we extract only the columns that will be used.
     
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
-    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'trtid10')
+    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
     
     The value is estimated below.
@@ -1784,17 +1854,24 @@ class Relative_Concentration:
     In this example, we will calculate the relative concentration index (RCO) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
-    Firstly, we need to read the data:
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import pandas as pd
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> from segregation.spatial_indexes import Relative_Concentration
+    
+    Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
-    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
-    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['trtid10', 'pop10','nhblk10']]
+    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
     
     Then, we read the Riverside map data using geopandas (the county id is 06065):
     
@@ -1805,7 +1882,7 @@ class Relative_Concentration:
     Later, we extract only the columns that will be used.
     
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
-    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'trtid10')
+    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
     
     The value is estimated below.
@@ -2009,17 +2086,24 @@ class Absolute_Centralization:
     In this example, we will calculate the absolute centralization index (ACE) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
-    Firstly, we need to read the data:
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import pandas as pd
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> from segregation.spatial_indexes import Absolute_Centralization
+    
+    Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
-    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
-    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['trtid10', 'pop10','nhblk10']]
+    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
     
     Then, we read the Riverside map data using geopandas (the county id is 06065):
     
@@ -2030,7 +2114,7 @@ class Absolute_Centralization:
     Later, we extract only the columns that will be used.
     
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
-    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'trtid10')
+    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
     
     The value is estimated below.
@@ -2092,7 +2176,7 @@ def _relative_centralization(data, group_pop_var, total_pop_var, center = "mean"
     ----------
 
     statistic     : float
-                    Absolute Centralization Index
+                    Relative Centralization Index
                 
     core_data     : a geopandas DataFrame
                     A geopandas DataFrame that contains the columns used to perform the estimate.
@@ -2223,7 +2307,7 @@ class Relative_Centralization:
     ----------
 
     statistic     : float
-                    Absolute Centralization Index
+                    Relative Centralization Index
             
     core_data     : a geopandas DataFrame
                     A geopandas DataFrame that contains the columns used to perform the estimate.
@@ -2236,17 +2320,24 @@ class Relative_Centralization:
     In this example, we will calculate the relative centralization index (RCE) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
-    Firstly, we need to read the data:
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import pandas as pd
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> from segregation.spatial_indexes import Relative_Centralization
+    
+    Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
-    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
-    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['trtid10', 'pop10','nhblk10']]
+    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
     
     Then, we read the Riverside map data using geopandas (the county id is 06065):
     
@@ -2257,7 +2348,7 @@ class Relative_Centralization:
     Later, we extract only the columns that will be used.
     
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
-    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'trtid10')
+    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
     
     The value is estimated below.
@@ -2430,17 +2521,24 @@ class Spatial_Information_Theory:
     In this example, we will calculate the degree of spatial information theory (SIT) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset. The neighborhood contiguity matrix is used.
     
-    Firstly, we need to read the data:
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import pandas as pd
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> from segregation.spatial_indexes import Spatial_Information_Theory
+    
+    Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
-    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
-    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['trtid10', 'pop10','nhblk10']]
+    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
     
     Then, we read the Riverside map data using geopandas (the county id is 06065):
     
@@ -2451,7 +2549,7 @@ class Spatial_Information_Theory:
     Later, we extract only the columns that will be used.
     
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
-    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'trtid10')
+    >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
     
     The value is estimated below.
