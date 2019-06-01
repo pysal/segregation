@@ -57,9 +57,9 @@ def _infer_segregation(seg_class, iterations_under_null = 500, null_approach = "
     The one-tailed p_value attribute might not be appropriate for some measures, as the two-tailed. Therefore, it is better to rely on the est_sim attribute.
     
     '''
-    if not null_approach in ['systematic', 'evenness', 'permutation', 'systematic_permutation', 'even_permutation']:
-        raise ValueError('null_approach must one of \'systematic\', \'evenness\', \'permutation\', \'systematic_permutation\', \'even_permutation\'')
-    
+    if not null_approach in ['systematic', 'bootstrap', 'evenness', 'permutation', 'systematic_permutation', 'even_permutation']:
+        raise ValueError('null_approach must one of \'systematic\', \'bootstrap\', \'evenness\', \'permutation\', \'systematic_permutation\', \'even_permutation\'')
+        
     if (type(two_tailed) is not bool):
         raise TypeError('two_tailed is not a boolean object')
     
