@@ -27,6 +27,7 @@ def _infer_segregation(seg_class, iterations_under_null = 500, null_approach = "
     null_approach : argument that specifies which type of null hypothesis the inference will iterate.
     
         "systematic"             : assumes that every group has the same probability with restricted conditional probabilities p_0_j = p_1_j = p_j = n_j/n (multinomial distribution).
+        "bootstrap"              : generates bootstrap replications of the units with replacement of the same size of the original data.
         "evenness"               : assumes that each spatial unit has the same global probability of drawing elements from the minority group of the fixed total unit population (binomial distribution).
         
         "permutation"            : randomly allocates the units over space keeping the original values.
@@ -98,6 +99,21 @@ def _infer_segregation(seg_class, iterations_under_null = 500, null_approach = "
                 df_aux['geometry'] = data['geometry']
                 
             Estimates_Stars[i] = seg_class._function(df_aux, 'simul_group', 'simul_tot', **kwargs)[0]
+            
+            print('Processed {} iterations out of {}.'.format(i + 1, iterations_under_null), end = "\r")
+    
+    #############
+    # BOOTSTRAP #
+    #############
+    if (null_approach == "bootstrap"):
+        
+        Estimates_Stars = np.empty(iterations_under_null)
+        
+        for i in np.array(range(iterations_under_null)):
+            
+            sample_index = np.random.choice(data.index, size = len(data), replace = True)
+            df_aux = data.iloc[sample_index]
+            Estimates_Stars[i] = seg_class._function(df_aux, 'group_pop_var', 'total_pop_var', **kwargs)[0]
             
             print('Processed {} iterations out of {}.'.format(i + 1, iterations_under_null), end = "\r")
     
@@ -229,6 +245,7 @@ class Infer_Segregation:
     null_approach : argument that specifies which type of null hypothesis the inference will iterate.
     
         "systematic"             : assumes that every group has the same probability with restricted conditional probabilities p_0_j = p_1_j = p_j = n_j/n (multinomial distribution).
+        "bootstrap"              : generates bootstrap replications of the units with replacement of the same size of the original data.
         "evenness"               : assumes that each spatial unit has the same global probability of drawing elements from the minority group of the fixed total unit population (binomial distribution).
         
         "permutation"            : randomly allocates the units over space keeping the original values.
