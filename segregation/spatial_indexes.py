@@ -1599,11 +1599,11 @@ def _absolute_concentration(data, group_pop_var, total_pop_var):
     n2 = np.where(((np.cumsum(t[des_ind]) / T) < X/T) == False)[0][0]
     
     n = data.shape[0]
-    T1 =  t[asc_ind][0:(n1+1)].sum()
+    T1 =  t[asc_ind][0:n1].sum()
     T2 =  t[asc_ind][n2:n].sum()
     
-    ACO = 1- ((((x[asc_ind] * area[asc_ind] / X).sum()) - ((t[asc_ind] * area[asc_ind] / T1)[0:(n1 + 1)].sum())) / \
-          (((t[asc_ind] * area[asc_ind] / T2)[n2:n].sum()) - ((t[asc_ind] * area[asc_ind]/T1)[0:(n1 + 1)].sum())))
+    ACO = 1- ((((x[asc_ind] * area[asc_ind] / X).sum()) - ((t[asc_ind] * area[asc_ind] / T1)[0:n1].sum())) / \
+          (((t[asc_ind] * area[asc_ind] / T2)[n2:n].sum()) - ((t[asc_ind] * area[asc_ind]/T1)[0:n1].sum())))
 
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
 
@@ -1752,11 +1752,11 @@ def _relative_concentration(data, group_pop_var, total_pop_var):
     n2 = np.where(((np.cumsum(t[des_ind]) / T) < X/T) == False)[0][0]
     
     n  = data.shape[0]
-    T1 = t[asc_ind][0:(n1+1)].sum()
+    T1 = t[asc_ind][0:n1].sum()
     T2 = t[asc_ind][n2:n].sum()
     
     RCO = ((((x[asc_ind] * area[asc_ind] / X).sum()) / ((y[asc_ind] * area[asc_ind] / Y).sum())) - 1) / \
-          ((((t[asc_ind] * area[asc_ind])[0:(n1+1)].sum() / T1) / ((t[asc_ind] * area[asc_ind])[n2:n].sum() / T2)) - 1)
+          ((((t[asc_ind] * area[asc_ind])[0:n1].sum() / T1) / ((t[asc_ind] * area[asc_ind])[n2:n].sum() / T2)) - 1)
     
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
     
