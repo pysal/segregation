@@ -632,7 +632,7 @@ def _perimeter_area_ratio_spatial_dissim(data, group_pop_var, total_pop_var, sta
     max_pa = max(peri / ai)
     
     num = np.multiply(np.multiply(manhattan_distances(data[['pi']]), cij), aux_sum).sum()
-    den = 4 * max_pa
+    den = 2 * max_pa
     
     PARD = D - (num / den)
     PARD
