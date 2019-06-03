@@ -595,7 +595,11 @@ def _perimeter_area_ratio_spatial_dissim(data, group_pop_var, total_pop_var, sta
                 
     Notes
     -----
-    Based on Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
+    Originally based on Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
+    
+    However, Tivadar, Mihai. "OasisR: An R Package to Bring Some Order to the World of Segregation Measurement." Journal of Statistical Software 89.1 (2019): 1-39.
+    points out that in Wong’s original there is an issue with the formula which is an extra division by 2 in the spatial interaction component.
+    This function follows the formula present in the first Appendix of Tivadar, Mihai. "OasisR: An R Package to Bring Some Order to the World of Segregation Measurement." Journal of Statistical Software 89.1 (2019): 1-39.
 
     """
     
@@ -707,7 +711,11 @@ class Perimeter_Area_Ratio_Spatial_Dissim:
             
     Notes
     -----
-    Based on Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
+    Originally based on Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
+    
+    However, Tivadar, Mihai. "OasisR: An R Package to Bring Some Order to the World of Segregation Measurement." Journal of Statistical Software 89.1 (2019): 1-39.
+    points out that in Wong’s original there is an issue with the formula which is an extra division by 2 in the spatial interaction component.
+    This function follows the formula present in the first Appendix of Tivadar, Mihai. "OasisR: An R Package to Bring Some Order to the World of Segregation Measurement." Journal of Statistical Software 89.1 (2019): 1-39.
     
     """
 
