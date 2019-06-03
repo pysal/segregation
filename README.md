@@ -105,6 +105,7 @@ For point estimation, all the measures available can be summarized in the follow
 | Spatial Isolation (SxPx)                          | Spatial\_Isolation                      |     Yes      |     alpha, beta     |
 | Spatial Exposure (SxPy)                           | Spatial\_Exposure                       |     Yes      |     alpha, beta     |
 | Spatial Proximity (SP)                            | Spatial\_Proximity                      |     Yes      |     alpha, beta     |
+| Absolute Clustering (ACL)                         | Absolute\_Clustering                    |     Yes      |     alpha, beta     |
 | Relative Clustering (RCL)                         | Relative\_Clustering                    |     Yes      |     alpha, beta     |
 | Delta (DEL)                                       | Delta                                   |     Yes      |         \-          |
 | Absolute Concentration (ACO)                      | Absolute\_Concentration                 |     Yes      |         \-          |
