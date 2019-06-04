@@ -116,21 +116,28 @@ class Dissim:
     In this example, we will calculate the degree of dissimilarity (D) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
-    Firstly, we need to read the data:
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import pandas as pd
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> from segregation.non_spatial_indexes import Dissim
+    
+    Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
-    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
-    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','nhblk10']]
+    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','tractid']]
     
     The value is estimated below.
     
-    >>> dissim_index = Dissim(df, 'nhblk10', 'pop10')
+    >>> dissim_index = Dissim(df, 'tractid', 'pop10')
     >>> dissim_index.statistic
     0.31565682496226544
     
@@ -236,21 +243,28 @@ class Gini_Seg:
     In this example, we will calculate the Gini Segregation Index (G) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
-    Firstly, we need to read the data:
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import pandas as pd
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> from segregation.non_spatial_indexes import Gini_Seg
+    
+    Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
-    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
-    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','nhblk10']]
+    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','tractid']]
     
     The value is estimated below.
     
-    >>> gini_seg_index = Gini_Seg(df, 'nhblk10', 'pop10')
+    >>> gini_seg_index = Gini_Seg(df, 'tractid', 'pop10')
     >>> gini_seg_index.statistic
     0.44620350030600087
        
@@ -361,21 +375,28 @@ class Entropy:
     In this example, we will calculate the Entropy (H) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
-    Firstly, we need to read the data:
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import pandas as pd
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> from segregation.non_spatial_indexes import Entropy
+    
+    Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
-    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
-    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','nhblk10']]
+    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','tractid']]
     
     The value is estimated below.
     
-    >>> entropy_index = Entropy(df, 'nhblk10', 'pop10')
+    >>> entropy_index = Entropy(df, 'tractid', 'pop10')
     >>> entropy_index.statistic
     0.08636489348167173
        
@@ -483,21 +504,28 @@ class Isolation:
     In this example, we will calculate the Isolation Index (xPx) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
-    Firstly, we need to read the data:
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import pandas as pd
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> from segregation.non_spatial_indexes import Isolation
+    
+    Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
-    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
-    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','nhblk10']]
+    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','tractid']]
     
     The value is estimated below.
     
-    >>> isolation_index = Isolation(df, 'nhblk10', 'pop10')
+    >>> isolation_index = Isolation(df, 'tractid', 'pop10')
     >>> isolation_index.statistic
     0.11321482777341298
     
@@ -610,21 +638,28 @@ class Exposure:
     In this example, we will calculate the Exposure Index (xPy) for the Riverside County using the census tract data of 2010.
     The group of interest (X) is non-hispanic black people which is the variable nhblk10 in the dataset and the Y group is the other part of the population.
     
-    Firstly, we need to read the data:
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import pandas as pd
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> from segregation.non_spatial_indexes import Exposure
+    
+    Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
-    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
-    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','nhblk10']]
+    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','tractid']]
     
     The value is estimated below.
     
-    >>> exposure_index = Exposure(df, 'nhblk10', 'pop10')
+    >>> exposure_index = Exposure(df, 'tractid', 'pop10')
     >>> exposure_index.statistic
     0.886785172226587
     
@@ -751,21 +786,28 @@ class Atkinson:
     In this example, we will calculate the Atkinson Index (A) with the shape parameter (b) equals to 0.5 for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
-    Firstly, we need to read the data:
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import pandas as pd
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> from segregation.non_spatial_indexes import Atkinson
+    
+    Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
-    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
-    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','nhblk10']]
+    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','tractid']]
     
     The value is estimated below.
     
-    >>> atkinson_index = Atkinson(df, 'nhblk10', 'pop10', b = 0.5)
+    >>> atkinson_index = Atkinson(df, 'tractid', 'pop10', b = 0.5)
     >>> atkinson_index.statistic
     0.16722406110274002
        
@@ -876,21 +918,28 @@ class Correlation_R:
     In this example, we will calculate the Correlation Ratio Index (V) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
-    Firstly, we need to read the data:
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import pandas as pd
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> from segregation.non_spatial_indexes import Correlation_R
+    
+    Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
-    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
-    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','nhblk10']]
+    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','tractid']]
     
     The value is estimated below.
     
-    >>> correlationr_index = Correlation_R(df, 'nhblk10', 'pop10')
+    >>> correlationr_index = Correlation_R(df, 'tractid', 'pop10')
     >>> correlationr_index.statistic
     0.048716810856363923
     
@@ -1017,21 +1066,28 @@ class Con_Prof:
     In this example, we will calculate the concentration profile (R) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
-    Firstly, we need to read the data:
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import pandas as pd
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> from segregation.non_spatial_indexes import Con_Prof
+    
+    Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
-    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
-    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','nhblk10']]
+    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','tractid']]
     
     The value is estimated below.
     
-    >>> conprof_index = Con_Prof(df, 'nhblk10', 'pop10')
+    >>> conprof_index = Con_Prof(df, 'tractid', 'pop10')
     >>> conprof_index.statistic
     0.06393365660089256
     
@@ -1177,22 +1233,29 @@ class Modified_Dissim:
     In this example, we will calculate the Modified Dissimilarity Index (Dct) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
-    Firstly, we need to read the data:
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import pandas as pd
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> from segregation.non_spatial_indexes import Modified_Dissim
+    
+    Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
-    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
-    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','nhblk10']]
+    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','tractid']]
     
     The value is estimated below.
     
     >>> np.random.seed(1234)
-    >>> modified_dissim_index = Modified_Dissim(df, 'nhblk10', 'pop10')
+    >>> modified_dissim_index = Modified_Dissim(df, 'tractid', 'pop10')
     >>> modified_dissim_index.statistic
     0.30009504639081996
      
@@ -1319,22 +1382,29 @@ class Modified_Gini_Seg:
     In this example, we will calculate the Modified Gini Segregation Index (Gct) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
-    Firstly, we need to read the data:
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import pandas as pd
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> from segregation.non_spatial_indexes import Modified_Gini_Seg
+    
+    Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
-    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
-    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','nhblk10']]
+    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','tractid']]
     
     The value is estimated below.
     
     >>> np.random.seed(1234)
-    >>> modified_gini_seg_index = Modified_Gini_Seg(df, 'nhblk10', 'pop10')
+    >>> modified_gini_seg_index = Modified_Gini_Seg(df, 'tractid', 'pop10')
     >>> modified_gini_seg_index.statistic
     0.4280279611418648
      
@@ -1466,22 +1536,29 @@ class Bias_Corrected_Dissim:
     In this example, we will calculate the Dissimilarity with Bias Correction (Dbc) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
-    Firstly, we need to read the data:
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import pandas as pd
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> from segregation.non_spatial_indexes import Bias_Corrected_Dissim
+    
+    Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
-    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
-    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','nhblk10']]
+    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','tractid']]
     
     The value is estimated below.
     
     >>> np.random.seed(1234)
-    >>> bias_corrected_dissim_index = Bias_Corrected_Dissim(df, 'nhblk10', 'pop10')
+    >>> bias_corrected_dissim_index = Bias_Corrected_Dissim(df, 'tractid', 'pop10')
     >>> bias_corrected_dissim_index.statistic
     0.31484636081876954
      
@@ -1619,21 +1696,28 @@ class Density_Corrected_Dissim:
     In this example, we will calculate the Dissimilarity with Density Correction (Ddc) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
-    Firstly, we need to read the data:
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import pandas as pd
+    >>> import geopandas as gpd
+    >>> import segregation
+    >>> from segregation.non_spatial_indexes import Density_Corrected_Dissim
+    
+    Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
-    >>> filepath = '~/data/std_2010_fullcount.csv'
+    >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
     
     Then, we filter only for the desired county (in this case, Riverside County):
     
-    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','nhblk10']]
+    >>> df = census_2010.loc[census_2010.county == "Riverside County"][['pop10','tractid']]
     
     The value is estimated below.
     
-    >>> density_corrected_dissim_index = Density_Corrected_Dissim(df, 'nhblk10', 'pop10')
+    >>> density_corrected_dissim_index = Density_Corrected_Dissim(df, 'tractid', 'pop10')
     >>> density_corrected_dissim_index.statistic
     0.29350643204887517
      
