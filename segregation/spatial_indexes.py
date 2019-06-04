@@ -596,7 +596,11 @@ def _perimeter_area_ratio_spatial_dissim(data, group_pop_var, total_pop_var, sta
                 
     Notes
     -----
-    Based on Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
+    Originally based on Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
+    
+    However, Tivadar, Mihai. "OasisR: An R Package to Bring Some Order to the World of Segregation Measurement." Journal of Statistical Software 89.1 (2019): 1-39.
+    points out that in Wong’s original there is an issue with the formula which is an extra division by 2 in the spatial interaction component.
+    This function follows the formula present in the first Appendix of Tivadar, Mihai. "OasisR: An R Package to Bring Some Order to the World of Segregation Measurement." Journal of Statistical Software 89.1 (2019): 1-39.
 
     """
     
@@ -633,7 +637,7 @@ def _perimeter_area_ratio_spatial_dissim(data, group_pop_var, total_pop_var, sta
     max_pa = max(peri / ai)
     
     num = np.multiply(np.multiply(manhattan_distances(data[['pi']]), cij), aux_sum).sum()
-    den = 4 * max_pa
+    den = 2 * max_pa
     
     PARD = D - (num / den)
     PARD
@@ -708,7 +712,11 @@ class Perimeter_Area_Ratio_Spatial_Dissim:
             
     Notes
     -----
-    Based on Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
+    Originally based on Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
+    
+    However, Tivadar, Mihai. "OasisR: An R Package to Bring Some Order to the World of Segregation Measurement." Journal of Statistical Software 89.1 (2019): 1-39.
+    points out that in Wong’s original there is an issue with the formula which is an extra division by 2 in the spatial interaction component.
+    This function follows the formula present in the first Appendix of Tivadar, Mihai. "OasisR: An R Package to Bring Some Order to the World of Segregation Measurement." Journal of Statistical Software 89.1 (2019): 1-39.
     
     """
 
@@ -1757,11 +1765,11 @@ def _absolute_concentration(data, group_pop_var, total_pop_var):
     n2 = np.where(((np.cumsum(t[des_ind]) / T) < X/T) == False)[0][0]
     
     n = data.shape[0]
-    T1 =  t[asc_ind][0:(n1+1)].sum()
+    T1 =  t[asc_ind][0:n1].sum()
     T2 =  t[asc_ind][n2:n].sum()
     
-    ACO = 1- ((((x[asc_ind] * area[asc_ind] / X).sum()) - ((t[asc_ind] * area[asc_ind] / T1)[0:(n1 + 1)].sum())) / \
-          (((t[asc_ind] * area[asc_ind] / T2)[n2:n].sum()) - ((t[asc_ind] * area[asc_ind]/T1)[0:(n1 + 1)].sum())))
+    ACO = 1- ((((x[asc_ind] * area[asc_ind] / X).sum()) - ((t[asc_ind] * area[asc_ind] / T1)[0:n1].sum())) / \
+          (((t[asc_ind] * area[asc_ind] / T2)[n2:n].sum()) - ((t[asc_ind] * area[asc_ind]/T1)[0:n1].sum())))
 
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
 
@@ -1910,11 +1918,11 @@ def _relative_concentration(data, group_pop_var, total_pop_var):
     n2 = np.where(((np.cumsum(t[des_ind]) / T) < X/T) == False)[0][0]
     
     n  = data.shape[0]
-    T1 = t[asc_ind][0:(n1+1)].sum()
+    T1 = t[asc_ind][0:n1].sum()
     T2 = t[asc_ind][n2:n].sum()
     
     RCO = ((((x[asc_ind] * area[asc_ind] / X).sum()) / ((y[asc_ind] * area[asc_ind] / Y).sum())) - 1) / \
-          ((((t[asc_ind] * area[asc_ind])[0:(n1+1)].sum() / T1) / ((t[asc_ind] * area[asc_ind])[n2:n].sum() / T2)) - 1)
+          ((((t[asc_ind] * area[asc_ind])[0:n1].sum() / T1) / ((t[asc_ind] * area[asc_ind])[n2:n].sum() / T2)) - 1)
     
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
     
