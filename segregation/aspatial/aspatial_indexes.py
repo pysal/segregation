@@ -121,7 +121,7 @@ class Dissim:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.non_spatial_indexes import Dissim
+    >>> from segregation.aspatial import Dissim
     
     Secondly, we need to read the data:
     
@@ -248,7 +248,7 @@ class Gini_Seg:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.non_spatial_indexes import Gini_Seg
+    >>> from segregation.aspatial import Gini_Seg
     
     Secondly, we need to read the data:
     
@@ -380,7 +380,7 @@ class Entropy:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.non_spatial_indexes import Entropy
+    >>> from segregation.aspatial import Entropy
     
     Secondly, we need to read the data:
     
@@ -509,7 +509,7 @@ class Isolation:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.non_spatial_indexes import Isolation
+    >>> from segregation.aspatial import Isolation
     
     Secondly, we need to read the data:
     
@@ -643,7 +643,7 @@ class Exposure:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.non_spatial_indexes import Exposure
+    >>> from segregation.aspatial import Exposure
     
     Secondly, we need to read the data:
     
@@ -791,7 +791,7 @@ class Atkinson:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.non_spatial_indexes import Atkinson
+    >>> from segregation.aspatial import Atkinson
     
     Secondly, we need to read the data:
     
@@ -923,7 +923,7 @@ class Correlation_R:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.non_spatial_indexes import Correlation_R
+    >>> from segregation.aspatial import Correlation_R
     
     Secondly, we need to read the data:
     
@@ -1071,7 +1071,7 @@ class Con_Prof:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.non_spatial_indexes import Con_Prof
+    >>> from segregation.aspatial import Con_Prof
     
     Secondly, we need to read the data:
     
@@ -1238,7 +1238,7 @@ class Modified_Dissim:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.non_spatial_indexes import Modified_Dissim
+    >>> from segregation.aspatial import Modified_Dissim
     
     Secondly, we need to read the data:
     
@@ -1387,7 +1387,7 @@ class Modified_Gini_Seg:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.non_spatial_indexes import Modified_Gini_Seg
+    >>> from segregation.aspatial import Modified_Gini_Seg
     
     Secondly, we need to read the data:
     
@@ -1541,7 +1541,7 @@ class Bias_Corrected_Dissim:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.non_spatial_indexes import Bias_Corrected_Dissim
+    >>> from segregation.aspatial import Bias_Corrected_Dissim
     
     Secondly, we need to read the data:
     
@@ -1701,7 +1701,7 @@ class Density_Corrected_Dissim:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.non_spatial_indexes import Density_Corrected_Dissim
+    >>> from segregation.aspatial import Density_Corrected_Dissim
     
     Secondly, we need to read the data:
     
