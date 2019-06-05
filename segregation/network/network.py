@@ -1,12 +1,11 @@
 """Calculate population accessibility."""
 
 import pandas as pd
-import geopandas as gpd
 import pandana as pdna
-#import osmnet
 from urbanaccess.osm.load import ua_network_from_bbox
 from osmnx import project_gdf
-import os, sys
+import os
+import sys
 
 
 class _HiddenPrints:  # from https://stackoverflow.com/questions/8391411/suppress-calls-to-print-python
@@ -56,18 +55,12 @@ def get_network(geodataframe, maxdist=5000, quiet=True, **kwargs):
     bounds = gdf.to_crs(epsg=4326).total_bounds
 
     if quiet:
-        print('Downloading data from OSM')
+        print('Downloading data from OSM. This may take awhile.')
         with _HiddenPrints():
-            net = ua_network_from_bbox(lng_min=bounds[0],
-                                       lat_min=bounds[1],
-                                       lng_max=bounds[2],
-                                       lat_max=bounds[3],
-                                       **kwargs)
+            net = ua_network_from_bbox(bounds[1], bounds[0], bounds[3],
+                                       bounds[2], **kwargs)
     else:
-        net = ua_network_from_bbox(lng_min=bounds[0],
-                                   lat_min=bounds[1],
-                                   lng_max=bounds[2],
-                                   lat_max=bounds[3],
+        net = ua_network_from_bbox(bounds[1], bounds[0], bounds[3], bounds[2],
                                    **kwargs)
     print("Building network")
     network = pdna.Network(net[0]["x"], net[0]["y"], net[1]["from"],
@@ -82,48 +75,54 @@ def calc_access(geodataframe,
                 decay="linear",
                 group_population=None,
                 total_population=None):
-    """Short summary.
+    """Calculate access to population groups.
 
     Parameters
     ----------
-    geodataframe : type
-        Description of parameter `geodataframe`.
-    network : type
-        Description of parameter `network`.
-    distance : type
-        Description of parameter `distance` (the default is 5000).
-    decay : type
-        Description of parameter `decay` (the default is "linear").
-    group_population : type
-        Description of parameter `group_population` (the default is None).
-    total_population : type
-        Description of parameter `total_population` (the default is None).
+    geodataframe : geopandas.GeoDataFrame
+        geodataframe with demographic data
+    network : pandana.Network
+        pandana.Network instance. This is likely created with `get_network` or
+        via helper functions from OSMnet or UrbanAccess.
+    distance : int
+        maximum distance to consider `accessible` (the default is 5000).
+    decay : str
+        decay type pandana should use "linear", "exponential" or "flat"
+        (which means no decay). The default is "linear".
+    group_population : str
+        column name of the `group[_population` present on the input
+        geodataframe.
+    total_population : str
+        column name of the `total_population` present on the input
+        geodataframe.
 
     Returns
     -------
-    type
-        Description of returned object.
-
-    Examples
-    -------
-    Examples should be written in doctest format, and
-    should illustrate how to use the function/class.
-    >>>
+    pandas.DataFrame
+        DataFrame with two columns, `total_population` and `group_population`
+        which represent the total number of each group that can be reached
+        within the supplied `distance` parameter. The DataFrame is indexed
+        on node_ids
 
     """
-    gdf = geodataframe.copy()
-
     network.precompute(distance)
 
-    gdf["node_ids"] = network.get_node_ids(gdf.x, gdf.y)
-    network.set(gdf.node_ids,
-                variable=gdf[group_population],
+    geodataframe["node_ids"] = network.get_node_ids(geodataframe.centroid.x,
+                                                    geodataframe.centroid.y)
+
+    network.set(geodataframe.node_ids,
+                variable=geodataframe[group_population],
                 name=group_population)
+
+    network.set(geodataframe.node_ids,
+                variable=geodataframe[total_population],
+                name=total_population)
 
     access_total_pop = network.aggregate(distance,
                                          type="sum",
                                          decay=decay,
                                          name=str(total_population))
+
     access_group_pop = network.aggregate(distance,
                                          type="sum",
                                          decay=decay,
