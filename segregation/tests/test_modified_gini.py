@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from segregation.non_spatial_indexes import Modified_Gini_Seg
+from segregation.aspatial import Modified_Gini_Seg
 
 
 class Modified_Gini_Seg_Tester(unittest.TestCase):

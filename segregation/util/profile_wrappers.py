@@ -4,12 +4,15 @@ Profile Wrappers for Segregation measures
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr.edu>"
 
+from segregation.aspatial import *
 
-from segregation.non_spatial_indexes import *
+from segregation.spatial import *
 
-from segregation.spatial_indexes import *
+__all__ = [
+    'Profile_Non_Spatial_Segregation', 'Profile_Spatial_Segregation',
+    'Profile_Segregation'
+]
 
-__all__ = ['Profile_Non_Spatial_Segregation', 'Profile_Spatial_Segregation', 'Profile_Segregation']
 
 def _profile_non_spatial_segregation(data, group_pop_var, total_pop_var):
     '''
@@ -33,7 +36,7 @@ def _profile_non_spatial_segregation(data, group_pop_var, total_pop_var):
                   A dictionary containing the name of the measure and the point estimation.
     
     '''
-    
+
     D = Dissim(data, group_pop_var, total_pop_var)
     G = Gini_Seg(data, group_pop_var, total_pop_var)
     H = Entropy(data, group_pop_var, total_pop_var)
@@ -46,23 +49,23 @@ def _profile_non_spatial_segregation(data, group_pop_var, total_pop_var):
     V = Correlation_R(data, group_pop_var, total_pop_var)
     Dct = Modified_Dissim(data, group_pop_var, total_pop_var)
     Gct = Modified_Gini_Seg(data, group_pop_var, total_pop_var)
-    
-    dictionary = {'Dissimilarity': D.statistic,
-                  'Gini': G.statistic,
-                  'Entropy': H.statistic,
-                  'Atkinson': A.statistic,
-                  'Exposure': xPy.statistic,
-                  'Isolation': xPx.statistic,
-                  'Concentration Profile': R.statistic,
-                  'Bias Corrected Dissimilarity': Dbc.statistic,
-                  'Density Corrected Dissimilarity': Ddc.statistic,
-                  'Correlation Ratio': V.statistic,
-                  'Modified Dissimilarity': Dct.statistic,
-                  'Modified Gini': Gct.statistic
-                  }
-    
-    return dictionary
 
+    dictionary = {
+        'Dissimilarity': D.statistic,
+        'Gini': G.statistic,
+        'Entropy': H.statistic,
+        'Atkinson': A.statistic,
+        'Exposure': xPy.statistic,
+        'Isolation': xPx.statistic,
+        'Concentration Profile': R.statistic,
+        'Bias Corrected Dissimilarity': Dbc.statistic,
+        'Density Corrected Dissimilarity': Ddc.statistic,
+        'Correlation Ratio': V.statistic,
+        'Modified Dissimilarity': Dct.statistic,
+        'Modified Gini': Gct.statistic
+    }
+
+    return dictionary
 
 
 class Profile_Non_Spatial_Segregation:
@@ -117,19 +120,11 @@ class Profile_Non_Spatial_Segregation:
     '''
 
     def __init__(self, data, group_pop_var, total_pop_var):
-        
-        aux = _profile_non_spatial_segregation(data, group_pop_var, total_pop_var)
+
+        aux = _profile_non_spatial_segregation(data, group_pop_var,
+                                               total_pop_var)
 
         self.profile = aux
-        
-        
-        
-
-
-
-
-
-
 
 
 def _profile_spatial_segregation(data, group_pop_var, total_pop_var):
@@ -154,9 +149,10 @@ def _profile_spatial_segregation(data, group_pop_var, total_pop_var):
                   A dictionary containing the name of the measure and the point estimation.
                   
     '''
-    
+
     SD = Spatial_Dissim(data, group_pop_var, total_pop_var)
-    PARD = Perimeter_Area_Ratio_Spatial_Dissim(data, group_pop_var, total_pop_var)
+    PARD = Perimeter_Area_Ratio_Spatial_Dissim(data, group_pop_var,
+                                               total_pop_var)
     BSD = Boundary_Spatial_Dissim(data, group_pop_var, total_pop_var)
     ACE = Absolute_Centralization(data, group_pop_var, total_pop_var)
     ACO = Absolute_Concentration(data, group_pop_var, total_pop_var)
@@ -169,25 +165,25 @@ def _profile_spatial_segregation(data, group_pop_var, total_pop_var):
     SPP = Spatial_Prox_Prof(data, group_pop_var, total_pop_var)
     SP = Spatial_Proximity(data, group_pop_var, total_pop_var)
     SIT = Spatial_Information_Theory(data, group_pop_var, total_pop_var)
-    
-    dictionary = {'Spatial Dissimilarity': SD.statistic,
-                  'Absolute Centralization': ACE.statistic,
-                  'Absolute Concentration': ACO.statistic,
-                  'Delta': DEL.statistic,
-                  'Relative Centralization': RCE.statistic,
-                  'Relative Clustering': RCL.statistic,
-                  'Relative Concentration': RCO.statistic,
-                  'Spatial Exposure': SxPy.statistic,
-                  'Spatial Isolation': SxPx.statistic,
-                  'Spatial Proximity Profile': SPP.statistic,
-                  'Spatial Proximity': SP.statistic,
-                  'Boundary Spatial Dissimilarity': BSD.statistic,
-                  'Perimeter Area Ratio Spatial Dissimilarity': PARD.statistic,
-                  'Spatial Information Theory': SIT.statistic
-                  }
-    
-    return dictionary
 
+    dictionary = {
+        'Spatial Dissimilarity': SD.statistic,
+        'Absolute Centralization': ACE.statistic,
+        'Absolute Concentration': ACO.statistic,
+        'Delta': DEL.statistic,
+        'Relative Centralization': RCE.statistic,
+        'Relative Clustering': RCL.statistic,
+        'Relative Concentration': RCO.statistic,
+        'Spatial Exposure': SxPy.statistic,
+        'Spatial Isolation': SxPx.statistic,
+        'Spatial Proximity Profile': SPP.statistic,
+        'Spatial Proximity': SP.statistic,
+        'Boundary Spatial Dissimilarity': BSD.statistic,
+        'Perimeter Area Ratio Spatial Dissimilarity': PARD.statistic,
+        'Spatial Information Theory': SIT.statistic
+    }
+
+    return dictionary
 
 
 class Profile_Spatial_Segregation:
@@ -242,26 +238,10 @@ class Profile_Spatial_Segregation:
     '''
 
     def __init__(self, data, group_pop_var, total_pop_var):
-        
+
         aux = _profile_spatial_segregation(data, group_pop_var, total_pop_var)
 
         self.profile = aux
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 def _profile_segregation(data, group_pop_var, total_pop_var):
@@ -286,14 +266,14 @@ def _profile_segregation(data, group_pop_var, total_pop_var):
                   A dictionary containing the name of the measure and the point estimation.
     
     '''
-    
-    x = Profile_Non_Spatial_Segregation(data, group_pop_var, total_pop_var).profile
-    y = Profile_Spatial_Segregation(data, group_pop_var, total_pop_var).profile
-    
-    x.update(y)
-    
-    return x
 
+    x = Profile_Non_Spatial_Segregation(data, group_pop_var,
+                                        total_pop_var).profile
+    y = Profile_Spatial_Segregation(data, group_pop_var, total_pop_var).profile
+
+    x.update(y)
+
+    return x
 
 
 class Profile_Segregation:
@@ -348,8 +328,7 @@ class Profile_Segregation:
     '''
 
     def __init__(self, data, group_pop_var, total_pop_var):
-        
+
         aux = _profile_segregation(data, group_pop_var, total_pop_var)
 
         self.profile = aux
-        

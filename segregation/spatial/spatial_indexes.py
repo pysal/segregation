@@ -18,28 +18,20 @@ from scipy.ndimage.interpolation import shift
 from scipy.sparse.csgraph import floyd_warshall
 from scipy.sparse import csr_matrix
 
-from segregation.util import _return_length_weighted_w
-from segregation.non_spatial_indexes import _dissim
+from segregation.util.util import _return_length_weighted_w
+from segregation.aspatial.aspatial_indexes import _dissim
+
+__all__ = [
+    'Spatial_Prox_Prof', 'Spatial_Dissim', 'Boundary_Spatial_Dissim',
+    'Perimeter_Area_Ratio_Spatial_Dissim', 'Spatial_Isolation',
+    'Spatial_Exposure', 'Spatial_Proximity', 'Absolute_Clustering',
+    'Relative_Clustering', 'Delta', 'Absolute_Concentration',
+    'Relative_Concentration', 'Absolute_Centralization',
+    'Relative_Centralization', 'Spatial_Information_Theory'
+]
 
 
-__all__ = ['Spatial_Prox_Prof',
-           'Spatial_Dissim',
-           'Boundary_Spatial_Dissim',
-           'Perimeter_Area_Ratio_Spatial_Dissim',
-           'Spatial_Isolation',
-           'Spatial_Exposure',
-           'Spatial_Proximity',
-           'Absolute_Clustering',
-           'Relative_Clustering',
-           'Delta',
-           'Absolute_Concentration',
-           'Relative_Concentration',
-           'Absolute_Centralization',
-           'Relative_Centralization',
-           'Spatial_Information_Theory']
-
-
-def _spatial_prox_profile(data, group_pop_var, total_pop_var, m = 1000):
+def _spatial_prox_profile(data, group_pop_var, total_pop_var, m=1000):
     """
     Calculation of Spatial Proximity Profile
 
@@ -72,57 +64,70 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, m = 1000):
     Based on Hong, Seong-Yun, and Yukio Sadahiro. "Measuring geographic segregation: a graph-based approach." Journal of Geographical Systems 16.2 (2014): 211-231.
 
     """
-    
+
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
-        raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
-        
+        raise TypeError(
+            'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
+        )
+
     if ('geometry' not in data.columns):
         data['geometry'] = data[data._geometry_column_name]
-        data = data.drop([data._geometry_column_name], axis = 1)
+        data = data.drop([data._geometry_column_name], axis=1)
         data = data.set_geometry('geometry')
-        
-    if(type(m) is not int):
+
+    if (type(m) is not int):
         raise TypeError('m must be a string.')
-        
-    if(m < 2):
+
+    if (m < 2):
         raise ValueError('m must be greater than 1.')
-    
-    if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
+
+    if ((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
-    
-    if ((group_pop_var not in data.columns) or (total_pop_var not in data.columns)):    
-        raise ValueError('group_pop_var and total_pop_var must be variables of data')
 
-    data = data.rename(columns={group_pop_var: 'group_pop_var', 
-                                total_pop_var: 'total_pop_var'})
-    
-    if any(data.total_pop_var < data.group_pop_var):    
-        raise ValueError('Group of interest population must equal or lower than the total population of the units.')
+    if ((group_pop_var not in data.columns)
+            or (total_pop_var not in data.columns)):
+        raise ValueError(
+            'group_pop_var and total_pop_var must be variables of data')
 
-    # Create the shortest distance path between two pair of units using Shimbel matrix. This step was well discussed in https://github.com/pysal/segregation/issues/5.    
+    data = data.rename(columns={
+        group_pop_var: 'group_pop_var',
+        total_pop_var: 'total_pop_var'
+    })
+
+    if any(data.total_pop_var < data.group_pop_var):
+        raise ValueError(
+            'Group of interest population must equal or lower than the total population of the units.'
+        )
+
+    # Create the shortest distance path between two pair of units using Shimbel matrix. This step was well discussed in https://github.com/pysal/segregation/issues/5.
     w_libpysal = Queen.from_dataframe(data)
     graph = csr_matrix(w_libpysal.full()[0])
-    delta = floyd_warshall(csgraph = graph, directed = False)
-    
+    delta = floyd_warshall(csgraph=graph, directed=False)
+
     def calculate_etat(t):
-        g_t_i = np.where(data.group_pop_var / data.total_pop_var >= t, True, False)
+        g_t_i = np.where(data.group_pop_var / data.total_pop_var >= t, True,
+                         False)
         k = g_t_i.sum()
-        sub_delta_ij = delta[g_t_i,:][:,g_t_i] # i and j only varies in the units subset within the threshold in eta_t of Hong (2014).
+        sub_delta_ij = delta[
+            g_t_i, :][:,
+                      g_t_i]  # i and j only varies in the units subset within the threshold in eta_t of Hong (2014).
         den = sub_delta_ij.sum()
         eta_t = (k**2 - k) / den
         return eta_t
-    
+
     grid = np.linspace(0, 1, m)
     aux = np.array(list(map(calculate_etat, grid)))
     aux[aux == inf] = 0
     aux[aux == -inf] = 0
     curve = np.nan_to_num(aux, 0)
-    
+
     threshold = data.group_pop_var.sum() / data.total_pop_var.sum()
-    SPP = ((threshold - ((curve[grid < threshold]).sum() / m - (curve[grid >= threshold]).sum()/ m)) / (1 - threshold))
-    
+    SPP = ((threshold - ((curve[grid < threshold]).sum() / m -
+                         (curve[grid >= threshold]).sum() / m)) /
+           (1 - threshold))
+
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
-    
+
     return SPP, grid, curve, core_data
 
 
@@ -204,13 +209,13 @@ class Spatial_Prox_Prof:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, m = 1000):
-        
+    def __init__(self, data, group_pop_var, total_pop_var, m=1000):
+
         aux = _spatial_prox_profile(data, group_pop_var, total_pop_var, m)
 
         self.statistic = aux[0]
-        self.grid      = aux[1]
-        self.curve     = aux[2]
+        self.grid = aux[1]
+        self.curve = aux[2]
         self.core_data = aux[3]
         self._function = _spatial_prox_profile
 
@@ -222,12 +227,15 @@ class Spatial_Prox_Prof:
             import matplotlib.pyplot as plt
         except ImportError:
             warnings.warn('This method relies on importing `matplotlib`')
-        graph = plt.scatter(self.grid, self.curve, s = 0.1)
+        graph = plt.scatter(self.grid, self.curve, s=0.1)
         return graph
-    
-    
 
-def _spatial_dissim(data, group_pop_var, total_pop_var, w = None, standardize = False):
+
+def _spatial_dissim(data,
+                    group_pop_var,
+                    total_pop_var,
+                    w=None,
+                    standardize=False):
     """
     Calculation of Spatial Dissimilarity index
 
@@ -265,53 +273,57 @@ def _spatial_dissim(data, group_pop_var, total_pop_var, w = None, standardize = 
 
     """
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
-        raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
-        
+        raise TypeError(
+            'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
+        )
+
     if ('geometry' not in data.columns):
         data['geometry'] = data[data._geometry_column_name]
-        data = data.drop([data._geometry_column_name], axis = 1)
+        data = data.drop([data._geometry_column_name], axis=1)
         data = data.set_geometry('geometry')
-        
+
     if (type(standardize) is not bool):
         raise TypeError('std is not a boolean object')
-        
-    if w is None:    
+
+    if w is None:
         w_object = Queen.from_dataframe(data)
     else:
         w_object = w
-    
+
     if (not issubclass(type(w_object), libpysal.weights.W)):
         raise TypeError('w is not a PySAL weights object')
-    
+
     D = _dissim(data, group_pop_var, total_pop_var)[0]
-    
-    data = data.rename(columns={group_pop_var: 'group_pop_var', 
-                                total_pop_var: 'total_pop_var'})
-    
+
+    data = data.rename(columns={
+        group_pop_var: 'group_pop_var',
+        total_pop_var: 'total_pop_var'
+    })
+
     x = np.array(data.group_pop_var)
     t = np.array(data.total_pop_var)
-    
+
     # If a unit has zero population, the group of interest frequency is zero
     pi = np.where(t == 0, 0, x / t)
-    
+
     if not standardize:
         cij = w_object.full()[0]
     else:
         cij = w_object.full()[0]
-        cij = cij / cij.sum(axis = 1).reshape((cij.shape[0], 1))
+        cij = cij / cij.sum(axis=1).reshape((cij.shape[0], 1))
 
     # Inspired in (second solution): https://stackoverflow.com/questions/22720864/efficiently-calculating-a-euclidean-distance-matrix-using-numpy
     # Distance Matrix
     abs_dist = abs(pi[..., np.newaxis] - pi)
-        
+
     # manhattan_distances used to compute absolute distances
     num = np.multiply(abs_dist, cij).sum()
     den = cij.sum()
     SD = D - num / den
     SD
-    
+
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
-    
+
     return SD, core_data
 
 
@@ -413,18 +425,25 @@ class Spatial_Dissim:
     
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, w = None, standardize = False):
-        
-        aux = _spatial_dissim(data, group_pop_var, total_pop_var, w, standardize)
+    def __init__(self,
+                 data,
+                 group_pop_var,
+                 total_pop_var,
+                 w=None,
+                 standardize=False):
+
+        aux = _spatial_dissim(data, group_pop_var, total_pop_var, w,
+                              standardize)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _spatial_dissim
-        
-        
-        
-        
-def _boundary_spatial_dissim(data, group_pop_var, total_pop_var, standardize = False):
+
+
+def _boundary_spatial_dissim(data,
+                             group_pop_var,
+                             total_pop_var,
+                             standardize=False):
     """
     Calculation of Boundary Spatial Dissimilarity index
 
@@ -460,40 +479,46 @@ def _boundary_spatial_dissim(data, group_pop_var, total_pop_var, standardize = F
     Original paper by Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
 
     """
-    
+
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
-        raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
-        
+        raise TypeError(
+            'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
+        )
+
     if ('geometry' not in data.columns):
         data['geometry'] = data[data._geometry_column_name]
-        data = data.drop([data._geometry_column_name], axis = 1)
+        data = data.drop([data._geometry_column_name], axis=1)
         data = data.set_geometry('geometry')
-        
+
     if (type(standardize) is not bool):
         raise TypeError('std is not a boolean object')
-    
+
     D = _dissim(data, group_pop_var, total_pop_var)[0]
-    
-    data = data.rename(columns={group_pop_var: 'group_pop_var', 
-                                total_pop_var: 'total_pop_var'})
-    
+
+    data = data.rename(columns={
+        group_pop_var: 'group_pop_var',
+        total_pop_var: 'total_pop_var'
+    })
+
     # If a unit has zero population, the group of interest frequency is zero
-    data = data.assign(pi = np.where(data.total_pop_var == 0, 0, data.group_pop_var/data.total_pop_var))
+    data = data.assign(
+        pi=np.where(data.total_pop_var == 0, 0, data.group_pop_var /
+                    data.total_pop_var))
 
     if not standardize:
         cij = _return_length_weighted_w(data).full()[0]
     else:
         cij = _return_length_weighted_w(data).full()[0]
-        cij = cij / cij.sum(axis = 1).reshape((cij.shape[0], 1))
+        cij = cij / cij.sum(axis=1).reshape((cij.shape[0], 1))
 
     # manhattan_distances used to compute absolute distances
     num = np.multiply(manhattan_distances(data[['pi']]), cij).sum()
     den = cij.sum()
     BSD = D - num / den
     BSD
-    
+
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
-    
+
     return BSD, core_data
 
 
@@ -577,17 +602,20 @@ class Boundary_Spatial_Dissim:
     
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, standardize = False):
-        
-        aux = _boundary_spatial_dissim(data, group_pop_var, total_pop_var, standardize)
+    def __init__(self, data, group_pop_var, total_pop_var, standardize=False):
+
+        aux = _boundary_spatial_dissim(data, group_pop_var, total_pop_var,
+                                       standardize)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _boundary_spatial_dissim
-        
-        
-        
-def _perimeter_area_ratio_spatial_dissim(data, group_pop_var, total_pop_var, standardize = True):
+
+
+def _perimeter_area_ratio_spatial_dissim(data,
+                                         group_pop_var,
+                                         total_pop_var,
+                                         standardize=True):
     """
     Calculation of Perimeter/Area Ratio Spatial Dissimilarity index
 
@@ -624,47 +652,56 @@ def _perimeter_area_ratio_spatial_dissim(data, group_pop_var, total_pop_var, sta
     This function follows the formula present in the first Appendix of Tivadar, Mihai. "OasisR: An R Package to Bring Some Order to the World of Segregation Measurement." Journal of Statistical Software 89.1 (2019): 1-39.
 
     """
-    
+
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
-        raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
-        
+        raise TypeError(
+            'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
+        )
+
     if ('geometry' not in data.columns):
         data['geometry'] = data[data._geometry_column_name]
-        data = data.drop([data._geometry_column_name], axis = 1)
+        data = data.drop([data._geometry_column_name], axis=1)
         data = data.set_geometry('geometry')
-        
+
     if (type(standardize) is not bool):
         raise TypeError('std is not a boolean object')
-    
+
     D = _dissim(data, group_pop_var, total_pop_var)[0]
-    
-    data = data.rename(columns={group_pop_var: 'group_pop_var', 
-                                total_pop_var: 'total_pop_var'})
-    
+
+    data = data.rename(columns={
+        group_pop_var: 'group_pop_var',
+        total_pop_var: 'total_pop_var'
+    })
+
     # If a unit has zero population, the group of interest frequency is zero
-    data = data.assign(pi = np.where(data.total_pop_var == 0, 0, data.group_pop_var/data.total_pop_var))
+    data = data.assign(
+        pi=np.where(data.total_pop_var == 0, 0, data.group_pop_var /
+                    data.total_pop_var))
 
     if not standardize:
         cij = _return_length_weighted_w(data).full()[0]
     else:
         cij = _return_length_weighted_w(data).full()[0]
         cij = cij / cij.sum()
-   
+
     peri = data.length
-    ai   = data.area
-    
-    aux_sum = np.add(np.array(list((peri / ai))), np.array(list((peri / ai))).reshape((len(list((peri / ai))),1)))
-    
+    ai = data.area
+
+    aux_sum = np.add(
+        np.array(list((peri / ai))),
+        np.array(list((peri / ai))).reshape((len(list((peri / ai))), 1)))
+
     max_pa = max(peri / ai)
-    
-    num = np.multiply(np.multiply(manhattan_distances(data[['pi']]), cij), aux_sum).sum()
+
+    num = np.multiply(np.multiply(manhattan_distances(data[['pi']]), cij),
+                      aux_sum).sum()
     den = 2 * max_pa
-    
+
     PARD = D - (num / den)
     PARD
-    
+
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
-    
+
     return PARD, core_data
 
 
@@ -748,17 +785,18 @@ class Perimeter_Area_Ratio_Spatial_Dissim:
     
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, standardize = True):
-        
-        aux = _perimeter_area_ratio_spatial_dissim(data, group_pop_var, total_pop_var, standardize)
+    def __init__(self, data, group_pop_var, total_pop_var, standardize=True):
+
+        aux = _perimeter_area_ratio_spatial_dissim(data, group_pop_var,
+                                                   total_pop_var, standardize)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _perimeter_area_ratio_spatial_dissim
-        
-        
-        
-def _spatial_isolation(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0.5):
+
+
+def _spatial_isolation(data, group_pop_var, total_pop_var, alpha=0.6,
+                       beta=0.5):
     """
     Calculation of Spatial Isolation index
 
@@ -798,48 +836,61 @@ def _spatial_isolation(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0
 
     """
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
-        raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
-        
+        raise TypeError(
+            'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
+        )
+
     if ('geometry' not in data.columns):
         data['geometry'] = data[data._geometry_column_name]
-        data = data.drop([data._geometry_column_name], axis = 1)
+        data = data.drop([data._geometry_column_name], axis=1)
         data = data.set_geometry('geometry')
-        
-    if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
+
+    if ((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
-    
-    if ((group_pop_var not in data.columns) or (total_pop_var not in data.columns)):    
-        raise ValueError('group_pop_var and total_pop_var must be variables of data')
-        
+
+    if ((group_pop_var not in data.columns)
+            or (total_pop_var not in data.columns)):
+        raise ValueError(
+            'group_pop_var and total_pop_var must be variables of data')
+
     if (alpha < 0):
         raise ValueError('alpha must be greater than zero.')
-    
+
     if (beta < 0):
         raise ValueError('beta must be greater than zero.')
-    
-    data = data.rename(columns={group_pop_var: 'group_pop_var', 
-                                total_pop_var: 'total_pop_var'})
-    
+
+    data = data.rename(columns={
+        group_pop_var: 'group_pop_var',
+        total_pop_var: 'total_pop_var'
+    })
+
     x = np.array(data.group_pop_var)
     t = np.array(data.total_pop_var)
-    
-    if any(t < x):    
-        raise ValueError('Group of interest population must equal or lower than the total population of the units.')
-    
+
+    if any(t < x):
+        raise ValueError(
+            'Group of interest population must equal or lower than the total population of the units.'
+        )
+
     c_lons = np.array(data.centroid.x)
     c_lats = np.array(data.centroid.y)
-    
+
     X = x.sum()
-    
-    dist = euclidean_distances(pd.DataFrame({'c_lons': c_lons, 'c_lats': c_lats}))
-    np.fill_diagonal(dist, val = (alpha * data.area) ** (beta))
+
+    dist = euclidean_distances(
+        pd.DataFrame({
+            'c_lons': c_lons,
+            'c_lats': c_lats
+        }))
+    np.fill_diagonal(dist, val=(alpha * data.area)**(beta))
     c = np.exp(-dist)
-    
-    Pij  = np.multiply(c, t) / np.sum(np.multiply(c, t), axis = 1)
-    SxPx = (np.array(x / X) * np.nansum(np.multiply(Pij, np.array(x / t)), axis = 1)).sum()
-    
+
+    Pij = np.multiply(c, t) / np.sum(np.multiply(c, t), axis=1)
+    SxPx = (np.array(x / X) *
+            np.nansum(np.multiply(Pij, np.array(x / t)), axis=1)).sum()
+
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
-    
+
     return SxPx, core_data
 
 
@@ -925,17 +976,18 @@ class Spatial_Isolation:
     
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0.5):
-        
-        aux = _spatial_isolation(data, group_pop_var, total_pop_var, alpha, beta)
+    def __init__(self, data, group_pop_var, total_pop_var, alpha=0.6,
+                 beta=0.5):
+
+        aux = _spatial_isolation(data, group_pop_var, total_pop_var, alpha,
+                                 beta)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _spatial_isolation
-        
-        
 
-def _spatial_exposure(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0.5):
+
+def _spatial_exposure(data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5):
     """
     Calculation of Spatial Exposure index
 
@@ -975,50 +1027,62 @@ def _spatial_exposure(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0.
 
     """
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
-        raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
-        
+        raise TypeError(
+            'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
+        )
+
     if ('geometry' not in data.columns):
         data['geometry'] = data[data._geometry_column_name]
-        data = data.drop([data._geometry_column_name], axis = 1)
+        data = data.drop([data._geometry_column_name], axis=1)
         data = data.set_geometry('geometry')
-        
-    if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
+
+    if ((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
-    
-    if ((group_pop_var not in data.columns) or (total_pop_var not in data.columns)):    
-        raise ValueError('group_pop_var and total_pop_var must be variables of data')
-        
+
+    if ((group_pop_var not in data.columns)
+            or (total_pop_var not in data.columns)):
+        raise ValueError(
+            'group_pop_var and total_pop_var must be variables of data')
+
     if (alpha < 0):
         raise ValueError('alpha must be greater than zero.')
-    
+
     if (beta < 0):
         raise ValueError('beta must be greater than zero.')
-    
-    data = data.rename(columns={group_pop_var: 'group_pop_var', 
-                                total_pop_var: 'total_pop_var'})
+
+    data = data.rename(columns={
+        group_pop_var: 'group_pop_var',
+        total_pop_var: 'total_pop_var'
+    })
 
     x = np.array(data.group_pop_var)
     t = np.array(data.total_pop_var)
-    
-    if any(t < x):    
-        raise ValueError('Group of interest population must equal or lower than the total population of the units.')
-    
+
+    if any(t < x):
+        raise ValueError(
+            'Group of interest population must equal or lower than the total population of the units.'
+        )
+
     y = t - x
-    
+
     c_lons = np.array(data.centroid.x)
     c_lats = np.array(data.centroid.y)
-    
+
     X = x.sum()
-    
-    dist = euclidean_distances(pd.DataFrame({'c_lons': c_lons, 'c_lats': c_lats}))
-    np.fill_diagonal(dist, val = (alpha * data.area) ** (beta))
+
+    dist = euclidean_distances(
+        pd.DataFrame({
+            'c_lons': c_lons,
+            'c_lats': c_lats
+        }))
+    np.fill_diagonal(dist, val=(alpha * data.area)**(beta))
     c = np.exp(-dist)
-    
-    Pij  = np.multiply(c, t) / np.sum(np.multiply(c, t), axis = 1)
-    SxPy = (x / X * np.nansum(np.multiply(Pij, y / t), axis = 1)).sum()
-    
+
+    Pij = np.multiply(c, t) / np.sum(np.multiply(c, t), axis=1)
+    SxPy = (x / X * np.nansum(np.multiply(Pij, y / t), axis=1)).sum()
+
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
-    
+
     return SxPy, core_data
 
 
@@ -1104,16 +1168,19 @@ class Spatial_Exposure:
     
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0.5):
-        
-        aux = _spatial_exposure(data, group_pop_var, total_pop_var, alpha, beta)
+    def __init__(self, data, group_pop_var, total_pop_var, alpha=0.6,
+                 beta=0.5):
+
+        aux = _spatial_exposure(data, group_pop_var, total_pop_var, alpha,
+                                beta)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _spatial_exposure
-        
-        
-def _spatial_proximity(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0.5):
+
+
+def _spatial_proximity(data, group_pop_var, total_pop_var, alpha=0.6,
+                       beta=0.5):
     """
     Calculation of Spatial Proximity index
     
@@ -1146,55 +1213,63 @@ def _spatial_proximity(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0
     
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
     """
-    
+
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
-        raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
-        
+        raise TypeError(
+            'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
+        )
+
     if ('geometry' not in data.columns):
         data['geometry'] = data[data._geometry_column_name]
-        data = data.drop([data._geometry_column_name], axis = 1)
+        data = data.drop([data._geometry_column_name], axis=1)
         data = data.set_geometry('geometry')
-        
-    if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
+
+    if ((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
-    
-    if ((group_pop_var not in data.columns) or (total_pop_var not in data.columns)):    
-        raise ValueError('group_pop_var and total_pop_var must be variables of data')
-        
+
+    if ((group_pop_var not in data.columns)
+            or (total_pop_var not in data.columns)):
+        raise ValueError(
+            'group_pop_var and total_pop_var must be variables of data')
+
     if (alpha < 0):
         raise ValueError('alpha must be greater than zero.')
-    
+
     if (beta < 0):
         raise ValueError('beta must be greater than zero.')
-    
-    data = data.rename(columns={group_pop_var: 'group_pop_var', 
-                                total_pop_var: 'total_pop_var'})
-    
-    if any(data.total_pop_var < data.group_pop_var):    
-        raise ValueError('Group of interest population must equal or lower than the total population of the units.')
-   
+
+    data = data.rename(columns={
+        group_pop_var: 'group_pop_var',
+        total_pop_var: 'total_pop_var'
+    })
+
+    if any(data.total_pop_var < data.group_pop_var):
+        raise ValueError(
+            'Group of interest population must equal or lower than the total population of the units.'
+        )
+
     T = data.total_pop_var.sum()
-    
-    data = data.assign(xi = data.group_pop_var,
-                       yi = data.total_pop_var - data.group_pop_var,
-                       ti = data.total_pop_var,
-                       c_lons = data.centroid.map(lambda p: p.x),
-                       c_lats = data.centroid.map(lambda p: p.y))
-    
+
+    data = data.assign(xi=data.group_pop_var,
+                       yi=data.total_pop_var - data.group_pop_var,
+                       ti=data.total_pop_var,
+                       c_lons=data.centroid.map(lambda p: p.x),
+                       c_lats=data.centroid.map(lambda p: p.y))
+
     X = data.xi.sum()
     Y = data.yi.sum()
-    
-    dist = euclidean_distances(data[['c_lons','c_lats']])
-    np.fill_diagonal(dist, val = (alpha * data.area) ** (beta))
+
+    dist = euclidean_distances(data[['c_lons', 'c_lats']])
+    np.fill_diagonal(dist, val=(alpha * data.area)**(beta))
     c = np.exp(-dist)
-    
+
     Pxx = ((np.array(data.xi) * c).T * np.array(data.xi)).sum() / X**2
     Pyy = ((np.array(data.yi) * c).T * np.array(data.yi)).sum() / Y**2
     Ptt = ((np.array(data.ti) * c).T * np.array(data.ti)).sum() / T**2
     SP = (X * Pxx + Y * Pyy) / (T * Ptt)
-    
-    core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]   
-    
+
+    core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
+
     return SP, core_data
 
 
@@ -1276,16 +1351,22 @@ class Spatial_Proximity:
     
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0.5):
-        
-        aux = _spatial_proximity(data, group_pop_var, total_pop_var, alpha, beta)
+    def __init__(self, data, group_pop_var, total_pop_var, alpha=0.6,
+                 beta=0.5):
+
+        aux = _spatial_proximity(data, group_pop_var, total_pop_var, alpha,
+                                 beta)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _spatial_proximity
 
 
-def _absolute_clustering(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0.5):
+def _absolute_clustering(data,
+                         group_pop_var,
+                         total_pop_var,
+                         alpha=0.6,
+                         beta=0.5):
     """
     Calculation of Absolute Clustering index
     
@@ -1318,53 +1399,61 @@ def _absolute_clustering(data, group_pop_var, total_pop_var, alpha = 0.6, beta =
     
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
     """
-    
+
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
-        raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
-        
+        raise TypeError(
+            'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
+        )
+
     if ('geometry' not in data.columns):
         data['geometry'] = data[data._geometry_column_name]
-        data = data.drop([data._geometry_column_name], axis = 1)
+        data = data.drop([data._geometry_column_name], axis=1)
         data = data.set_geometry('geometry')
-        
-    if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
+
+    if ((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
-    
-    if ((group_pop_var not in data.columns) or (total_pop_var not in data.columns)):    
-        raise ValueError('group_pop_var and total_pop_var must be variables of data')
-        
+
+    if ((group_pop_var not in data.columns)
+            or (total_pop_var not in data.columns)):
+        raise ValueError(
+            'group_pop_var and total_pop_var must be variables of data')
+
     if (alpha < 0):
         raise ValueError('alpha must be greater than zero.')
-    
+
     if (beta < 0):
         raise ValueError('beta must be greater than zero.')
-    
-    data = data.rename(columns={group_pop_var: 'group_pop_var', 
-                                total_pop_var: 'total_pop_var'})
-    
-    if any(data.total_pop_var < data.group_pop_var):    
-        raise ValueError('Group of interest population must equal or lower than the total population of the units.')
-    
-    data = data.assign(xi = data.group_pop_var,
-                       yi = data.total_pop_var - data.group_pop_var,
-                       c_lons = data.centroid.map(lambda p: p.x),
-                       c_lats = data.centroid.map(lambda p: p.y))
-    
+
+    data = data.rename(columns={
+        group_pop_var: 'group_pop_var',
+        total_pop_var: 'total_pop_var'
+    })
+
+    if any(data.total_pop_var < data.group_pop_var):
+        raise ValueError(
+            'Group of interest population must equal or lower than the total population of the units.'
+        )
+
+    data = data.assign(xi=data.group_pop_var,
+                       yi=data.total_pop_var - data.group_pop_var,
+                       c_lons=data.centroid.map(lambda p: p.x),
+                       c_lats=data.centroid.map(lambda p: p.y))
+
     X = data.xi.sum()
-    
+
     x = np.array(data.xi)
     t = np.array(data.total_pop_var)
     n = len(data)
-    
-    dist = euclidean_distances(data[['c_lons','c_lats']])
-    np.fill_diagonal(dist, val = (alpha * data.area) ** (beta))
+
+    dist = euclidean_distances(data[['c_lons', 'c_lats']])
+    np.fill_diagonal(dist, val=(alpha * data.area)**(beta))
     c = np.exp(-dist)
-    
+
     ACL = ((((x/X) * (c * x).sum(axis = 1)).sum()) - ((X / n**2) * c.sum())) / \
           ((((x/X) * (c * t).sum(axis = 1)).sum()) - ((X / n**2) * c.sum()))
-    
+
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
-    
+
     return ACL, core_data
 
 
@@ -1439,18 +1528,22 @@ class Absolute_Clustering:
     
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0.5):
-        
-        aux = _absolute_clustering(data, group_pop_var, total_pop_var, alpha, beta)
+    def __init__(self, data, group_pop_var, total_pop_var, alpha=0.6,
+                 beta=0.5):
+
+        aux = _absolute_clustering(data, group_pop_var, total_pop_var, alpha,
+                                   beta)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _absolute_clustering
 
 
-        
-        
-def _relative_clustering(data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0.5):
+def _relative_clustering(data,
+                         group_pop_var,
+                         total_pop_var,
+                         alpha=0.6,
+                         beta=0.5):
     """
     Calculation of Relative Clustering index
     
@@ -1483,51 +1576,59 @@ def _relative_clustering(data, group_pop_var, total_pop_var, alpha = 0.6, beta =
     
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
     """
-    
+
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
-        raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
-        
+        raise TypeError(
+            'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
+        )
+
     if ('geometry' not in data.columns):
         data['geometry'] = data[data._geometry_column_name]
-        data = data.drop([data._geometry_column_name], axis = 1)
+        data = data.drop([data._geometry_column_name], axis=1)
         data = data.set_geometry('geometry')
-        
-    if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
+
+    if ((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
-    
-    if ((group_pop_var not in data.columns) or (total_pop_var not in data.columns)):    
-        raise ValueError('group_pop_var and total_pop_var must be variables of data')
-        
+
+    if ((group_pop_var not in data.columns)
+            or (total_pop_var not in data.columns)):
+        raise ValueError(
+            'group_pop_var and total_pop_var must be variables of data')
+
     if (alpha < 0):
         raise ValueError('alpha must be greater than zero.')
-    
+
     if (beta < 0):
         raise ValueError('beta must be greater than zero.')
-    
-    data = data.rename(columns={group_pop_var: 'group_pop_var', 
-                                total_pop_var: 'total_pop_var'})
-    
-    if any(data.total_pop_var < data.group_pop_var):    
-        raise ValueError('Group of interest population must equal or lower than the total population of the units.')
-    
-    data = data.assign(xi = data.group_pop_var,
-                       yi = data.total_pop_var - data.group_pop_var,
-                       c_lons = data.centroid.map(lambda p: p.x),
-                       c_lats = data.centroid.map(lambda p: p.y))
-    
+
+    data = data.rename(columns={
+        group_pop_var: 'group_pop_var',
+        total_pop_var: 'total_pop_var'
+    })
+
+    if any(data.total_pop_var < data.group_pop_var):
+        raise ValueError(
+            'Group of interest population must equal or lower than the total population of the units.'
+        )
+
+    data = data.assign(xi=data.group_pop_var,
+                       yi=data.total_pop_var - data.group_pop_var,
+                       c_lons=data.centroid.map(lambda p: p.x),
+                       c_lats=data.centroid.map(lambda p: p.y))
+
     X = data.xi.sum()
     Y = data.yi.sum()
-    
-    dist = euclidean_distances(data[['c_lons','c_lats']])
-    np.fill_diagonal(dist, val = (alpha * data.area) ** (beta))
+
+    dist = euclidean_distances(data[['c_lons', 'c_lats']])
+    np.fill_diagonal(dist, val=(alpha * data.area)**(beta))
     c = np.exp(-dist)
-    
+
     Pxx = ((np.array(data.xi) * c).T * np.array(data.xi)).sum() / X**2
     Pyy = ((np.array(data.yi) * c).T * np.array(data.yi)).sum() / Y**2
     RCL = Pxx / Pyy - 1
-    
+
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
-    
+
     return RCL, core_data
 
 
@@ -1609,15 +1710,17 @@ class Relative_Clustering:
     
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, alpha = 0.6, beta = 0.5):
-        
-        aux = _relative_clustering(data, group_pop_var, total_pop_var, alpha, beta)
+    def __init__(self, data, group_pop_var, total_pop_var, alpha=0.6,
+                 beta=0.5):
+
+        aux = _relative_clustering(data, group_pop_var, total_pop_var, alpha,
+                                   beta)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _relative_clustering
-        
-        
+
+
 def _delta(data, group_pop_var, total_pop_var):
     """
     Calculation of Delta index
@@ -1648,37 +1751,45 @@ def _delta(data, group_pop_var, total_pop_var):
 
     """
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
-        raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
-        
+        raise TypeError(
+            'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
+        )
+
     if ('geometry' not in data.columns):
         data['geometry'] = data[data._geometry_column_name]
-        data = data.drop([data._geometry_column_name], axis = 1)
+        data = data.drop([data._geometry_column_name], axis=1)
         data = data.set_geometry('geometry')
-        
-    if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
+
+    if ((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
-    
-    if ((group_pop_var not in data.columns) or (total_pop_var not in data.columns)):    
-        raise ValueError('group_pop_var and total_pop_var must be variables of data')
-    
-    data = data.rename(columns={group_pop_var: 'group_pop_var', 
-                                total_pop_var: 'total_pop_var'})
-    
+
+    if ((group_pop_var not in data.columns)
+            or (total_pop_var not in data.columns)):
+        raise ValueError(
+            'group_pop_var and total_pop_var must be variables of data')
+
+    data = data.rename(columns={
+        group_pop_var: 'group_pop_var',
+        total_pop_var: 'total_pop_var'
+    })
+
     x = np.array(data.group_pop_var)
     t = np.array(data.total_pop_var)
-    
-    if any(t < x):    
-        raise ValueError('Group of interest population must equal or lower than the total population of the units.')
-    
+
+    if any(t < x):
+        raise ValueError(
+            'Group of interest population must equal or lower than the total population of the units.'
+        )
+
     area = np.array(data.area)
-    
+
     X = x.sum()
     A = area.sum()
-    
-    DEL = 1/2 * abs(x / X - area / A).sum()
-    
+
+    DEL = 1 / 2 * abs(x / X - area / A).sum()
+
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
-    
+
     return DEL, core_data
 
 
@@ -1755,14 +1866,14 @@ class Delta:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var):
-        
+
         aux = _delta(data, group_pop_var, total_pop_var)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _delta
-        
-        
+
+
 def _absolute_concentration(data, group_pop_var, total_pop_var):
     """
     Calculation of Absolute Concentration index
@@ -1793,44 +1904,52 @@ def _absolute_concentration(data, group_pop_var, total_pop_var):
 
     """
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
-        raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
-        
+        raise TypeError(
+            'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
+        )
+
     if ('geometry' not in data.columns):
         data['geometry'] = data[data._geometry_column_name]
-        data = data.drop([data._geometry_column_name], axis = 1)
+        data = data.drop([data._geometry_column_name], axis=1)
         data = data.set_geometry('geometry')
-        
-    if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
+
+    if ((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
-    
-    if ((group_pop_var not in data.columns) or (total_pop_var not in data.columns)):    
-        raise ValueError('group_pop_var and total_pop_var must be variables of data')
-    
-    data = data.rename(columns={group_pop_var: 'group_pop_var', 
-                                total_pop_var: 'total_pop_var'})
-    
+
+    if ((group_pop_var not in data.columns)
+            or (total_pop_var not in data.columns)):
+        raise ValueError(
+            'group_pop_var and total_pop_var must be variables of data')
+
+    data = data.rename(columns={
+        group_pop_var: 'group_pop_var',
+        total_pop_var: 'total_pop_var'
+    })
+
     x = np.array(data.group_pop_var)
     t = np.array(data.total_pop_var)
-    
-    if any(t < x):    
-        raise ValueError('Group of interest population must equal or lower than the total population of the units.')
-    
+
+    if any(t < x):
+        raise ValueError(
+            'Group of interest population must equal or lower than the total population of the units.'
+        )
+
     area = np.array(data.area)
-    
+
     X = x.sum()
     T = t.sum()
-    
+
     # Create the indexes according to the area ordering
     des_ind = (-area).argsort()
     asc_ind = area.argsort()
-    
-    n1 = np.where(((np.cumsum(t[asc_ind]) / T) < X/T) == False)[0][0]
-    n2 = np.where(((np.cumsum(t[des_ind]) / T) < X/T) == False)[0][0]
-    
+
+    n1 = np.where(((np.cumsum(t[asc_ind]) / T) < X / T) == False)[0][0]
+    n2 = np.where(((np.cumsum(t[des_ind]) / T) < X / T) == False)[0][0]
+
     n = data.shape[0]
-    T1 =  t[asc_ind][0:n1].sum()
-    T2 =  t[asc_ind][n2:n].sum()
-    
+    T1 = t[asc_ind][0:n1].sum()
+    T2 = t[asc_ind][n2:n].sum()
+
     ACO = 1- ((((x[asc_ind] * area[asc_ind] / X).sum()) - ((t[asc_ind] * area[asc_ind] / T1)[0:n1].sum())) / \
           (((t[asc_ind] * area[asc_ind] / T2)[n2:n].sum()) - ((t[asc_ind] * area[asc_ind]/T1)[0:n1].sum())))
 
@@ -1912,14 +2031,14 @@ class Absolute_Concentration:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var):
-        
+
         aux = _absolute_concentration(data, group_pop_var, total_pop_var)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _absolute_concentration
-        
-        
+
+
 def _relative_concentration(data, group_pop_var, total_pop_var):
     """
     Calculation of Relative Concentration index
@@ -1950,52 +2069,60 @@ def _relative_concentration(data, group_pop_var, total_pop_var):
 
     """
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
-        raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
-        
+        raise TypeError(
+            'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
+        )
+
     if ('geometry' not in data.columns):
         data['geometry'] = data[data._geometry_column_name]
-        data = data.drop([data._geometry_column_name], axis = 1)
+        data = data.drop([data._geometry_column_name], axis=1)
         data = data.set_geometry('geometry')
-        
-    if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
+
+    if ((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
-    
-    if ((group_pop_var not in data.columns) or (total_pop_var not in data.columns)):    
-        raise ValueError('group_pop_var and total_pop_var must be variables of data')
-    
-    data = data.rename(columns={group_pop_var: 'group_pop_var', 
-                                total_pop_var: 'total_pop_var'})
-    
+
+    if ((group_pop_var not in data.columns)
+            or (total_pop_var not in data.columns)):
+        raise ValueError(
+            'group_pop_var and total_pop_var must be variables of data')
+
+    data = data.rename(columns={
+        group_pop_var: 'group_pop_var',
+        total_pop_var: 'total_pop_var'
+    })
+
     x = np.array(data.group_pop_var)
     t = np.array(data.total_pop_var)
-    
-    if any(t < x):    
-        raise ValueError('Group of interest population must equal or lower than the total population of the units.')
-    
+
+    if any(t < x):
+        raise ValueError(
+            'Group of interest population must equal or lower than the total population of the units.'
+        )
+
     area = np.array(data.area)
-    
+
     y = t - x
-    
+
     X = x.sum()
     Y = y.sum()
     T = t.sum()
-    
+
     # Create the indexes according to the area ordering
     des_ind = (-area).argsort()
     asc_ind = area.argsort()
-    
-    n1 = np.where(((np.cumsum(t[asc_ind]) / T) < X/T) == False)[0][0]
-    n2 = np.where(((np.cumsum(t[des_ind]) / T) < X/T) == False)[0][0]
-    
-    n  = data.shape[0]
+
+    n1 = np.where(((np.cumsum(t[asc_ind]) / T) < X / T) == False)[0][0]
+    n2 = np.where(((np.cumsum(t[des_ind]) / T) < X / T) == False)[0][0]
+
+    n = data.shape[0]
     T1 = t[asc_ind][0:n1].sum()
     T2 = t[asc_ind][n2:n].sum()
-    
+
     RCO = ((((x[asc_ind] * area[asc_ind] / X).sum()) / ((y[asc_ind] * area[asc_ind] / Y).sum())) - 1) / \
           ((((t[asc_ind] * area[asc_ind])[0:n1].sum() / T1) / ((t[asc_ind] * area[asc_ind])[n2:n].sum() / T2)) - 1)
-    
+
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
-    
+
     return RCO, core_data
 
 
@@ -2072,16 +2199,16 @@ class Relative_Concentration:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var):
-        
+
         aux = _relative_concentration(data, group_pop_var, total_pop_var)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _relative_concentration
-        
-        
-        
-def _absolute_centralization(data, group_pop_var, total_pop_var, center = "mean"):
+
+
+def _absolute_centralization(data, group_pop_var, total_pop_var,
+                             center="mean"):
     """
     Calculation of Absolute Centralization index
 
@@ -2130,86 +2257,100 @@ def _absolute_centralization(data, group_pop_var, total_pop_var, center = "mean"
     A discussion of defining the center in this function can be found in https://github.com/pysal/segregation/issues/18.
 
     """
-    
+
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
-        raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
-        
+        raise TypeError(
+            'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
+        )
+
     if ('geometry' not in data.columns):
         data['geometry'] = data[data._geometry_column_name]
-        data = data.drop([data._geometry_column_name], axis = 1)
+        data = data.drop([data._geometry_column_name], axis=1)
         data = data.set_geometry('geometry')
-        
-    if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
+
+    if ((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
-    
-    if ((group_pop_var not in data.columns) or (total_pop_var not in data.columns)):    
-        raise ValueError('group_pop_var and total_pop_var must be variables of data')
-    
-    data = data.rename(columns={group_pop_var: 'group_pop_var', 
-                                total_pop_var: 'total_pop_var'})
-    
+
+    if ((group_pop_var not in data.columns)
+            or (total_pop_var not in data.columns)):
+        raise ValueError(
+            'group_pop_var and total_pop_var must be variables of data')
+
+    data = data.rename(columns={
+        group_pop_var: 'group_pop_var',
+        total_pop_var: 'total_pop_var'
+    })
+
     x = np.array(data.group_pop_var)
     t = np.array(data.total_pop_var)
-    
-    if any(t < x):    
-        raise ValueError('Group of interest population must equal or lower than the total population of the units.')
-    
+
+    if any(t < x):
+        raise ValueError(
+            'Group of interest population must equal or lower than the total population of the units.'
+        )
+
     area = np.array(data.area)
-    
+
     c_lons = np.array(data.centroid.x)
     c_lats = np.array(data.centroid.y)
-    
+
     if isinstance(center, str):
-        if not center in ['mean', 'median', 'population_weighted_mean', 'largest_population']:
-            raise ValueError('The center string must one of \'mean\', \'median\', \'population_weighted_mean\', \'largest_population\'')
-        
+        if not center in [
+                'mean', 'median', 'population_weighted_mean',
+                'largest_population'
+        ]:
+            raise ValueError(
+                'The center string must one of \'mean\', \'median\', \'population_weighted_mean\', \'largest_population\''
+            )
+
         if (center == "mean"):
             center_lon = c_lons.mean()
             center_lat = c_lats.mean()
-    
+
         if (center == "median"):
             center_lon = np.median(c_lons)
             center_lat = np.median(c_lats)
-            
+
         if (center == "population_weighted_mean"):
-            center_lon = np.average(c_lons, weights = t)
-            center_lat = np.average(c_lats, weights = t)
-    
+            center_lon = np.average(c_lons, weights=t)
+            center_lat = np.average(c_lats, weights=t)
+
         if (center == "largest_population"):
             center_lon = c_lons[np.where(t == t.max())].mean()
             center_lat = c_lats[np.where(t == t.max())].mean()
 
-    if isinstance(center, tuple) or isinstance(center, list) or isinstance(center, np.ndarray):
-        if np.array(center).shape != (2,):
+    if isinstance(center, tuple) or isinstance(center, list) or isinstance(
+            center, np.ndarray):
+        if np.array(center).shape != (2, ):
             raise ValueError('The center tuple/list/array must have length 2.')
-        
+
         center_lon = center[0]
         center_lat = center[1]
-    
+
     if isinstance(center, int):
         if (center > len(data) - 1) or (center < 0):
             raise ValueError('The center index must by in the range of data.')
 
         center_lon = data.iloc[[center]].centroid.x.values[0]
         center_lat = data.iloc[[center]].centroid.y.values[0]
-    
+
     X = x.sum()
     A = area.sum()
 
-    center_dist = np.sqrt((c_lons - center_lon) ** 2 + (c_lats - center_lat) ** 2)
-    
-    asc_ind = center_dist.argsort() 
-    
+    center_dist = np.sqrt((c_lons - center_lon)**2 + (c_lats - center_lat)**2)
+
+    asc_ind = center_dist.argsort()
+
     Xi = np.cumsum(x[asc_ind]) / X
     Ai = np.cumsum(area[asc_ind]) / A
-    
+
     ACE = np.nansum(shift(Xi, 1, cval=np.NaN) * Ai) - \
           np.nansum(Xi * shift(Ai, 1, cval=np.NaN))
-    
+
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
-    
+
     center_values = [center_lon, center_lat]
-    
+
     return ACE, core_data, center_values
 
 
@@ -2305,18 +2446,19 @@ class Absolute_Centralization:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, center = "mean"):
-        
-        aux = _absolute_centralization(data, group_pop_var, total_pop_var, center)
+    def __init__(self, data, group_pop_var, total_pop_var, center="mean"):
 
-        self.statistic     = aux[0]
-        self.core_data     = aux[1]
+        aux = _absolute_centralization(data, group_pop_var, total_pop_var,
+                                       center)
+
+        self.statistic = aux[0]
+        self.core_data = aux[1]
         self.center_values = aux[2]
-        self._function     = _absolute_centralization
-        
-        
-        
-def _relative_centralization(data, group_pop_var, total_pop_var, center = "mean"):
+        self._function = _absolute_centralization
+
+
+def _relative_centralization(data, group_pop_var, total_pop_var,
+                             center="mean"):
     """
     Calculation of Relative Centralization index
 
@@ -2366,82 +2508,96 @@ def _relative_centralization(data, group_pop_var, total_pop_var, center = "mean"
 
     """
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
-        raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
-        
+        raise TypeError(
+            'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
+        )
+
     if ('geometry' not in data.columns):
         data['geometry'] = data[data._geometry_column_name]
-        data = data.drop([data._geometry_column_name], axis = 1)
+        data = data.drop([data._geometry_column_name], axis=1)
         data = data.set_geometry('geometry')
-        
-    if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
+
+    if ((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
-    
-    if ((group_pop_var not in data.columns) or (total_pop_var not in data.columns)):    
-        raise ValueError('group_pop_var and total_pop_var must be variables of data')
-    
-    data = data.rename(columns={group_pop_var: 'group_pop_var', 
-                                total_pop_var: 'total_pop_var'})
+
+    if ((group_pop_var not in data.columns)
+            or (total_pop_var not in data.columns)):
+        raise ValueError(
+            'group_pop_var and total_pop_var must be variables of data')
+
+    data = data.rename(columns={
+        group_pop_var: 'group_pop_var',
+        total_pop_var: 'total_pop_var'
+    })
 
     x = np.array(data.group_pop_var)
     t = np.array(data.total_pop_var)
-    
-    if any(t < x):    
-        raise ValueError('Group of interest population must equal or lower than the total population of the units.')
+
+    if any(t < x):
+        raise ValueError(
+            'Group of interest population must equal or lower than the total population of the units.'
+        )
 
     y = t - x
-    
+
     c_lons = np.array(data.centroid.x)
     c_lats = np.array(data.centroid.y)
-    
+
     if isinstance(center, str):
-        if not center in ['mean', 'median', 'population_weighted_mean', 'largest_population']:
-            raise ValueError('The center string must one of \'mean\', \'median\', \'population_weighted_mean\', \'largest_population\'')
-        
+        if not center in [
+                'mean', 'median', 'population_weighted_mean',
+                'largest_population'
+        ]:
+            raise ValueError(
+                'The center string must one of \'mean\', \'median\', \'population_weighted_mean\', \'largest_population\''
+            )
+
         if (center == "mean"):
             center_lon = c_lons.mean()
             center_lat = c_lats.mean()
-    
+
         if (center == "median"):
             center_lon = np.median(c_lons)
             center_lat = np.median(c_lats)
-            
+
         if (center == "population_weighted_mean"):
-            center_lon = np.average(c_lons, weights = t)
-            center_lat = np.average(c_lats, weights = t)
-    
+            center_lon = np.average(c_lons, weights=t)
+            center_lat = np.average(c_lats, weights=t)
+
         if (center == "largest_population"):
             center_lon = c_lons[np.where(t == t.max())].mean()
             center_lat = c_lats[np.where(t == t.max())].mean()
 
-    if isinstance(center, tuple) or isinstance(center, list) or isinstance(center, np.ndarray):
-        if np.array(center).shape != (2,):
+    if isinstance(center, tuple) or isinstance(center, list) or isinstance(
+            center, np.ndarray):
+        if np.array(center).shape != (2, ):
             raise ValueError('The center tuple/list/array must have length 2.')
-        
+
         center_lon = center[0]
         center_lat = center[1]
-    
+
     if isinstance(center, int):
         if (center > len(data) - 1) or (center < 0):
             raise ValueError('The center index must by in the range of data.')
 
         center_lon = data.iloc[[center]].centroid.x.values[0]
         center_lat = data.iloc[[center]].centroid.y.values[0]
-    
+
     X = x.sum()
     Y = y.sum()
 
-    center_dist = np.sqrt((c_lons - center_lon) ** 2 + (c_lats - center_lat) ** 2)
-    
-    asc_ind = center_dist.argsort() 
-    
+    center_dist = np.sqrt((c_lons - center_lon)**2 + (c_lats - center_lat)**2)
+
+    asc_ind = center_dist.argsort()
+
     Xi = np.cumsum(x[asc_ind]) / X
     Yi = np.cumsum(y[asc_ind]) / Y
-    
+
     RCE = np.nansum(shift(Xi, 1, cval=np.NaN) * Yi) - \
           np.nansum(Xi * shift(Yi, 1, cval=np.NaN))
 
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
-    
+
     center_values = [center_lon, center_lat]
 
     return RCE, core_data, center_values
@@ -2539,18 +2695,23 @@ class Relative_Centralization:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, center = "mean"):
-        
-        aux = _relative_centralization(data, group_pop_var, total_pop_var, center)
+    def __init__(self, data, group_pop_var, total_pop_var, center="mean"):
 
-        self.statistic     = aux[0]
-        self.core_data     = aux[1]
+        aux = _relative_centralization(data, group_pop_var, total_pop_var,
+                                       center)
+
+        self.statistic = aux[0]
+        self.core_data = aux[1]
         self.center_values = aux[2]
         self._function = _relative_centralization
-        
-        
-        
-def _spatial_information_theory(data, group_pop_var, total_pop_var, w = None, unit_in_local_env = True, original_crs = {'init': 'epsg:4326'}):
+
+
+def _spatial_information_theory(data,
+                                group_pop_var,
+                                total_pop_var,
+                                w=None,
+                                unit_in_local_env=True,
+                                original_crs={'init': 'epsg:4326'}):
     """
     Calculation of Spatial Information Theory index
 
@@ -2593,46 +2754,51 @@ def _spatial_information_theory(data, group_pop_var, total_pop_var, w = None, un
 
     """
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
-        raise TypeError('data is not a GeoDataFrame and, therefore, this index cannot be calculated.')
-    
-    if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
+        raise TypeError(
+            'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
+        )
+
+    if ((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
-    
-    if ((group_pop_var not in data.columns) or (total_pop_var not in data.columns)):    
-        raise ValueError('group_pop_var and total_pop_var must be variables of data')
-    
+
+    if ((group_pop_var not in data.columns)
+            or (total_pop_var not in data.columns)):
+        raise ValueError(
+            'group_pop_var and total_pop_var must be variables of data')
+
     if ('geometry' not in data.columns):
         data['geometry'] = data[data._geometry_column_name]
-        data = data.drop([data._geometry_column_name], axis = 1)
+        data = data.drop([data._geometry_column_name], axis=1)
         data = data.set_geometry('geometry')
-        
-    if w is None:    
+
+    if w is None:
         w_object = Queen.from_dataframe(data)
     else:
         w_object = w
-    
+
     if (not issubclass(type(w_object), libpysal.weights.W)):
         raise TypeError('w is not a PySAL weights object')
-    
-    data = data.rename(columns={group_pop_var: 'group_pop_var', 
-                                total_pop_var: 'total_pop_var'})
-    
+
+    data = data.rename(columns={
+        group_pop_var: 'group_pop_var',
+        total_pop_var: 'total_pop_var'
+    })
+
     data['compl_pop_var'] = data['total_pop_var'] - data['group_pop_var']
-    
-    
+
     # In this case, M = 2 according to Reardon, Sean F., and David O’Sullivan. "Measures of spatial segregation." Sociological methodology 34.1 (2004): 121-162.
     pi_1 = data['group_pop_var'].sum() / data['total_pop_var'].sum()
     pi_2 = data['compl_pop_var'].sum() / data['total_pop_var'].sum()
     E = -1 * (pi_1 * math.log(pi_1, 2) + pi_2 * math.log(pi_2, 2))
     T = data['total_pop_var'].sum()
-    
+
     # Here you reproject the data using the Mercator projection
     data.crs = original_crs
-    data = data.to_crs(crs = {'init': 'epsg:3395'})  # Mercator
-    sqm_to_sqkm = 10 ** 6
+    data = data.to_crs(crs={'init': 'epsg:3395'})  # Mercator
+    sqm_to_sqkm = 10**6
     data['area_sq_km'] = data.area / sqm_to_sqkm
     tau_p = data['total_pop_var'] / data['area_sq_km']
-    
+
     w_matrix = w_object.full()[0]
 
     if unit_in_local_env:
@@ -2642,16 +2808,20 @@ def _spatial_information_theory(data, group_pop_var, total_pop_var, w = None, un
     data['local_group_pop_var'] = np.matmul(data['group_pop_var'], w_matrix)
     data['local_compl_pop_var'] = np.matmul(data['compl_pop_var'], w_matrix)
     data['local_total_pop_var'] = np.matmul(data['total_pop_var'], w_matrix)
-    
-    pi_tilde_p_1 = np.array(data['local_group_pop_var'] / data['local_total_pop_var'])
-    pi_tilde_p_2 = np.array(data['local_compl_pop_var'] / data['local_total_pop_var'])
-    
-    E_tilde_p = -1 * (pi_tilde_p_1 * np.log(pi_tilde_p_1) / np.log(2) + pi_tilde_p_2 * np.log(pi_tilde_p_2) / np.log(2))
-    
-    SIT = 1 - 1 / (T * E) * (tau_p * E_tilde_p).sum() # This is the H_Tilde according to Reardon, Sean F., and David O’Sullivan. "Measures of spatial segregation." Sociological methodology 34.1 (2004): 121-162.
-    
+
+    pi_tilde_p_1 = np.array(data['local_group_pop_var'] /
+                            data['local_total_pop_var'])
+    pi_tilde_p_2 = np.array(data['local_compl_pop_var'] /
+                            data['local_total_pop_var'])
+
+    E_tilde_p = -1 * (pi_tilde_p_1 * np.log(pi_tilde_p_1) / np.log(2) +
+                      pi_tilde_p_2 * np.log(pi_tilde_p_2) / np.log(2))
+
+    SIT = 1 - 1 / (T * E) * (tau_p * E_tilde_p).sum(
+    )  # This is the H_Tilde according to Reardon, Sean F., and David O’Sullivan. "Measures of spatial segregation." Sociological methodology 34.1 (2004): 121-162.
+
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
-    
+
     return SIT, core_data
 
 
@@ -2756,9 +2926,15 @@ class Spatial_Information_Theory:
     
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, w = None, unit_in_local_env = True):
-        
-        aux = _spatial_information_theory(data, group_pop_var, total_pop_var, w, unit_in_local_env)
+    def __init__(self,
+                 data,
+                 group_pop_var,
+                 total_pop_var,
+                 w=None,
+                 unit_in_local_env=True):
+
+        aux = _spatial_information_theory(data, group_pop_var, total_pop_var,
+                                          w, unit_in_local_env)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
