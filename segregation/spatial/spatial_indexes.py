@@ -167,7 +167,7 @@ class Spatial_Prox_Prof:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial_indexes import Spatial_Prox_Prof
+    >>> from segregation.spatial import Spatial_Prox_Prof
     
     Secondly, we need to read the data:
     
@@ -367,7 +367,7 @@ class Spatial_Dissim:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial_indexes import Spatial_Dissim
+    >>> from segregation.spatial import Spatial_Dissim
     
     Secondly, we need to read the data:
     
@@ -560,7 +560,7 @@ class Boundary_Spatial_Dissim:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial_indexes import Boundary_Spatial_Dissim
+    >>> from segregation.spatial import Boundary_Spatial_Dissim
     
     Secondly, we need to read the data:
     
@@ -741,7 +741,7 @@ class Perimeter_Area_Ratio_Spatial_Dissim:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial_indexes import Perimeter_Area_Ratio_Spatial_Dissim
+    >>> from segregation.spatial import Perimeter_Area_Ratio_Spatial_Dissim
     
     Secondly, we need to read the data:
     
@@ -932,7 +932,7 @@ class Spatial_Isolation:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial_indexes import Spatial_Isolation
+    >>> from segregation.spatial import Spatial_Isolation
     
     Secondly, we need to read the data:
     
@@ -1124,7 +1124,7 @@ class Spatial_Exposure:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial_indexes import Spatial_Exposure
+    >>> from segregation.spatial import Spatial_Exposure
     
     Secondly, we need to read the data:
     
@@ -1309,7 +1309,7 @@ class Spatial_Proximity:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial_indexes import Spatial_Proximity
+    >>> from segregation.spatial import Spatial_Proximity
     
     Secondly, we need to read the data:
     
@@ -1668,7 +1668,7 @@ class Relative_Clustering:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial_indexes import Relative_Clustering
+    >>> from segregation.spatial import Relative_Clustering
     
     Secondly, we need to read the data:
     
@@ -1825,7 +1825,7 @@ class Delta:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial_indexes import Delta
+    >>> from segregation.spatial import Delta
     
     Secondly, we need to read the data:
     
@@ -1990,7 +1990,7 @@ class Absolute_Concentration:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial_indexes import Absolute_Concentration
+    >>> from segregation.spatial import Absolute_Concentration
     
     Secondly, we need to read the data:
     
@@ -2158,7 +2158,7 @@ class Relative_Concentration:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial_indexes import Relative_Concentration
+    >>> from segregation.spatial import Relative_Concentration
     
     Secondly, we need to read the data:
     
@@ -2404,7 +2404,7 @@ class Absolute_Centralization:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial_indexes import Absolute_Centralization
+    >>> from segregation.spatial import Absolute_Centralization
     
     Secondly, we need to read the data:
     
@@ -2653,7 +2653,7 @@ class Relative_Centralization:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial_indexes import Relative_Centralization
+    >>> from segregation.spatial import Relative_Centralization
     
     Secondly, we need to read the data:
     
