@@ -75,14 +75,14 @@ All input data for this module rely on [pandas](https://github.com/pandas-dev/pa
 So, for example, if a user would want to fit a dissimilarity index (D) to a DataFrame called <tt>df</tt> to a specific group with frequency <tt>freq</tt> with each total population <tt>population</tt>, a usual call would be something like this:
 
 ```python
-from segregation.non_spatial_indexes import Dissim
+from segregation.aspatial import Dissim
 index = Dissim(df, "freq", "population")
 ```
 
 If a user would want to fit a spatial dissimilarity index (SD) to a geopandas DataFrame called <tt>gdf</tt> to a specific group with frequency <tt>freq</tt> with each total population <tt>population</tt>, a usual call would be something like this:
 
 ```python
-from segregation.spatial_indexes import Spatial_Dissim
+from segregation.spatial import Spatial_Dissim
 spatial_index = Spatial_Dissim(gdf, "freq", "population")
 ```
 
@@ -119,7 +119,6 @@ For point estimation, all the measures available can be summarized in the follow
 | Relative Concentration (RCO)                      | Relative\_Concentration                 |     Yes      |         \-          |
 | Absolute Centralization (ACE)                     | Absolute\_Centralization                |     Yes      |         \-          |
 | Relative Centralization (RCE)                     | Relative\_Centralization                |     Yes      |         \-          |
-| Spatial Information Theory (SIT)                  | Spatial\_Information\_Theory            |     Yes      | w, unit_in_local_env, original_crs |
 
 
 Once the segregation indexes are fitted, the user can perform inference to shed light for statistical significance in regional analysis. The summary of the inference framework is presented in the table below:
