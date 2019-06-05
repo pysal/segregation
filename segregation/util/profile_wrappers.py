@@ -158,17 +158,18 @@ def _profile_spatial_segregation(data, group_pop_var, total_pop_var):
     ACO = Absolute_Concentration(data, group_pop_var, total_pop_var)
     DEL = Delta(data, group_pop_var, total_pop_var)
     RCE = Relative_Centralization(data, group_pop_var, total_pop_var)
+    ACL = Absolute_Clustering(data, group_pop_var, total_pop_var)
     RCL = Relative_Clustering(data, group_pop_var, total_pop_var)
     RCO = Relative_Concentration(data, group_pop_var, total_pop_var)
     SxPy = Spatial_Exposure(data, group_pop_var, total_pop_var)
     SxPx = Spatial_Isolation(data, group_pop_var, total_pop_var)
     SPP = Spatial_Prox_Prof(data, group_pop_var, total_pop_var)
     SP = Spatial_Proximity(data, group_pop_var, total_pop_var)
-    SIT = Spatial_Information_Theory(data, group_pop_var, total_pop_var)
 
     dictionary = {
         'Spatial Dissimilarity': SD.statistic,
         'Absolute Centralization': ACE.statistic,
+        'Absolute Clustering': ACL.statistic,
         'Absolute Concentration': ACO.statistic,
         'Delta': DEL.statistic,
         'Relative Centralization': RCE.statistic,
@@ -179,8 +180,7 @@ def _profile_spatial_segregation(data, group_pop_var, total_pop_var):
         'Spatial Proximity Profile': SPP.statistic,
         'Spatial Proximity': SP.statistic,
         'Boundary Spatial Dissimilarity': BSD.statistic,
-        'Perimeter Area Ratio Spatial Dissimilarity': PARD.statistic,
-        'Spatial Information Theory': SIT.statistic
+        'Perimeter Area Ratio Spatial Dissimilarity': PARD.statistic
     }
 
     return dictionary
