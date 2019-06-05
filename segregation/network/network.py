@@ -1,6 +1,7 @@
 """Calculate population accessibility."""
 
 import pandas as pd
+import geopandas as gpd
 import pandana as pdna
 #import osmnet
 from urbanaccess.osm.load import ua_network_from_bbox
@@ -45,17 +46,29 @@ def get_network(geodataframe, maxdist=5000, quiet=True, **kwargs):
 
     """
     gdf = geodataframe.copy()
-    try:
-        gdf = project_gdf(gdf).buffer(maxdist).to_crs(epsg=4326)
-    except:  #projection error
-        raise ("GeoDataFrame must have a crs")
+
+    assert gdf.crs == {
+        'init': 'epsg:4326'
+    }, "geodataframe must be in epsg 4326"
+
+    gdf = project_gdf(gdf)
+    gdf = gdf.buffer(maxdist)
+    bounds = gdf.to_crs(epsg=4326).total_bounds
 
     if quiet:
         print('Downloading data from OSM')
         with _HiddenPrints():
-            net = ua_network_from_bbox(bbox=tuple(gdf.total_bounds), **kwargs)
+            net = ua_network_from_bbox(lng_min=bounds[0],
+                                       lat_min=bounds[1],
+                                       lng_max=bounds[2],
+                                       lat_max=bounds[3],
+                                       **kwargs)
     else:
-        net = ua_network_from_bbox(bbox=tuple(gdf.total_bounds), **kwargs)
+        net = ua_network_from_bbox(lng_min=bounds[0],
+                                   lat_min=bounds[1],
+                                   lng_max=bounds[2],
+                                   lat_max=bounds[3],
+                                   **kwargs)
     print("Building network")
     network = pdna.Network(net[0]["x"], net[0]["y"], net[1]["from"],
                            net[1]["to"], net[1][["distance"]])
