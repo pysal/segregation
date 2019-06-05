@@ -3,7 +3,7 @@ Segregation Measures Framework in PySAL
 
 [![Build Status](https://travis-ci.com/pysal/segregation.svg?branch=master)](https://travis-ci.org/pysal/segregation)
 
-## Analytics for spatial and non-spatial segregation in Python.
+## Analytics for spatial and aspatial segregation in Python.
 
 **Easily estimate several segregation measures:**
 
@@ -24,7 +24,7 @@ The PySAL **segregation** module allows users to estimate several segregation me
 
 It can be divided into frameworks: 
 
-- Point Estimation: point estimation of many non-spatial and spatial segregation indexes.
+- Point Estimation: point estimation of many aspatial and spatial segregation indexes.
 - Inference Wrappers: present functions to perform inference for a single measure or for comparison between two measures.
 - Decompose Segregation: decompose comparative segregation into spatial and attribute components.
 
@@ -70,7 +70,7 @@ $ pip install git+https://github.com/pysal/segregation
 
 ## Getting started
 
-All input data for this module rely on [pandas](https://github.com/pandas-dev/pandas) DataFrames for the non-spatial measures and [geopandas](https://github.com/geopandas/geopandas) DataFrames for spatial ones. In a nutshell, the user needs to pass the pandas DataFrame as its first argument and then two string that represent the variable name of population frequency of the group of interest (variable <tt>group_pop_var</tt>) and the total population of the unit (variable <tt>total_pop_var</tt>).
+All input data for this module rely on [pandas](https://github.com/pandas-dev/pandas) DataFrames for the aspatial measures and [geopandas](https://github.com/geopandas/geopandas) DataFrames for spatial ones. In a nutshell, the user needs to pass the pandas DataFrame as its first argument and then two string that represent the variable name of population frequency of the group of interest (variable <tt>group_pop_var</tt>) and the total population of the unit (variable <tt>total_pop_var</tt>).
 
 So, for example, if a user would want to fit a dissimilarity index (D) to a DataFrame called <tt>df</tt> to a specific group with frequency <tt>freq</tt> with each total population <tt>population</tt>, a usual call would be something like this:
 
