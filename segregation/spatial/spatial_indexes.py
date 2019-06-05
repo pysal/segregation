@@ -19,7 +19,7 @@ from scipy.sparse.csgraph import floyd_warshall
 from scipy.sparse import csr_matrix
 
 from segregation.util.util import _return_length_weighted_w
-from segregation.aspatial.non_spatial_indexes import _dissim
+from segregation.aspatial.aspatial_indexes import _dissim
 
 __all__ = [
     'Spatial_Prox_Prof', 'Spatial_Dissim', 'Boundary_Spatial_Dissim',

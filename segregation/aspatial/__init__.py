@@ -1,1 +1,1 @@
-from .non_spatial_indexes import *
+from .aspatial_indexes import *
