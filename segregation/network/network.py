@@ -1,5 +1,8 @@
 """Calculate population accessibility."""
 
+__author__ = "Elijah Knaap <elijah.knaap@ucr.edu> Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr.edu>"
+
+import numpy as np
 import pandas as pd
 import pandana as pdna
 from urbanaccess.osm.load import ua_network_from_bbox
@@ -19,23 +22,25 @@ class _HiddenPrints:  # from https://stackoverflow.com/questions/8391411/suppres
 
 
 def get_network(geodataframe, maxdist=5000, quiet=True, **kwargs):
-    """Short summary.
+    """Download a street network from OSM.
 
     Parameters
     ----------
     geodataframe : geopandas.GeoDataFrame
         geopandas.GeoDataFrame of the study area.
     maxdist : int
-        Total distance (in meters) of the network queries you may need
-        this is used to buffer the network to ensure theres enough to satisfy
-        your largest query.
-    **kwargs : type
-        Description of parameter `**kwargs`.
+        Total distance (in meters) of the network queries you may need.
+        This is used to buffer the network to ensure theres enough to satisfy
+        your largest query, otherwise there may be edge effects.
+    **kwargs : dict
+        additional kwargs passed through to
+        urbanaccess.ua_network_from_bbox
 
     Returns
     -------
-    type
-        Description of returned object.
+    pandana.Network
+        A pandana Network instance for use in accessibility calculations or
+        spatial segregation measures that include a distance decay
 
     Examples
     -------
@@ -71,7 +76,7 @@ def get_network(geodataframe, maxdist=5000, quiet=True, **kwargs):
 
 def calc_access(geodataframe,
                 network,
-                distance=5000,
+                distance=2000,
                 decay="linear",
                 group_population=None,
                 total_population=None):
@@ -87,7 +92,7 @@ def calc_access(geodataframe,
     distance : int
         maximum distance to consider `accessible` (the default is 5000).
     decay : str
-        decay type pandana should use "linear", "exponential" or "flat"
+        decay type pandana should use "linear", "exp", or "flat"
         (which means no decay). The default is "linear".
     group_population : str
         column name of the `group[_population` present on the input
@@ -134,3 +139,63 @@ def calc_access(geodataframe,
     })
 
     return access
+
+
+def local_entropy(gdf, groups):
+
+    gdf = gdf.copy()
+
+    T = gdf[groups].sum().sum()  # total population (sum of all group sums)
+
+    m = len(groups)  # number of groups
+
+    tau_m = gdf[groups]  # group densities
+
+    pi_m = tau_m.sum() / T  # overall group proportions
+
+    pi_pm = tau_m / T  # group proportions at location p
+
+    log_pipm = np.log(pi_pm) / np.log(m)
+
+    e = (pi_pm * log_pipm)
+
+    Ep = -e.sum(axis=1)
+
+    return Ep
+
+
+def total_entropy(gdf, groups):
+
+    gdf = gdf.copy()
+
+    T = gdf[groups].sum().sum()  # total population (sum of all group sums)
+
+    m = len(groups)  # number of groups
+
+    tau_m = gdf[groups]  # group densities
+
+    pi_m = tau_m.sum() / T  # overall group proportions
+
+    pi_pm = tau_m / T  # group proportions at location p
+
+    log_pim = np.log(pi_m) / np.log(m)
+
+    E = (pi_m * log_pim)
+
+    E = -E.sum()
+
+    return E
+
+
+def nbsit(gdf, groups):
+
+    T = gdf[groups].sum().sum()  # total population (sum of all group sums)
+
+    Ep = local_entropy(gdf, groups)
+    E = total_entropy(gdf, groups)
+
+    tau_p = gdf[groups].sum(axis=1)  # overall density
+
+    H = (1 - (1 / T * E)) * np.sum(tau_p * Ep)
+
+    return H
