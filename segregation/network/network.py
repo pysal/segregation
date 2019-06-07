@@ -123,7 +123,7 @@ def calc_access(geodataframe,
                                        name=variable)
 
         access.append(access_pop)
-    names = ["acc" + variable for variable in variables]
+    names = ["acc_" + variable for variable in variables]
     access = pd.DataFrame(dict(zip(names, access)))
 
     return access
