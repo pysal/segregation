@@ -6,3 +6,6 @@ seaborn
 numpy
 scipy
 libpysal
+osmnx
+pandana
+urbanaccess
