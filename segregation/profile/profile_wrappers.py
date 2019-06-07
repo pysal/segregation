@@ -5,18 +5,17 @@ Profile Wrappers for Segregation measures
 __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr.edu>"
 
 from segregation.aspatial import *
-
 from segregation.spatial import *
 
 __all__ = [
-    'Profile_Non_Spatial_Segregation', 'Profile_Spatial_Segregation',
+    'Profile_Aspatial_Segregation', 'Profile_Spatial_Segregation',
     'Profile_Segregation'
 ]
 
 
-def _profile_non_spatial_segregation(data, group_pop_var, total_pop_var):
+def _profile_aspatial_segregation(data, group_pop_var, total_pop_var):
     '''
-    Perform point estimation of selected non spatial segregation measures at once
+    Perform point estimation of selected aspatial segregation measures at once
 
     Parameters
     ----------
@@ -34,6 +33,10 @@ def _profile_non_spatial_segregation(data, group_pop_var, total_pop_var):
 
     profile     : dict
                   A dictionary containing the name of the measure and the point estimation.
+    
+    Notes
+    -----
+    Currently, works with the default input parameters of the functions.
     
     '''
 
@@ -68,9 +71,9 @@ def _profile_non_spatial_segregation(data, group_pop_var, total_pop_var):
     return dictionary
 
 
-class Profile_Non_Spatial_Segregation:
+class Profile_Aspatial_Segregation:
     '''
-    Perform point estimation of selected non spatial segregation measures at once
+    Perform point estimation of selected Aspatial segregation measures at once
 
     Parameters
     ----------
@@ -98,7 +101,7 @@ class Profile_Non_Spatial_Segregation:
     >>> import geopandas as gpd
     >>> import segregation
     >>> import libpysal
-    >>> from segregation.profile_wrappers import Profile_Non_Spatial_Segregation
+    >>> from segregation.util.profile_wrappers import Profile_Aspatial_Segregation
     
     Then it's time to load some data to estimate segregation. We use the data of 2000 Census Tract Data for the metropolitan area of Sacramento, CA, USA.
 
@@ -114,15 +117,15 @@ class Profile_Non_Spatial_Segregation:
     
     Now the profile is fitted.
     
-    >>> non_spatial_fit = Profile_Non_Spatial_Segregation(gdf, 'HISP_', 'TOT_POP')
-    >>> non_spatial_fit.profile
+    >>> aspatial_fit = Profile_Aspatial_Segregation(gdf, 'HISP_', 'TOT_POP')
+    >>> aspatial_fit.profile
     
     '''
 
     def __init__(self, data, group_pop_var, total_pop_var):
 
-        aux = _profile_non_spatial_segregation(data, group_pop_var,
-                                               total_pop_var)
+        aux = _profile_aspatial_segregation(data, group_pop_var,
+                                            total_pop_var)
 
         self.profile = aux
 
@@ -158,17 +161,18 @@ def _profile_spatial_segregation(data, group_pop_var, total_pop_var):
     ACO = Absolute_Concentration(data, group_pop_var, total_pop_var)
     DEL = Delta(data, group_pop_var, total_pop_var)
     RCE = Relative_Centralization(data, group_pop_var, total_pop_var)
+    ACL = Absolute_Clustering(data, group_pop_var, total_pop_var)
     RCL = Relative_Clustering(data, group_pop_var, total_pop_var)
     RCO = Relative_Concentration(data, group_pop_var, total_pop_var)
     SxPy = Spatial_Exposure(data, group_pop_var, total_pop_var)
     SxPx = Spatial_Isolation(data, group_pop_var, total_pop_var)
     SPP = Spatial_Prox_Prof(data, group_pop_var, total_pop_var)
     SP = Spatial_Proximity(data, group_pop_var, total_pop_var)
-    SIT = Spatial_Information_Theory(data, group_pop_var, total_pop_var)
 
     dictionary = {
         'Spatial Dissimilarity': SD.statistic,
         'Absolute Centralization': ACE.statistic,
+        'Absolute Clustering': ACL.statistic,
         'Absolute Concentration': ACO.statistic,
         'Delta': DEL.statistic,
         'Relative Centralization': RCE.statistic,
@@ -179,8 +183,7 @@ def _profile_spatial_segregation(data, group_pop_var, total_pop_var):
         'Spatial Proximity Profile': SPP.statistic,
         'Spatial Proximity': SP.statistic,
         'Boundary Spatial Dissimilarity': BSD.statistic,
-        'Perimeter Area Ratio Spatial Dissimilarity': PARD.statistic,
-        'Spatial Information Theory': SIT.statistic
+        'Perimeter Area Ratio Spatial Dissimilarity': PARD.statistic
     }
 
     return dictionary
@@ -216,7 +219,7 @@ class Profile_Spatial_Segregation:
     >>> import geopandas as gpd
     >>> import segregation
     >>> import libpysal
-    >>> from segregation.profile_wrappers import Profile_Spatial_Segregation
+    >>> from segregation.util.profile_wrappers import Profile_Spatial_Segregation
     
     Then it's time to load some data to estimate segregation. We use the data of 2000 Census Tract Data for the metropolitan area of Sacramento, CA, USA.
 
@@ -267,8 +270,8 @@ def _profile_segregation(data, group_pop_var, total_pop_var):
     
     '''
 
-    x = Profile_Non_Spatial_Segregation(data, group_pop_var,
-                                        total_pop_var).profile
+    x = Profile_Aspatial_Segregation(data, group_pop_var,
+                                     total_pop_var).profile
     y = Profile_Spatial_Segregation(data, group_pop_var, total_pop_var).profile
 
     x.update(y)
@@ -306,7 +309,7 @@ class Profile_Segregation:
     >>> import geopandas as gpd
     >>> import segregation
     >>> import libpysal
-    >>> from segregation.profile_wrappers import Profile_Segregation
+    >>> from segregation.util.profile_wrappers import Profile_Segregation
     
     Then it's time to load some data to estimate segregation. We use the data of 2000 Census Tract Data for the metropolitan area of Sacramento, CA, USA.
 
