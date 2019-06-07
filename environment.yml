@@ -13,6 +13,7 @@ dependencies:
   - scipy
   - urbanaccess
   - pandana
+  - osmnx
   - pip
   - pip:
     - git+git://github.com/pysal/libpysal.git
