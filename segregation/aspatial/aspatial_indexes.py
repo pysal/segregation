@@ -1,5 +1,5 @@
 """
-Non-Spatial based Segregation Metrics
+Aspatial based Segregation Metrics
 """
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
