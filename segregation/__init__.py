@@ -9,3 +9,4 @@ from . import spatial
 from . import inference
 from . import decomposition
 from . import util
+from . import network
