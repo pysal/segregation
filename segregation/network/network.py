@@ -151,9 +151,7 @@ def local_entropy(gdf, groups):
 
     tau_m = gdf[groups]  # group densities
 
-    pi_m = tau_m.sum() / T  # overall group proportions
-
-    pi_pm = tau_m / T  # group proportions at location p
+    pi_pm = tau_m.values / T  # group proportions at location p
 
     log_pipm = np.log(pi_pm) / np.log(m)
 
@@ -172,17 +170,11 @@ def total_entropy(gdf, groups):
 
     m = len(groups)  # number of groups
 
-    tau_m = gdf[groups]  # group densities
+    tau_m = gdf[groups].values  # group densities
 
-    pi_m = tau_m.sum() / T  # overall group proportions
+    pi_m = tau_m.sum(axis=0) / T  # overall group proportions
 
-    pi_pm = tau_m / T  # group proportions at location p
-
-    log_pim = np.log(pi_m) / np.log(m)
-
-    E = (pi_m * log_pim)
-
-    E = -E.sum()
+    E = -(pi_m * np.log(pi_m) / np.log(m)).sum()
 
     return E
 
@@ -194,8 +186,8 @@ def nbsit(gdf, groups):
     Ep = local_entropy(gdf, groups)
     E = total_entropy(gdf, groups)
 
-    tau_p = gdf[groups].sum(axis=1)  # overall density
+    tau_p = gdf[groups].sum(axis=1).values  # overall density
 
-    H = (1 - (1 / T * E)) * np.sum(tau_p * Ep)
+    H = 1 - (np.sum(tau_p * Ep) / T * E)
 
     return H
