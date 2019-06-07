@@ -78,8 +78,7 @@ def calc_access(geodataframe,
                 network,
                 distance=2000,
                 decay="linear",
-                group_population=None,
-                total_population=None):
+                variables=None):
     """Calculate access to population groups.
 
     Parameters
@@ -94,12 +93,9 @@ def calc_access(geodataframe,
     decay : str
         decay type pandana should use "linear", "exp", or "flat"
         (which means no decay). The default is "linear".
-    group_population : str
-        column name of the `group[_population` present on the input
-        geodataframe.
-    total_population : str
-        column name of the `total_population` present on the input
-        geodataframe.
+    variables : list
+        list of variable names present on gdf that should be calculated
+
 
     Returns
     -------
@@ -115,28 +111,20 @@ def calc_access(geodataframe,
     geodataframe["node_ids"] = network.get_node_ids(geodataframe.centroid.x,
                                                     geodataframe.centroid.y)
 
-    network.set(geodataframe.node_ids,
-                variable=geodataframe[group_population],
-                name=group_population)
+    access = []
+    for variable in variables:
+        network.set(geodataframe.node_ids,
+                    variable=geodataframe[variable],
+                    name=variable)
 
-    network.set(geodataframe.node_ids,
-                variable=geodataframe[total_population],
-                name=total_population)
+        access_pop = network.aggregate(distance,
+                                       type="sum",
+                                       decay=decay,
+                                       name=variable)
 
-    access_total_pop = network.aggregate(distance,
-                                         type="sum",
-                                         decay=decay,
-                                         name=str(total_population))
-
-    access_group_pop = network.aggregate(distance,
-                                         type="sum",
-                                         decay=decay,
-                                         name=str(group_population))
-
-    access = pd.DataFrame({
-        'total_population': access_total_pop,
-        'group_population': access_group_pop
-    })
+        access.append(access_pop)
+    names = ["acc" + variable for variable in variables]
+    access = pd.DataFrame(dict(zip(names, access)))
 
     return access
 
@@ -151,7 +139,7 @@ def local_entropy(gdf, groups):
 
     tau_m = gdf[groups]  # group densities
 
-    pi_pm = tau_m.values / T  # group proportions at location p
+    pi_pm = tau_m / T  # group proportions at location p
 
     log_pipm = np.log(pi_pm) / np.log(m)
 
@@ -170,7 +158,7 @@ def total_entropy(gdf, groups):
 
     m = len(groups)  # number of groups
 
-    tau_m = gdf[groups].values  # group densities
+    tau_m = gdf[groups]  # group densities
 
     pi_m = tau_m.sum(axis=0) / T  # overall group proportions
 
@@ -186,7 +174,7 @@ def nbsit(gdf, groups):
     Ep = local_entropy(gdf, groups)
     E = total_entropy(gdf, groups)
 
-    tau_p = gdf[groups].sum(axis=1).values  # overall density
+    tau_p = gdf[groups].sum(axis=1)  # overall density
 
     H = 1 - (np.sum(tau_p * Ep) / T * E)
 
