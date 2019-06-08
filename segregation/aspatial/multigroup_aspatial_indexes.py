@@ -136,7 +136,7 @@ def _multi_gini_seg(data, groups):
     ----------
 
     statistic : float
-                Multigroup Gini Index
+                Multigroup Gini Segregation Index
                 
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
