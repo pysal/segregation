@@ -33,7 +33,7 @@ def _multi_dissim(data, groups):
              The variables names in data of the groups of interest of the analysis.
 
     Returns
-    ----------
+    -------
 
     statistic : float
                 Multigroup Dissimilarity Index
@@ -138,7 +138,7 @@ def _multi_gini_seg(data, groups):
              The variables names in data of the groups of interest of the analysis.
 
     Returns
-    ----------
+    -------
 
     statistic : float
                 Multigroup Gini Segregation Index
@@ -229,7 +229,7 @@ def _multi_normalized_exposure(data, groups):
              The variables names in data of the groups of interest of the analysis.
 
     Returns
-    ----------
+    -------
 
     statistic : float
                 Multigroup Normalized Exposure Index
@@ -312,7 +312,7 @@ def _multi_information_theory(data, groups):
              The variables names in data of the groups of interest of the analysis.
 
     Returns
-    ----------
+    -------
 
     statistic : float
                 Multigroup Information Theory Index
@@ -399,7 +399,7 @@ def _multi_relative_diversity(data, groups):
              The variables names in data of the groups of interest of the analysis.
 
     Returns
-    ----------
+    -------
 
     statistic : float
                 Multigroup Relative Diversity Index
@@ -446,7 +446,7 @@ class Multi_Relative_Diversity:
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
-    Returns
+    Attributes
     ----------
 
     statistic : float
@@ -490,7 +490,7 @@ def _multi_squared_coefficient_of_variation(data, groups):
              The variables names in data of the groups of interest of the analysis.
 
     Returns
-    ----------
+    -------
 
     statistic : float
                 Multigroup Squared Coefficient of Variation Index
@@ -535,7 +535,7 @@ class Multi_Squared_Coefficient_of_Variation:
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
-    Returns
+    Attributes
     ----------
 
     statistic : float
@@ -576,7 +576,7 @@ def _multi_diversity(data, groups, normalized = False):
              The variables names in data of the groups of interest of the analysis.
 
     Returns
-    ----------
+    -------
 
     statistic  : float
                  Multigroup Diversity Index
@@ -624,7 +624,7 @@ class Multi_Diversity:
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
-    Returns
+    Attributes
     ----------
 
     statistic : float
@@ -670,7 +670,7 @@ def _simpsons_concentration(data, groups):
              The variables names in data of the groups of interest of the analysis.
 
     Returns
-    ----------
+    -------
 
     statistic  : float
                  Simpson's Concentration Index
@@ -714,7 +714,7 @@ class Simpsons_Concentration:
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
-    Returns
+    Attributes
     ----------
 
     statistic  : float
@@ -762,7 +762,7 @@ def _simpsons_interaction(data, groups):
              The variables names in data of the groups of interest of the analysis.
 
     Returns
-    ----------
+    -------
 
     statistic  : float
                  Simpson's Interaction Index
@@ -806,7 +806,7 @@ class Simpsons_Interaction:
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
-    Returns
+    Attributes
     ----------
 
     statistic  : float
