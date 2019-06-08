@@ -42,12 +42,12 @@ def _multi_dissim(data, groups):
 
     """
     
-    core_c
+    core_data = data[groups]
     
-    df = np.array(data)
+    df = np.array(core_data)
     
     n = df.shape[0]
-    k = df.shape[1]
+    m = df.shape[1]
     
     T = df.sum()
     
@@ -57,9 +57,9 @@ def _multi_dissim(data, groups):
     
     Is = (Pk * (1 - Pk)).sum()
     
-    multi_D = 1/(2 * T * Is) * np.multiply(abs(pik - Pk), np.repeat(ti, k, axis=0).reshape(n,k)).sum()
+    multi_D = 1/(2 * T * Is) * np.multiply(abs(pik - Pk), np.repeat(ti, m, axis=0).reshape(n,m)).sum()
     
-    return multi_D
+    return multi_D, core_data
 
 
 class Multi_Dissim:
@@ -93,11 +93,10 @@ class Multi_Dissim:
     >>> import geopandas as gpd
     >>> from segregation.multigroup_aspatial import Multi_Dissim
     
-    Then, we read the data and extract only the necessary columns with an auxiliary list for fitting the index.
+    Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
-    >>> s_map = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
+    >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
     >>> groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
-    >>> input_df = s_map[groups_list]
     
     The value is estimated below.
     
@@ -123,7 +122,7 @@ class Multi_Dissim:
         
 def _multi_gini_seg(data, groups):
     """
-    Calculation of Multigroup Gini index
+    Calculation of Multigroup Gini Segregation index
 
     Parameters
     ----------
@@ -148,9 +147,11 @@ def _multi_gini_seg(data, groups):
 
     """
     
-    m = data.shape[1]
+    core_data = data[groups]
     
-    df = np.array(data)
+    df = np.array(core_data)
+    
+    m = df.shape[1]
     
     T = df.sum()
     
@@ -166,12 +167,12 @@ def _multi_gini_seg(data, groups):
         
     multi_Gini_Seg = elements_sum.sum() / (2 * (T ** 2) * Is)
     
-    return multi_Gini_Seg
+    return multi_Gini_Seg, core_data
 
 
 class Multi_Gini_Seg:
     """
-    Calculation of Multigroup Dissimilarity index
+    Calculation of Multigroup Gini Segregation index
 
     Parameters
     ----------
@@ -185,7 +186,7 @@ class Multi_Gini_Seg:
     ----------
 
     statistic : float
-                Multigroup Dissimilarity Index
+                Multigroup Gini Segregation Index
                 
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
@@ -237,7 +238,9 @@ def _multi_normalized_exposure(data, groups):
 
     """
     
-    df = np.array(data)
+    core_data = data[groups]
+    
+    df = np.array(core_data)
     
     T = df.sum()
     
@@ -247,7 +250,7 @@ def _multi_normalized_exposure(data, groups):
     
     MNE = ((ti[:,None] * (pik - Pk) ** 2) / (1 - Pk)).sum() / T
     
-    return MNE
+    return MNE, core_data
 
 
 class Multi_Normalized_Exposure:
@@ -318,7 +321,9 @@ def _multi_information_theory(data, groups):
 
     """
     
-    df = np.array(data)
+    core_data = data[groups]
+    
+    df = np.array(core_data)
     
     T = df.sum()
     
@@ -332,7 +337,7 @@ def _multi_information_theory(data, groups):
     
     MIT = np.nansum(ti[:,None] * pik * np.log(pik / Pk)) / (T*E)
     
-    return MIT
+    return MIT, core_data
 
 
 class Multi_Information_Theory:
