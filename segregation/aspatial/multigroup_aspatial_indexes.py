@@ -13,7 +13,12 @@ from sklearn.metrics.pairwise import manhattan_distances
 __all__ = ['Multi_Dissim',
            'Multi_Gini_Seg',
            'Multi_Normalized_Exposure',
-           'Multi_Information_Theory']
+           'Multi_Information_Theory',
+           'Multi_Relative_Diversity',
+           'Multi_Squared_Coefficient_of_Variation',
+           'Multi_Diversity',
+           'Simpsons_Concentration',
+           'Simpsons_Interaction']
 
 def _multi_dissim(data, groups):
     """
@@ -47,7 +52,7 @@ def _multi_dissim(data, groups):
     df = np.array(core_data)
     
     n = df.shape[0]
-    m = df.shape[1]
+    K = df.shape[1]
     
     T = df.sum()
     
@@ -57,7 +62,7 @@ def _multi_dissim(data, groups):
     
     Is = (Pk * (1 - Pk)).sum()
     
-    multi_D = 1/(2 * T * Is) * np.multiply(abs(pik - Pk), np.repeat(ti, m, axis=0).reshape(n,m)).sum()
+    multi_D = 1/(2 * T * Is) * np.multiply(abs(pik - Pk), np.repeat(ti, K, axis=0).reshape(n,K)).sum()
     
     return multi_D, core_data
 
@@ -151,7 +156,7 @@ def _multi_gini_seg(data, groups):
     
     df = np.array(core_data)
     
-    m = df.shape[1]
+    K = df.shape[1]
     
     T = df.sum()
     
@@ -160,8 +165,8 @@ def _multi_gini_seg(data, groups):
     Pk = df.sum(axis = 0) / df.sum()
     Is = (Pk * (1 - Pk)).sum()
     
-    elements_sum = np.empty(m)
-    for k in range(m):
+    elements_sum = np.empty(K)
+    for k in range(K):
         aux = np.multiply(np.outer(ti, ti), manhattan_distances(pik[:,k].reshape(-1, 1))).sum()
         elements_sum[k] = aux
         
@@ -406,6 +411,8 @@ def _multi_relative_diversity(data, groups):
     -----
     Based on Reardon, Sean F. "Measures of racial diversity and segregation in multigroup and hierarchically structured populations." annual meeting of the Eastern Sociological Society, Philadelphia, PA. 1998.
 
+    High diversity means less segregation.
+
     """
     
     core_data = data[groups]
@@ -456,6 +463,8 @@ class Multi_Relative_Diversity:
     -----
     Based on Reardon, Sean F. "Measures of racial diversity and segregation in multigroup and hierarchically structured populations." annual meeting of the Eastern Sociological Society, Philadelphia, PA. 1998.
 
+    High diversity means less segregation.
+
     """
     
     def __init__(self, data, groups):
@@ -499,7 +508,7 @@ def _multi_squared_coefficient_of_variation(data, groups):
     
     df = np.array(core_data)
     
-    m = df.shape[1]
+    K = df.shape[1]
     
     T = df.sum()
     
@@ -507,7 +516,7 @@ def _multi_squared_coefficient_of_variation(data, groups):
     pik = df/ti[:,None]
     Pk = df.sum(axis = 0) / df.sum()
     
-    C = ((ti[:,None] * (pik - Pk) ** 2) / (T * (m - 1) * Pk)).sum()
+    C = ((ti[:,None] * (pik - Pk) ** 2) / (T * (K - 1) * Pk)).sum()
     
     return C, core_data
 
@@ -552,3 +561,280 @@ class Multi_Squared_Coefficient_of_Variation:
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _multi_squared_coefficient_of_variation
+        
+        
+def _multi_diversity(data, groups, normalized = False):
+    """
+    Calculation of Multigroup Diversity index
+
+    Parameters
+    ----------
+
+    data   : a pandas DataFrame
+    
+    groups : list of strings.
+             The variables names in data of the groups of interest of the analysis.
+
+    Returns
+    ----------
+
+    statistic  : float
+                 Multigroup Diversity Index
+                
+    core_data  : a pandas DataFrame
+                 A pandas DataFrame that contains the columns used to perform the estimate.
+                
+    normalized : bool. Default is False.
+                 Wheter the resulting index will be divided by its maximum (natural log of the number of groups)
+
+    Notes
+    -----
+    Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67 and Theil, Henry. "Statistical decomposition analysis; with applications in the social and administrative sciences". No. 04; HA33, T4.. 1972.
+    
+    This is also know as Theil's Entropy Index (Equation 2 of page 37 of Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67)
+    
+    High diversity means less segregation.
+
+    """
+    
+    core_data = data[groups]
+    
+    df = np.array(core_data)
+    
+    Pk = df.sum(axis = 0) / df.sum()
+    
+    E = - (Pk * np.log(Pk)).sum()
+    
+    if normalized:
+        K = df.shape[1]
+        E = E / np.log(K)
+    
+    return E, core_data
+
+
+class Multi_Diversity:
+    """
+    Calculation of Multigroup Diversity index
+
+    Parameters
+    ----------
+
+    data   : a pandas DataFrame
+    
+    groups : list of strings.
+             The variables names in data of the groups of interest of the analysis.
+
+    Returns
+    ----------
+
+    statistic : float
+                Multigroup Diversity Index
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate.
+
+    Examples
+    --------
+    Available at multigroup_aspatial_example.ipynb
+
+    Notes
+    -----
+    Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67 and Theil, Henry. "Statistical decomposition analysis; with applications in the social and administrative sciences". No. 04; HA33, T4.. 1972.
+    
+    This is also know as Theil's Entropy Index (Equation 2 of page 37 of Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67)
+    
+    High diversity means less segregation.
+
+    """
+    
+    def __init__(self, data, groups, normalized = False):
+        
+        aux = _multi_diversity(data, groups, normalized)
+
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _multi_diversity
+        
+        
+
+def _simpsons_concentration(data, groups):
+    """
+    Calculation of Simpson's Concentration index
+
+    Parameters
+    ----------
+
+    data   : a pandas DataFrame
+    
+    groups : list of strings.
+             The variables names in data of the groups of interest of the analysis.
+
+    Returns
+    ----------
+
+    statistic  : float
+                 Simpson's Concentration Index
+                
+    core_data  : a pandas DataFrame
+                 A pandas DataFrame that contains the columns used to perform the estimate.
+
+    Notes
+    -----
+    Based on Simpson, Edward H. "Measurement of diversity." nature 163.4148 (1949): 688.
+    
+    Simpson's concentration index (Lambda) can be simply interpreted as the probability that two individuals chosen at random and independently from the population will be found to belong to the same group.
+
+    Higher values means higher segregation.
+    
+    Simpson's Concentration + Simpson's Interaction = 1
+
+    """
+    
+    core_data = data[groups]
+    
+    df = np.array(core_data)
+    
+    Pk = df.sum(axis = 0) / df.sum()
+    
+    Lambda = (Pk * Pk).sum()
+    
+    return Lambda, core_data
+
+
+
+class Simpsons_Concentration:
+    """
+    Calculation of Simpson's Concentration index
+
+    Parameters
+    ----------
+
+    data   : a pandas DataFrame
+    
+    groups : list of strings.
+             The variables names in data of the groups of interest of the analysis.
+
+    Returns
+    ----------
+
+    statistic  : float
+                 Simpson's Concentration Index
+                
+    core_data  : a pandas DataFrame
+                 A pandas DataFrame that contains the columns used to perform the estimate.
+
+    Examples
+    --------
+    Available at multigroup_aspatial_example.ipynb
+    
+    Notes
+    -----
+    Based on Simpson, Edward H. "Measurement of diversity." nature 163.4148 (1949): 688.
+    
+    Simpson's concentration index (Lambda) can be simply interpreted as the probability that two individuals chosen at random and independently from the population will be found to belong to the same group.
+
+    Higher values means higher segregation.
+    
+    Simpson's Concentration + Simpson's Interaction = 1
+
+    """
+    
+    def __init__(self, data, groups):
+        
+        aux = _simpsons_concentration(data, groups)
+
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _simpsons_concentration
+        
+        
+        
+def _simpsons_interaction(data, groups):
+    """
+    Calculation of Simpson's Interaction index
+
+    Parameters
+    ----------
+
+    data   : a pandas DataFrame
+    
+    groups : list of strings.
+             The variables names in data of the groups of interest of the analysis.
+
+    Returns
+    ----------
+
+    statistic  : float
+                 Simpson's Interaction Index
+                
+    core_data  : a pandas DataFrame
+                 A pandas DataFrame that contains the columns used to perform the estimate.
+
+    Notes
+    -----
+    Based on Equation 1 of page 37 of Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
+    
+    Simpson's interaction index (I) can be simply interpreted as the probability that two individuals chosen at random and independently from the population will be found to not belong to the same group.
+
+    Higher values means lesser segregation.
+    
+    Simpson's Concentration + Simpson's Interaction = 1
+
+    """
+    
+    core_data = data[groups]
+    
+    df = np.array(core_data)
+    
+    Pk = df.sum(axis = 0) / df.sum()
+    
+    I = (Pk * (1 - Pk)).sum()
+    
+    return I, core_data
+
+
+
+class Simpsons_Interaction:
+    """
+    Calculation of Simpson's Interaction index
+
+    Parameters
+    ----------
+
+    data   : a pandas DataFrame
+    
+    groups : list of strings.
+             The variables names in data of the groups of interest of the analysis.
+
+    Returns
+    ----------
+
+    statistic  : float
+                 Simpson's Interaction Index
+                
+    core_data  : a pandas DataFrame
+                 A pandas DataFrame that contains the columns used to perform the estimate.
+
+    Examples
+    --------
+    Available at multigroup_aspatial_example.ipynb
+    
+    Notes
+    -----
+    Based on Equation 1 of page 37 of Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
+    
+    Simpson's interaction index (I) can be simply interpreted as the probability that two individuals chosen at random and independently from the population will be found to not belong to the same group.
+
+    Higher values means lesser segregation.
+    
+    Simpson's Concentration + Simpson's Interaction = 1
+
+    """
+    
+    def __init__(self, data, groups):
+        
+        aux = _simpsons_interaction(data, groups)
+
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _simpsons_interaction
