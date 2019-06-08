@@ -378,3 +378,177 @@ class Multi_Information_Theory:
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _multi_information_theory
+        
+        
+        
+def _multi_relative_diversity(data, groups):
+    """
+    Calculation of Multigroup Relative Diversity index
+
+    Parameters
+    ----------
+
+    data   : a pandas DataFrame
+    
+    groups : list of strings.
+             The variables names in data of the groups of interest of the analysis.
+
+    Returns
+    ----------
+
+    statistic : float
+                Multigroup Relative Diversity Index
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate.
+
+    Notes
+    -----
+    Based on Reardon, Sean F. "Measures of racial diversity and segregation in multigroup and hierarchically structured populations." annual meeting of the Eastern Sociological Society, Philadelphia, PA. 1998.
+
+    """
+    
+    core_data = data[groups]
+    
+    df = np.array(core_data)
+    
+    T = df.sum()
+    
+    ti = df.sum(axis = 1)
+    pik = df/ti[:,None]
+    Pk = df.sum(axis = 0) / df.sum()
+    Is = (Pk * (1 - Pk)).sum()
+    
+    MRD = (ti[:,None] * (pik - Pk) ** 2).sum() / (T * Is)
+    
+    return MRD, core_data
+
+
+
+
+
+class Multi_Relative_Diversity:
+    """
+    Calculation of Multigroup Relative Diversity index
+
+    Parameters
+    ----------
+
+    data   : a pandas DataFrame
+    
+    groups : list of strings.
+             The variables names in data of the groups of interest of the analysis.
+
+    Returns
+    ----------
+
+    statistic : float
+                Multigroup Relative Diversity Index
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate.
+
+    Examples
+    --------
+    Available at multigroup_aspatial_example.ipynb
+
+    Notes
+    -----
+    Based on Reardon, Sean F. "Measures of racial diversity and segregation in multigroup and hierarchically structured populations." annual meeting of the Eastern Sociological Society, Philadelphia, PA. 1998.
+
+    """
+    
+    def __init__(self, data, groups):
+        
+        aux = _multi_relative_diversity(data, groups)
+
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _multi_relative_diversity
+        
+        
+        
+def _multi_squared_coefficient_of_variation(data, groups):
+    """
+    Calculation of Multigroup Squared Coefficient of Variation index
+
+    Parameters
+    ----------
+
+    data   : a pandas DataFrame
+    
+    groups : list of strings.
+             The variables names in data of the groups of interest of the analysis.
+
+    Returns
+    ----------
+
+    statistic : float
+                Multigroup Squared Coefficient of Variation Index
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate.
+
+    Notes
+    -----
+    Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
+
+    """
+    
+    core_data = data[groups]
+    
+    df = np.array(core_data)
+    
+    m = df.shape[1]
+    
+    T = df.sum()
+    
+    ti = df.sum(axis = 1)
+    pik = df/ti[:,None]
+    Pk = df.sum(axis = 0) / df.sum()
+    
+    C = ((ti[:,None] * (pik - Pk) ** 2) / (T * (m - 1) * Pk)).sum()
+    
+    return C, core_data
+
+
+
+
+class Multi_Squared_Coefficient_of_Variation:
+    """
+    Calculation of Multigroup Squared Coefficient of Variation index
+
+    Parameters
+    ----------
+
+    data   : a pandas DataFrame
+    
+    groups : list of strings.
+             The variables names in data of the groups of interest of the analysis.
+
+    Returns
+    ----------
+
+    statistic : float
+                Multigroup Squared Coefficient of Variation Index
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate.
+
+    Examples
+    --------
+    Available at multigroup_aspatial_example.ipynb
+    
+    Notes
+    -----
+    Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
+
+    """
+    
+    def __init__(self, data, groups):
+        
+        aux = _multi_squared_coefficient_of_variation(data, groups)
+
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _multi_squared_coefficient_of_variation
