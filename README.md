@@ -156,7 +156,7 @@ from segregation.aspatial import Multi_Dissim
 index = Multi_Dissim(df, ['Group A', 'Group B', 'Group C'])
 ```
 
-Therefore, a <tt>statistic</tt> attributes will contain the value of this index.
+Therefore, a <tt>statistic</tt> attribute will contain the value of this index.
 
 
 Currently, theses indexes are summarized in the table below:
