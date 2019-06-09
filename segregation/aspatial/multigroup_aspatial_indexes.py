@@ -198,7 +198,24 @@ class Multi_Gini_Seg:
 
     Examples
     --------
-    Available at multigroup_aspatial_example.ipynb
+    In this example, we are going to use 2000 Census Tract Data for Sacramento MSA, CA. The groups of interest are White, Black, Asian and Hispanic population.
+    
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import libpysal
+    >>> import geopandas as gpd
+    >>> from segregation.multigroup_aspatial import Multi_Gini_Seg
+    
+    Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
+    
+    >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
+    >>> groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+    
+    The value is estimated below.
+    
+    >>> index = Multi_Gini_Seg(input_df, groups_list)
+    >>> index.statistic
+    0.5456349992598081
 
     Notes
     -----
@@ -281,7 +298,24 @@ class Multi_Normalized_Exposure:
 
     Examples
     --------
-    Available at multigroup_aspatial_example.ipynb
+    In this example, we are going to use 2000 Census Tract Data for Sacramento MSA, CA. The groups of interest are White, Black, Asian and Hispanic population.
+    
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import libpysal
+    >>> import geopandas as gpd
+    >>> from segregation.multigroup_aspatial import Multi_Normalized_Exposure
+    
+    Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
+    
+    >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
+    >>> groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+    
+    The value is estimated below.
+    
+    >>> index = Multi_Normalized_Exposure(input_df, groups_list)
+    >>> index.statistic
+    0.18821879029994157
 
     Notes
     -----
@@ -368,7 +402,24 @@ class Multi_Information_Theory:
 
     Examples
     --------
-    Available at multigroup_aspatial_example.ipynb
+    In this example, we are going to use 2000 Census Tract Data for Sacramento MSA, CA. The groups of interest are White, Black, Asian and Hispanic population.
+    
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import libpysal
+    >>> import geopandas as gpd
+    >>> from segregation.multigroup_aspatial import Multi_Information_Theory
+    
+    Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
+    
+    >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
+    >>> groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+    
+    The value is estimated below.
+    
+    >>> index = Multi_Information_Theory(input_df, groups_list)
+    >>> index.statistic
+    0.1710160297858887
 
     Notes
     -----
@@ -457,7 +508,24 @@ class Multi_Relative_Diversity:
 
     Examples
     --------
-    Available at multigroup_aspatial_example.ipynb
+    In this example, we are going to use 2000 Census Tract Data for Sacramento MSA, CA. The groups of interest are White, Black, Asian and Hispanic population.
+    
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import libpysal
+    >>> import geopandas as gpd
+    >>> from segregation.multigroup_aspatial import Multi_Relative_Diversity
+    
+    Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
+    
+    >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
+    >>> groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+    
+    The value is estimated below.
+    
+    >>> index = Multi_Relative_Diversity(input_df, groups_list)
+    >>> index.statistic
+    0.15820019878220337
 
     Notes
     -----
@@ -546,7 +614,24 @@ class Multi_Squared_Coefficient_of_Variation:
 
     Examples
     --------
-    Available at multigroup_aspatial_example.ipynb
+    In this example, we are going to use 2000 Census Tract Data for Sacramento MSA, CA. The groups of interest are White, Black, Asian and Hispanic population.
+    
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import libpysal
+    >>> import geopandas as gpd
+    >>> from segregation.multigroup_aspatial import Multi_Squared_Coefficient_of_Variation
+    
+    Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
+    
+    >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
+    >>> groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+    
+    The value is estimated below.
+    
+    >>> index = Multi_Squared_Coefficient_of_Variation(input_df, groups_list)
+    >>> index.statistic
+    0.11875484641127525
     
     Notes
     -----
@@ -635,7 +720,30 @@ class Multi_Diversity:
 
     Examples
     --------
-    Available at multigroup_aspatial_example.ipynb
+    In this example, we are going to use 2000 Census Tract Data for Sacramento MSA, CA. The groups of interest are White, Black, Asian and Hispanic population.
+    
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import libpysal
+    >>> import geopandas as gpd
+    >>> from segregation.multigroup_aspatial import Multi_Diversity
+    
+    Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
+    
+    >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
+    >>> groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+    
+    The value is estimated below.
+    
+    >>> index = Multi_Diversity(input_df, groups_list)
+    >>> index.statistic
+    0.9733112243997906
+    
+    You can also fit the normalized version of the multigroup diversity index.
+    
+    >>> normalized_index = Multi_Diversity(input_df, groups_list, normalized = True)
+    >>> normalized_index.statistic
+    0.7020956383415715
 
     Notes
     -----
@@ -725,7 +833,24 @@ class Simpsons_Concentration:
 
     Examples
     --------
-    Available at multigroup_aspatial_example.ipynb
+    In this example, we are going to use 2000 Census Tract Data for Sacramento MSA, CA. The groups of interest are White, Black, Asian and Hispanic population.
+    
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import libpysal
+    >>> import geopandas as gpd
+    >>> from segregation.multigroup_aspatial import Simpsons_Concentration
+    
+    Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
+    
+    >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
+    >>> groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+    
+    The value is estimated below.
+    
+    >>> index = Simpsons_Concentration(input_df, groups_list)
+    >>> index.statistic
+    0.49182413151957904
     
     Notes
     -----
@@ -817,7 +942,24 @@ class Simpsons_Interaction:
 
     Examples
     --------
-    Available at multigroup_aspatial_example.ipynb
+    In this example, we are going to use 2000 Census Tract Data for Sacramento MSA, CA. The groups of interest are White, Black, Asian and Hispanic population.
+    
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import libpysal
+    >>> import geopandas as gpd
+    >>> from segregation.multigroup_aspatial import Simpsons_Interaction
+    
+    Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
+    
+    >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
+    >>> groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+    
+    The value is estimated below.
+    
+    >>> index = Simpsons_Interaction(input_df, groups_list)
+    >>> index.statistic
+    0.508175868480421
     
     Notes
     -----
