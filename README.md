@@ -75,6 +75,8 @@ $ pip install git+https://github.com/pysal/segregation
 
 ## Getting started
 
+### Single group measures
+
 All input data for this module rely on [pandas](https://github.com/pandas-dev/pandas) DataFrames for the aspatial measures and [geopandas](https://github.com/geopandas/geopandas) DataFrames for spatial ones. In a nutshell, the user needs to pass the pandas DataFrame as its first argument and then two string that represent the variable name of population frequency of the group of interest (variable <tt>group_pop_var</tt>) and the total population of the unit (variable <tt>total_pop_var</tt>).
 
 So, for example, if a user would want to fit a dissimilarity index (D) to a DataFrame called <tt>df</tt> to a specific group with frequency <tt>freq</tt> with each total population <tt>population</tt>, a usual call would be something like this:
@@ -143,7 +145,21 @@ Another useful analytics that can be performed with the **segregation** module i
 | Decomposition       | Decompose\_Segregation   |   index1, index2, counterfactual\_approach    |    c\_a, c\_s     |
 
 
-It also possible to estimate Multigroup measures. Currently, theses indexes are summarized in the table below:
+### Multigroup measures
+
+It also possible to estimate Multigroup measures. This framework also relies on [pandas](https://github.com/pandas-dev/pandas) DataFrames for the aspatial measures.
+
+Suppose you have a DataFrame called <tt>df</tt> that has populations of some groups, for example, <tt>Group A</tt>, <tt>Group B</tt> and <tt>Group C</tt>. A usual call for a multigroup Dissimilarity index would be:
+
+```python
+from segregation.aspatial import Multi_Dissim
+index = Multi_Dissim(df, ['Group A', 'Group B', 'Group C'])
+```
+
+Therefore, a <tt>statistic</tt> attributes will contain the value of this index.
+
+
+Currently, theses indexes are summarized in the table below:
 
 | **Measure**                                       | **Class/Function**                        | **Spatial?** | **Function Inputs** |
 | :------------------------------------------------ | :---------------------------------------- | :----------: | :-----------------: |
