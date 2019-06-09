@@ -5,7 +5,7 @@ import numpy as np
 from segregation.aspatial import Multi_Dissim
 
 
-class Delta_Tester(unittest.TestCase):
+class Multi_Dissim_Tester(unittest.TestCase):
     def test_Delta(self):
         s_map = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
 		groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
