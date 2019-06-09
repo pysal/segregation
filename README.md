@@ -61,12 +61,17 @@ $ pip install git+https://github.com/pysal/segregation
 
 #### Segregation uses:
 
-- libpysal
 - pandas
 - geopandas
+- matplotlib
+- scikit-learn
+- seaborn
 - numpy
 - scipy
-- scikit-learn
+- libpysal
+- osmnx
+- pandana
+- urbanaccess
 
 ## Getting started
 
@@ -136,6 +141,21 @@ Another useful analytics that can be performed with the **segregation** module i
 | **Framework** | **Class/Function**   |                 **Function main Inputs**                 |         **Function Outputs**         |
 | :----------------- | :------------------- | :------------------------------------------------------: | :----------------------------------: |
 | Decomposition       | Decompose\_Segregation   |   index1, index2, counterfactual\_approach    |    c\_a, c\_s     |
+
+
+It also possible to estimate Multigroup measures. Currently, theses indexes are summarized in the table below:
+
+| **Measure**                                       | **Class/Function**                        | **Spatial?** | **Function Inputs** |
+| :------------------------------------------------ | :---------------------------------------- | :----------: | :-----------------: |
+| Multigroup Dissimilarity                          | Multi\_Dissim                             |      No      |         \-          |
+| Multigroup Gini                                   | Multi\_Gini\_Seg                          |      No      |         \-          |
+| Multigroup Normalized Exposure                    | Multi\_Normalized\_Exposure               |      No      |         \-          |
+| Multigroup Information Theory                     | Multi\_Information\_Theory                |      No      |         \-          |
+| Multigroup Relative Diversity                     | Multi\_Relative\_Diversity                |      No      |         \-          |
+| Multigroup Squared Coefficient of Variation       | Multi\_Squared\_Coefficient\_of\_Variation|      No      |         \-          |
+| Multigroup Diversity                              | Multi\_Diversity                          |      No      |     normalized      |
+| Simpson's Concentration                           | Simpsons\_Concentration                   |      No      |         \-          |
+| Simpson's Interaction                             | Simpsons\_Interaction                     |      No      |         \-          |
 
 
 
