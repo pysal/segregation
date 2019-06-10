@@ -52,6 +52,7 @@ notifications:
         recipients:
             - renanxcortes+travis@gmail.com
             - sjsrey+travis@gmail.com
+            - knaaptime+travis@gmail.com
         on_change: always
         on_failure: always
 
