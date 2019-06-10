@@ -61,14 +61,21 @@ $ pip install git+https://github.com/pysal/segregation
 
 #### Segregation uses:
 
-- libpysal
 - pandas
 - geopandas
+- matplotlib
+- scikit-learn
+- seaborn
 - numpy
 - scipy
-- scikit-learn
+- libpysal
+- osmnx
+- pandana
+- urbanaccess
 
 ## Getting started
+
+### Single group measures
 
 All input data for this module rely on [pandas](https://github.com/pandas-dev/pandas) DataFrames for the aspatial measures and [geopandas](https://github.com/geopandas/geopandas) DataFrames for spatial ones. In a nutshell, the user needs to pass the pandas DataFrame as its first argument and then two string that represent the variable name of population frequency of the group of interest (variable <tt>group_pop_var</tt>) and the total population of the unit (variable <tt>total_pop_var</tt>).
 
@@ -136,6 +143,35 @@ Another useful analytics that can be performed with the **segregation** module i
 | **Framework** | **Class/Function**   |                 **Function main Inputs**                 |         **Function Outputs**         |
 | :----------------- | :------------------- | :------------------------------------------------------: | :----------------------------------: |
 | Decomposition       | Decompose\_Segregation   |   index1, index2, counterfactual\_approach    |    c\_a, c\_s     |
+
+
+### Multigroup measures
+
+It also possible to estimate Multigroup measures. This framework also relies on [pandas](https://github.com/pandas-dev/pandas) DataFrames for the aspatial measures.
+
+Suppose you have a DataFrame called <tt>df</tt> that has populations of some groups, for example, <tt>Group A</tt>, <tt>Group B</tt> and <tt>Group C</tt>. A usual call for a multigroup Dissimilarity index would be:
+
+```python
+from segregation.aspatial import Multi_Dissim
+index = Multi_Dissim(df, ['Group A', 'Group B', 'Group C'])
+```
+
+Therefore, a <tt>statistic</tt> attribute will contain the value of this index.
+
+
+Currently, theses indexes are summarized in the table below:
+
+| **Measure**                                       | **Class/Function**                        | **Spatial?** | **Function Inputs** |
+| :------------------------------------------------ | :---------------------------------------- | :----------: | :-----------------: |
+| Multigroup Dissimilarity                          | Multi\_Dissim                             |      No      |         \-          |
+| Multigroup Gini                                   | Multi\_Gini\_Seg                          |      No      |         \-          |
+| Multigroup Normalized Exposure                    | Multi\_Normalized\_Exposure               |      No      |         \-          |
+| Multigroup Information Theory                     | Multi\_Information\_Theory                |      No      |         \-          |
+| Multigroup Relative Diversity                     | Multi\_Relative\_Diversity                |      No      |         \-          |
+| Multigroup Squared Coefficient of Variation       | Multi\_Squared\_Coefficient\_of\_Variation|      No      |         \-          |
+| Multigroup Diversity                              | Multi\_Diversity                          |      No      |     normalized      |
+| Simpson's Concentration                           | Simpsons\_Concentration                   |      No      |         \-          |
+| Simpson's Interaction                             | Simpsons\_Interaction                     |      No      |         \-          |
 
 
 
