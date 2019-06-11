@@ -1,21 +1,22 @@
 language: python
-sudo: false
+dist: xenial
+sudo: true
 branches:
 only:
   - master
 
 python:
-  - 3.5
   - 3.6
+  - 3.7
 env:
     - PYSAL_PYPI=true
     - PYSAL_PYPI=false
       
 matrix:
   allow_failures:
-      - python: 3.5
-        env: PYSAL_PYPI=false
       - python: 3.6
+        env: PYSAL_PYPI=false
+      - python: 3.7
         env: PYSAL_PYPI=false
 
 before_install:
@@ -32,6 +33,7 @@ before_install:
 
 install:
   - conda install --yes pip nose
+  - conda install --yes -c conda-forge geopandas #comment this line if geopandas is not a dependency for the package
   - which pip
   - if "$PYSAL_PYPI"; then
         echo 'testing pypi libpysal' && pip install libpysal;
@@ -51,6 +53,7 @@ notifications:
         recipients:
             - renanxcortes+travis@gmail.com
             - sjsrey+travis@gmail.com
+            - knaaptime+travis@gmail.com
         on_change: always
         on_failure: always
 

@@ -76,3 +76,7 @@
     color: #222222;
     font-size: 100%;
 }
+
+div.body {
+    max-width: 1080px;
+}
