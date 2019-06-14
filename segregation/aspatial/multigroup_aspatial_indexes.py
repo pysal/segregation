@@ -18,7 +18,8 @@ __all__ = ['Multi_Dissim',
            'Multi_Squared_Coefficient_of_Variation',
            'Multi_Diversity',
            'Simpsons_Concentration',
-           'Simpsons_Interaction']
+           'Simpsons_Interaction',
+           'Multi_Divergence']
 
 def _multi_dissim(data, groups):
     """
@@ -980,3 +981,105 @@ class Simpsons_Interaction:
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _simpsons_interaction
+        
+        
+        
+def _multi_divergence(data, groups):
+    """
+    Calculation of Multigroup Divergence index
+
+    Parameters
+    ----------
+
+    data   : a pandas DataFrame
+    
+    groups : list of strings.
+             The variables names in data of the groups of interest of the analysis.
+
+    Returns
+    -------
+
+    statistic : float
+                Multigroup Divergence Index
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate.
+
+    Notes
+    -----
+    Based on Roberto, Elizabeth. "The Divergence Index: A Decomposable Measure of Segregation and Inequality." arXiv preprint arXiv:1508.01167 (2015).
+
+    """
+    
+    core_data = data[groups]
+    
+    df = np.array(core_data)
+    
+    T = df.sum()
+    
+    ti = df.sum(axis = 1)
+    pik = df/ti[:,None]
+    Pk = df.sum(axis = 0) / df.sum()
+    
+    Di = np.nansum(pik * np.log(pik / Pk), axis = 1)
+
+    Divergence_Index = ((ti / T) * Di).sum()
+    
+    return Divergence_Index, core_data
+
+
+class Multi_Divergence:
+    """
+    Calculation of Multigroup Divergence index
+
+    Parameters
+    ----------
+
+    data   : a pandas DataFrame
+    
+    groups : list of strings.
+             The variables names in data of the groups of interest of the analysis.
+
+    Attributes
+    ----------
+
+    statistic : float
+                Multigroup Divergence Index
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate.
+
+    Examples
+    --------
+    In this example, we are going to use 2000 Census Tract Data for Sacramento MSA, CA. The groups of interest are White, Black, Asian and Hispanic population.
+    
+    Firstly, we need to perform some import the modules and the respective function.
+    
+    >>> import libpysal
+    >>> import geopandas as gpd
+    >>> from segregation.multigroup_aspatial import Multi_Divergence
+    
+    Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
+    
+    >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
+    >>> groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+    
+    The value is estimated below.
+    
+    >>> index = Multi_Divergence(input_df, groups_list)
+    >>> index.statistic
+    0.16645182134289443
+
+    Notes
+    -----
+    Based on Roberto, Elizabeth. "The Divergence Index: A Decomposable Measure of Segregation and Inequality." arXiv preprint arXiv:1508.01167 (2015).
+
+    """
+    
+    def __init__(self, data, groups):
+        
+        aux = _multi_divergence(data, groups)
+
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _multi_divergence
