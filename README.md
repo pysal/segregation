@@ -172,6 +172,7 @@ Currently, theses indexes are summarized in the table below:
 | Multigroup Diversity                              | Multi\_Diversity                          |      No      |     normalized      |
 | Simpson's Concentration                           | Simpsons\_Concentration                   |      No      |         \-          |
 | Simpson's Interaction                             | Simpsons\_Interaction                     |      No      |         \-          |
+| Multigroup Divergence                             | Multi\_Divergence                         |      No      |         \-          |
 
 
 
