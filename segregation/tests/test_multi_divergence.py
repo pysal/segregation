@@ -1,0 +1,18 @@
+import unittest
+import libpysal
+import geopandas as gpd
+import numpy as np
+from segregation.aspatial import Multi_Divergence
+
+
+class Multi_Divergence_Tester(unittest.TestCase):
+    def test_Multi_Divergence(self):
+        s_map = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
+        groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+        df = s_map[groups_list]
+        index = Multi_Divergence(df, groups_list)
+        np.testing.assert_almost_equal(index.statistic, 0.16645182134289443)
+
+
+if __name__ == '__main__':
+    unittest.main()
