@@ -8,6 +8,8 @@ import numpy as np
 import warnings
 from segregation.util.util import _generate_counterfactual
 
+__all__ = ['Decompose_Segregation']
+
 
 def _decompose_segregation(index1,
                            index2,
