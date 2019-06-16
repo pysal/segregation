@@ -5,57 +5,80 @@
 API reference
 =============
 
-A-spatial Indices
+Aspatial Indices
 ---------------------
 .. autosummary::
    :toctree: generated/
    
-      non_spatial_indexes.Dissim 
-      non_spatial_indexes.Gini_Seg
-      non_spatial_indexes.Entropy
-      non_spatial_indexes.Isolation
-      non_spatial_indexes.Exposure
-      non_spatial_indexes.Atkinson
-      non_spatial_indexes.Correlation_R
-      non_spatial_indexes.Con_Prof
-      non_spatial_indexes.Modified_Dissim
-      non_spatial_indexes.Modified_Gini_Seg
-      non_spatial_indexes.Bias_Corrected_Dissim
-      non_spatial_indexes.Density_Corrected_Dissim
+      aspatial.Dissim 
+      aspatial.Gini_Seg
+      aspatial.Entropy
+      aspatial.Isolation
+      aspatial.Exposure
+      aspatial.Atkinson
+      aspatial.Correlation_R
+      aspatial.Con_Prof
+      aspatial.Modified_Dissim
+      aspatial.Modified_Gini_Seg
+      aspatial.Bias_Corrected_Dissim
+      aspatial.Density_Corrected_Dissim
 
 Spatial Indices
 ---------------------
 .. autosummary::
    :toctree: generated/
    
-      spatial_indexes.Spatial_Prox_Prof
-      spatial_indexes.Spatial_Dissim
-      spatial_indexes.Boundary_Spatial_Dissim
-      spatial_indexes.Perimeter_Area_Ratio_Spatial_Dissim
-      spatial_indexes.Spatial_Isolation
-      spatial_indexes.Spatial_Exposure
-      spatial_indexes.Spatial_Proximity
-      spatial_indexes.Relative_Clustering
-      spatial_indexes.Delta
-      spatial_indexes.Absolute_Concentration
-      spatial_indexes.Relative_Concentration
-      spatial_indexes.Absolute_Centralization
-      spatial_indexes.Relative_Centralization
-      spatial_indexes.Spatial_Information_Theory
+      spatial.Spatial_Prox_Prof
+      spatial.Spatial_Dissim
+      spatial.Boundary_Spatial_Dissim
+      spatial.Perimeter_Area_Ratio_Spatial_Dissim
+      spatial.Spatial_Isolation
+      spatial.Spatial_Exposure
+      spatial.Spatial_Proximity
+      spatial.Absolute_Clustering
+      spatial.Relative_Clustering
+      spatial.Delta
+      spatial.Absolute_Concentration
+      spatial.Relative_Concentration
+      spatial.Absolute_Centralization
+      spatial.Relative_Centralization
+	  
+Multigroup Indices
+---------------------
+.. autosummary::
+   :toctree: generated/
+   
+      aspatial.Multi_Dissim
+      aspatial.Multi_Gini_Seg
+      aspatial.Multi_Normalized_Exposure
+      aspatial.Multi_Information_Theory
+      aspatial.Multi_Relative_Diversity
+      aspatial.Multi_Squared_Coefficient_of_Variation
+      aspatial.Multi_Diversity
+      aspatial.Simpsons_Concentration
+      aspatial.Simpsons_Interaction
+      aspatial.Multi_Divergence
 	  
 Profile Wrappers
 ---------------------
 .. autosummary::
    :toctree: generated/
    
-      profile_wrappers.Profile_Non_Spatial_Segregation
-	  profile_wrappers.Profile_Spatial_Segregation
-	  profile_wrappers.Profile_Segregation
+	  profile.Profile_Aspatial_Segregation
+	  profile.Profile_Spatial_Segregation
+	  profile.Profile_Segregation
 	  
 Inference Wrappers
 ---------------------
 .. autosummary::
    :toctree: generated/
    
-      inference_wrappers.Infer_Segregation
-	  inference_wrappers.Compare_Segregation
+	  inference.Infer_Segregation
+	  inference.Compare_Segregation
+	  
+Decomposition
+---------------------
+.. autosummary::
+   :toctree: generated/
+   
+      decomposition.Decompose_Segregation
