@@ -54,7 +54,7 @@ def _dissim(data, group_pop_var, total_pop_var):
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
 
-    BibTex: :cite:`massey1988dimensions`.
+    Reference: :cite:`massey1988dimensions`.
     
     """
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
@@ -149,7 +149,7 @@ class Dissim:
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
     
-    BibTex: :cite:`massey1988dimensions`.
+    Reference: :cite:`massey1988dimensions`.
 
     """
 
@@ -189,7 +189,7 @@ def _gini_seg(data, group_pop_var, total_pop_var):
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
     
-    BibTex: :cite:`massey1988dimensions`.
+    Reference: :cite:`massey1988dimensions`.
     
     """
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
@@ -279,7 +279,7 @@ class Gini_Seg:
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
     
-    BibTex: :cite:`massey1988dimensions`.
+    Reference: :cite:`massey1988dimensions`.
     
     """
 
@@ -321,7 +321,7 @@ def _entropy(data, group_pop_var, total_pop_var):
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
     
-    BibTex Reference: :cite:`massey1988dimensions`.
+    Reference: :cite:`massey1988dimensions`.
 
     """
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
@@ -416,7 +416,7 @@ class Entropy:
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
 
-    BibTex: :cite:`massey1988dimensions`.
+    Reference: :cite:`massey1988dimensions`.
 
     """
 
@@ -461,7 +461,7 @@ def _isolation(data, group_pop_var, total_pop_var):
     
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
     
-    BibTex: :cite:`massey1988dimensions`.
+    Reference: :cite:`massey1988dimensions`.
 
     """
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
@@ -553,7 +553,7 @@ class Isolation:
     
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
     
-    BibTex: :cite:`massey1988dimensions`.
+    Reference: :cite:`massey1988dimensions`.
 
     """
 
@@ -597,7 +597,7 @@ def _exposure(data, group_pop_var, total_pop_var):
     
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
     
-    BibTex: :cite:`massey1988dimensions`.
+    Reference: :cite:`massey1988dimensions`.
 
     """
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
@@ -691,7 +691,7 @@ class Exposure:
     
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
     
-    BibTex: :cite:`massey1988dimensions`.
+    Reference: :cite:`massey1988dimensions`.
 
     """
 
@@ -737,7 +737,7 @@ def _atkinson(data, group_pop_var, total_pop_var, b = 0.5):
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
     
-    BibTex: :cite:`massey1988dimensions`.
+    Reference: :cite:`massey1988dimensions`.
 
     """
     if (not isinstance(b, float)):
@@ -839,7 +839,7 @@ class Atkinson:
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
     
-    BibTex: :cite:`massey1988dimensions`.
+    Reference: :cite:`massey1988dimensions`.
 
     """
 
@@ -882,7 +882,7 @@ def _correlationr(data, group_pop_var, total_pop_var):
     
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
     
-    BibTex: :cite:`massey1988dimensions`.
+    Reference: :cite:`massey1988dimensions`.
 
     """
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
@@ -976,7 +976,7 @@ class Correlation_R:
     
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
     
-    BibTex: :cite:`massey1988dimensions`.
+    Reference: :cite:`massey1988dimensions`.
 
     """
 
@@ -1021,7 +1021,7 @@ def _conprof(data, group_pop_var, total_pop_var, m = 1000):
     -----
     Based on Hong, Seong-Yun, and Yukio Sadahiro. "Measuring geographic segregation: a graph-based approach." Journal of Geographical Systems 16.2 (2014): 211-231.
 
-    BibTex Reference: :cite:`hong2014measuring`.
+    Reference: :cite:`hong2014measuring`.
 
     """
     if(type(m) is not int):
@@ -1131,7 +1131,7 @@ class Con_Prof:
     -----
     Based on Hong, Seong-Yun, and Yukio Sadahiro. "Measuring geographic segregation: a graph-based approach." Journal of Geographical Systems 16.2 (2014): 211-231.
     
-    BibTex Reference: :cite:`hong2014measuring`.
+    Reference: :cite:`hong2014measuring`.
 
     """
 
@@ -1190,7 +1190,7 @@ def _modified_dissim(data, group_pop_var, total_pop_var, iterations = 500):
     -----
     Based on Carrington, William J., and Kenneth R. Troske. "On measuring segregation in samples with small units." Journal of Business & Economic Statistics 15.4 (1997): 402-409.
     
-    BibTex Reference: :cite:`carrington1997measuring`.
+    Reference: :cite:`carrington1997measuring`.
 
     """
     if(type(iterations) is not int):
@@ -1299,7 +1299,7 @@ class Modified_Dissim:
     -----
     Based on Carrington, William J., and Kenneth R. Troske. "On measuring segregation in samples with small units." Journal of Business & Economic Statistics 15.4 (1997): 402-409.
 
-    BibTex Reference: :cite:`carrington1997measuring`.
+    Reference: :cite:`carrington1997measuring`.
 
     """
 
@@ -1343,7 +1343,7 @@ def _modified_gini_seg(data, group_pop_var, total_pop_var, iterations = 500):
     -----
     Based on Carrington, William J., and Kenneth R. Troske. "On measuring segregation in samples with small units." Journal of Business & Economic Statistics 15.4 (1997): 402-409.
     
-    BibTex Reference: :cite:`carrington1997measuring`.
+    Reference: :cite:`carrington1997measuring`.
 
     """
     if(type(iterations) is not int):
@@ -1452,7 +1452,7 @@ class Modified_Gini_Seg:
     -----
     Based on Carrington, William J., and Kenneth R. Troske. "On measuring segregation in samples with small units." Journal of Business & Economic Statistics 15.4 (1997): 402-409.
     
-    BibTex Reference: :cite:`carrington1997measuring`.
+    Reference: :cite:`carrington1997measuring`.
 
     """
 
@@ -1498,7 +1498,7 @@ def _bias_corrected_dissim(data, group_pop_var, total_pop_var, B = 500):
     -----
     Based on Allen, Rebecca, et al. "More reliable inference for the dissimilarity index of segregation." The econometrics journal 18.1 (2015): 40-66.
     
-    BibTex Reference: :cite:`allen2015more`.
+    Reference: :cite:`allen2015more`.
 
     """
     if(type(B) is not int):
@@ -1610,7 +1610,7 @@ class Bias_Corrected_Dissim:
     -----
     Based on Allen, Rebecca, et al. "More reliable inference for the dissimilarity index of segregation." The econometrics journal 18.1 (2015): 40-66.
     
-    BibTex Reference: :cite:`allen2015more`.
+    Reference: :cite:`allen2015more`.
 
     """
 
@@ -1654,7 +1654,7 @@ def _density_corrected_dissim(data, group_pop_var, total_pop_var, xtol = 1e-5):
     -----
     Based on Allen, Rebecca, et al. "More reliable inference for the dissimilarity index of segregation." The econometrics journal 18.1 (2015): 40-66.
     
-    BibTex Reference: :cite:`allen2015more`.
+    Reference: :cite:`allen2015more`.
 
     """
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
@@ -1773,7 +1773,7 @@ class Density_Corrected_Dissim:
     -----
     Based on Allen, Rebecca, et al. "More reliable inference for the dissimilarity index of segregation." The econometrics journal 18.1 (2015): 40-66.
     
-    BibTex Reference: :cite:`allen2015more`.
+    Reference: :cite:`allen2015more`.
 
     """
 

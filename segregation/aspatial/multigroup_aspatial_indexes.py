@@ -45,6 +45,8 @@ def _multi_dissim(data, groups):
     Notes
     -----
     Based on Sakoda, James M. "A generalized index of dissimilarity." Demography 18.2 (1981): 245-250.
+    
+    Reference: :cite:`sakoda1981generalized`.
 
     """
     
@@ -113,6 +115,8 @@ class Multi_Dissim:
     Notes
     -----
     Based on Sakoda, James M. "A generalized index of dissimilarity." Demography 18.2 (1981): 245-250.
+    
+    Reference: :cite:`sakoda1981generalized`.
 
     """
     
@@ -150,6 +154,8 @@ def _multi_gini_seg(data, groups):
     Notes
     -----
     Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
+    
+    Reference: :cite:`reardon2002measures`.
 
     """
     
@@ -221,6 +227,8 @@ class Multi_Gini_Seg:
     Notes
     -----
     Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
+    
+    Reference: :cite:`reardon2002measures`.
 
     """
     
@@ -258,6 +266,8 @@ def _multi_normalized_exposure(data, groups):
     Notes
     -----
     Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
+    
+    Reference: :cite:`reardon2002measures`.
 
     """
     
@@ -321,6 +331,8 @@ class Multi_Normalized_Exposure:
     Notes
     -----
     Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
+    
+    Reference: :cite:`reardon2002measures`.
 
     """
     
@@ -358,6 +370,8 @@ def _multi_information_theory(data, groups):
     Notes
     -----
     Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
+    
+    Reference: :cite:`reardon2002measures`.
 
     """
     
@@ -425,6 +439,8 @@ class Multi_Information_Theory:
     Notes
     -----
     Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
+    
+    Reference: :cite:`reardon2002measures`.
 
     """
     
@@ -464,6 +480,8 @@ def _multi_relative_diversity(data, groups):
     Based on Reardon, Sean F. "Measures of racial diversity and segregation in multigroup and hierarchically structured populations." annual meeting of the Eastern Sociological Society, Philadelphia, PA. 1998.
 
     High diversity means less segregation.
+    
+    Reference: :cite:`reardon1998measures`.
 
     """
     
@@ -533,6 +551,8 @@ class Multi_Relative_Diversity:
     Based on Reardon, Sean F. "Measures of racial diversity and segregation in multigroup and hierarchically structured populations." annual meeting of the Eastern Sociological Society, Philadelphia, PA. 1998.
 
     High diversity means less segregation.
+    
+    Reference: :cite:`reardon1998measures`.
 
     """
     
@@ -570,6 +590,8 @@ def _multi_squared_coefficient_of_variation(data, groups):
     Notes
     -----
     Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
+
+    Reference: :cite:`reardon2002measures`.
 
     """
     
@@ -637,6 +659,8 @@ class Multi_Squared_Coefficient_of_Variation:
     Notes
     -----
     Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
+    
+    Reference: :cite:`reardon2002measures`.
 
     """
     
@@ -680,6 +704,8 @@ def _multi_diversity(data, groups, normalized = False):
     This is also know as Theil's Entropy Index (Equation 2 of page 37 of Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67)
     
     High diversity means less segregation.
+    
+    Reference: :cite:`reardon2002measures`.
 
     """
     
@@ -753,6 +779,8 @@ class Multi_Diversity:
     This is also know as Theil's Entropy Index (Equation 2 of page 37 of Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67)
     
     High diversity means less segregation.
+    
+    Reference: :cite:`reardon2002measures`.
 
     """
     
@@ -796,6 +824,8 @@ def _simpsons_concentration(data, groups):
     Higher values means higher segregation.
     
     Simpson's Concentration + Simpson's Interaction = 1
+    
+    Reference: :cite:`simpson1949measurement`.
 
     """
     
@@ -862,6 +892,8 @@ class Simpsons_Concentration:
     Higher values means higher segregation.
     
     Simpson's Concentration + Simpson's Interaction = 1
+    
+    Reference: :cite:`simpson1949measurement`.
 
     """
     
@@ -905,6 +937,8 @@ def _simpsons_interaction(data, groups):
     Higher values means lesser segregation.
     
     Simpson's Concentration + Simpson's Interaction = 1
+    
+    Reference: :cite:`reardon2002measures`.
 
     """
     
@@ -971,6 +1005,8 @@ class Simpsons_Interaction:
     Higher values means lesser segregation.
     
     Simpson's Concentration + Simpson's Interaction = 1
+    
+    Reference: :cite:`reardon2002measures`.
 
     """
     
@@ -1008,6 +1044,8 @@ def _multi_divergence(data, groups):
     Notes
     -----
     Based on Roberto, Elizabeth. "The Divergence Index: A Decomposable Measure of Segregation and Inequality." arXiv preprint arXiv:1508.01167 (2015).
+    
+    Reference: :cite:`roberto2015divergence`.
 
     """
     
@@ -1073,6 +1111,8 @@ class Multi_Divergence:
     Notes
     -----
     Based on Roberto, Elizabeth. "The Divergence Index: A Decomposable Measure of Segregation and Inequality." arXiv preprint arXiv:1508.01167 (2015).
+    
+    Reference: :cite:`roberto2015divergence`.
 
     """
     
