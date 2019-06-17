@@ -184,6 +184,7 @@ def _gini_seg(data, group_pop_var, total_pop_var):
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
+    
     """
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
@@ -271,6 +272,7 @@ class Gini_Seg:
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
+    
     """
 
     def __init__(self, data, group_pop_var, total_pop_var):
@@ -310,6 +312,8 @@ def _entropy(data, group_pop_var, total_pop_var):
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
+    
+    BibTex Reference: :cite:`massey1988dimensions`.
 
     """
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
@@ -990,6 +994,8 @@ def _conprof(data, group_pop_var, total_pop_var, m = 1000):
     Notes
     -----
     Based on Hong, Seong-Yun, and Yukio Sadahiro. "Measuring geographic segregation: a graph-based approach." Journal of Geographical Systems 16.2 (2014): 211-231.
+
+    BibTex Reference: :cite:`hong2014measuring`.
 
     """
     if(type(m) is not int):
