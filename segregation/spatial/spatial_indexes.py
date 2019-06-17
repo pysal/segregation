@@ -62,6 +62,8 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, m=1000):
     Notes
     -----
     Based on Hong, Seong-Yun, and Yukio Sadahiro. "Measuring geographic segregation: a graph-based approach." Journal of Geographical Systems 16.2 (2014): 211-231.
+    
+    Reference: :cite:`hong2014measuring`.
 
     """
 
@@ -204,6 +206,8 @@ class Spatial_Prox_Prof:
     Notes
     -----
     Based on Hong, Seong-Yun, and Yukio Sadahiro. "Measuring geographic segregation: a graph-based approach." Journal of Geographical Systems 16.2 (2014): 211-231.
+    
+    Reference: :cite:`hong2014measuring`.
 
     """
 
@@ -268,6 +272,8 @@ def _spatial_dissim(data,
     Notes
     -----
     Based on Morrill, R. L. (1991) "On the Measure of Geographic Segregation". Geography Research Forum.
+    
+    Reference: :cite:`morrill1991measure`.
 
     """
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
@@ -421,6 +427,8 @@ class Spatial_Dissim:
     -----
     Based on Morrill, R. L. (1991) "On the Measure of Geographic Segregation". Geography Research Forum.
     
+    Reference: :cite:`morrill1991measure`.
+    
     """
 
     def __init__(self,
@@ -475,6 +483,8 @@ def _boundary_spatial_dissim(data,
     The formula is based on Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
     
     Original paper by Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
+    
+    References: :cite:`hong2014implementing` and :cite:`wong1993spatial`.
 
     """
 
@@ -598,6 +608,8 @@ class Boundary_Spatial_Dissim:
     
     Original paper by Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
     
+    References: :cite:`hong2014implementing` and :cite:`wong1993spatial`.
+    
     """
 
     def __init__(self, data, group_pop_var, total_pop_var, standardize=False):
@@ -649,6 +661,8 @@ def _perimeter_area_ratio_spatial_dissim(data,
     points out that in Wong’s original there is an issue with the formula which is an extra division by 2 in the spatial interaction component.
     This function follows the formula present in the first Appendix of Tivadar, Mihai. "OasisR: An R Package to Bring Some Order to the World of Segregation Measurement." Journal of Statistical Software 89.1 (2019): 1-39.
 
+    References: :cite:`wong1993spatial` and :cite:`tivadar2019oasisr`.
+        
     """
 
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
@@ -781,6 +795,8 @@ class Perimeter_Area_Ratio_Spatial_Dissim:
     points out that in Wong’s original there is an issue with the formula which is an extra division by 2 in the spatial interaction component.
     This function follows the formula present in the first Appendix of Tivadar, Mihai. "OasisR: An R Package to Bring Some Order to the World of Segregation Measurement." Journal of Statistical Software 89.1 (2019): 1-39.
     
+    References: :cite:`wong1993spatial` and :cite:`tivadar2019oasisr`.
+    
     """
 
     def __init__(self, data, group_pop_var, total_pop_var, standardize=True):
@@ -831,6 +847,8 @@ def _spatial_isolation(data, group_pop_var, total_pop_var, alpha=0.6,
     Based on Morgan, Barrie S. "A distance-decay based interaction index to measure residential segregation." Area (1983): 211-217.
     
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
+    
+    Reference: :cite:`morgan1983distance`.
 
     """
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
@@ -972,6 +990,8 @@ class Spatial_Isolation:
     
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
     
+    Reference: :cite:`morgan1983distance`.
+    
     """
 
     def __init__(self, data, group_pop_var, total_pop_var, alpha=0.6,
@@ -1022,6 +1042,8 @@ def _spatial_exposure(data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5):
     Based on Morgan, Barrie S. "A distance-decay based interaction index to measure residential segregation." Area (1983): 211-217.
     
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
+    
+    Reference: :cite:`morgan1983distance`.
 
     """
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
@@ -1164,6 +1186,8 @@ class Spatial_Exposure:
     
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
     
+    Reference: :cite:`morgan1983distance`.
+    
     """
 
     def __init__(self, data, group_pop_var, total_pop_var, alpha=0.6,
@@ -1210,6 +1234,9 @@ def _spatial_proximity(data, group_pop_var, total_pop_var, alpha=0.6,
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
     
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
+    
+    Reference: :cite:`massey1988dimensions`.
+    
     """
 
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
@@ -1347,6 +1374,8 @@ class Spatial_Proximity:
     
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
     
+    Reference: :cite:`massey1988dimensions`.
+    
     """
 
     def __init__(self, data, group_pop_var, total_pop_var, alpha=0.6,
@@ -1396,6 +1425,9 @@ def _absolute_clustering(data,
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
     
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
+    
+    Reference: :cite:`massey1988dimensions`.
+    
     """
 
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
@@ -1524,6 +1556,8 @@ class Absolute_Clustering:
     
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
     
+    Reference: :cite:`massey1988dimensions`.
+    
     """
 
     def __init__(self, data, group_pop_var, total_pop_var, alpha=0.6,
@@ -1573,6 +1607,9 @@ def _relative_clustering(data,
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
     
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
+    
+    Reference: :cite:`massey1988dimensions`.
+    
     """
 
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
@@ -1706,6 +1743,8 @@ class Relative_Clustering:
     
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
     
+    Reference: :cite:`massey1988dimensions`.
+    
     """
 
     def __init__(self, data, group_pop_var, total_pop_var, alpha=0.6,
@@ -1746,6 +1785,8 @@ def _delta(data, group_pop_var, total_pop_var):
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
+    
+    Reference: :cite:`massey1988dimensions`.
 
     """
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
@@ -1861,6 +1902,8 @@ class Delta:
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
     
+    Reference: :cite:`massey1988dimensions`.
+    
     """
 
     def __init__(self, data, group_pop_var, total_pop_var):
@@ -1899,6 +1942,8 @@ def _absolute_concentration(data, group_pop_var, total_pop_var):
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
+    
+    Reference: :cite:`massey1988dimensions`.
 
     """
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
@@ -2025,6 +2070,8 @@ class Absolute_Concentration:
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
+    
+    Reference: :cite:`massey1988dimensions`.
 
     """
 
@@ -2064,6 +2111,8 @@ def _relative_concentration(data, group_pop_var, total_pop_var):
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
+    
+    Reference: :cite:`massey1988dimensions`.
 
     """
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
@@ -2193,6 +2242,8 @@ class Relative_Concentration:
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
+    
+    Reference: :cite:`massey1988dimensions`.
 
     """
 
@@ -2253,6 +2304,8 @@ def _absolute_centralization(data, group_pop_var, total_pop_var,
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
     
     A discussion of defining the center in this function can be found in https://github.com/pysal/segregation/issues/18.
+    
+    Reference: :cite:`massey1988dimensions`.
 
     """
 
@@ -2441,6 +2494,8 @@ class Absolute_Centralization:
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
     
     A discussion of defining the center in this function can be found in https://github.com/pysal/segregation/issues/18.
+    
+    Reference: :cite:`massey1988dimensions`.
 
     """
 
@@ -2690,6 +2745,8 @@ class Relative_Centralization:
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
     
     A discussion of defining the center in this function can be found in https://github.com/pysal/segregation/issues/18.
+    
+    Reference: :cite:`massey1988dimensions`.
 
     """
 
