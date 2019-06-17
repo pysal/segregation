@@ -44,6 +44,15 @@ The PySAL `segregation` package provides a suite of tools for measuring segregat
                 </div>
             </a>
         </div>
+		<div class="col-sm-6 col-xs-12">
+			<a href="https://github.com/pysal/segregation/blob/master/notebooks/network_measures.ipynb" class="thumbnail">
+				<img src="_static/images/network_example.png"
+				class="img-responsive center-block">
+				<div class="caption text-center">
+				<h6>Street network based segregation measures</h6>
+				</div>
+			</a>
+        </div>
         <div class="col-sm-2 col-xs-hidden">
         </div>
       </div>
