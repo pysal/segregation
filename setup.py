@@ -35,6 +35,8 @@ def setup_package():
     # assumes nested directories are only down one level
     _groups_files = {
         'base': 'requirements.txt',
+        'tests': 'requirements_tests.txt',
+        'docs': 'requirements_docs.txt'
     }
 
     reqs = _get_requirements_from_files(_groups_files)
