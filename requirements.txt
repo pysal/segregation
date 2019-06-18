@@ -6,3 +6,7 @@ seaborn
 numpy
 scipy
 libpysal
+osmnx
+pandana
+urbanaccess
+sphinx_bootstrap_theme
