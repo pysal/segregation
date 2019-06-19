@@ -11,3 +11,4 @@ pandana
 urbanaccess
 sphinx_bootstrap_theme
 sphinxcontrib.bibtex
+numpydoc
