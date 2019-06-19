@@ -1,19 +1,20 @@
 """
-Profile Wrappers for Segregation measures
+Compute Several Segregation measures at once
 """
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr.edu>"
 
+import pandas as pd
 from segregation.aspatial import *
 from segregation.spatial import *
 
 __all__ = [
-    'Profile_Aspatial_Segregation', 'Profile_Spatial_Segregation',
-    'Profile_Segregation'
+    'Compute_All_Aspatial_Segregation', 'Compute_All_Spatial_Segregation',
+    'Compute_All_Segregation'
 ]
 
 
-def _profile_aspatial_segregation(data, group_pop_var, total_pop_var):
+def _compute_all_aspatial_segregation(data, group_pop_var, total_pop_var):
     '''
     Perform point estimation of selected aspatial segregation measures at once
 
@@ -28,11 +29,10 @@ def _profile_aspatial_segregation(data, group_pop_var, total_pop_var):
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
     
-    Attributes
-    ----------
+    Returns
+    -------
 
-    profile     : dict
-                  A dictionary containing the name of the measure and the point estimation.
+    computed      : a pandas DataFrame containing the name of the measure and the point estimation.
     
     Notes
     -----
@@ -67,11 +67,15 @@ def _profile_aspatial_segregation(data, group_pop_var, total_pop_var):
         'Modified Dissimilarity': Dct.statistic,
         'Modified Gini': Gct.statistic
     }
+    
+    d = {'Measure': list(dictionary.keys()), 'Value': list(dictionary.values())}
 
-    return dictionary
+    computed = pd.DataFrame(data = d)
+
+    return computed
 
 
-class Profile_Aspatial_Segregation:
+class Compute_All_Aspatial_Segregation:
     '''
     Perform point estimation of selected Aspatial segregation measures at once
 
@@ -89,19 +93,18 @@ class Profile_Aspatial_Segregation:
     Attributes
     ----------
 
-    profile     : dict
-                  A dictionary containing the name of the measure and the point estimation.
+    computed      : a pandas DataFrame containing the name of the measure and the point estimation.
     
     Examples
     --------
-    The Profile Wrappers comprises simple and quick functions to assess multiple segregation measures at once in a dataset. It uses all the default parameters and returns an object that has an attribute (.profile) of a dictionary with summary of all values fitted.
+    The Compute_All comprises simple and quick functions to assess multiple segregation measures at once in a dataset. It uses all the default parameters and returns an object that has an attribute (.computed) of a dictionary with summary of all values fitted.
 
     Firstly, we need to import the libraries and functions to be used.
     
     >>> import geopandas as gpd
     >>> import segregation
     >>> import libpysal
-    >>> from segregation.util.profile_wrappers import Profile_Aspatial_Segregation
+    >>> from segregation.util import Compute_All_Aspatial_Segregation
     
     Then it's time to load some data to estimate segregation. We use the data of 2000 Census Tract Data for the metropolitan area of Sacramento, CA, USA.
 
@@ -115,22 +118,22 @@ class Profile_Aspatial_Segregation:
     
     >>> gdf = s_map[['geometry', 'HISP_', 'TOT_POP']]
     
-    Now the profile is fitted.
+    Now the measures are fitted.
     
-    >>> aspatial_fit = Profile_Aspatial_Segregation(gdf, 'HISP_', 'TOT_POP')
-    >>> aspatial_fit.profile
+    >>> aspatial_fit = Compute_All_Aspatial_Segregation(gdf, 'HISP_', 'TOT_POP')
+    >>> aspatial_fit.computed
     
     '''
 
     def __init__(self, data, group_pop_var, total_pop_var):
 
-        aux = _profile_aspatial_segregation(data, group_pop_var,
+        aux = _compute_all_aspatial_segregation(data, group_pop_var,
                                             total_pop_var)
 
-        self.profile = aux
+        self.computed = aux
 
 
-def _profile_spatial_segregation(data, group_pop_var, total_pop_var):
+def _compute_all_spatial_segregation(data, group_pop_var, total_pop_var):
     '''
     Perform point estimation of selected spatial segregation measures at once
 
@@ -148,8 +151,7 @@ def _profile_spatial_segregation(data, group_pop_var, total_pop_var):
     Attributes
     ----------
 
-    profile     : dict
-                  A dictionary containing the name of the measure and the point estimation.
+    computed      : a pandas DataFrame containing the name of the measure and the point estimation.
                   
     '''
 
@@ -186,10 +188,14 @@ def _profile_spatial_segregation(data, group_pop_var, total_pop_var):
         'Perimeter Area Ratio Spatial Dissimilarity': PARD.statistic
     }
 
-    return dictionary
+    d = {'Measure': list(dictionary.keys()), 'Value': list(dictionary.values())}
+
+    computed = pd.DataFrame(data = d)
+
+    return computed
 
 
-class Profile_Spatial_Segregation:
+class Compute_All_Spatial_Segregation:
     '''
     Perform point estimation of selected spatial segregation measures at once
 
@@ -207,19 +213,18 @@ class Profile_Spatial_Segregation:
     Attributes
     ----------
 
-    profile     : dict
-                  A dictionary containing the name of the measure and the point estimation.
+    computed      : a pandas DataFrame containing the name of the measure and the point estimation.
     
     Examples
     --------
-    The Profile Wrappers comprises simple and quick functions to assess multiple segregation measures at once in a dataset. It uses all the default parameters and returns an object that has an attribute (.profile) of a dictionary with summary of all values fitted.
+    The Compute_All comprises simple and quick functions to assess multiple segregation measures at once in a dataset. It uses all the default parameters and returns an object that has an attribute (.computed) of a dictionary with summary of all values fitted.
 
     Firstly, we need to import the libraries and functions to be used.
     
     >>> import geopandas as gpd
     >>> import segregation
     >>> import libpysal
-    >>> from segregation.util.profile_wrappers import Profile_Spatial_Segregation
+    >>> from segregation.util import Compute_All_Spatial_Segregation
     
     Then it's time to load some data to estimate segregation. We use the data of 2000 Census Tract Data for the metropolitan area of Sacramento, CA, USA.
 
@@ -233,21 +238,21 @@ class Profile_Spatial_Segregation:
     
     >>> gdf = s_map[['geometry', 'HISP_', 'TOT_POP']]
     
-    Now the profile is fitted.
+    Now the measures are fitted.
     
-    >>> spatial_fit = Profile_Spatial_Segregation(gdf, 'HISP_', 'TOT_POP')
-    >>> spatial_fit.profile
+    >>> spatial_fit = Compute_All_Spatial_Segregation(gdf, 'HISP_', 'TOT_POP')
+    >>> spatial_fit.computed
     
     '''
 
     def __init__(self, data, group_pop_var, total_pop_var):
 
-        aux = _profile_spatial_segregation(data, group_pop_var, total_pop_var)
+        aux = _compute_all_spatial_segregation(data, group_pop_var, total_pop_var)
 
-        self.profile = aux
+        self.computed = aux
 
 
-def _profile_segregation(data, group_pop_var, total_pop_var):
+def _compute_all_segregation(data, group_pop_var, total_pop_var):
     '''
     Perform point estimation of selected segregation measures at once
 
@@ -265,21 +270,20 @@ def _profile_segregation(data, group_pop_var, total_pop_var):
     Attributes
     ----------
 
-    profile     : dict
-                  A dictionary containing the name of the measure and the point estimation.
+    computed      : a pandas DataFrame containing the name of the measure and the point estimation.
     
     '''
 
-    x = Profile_Aspatial_Segregation(data, group_pop_var,
-                                     total_pop_var).profile
-    y = Profile_Spatial_Segregation(data, group_pop_var, total_pop_var).profile
+    x = Compute_All_Aspatial_Segregation(data, group_pop_var,
+                                     total_pop_var).computed
+    y = Compute_All_Spatial_Segregation(data, group_pop_var, total_pop_var).computed
 
-    x.update(y)
+    z = pd.concat([x, y], ignore_index = True)
 
-    return x
+    return z
 
 
-class Profile_Segregation:
+class Compute_All_Segregation:
     '''
     Perform point estimation of selected segregation measures at once
 
@@ -297,19 +301,18 @@ class Profile_Segregation:
     Attributes
     ----------
 
-    profile     : dict
-                  A dictionary containing the name of the measure and the point estimation.
+    computed      : a pandas DataFrame containing the name of the measure and the point estimation.
     
     Examples
     --------
-    The Profile Wrappers comprises simple and quick functions to assess multiple segregation measures at once in a dataset. It uses all the default parameters and returns an object that has an attribute (.profile) of a dictionary with summary of all values fitted.
+    The Compute_All comprises simple and quick functions to assess multiple segregation measures at once in a dataset. It uses all the default parameters and returns an object that has an attribute (.computed) of a dictionary with summary of all values fitted.
 
     Firstly, we need to import the libraries and functions to be used.
     
     >>> import geopandas as gpd
     >>> import segregation
     >>> import libpysal
-    >>> from segregation.util.profile_wrappers import Profile_Segregation
+    >>> from segregation.util import Compute_All_Segregation
     
     Then it's time to load some data to estimate segregation. We use the data of 2000 Census Tract Data for the metropolitan area of Sacramento, CA, USA.
 
@@ -323,15 +326,15 @@ class Profile_Segregation:
     
     >>> gdf = s_map[['geometry', 'HISP_', 'TOT_POP']]
     
-    Now the profile is fitted.
+    Now the measures are fitted.
     
-    >>> segregation_fit = Profile_Segregation(gdf, 'HISP_', 'TOT_POP')
-    >>> segregation_fit.profile
+    >>> segregation_fit = Compute_All_Segregation(gdf, 'HISP_', 'TOT_POP')
+    >>> segregation_fit.computed
     
     '''
 
     def __init__(self, data, group_pop_var, total_pop_var):
 
-        aux = _profile_segregation(data, group_pop_var, total_pop_var)
+        aux = _compute_all_segregation(data, group_pop_var, total_pop_var)
 
-        self.profile = aux
+        self.computed = aux

@@ -8,6 +8,5 @@ from . import aspatial
 from . import spatial
 from . import inference
 from . import decomposition
-from . import profile
 from . import util
 from . import network
