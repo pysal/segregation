@@ -3,8 +3,7 @@
 Installation
 ===============
 
-Note: segregation supports python `3.5`_ and `3.6`_ only. Please make sure that you are
-operating in a python 3 environment.
+Note: segregation supports python 3.5 and 3.6 only. Please make sure that you are operating in a python 3 environment.
 
 i) `pip` directly running in the prompt::
 
@@ -15,7 +14,7 @@ ii) Using the `conda-forge` channel as described in https://github.com/conda-for
 	conda config --add channels conda-forge
 	conda install segregation
 
-iii) Another recommended method for installing segregation is with [anaconda](https://www.anaconda.com/download/). Clone this repository or download it manually then `cd` into the directory and run the following commands (this will install the development version)::
+iii) Another recommended method for installing segregation is with anaconda (https://www.anaconda.com/download/). Clone this repository or download it manually then `cd` into the directory and run the following commands (this will install the development version)::
 
 	conda env create -f environment.yml
 	source activate segregation
