@@ -166,8 +166,8 @@ def _compute_all_spatial_segregation(data, group_pop_var, total_pop_var):
     ACL = Absolute_Clustering(data, group_pop_var, total_pop_var)
     RCL = Relative_Clustering(data, group_pop_var, total_pop_var)
     RCO = Relative_Concentration(data, group_pop_var, total_pop_var)
-    SxPy = Spatial_Exposure(data, group_pop_var, total_pop_var)
-    SxPx = Spatial_Isolation(data, group_pop_var, total_pop_var)
+    DDxPy = Distance_Decay_Exposure(data, group_pop_var, total_pop_var)
+    DDxPx = Distance_Decay_Isolation(data, group_pop_var, total_pop_var)
     SPP = Spatial_Prox_Prof(data, group_pop_var, total_pop_var)
     SP = Spatial_Proximity(data, group_pop_var, total_pop_var)
 
@@ -180,8 +180,8 @@ def _compute_all_spatial_segregation(data, group_pop_var, total_pop_var):
         'Relative Centralization': RCE.statistic,
         'Relative Clustering': RCL.statistic,
         'Relative Concentration': RCO.statistic,
-        'Spatial Exposure': SxPy.statistic,
-        'Spatial Isolation': SxPx.statistic,
+        'Distance Decay Exposure': DDxPy.statistic,
+        'Distance Decay Isolation': DDxPx.statistic,
         'Spatial Proximity Profile': SPP.statistic,
         'Spatial Proximity': SP.statistic,
         'Boundary Spatial Dissimilarity': BSD.statistic,
