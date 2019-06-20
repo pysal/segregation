@@ -116,8 +116,8 @@ For point estimation, all the measures available can be summarized in the follow
 | Spatial Dissimilarity (SD)                        | Spatial\_Dissim                         |     Yes      |   w, standardize    |
 | Boundary Spatial Dissimilarity (BSD)              | Boundary\_Spatial\_Dissim               |     Yes      |     standardize     |
 | Perimeter Area Ratio Spatial Dissimilarity (PARD) | Perimeter\_Area\_Ratio\_Spatial\_Dissim |     Yes      |     standardize     |
-| Spatial Isolation (SxPx)                          | Spatial\_Isolation                      |     Yes      |     alpha, beta     |
-| Spatial Exposure (SxPy)                           | Spatial\_Exposure                       |     Yes      |     alpha, beta     |
+| Distance Decay Isolation (DDxPx)                  | Distance\_Decay\_Isolation              |     Yes      |     alpha, beta     |
+| Distance Decay Exposure (DDxPy)                   | Distance\_Decay\_Exposure               |     Yes      |     alpha, beta     |
 | Spatial Proximity (SP)                            | Spatial\_Proximity                      |     Yes      |     alpha, beta     |
 | Absolute Clustering (ACL)                         | Absolute\_Clustering                    |     Yes      |     alpha, beta     |
 | Relative Clustering (RCL)                         | Relative\_Clustering                    |     Yes      |     alpha, beta     |
