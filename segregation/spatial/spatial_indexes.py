@@ -81,8 +81,8 @@ def _return_length_weighted_w(data):
 
 __all__ = [
     'Spatial_Prox_Prof', 'Spatial_Dissim', 'Boundary_Spatial_Dissim',
-    'Perimeter_Area_Ratio_Spatial_Dissim', 'Spatial_Isolation',
-    'Spatial_Exposure', 'Spatial_Proximity', 'Absolute_Clustering',
+    'Perimeter_Area_Ratio_Spatial_Dissim', 'Distance_Decay_Isolation',
+    'Distance_Decay_Exposure', 'Spatial_Proximity', 'Absolute_Clustering',
     'Relative_Clustering', 'Delta', 'Absolute_Concentration',
     'Relative_Concentration', 'Absolute_Centralization',
     'Relative_Centralization'
@@ -866,10 +866,10 @@ class Perimeter_Area_Ratio_Spatial_Dissim:
         self._function = _perimeter_area_ratio_spatial_dissim
 
 
-def _spatial_isolation(data, group_pop_var, total_pop_var, alpha=0.6,
+def _distance_decay_isolation(data, group_pop_var, total_pop_var, alpha=0.6,
                        beta=0.5):
     """
-    Calculation of Spatial Isolation index
+    Calculation of Distance Decay Isolation index
 
     Parameters
     ----------
@@ -892,14 +892,14 @@ def _spatial_isolation(data, group_pop_var, total_pop_var, alpha=0.6,
     ----------
 
     statistic : float
-                Spatial Isolation Index
+                Distance Decay Isolation Index
                 
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    This measure is also called the distance decay isolation. It may be interpreted as the probability that the next person a group member meets anywhere in space is from the same group.
+    It may be interpreted as the probability that the next person a group member meets anywhere in space is from the same group.
     
     Based on Morgan, Barrie S. "A distance-decay based interaction index to measure residential segregation." Area (1983): 211-217.
     
@@ -959,17 +959,17 @@ def _spatial_isolation(data, group_pop_var, total_pop_var, alpha=0.6,
     c = np.exp(-dist)
 
     Pij = np.multiply(c, t) / np.sum(np.multiply(c, t), axis=1)
-    SxPx = (np.array(x / X) *
+    DDxPx = (np.array(x / X) *
             np.nansum(np.multiply(Pij, np.array(x / t)), axis=1)).sum()
 
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
 
-    return SxPx, core_data
+    return DDxPx, core_data
 
 
-class Spatial_Isolation:
+class Distance_Decay_Isolation:
     """
-    Calculation of Spatial Isolation index
+    Calculation of Distance Decay Isolation index
 
     Parameters
     ----------
@@ -992,14 +992,14 @@ class Spatial_Isolation:
     ----------
 
     statistic : float
-                Spatial Isolation Index
+                Distance Decay Isolation Index
                 
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
         
     Examples
     --------
-    In this example, we will calculate the spatial isolation index (SxPx) for the Riverside County using the census tract data of 2010.
+    In this example, we will calculate the distance decay isolation index (DDxPx) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
     Firstly, we need to perform some import the modules and the respective function.
@@ -1007,7 +1007,7 @@ class Spatial_Isolation:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial import Spatial_Isolation
+    >>> from segregation.spatial import Distance_Decay_Isolation
     
     Secondly, we need to read the data:
     
@@ -1035,13 +1035,13 @@ class Spatial_Isolation:
     
     The value is estimated below.
     
-    >>> spatial_isolation_index = Spatial_Isolation(gdf, 'nhblk10', 'pop10')
+    >>> spatial_isolation_index = Distance_Decay_Isolation(gdf, 'nhblk10', 'pop10')
     >>> spatial_isolation_index.statistic
     0.07214112078134231
             
     Notes
     -----
-    This measure is also called the distance decay isolation. It may be interpreted as the probability that the next person a group member meets anywhere in space is from the same group.
+    It may be interpreted as the probability that the next person a group member meets anywhere in space is from the same group.
     
     Based on Morgan, Barrie S. "A distance-decay based interaction index to measure residential segregation." Area (1983): 211-217.
     
@@ -1054,17 +1054,17 @@ class Spatial_Isolation:
     def __init__(self, data, group_pop_var, total_pop_var, alpha=0.6,
                  beta=0.5):
 
-        aux = _spatial_isolation(data, group_pop_var, total_pop_var, alpha,
+        aux = _distance_decay_isolation(data, group_pop_var, total_pop_var, alpha,
                                  beta)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
-        self._function = _spatial_isolation
+        self._function = _distance_decay_isolation
 
 
-def _spatial_exposure(data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5):
+def _distance_decay_exposure(data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5):
     """
-    Calculation of Spatial Exposure index
+    Calculation of Distance Decay Exposure index
 
     Parameters
     ----------
@@ -1087,14 +1087,14 @@ def _spatial_exposure(data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5):
     ----------
 
     statistic : float
-                Spatial Exposure Index
+                Distance Decay Exposure Index
                 
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    This measure is also called the distance decay exposure. It may be interpreted as the probability that the next person a group member meets anywhere in space is from the other group.
+    It may be interpreted as the probability that the next person a group member meets anywhere in space is from the other group.
     
     Based on Morgan, Barrie S. "A distance-decay based interaction index to measure residential segregation." Area (1983): 211-217.
     
@@ -1156,16 +1156,16 @@ def _spatial_exposure(data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5):
     c = np.exp(-dist)
 
     Pij = np.multiply(c, t) / np.sum(np.multiply(c, t), axis=1)
-    SxPy = (x / X * np.nansum(np.multiply(Pij, y / t), axis=1)).sum()
+    DDxPy = (x / X * np.nansum(np.multiply(Pij, y / t), axis=1)).sum()
 
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
 
-    return SxPy, core_data
+    return DDxPy, core_data
 
 
-class Spatial_Exposure:
+class Distance_Decay_Exposure:
     """
-    Calculation of Spatial Exposure index
+    Calculation of Distance Decay Exposure index
 
     Parameters
     ----------
@@ -1188,14 +1188,14 @@ class Spatial_Exposure:
     ----------
 
     statistic : float
-                Spatial Exposure Index
+                Distance Decay Exposure Index
                 
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
         
     Examples
     --------
-    In this example, we will calculate the spatial exposure index (SxPy) for the Riverside County using the census tract data of 2010.
+    In this example, we will calculate the distance decay exposure index (DDxPy) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
     
     Firstly, we need to perform some import the modules and the respective function.
@@ -1203,7 +1203,7 @@ class Spatial_Exposure:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial import Spatial_Exposure
+    >>> from segregation.spatial import Distance_Decay_Exposure
     
     Secondly, we need to read the data:
     
@@ -1231,13 +1231,13 @@ class Spatial_Exposure:
     
     The value is estimated below.
     
-    >>> spatial_exposure_index = Spatial_Exposure(gdf, 'nhblk10', 'pop10')
+    >>> spatial_exposure_index = Distance_Decay_Exposure(gdf, 'nhblk10', 'pop10')
     >>> spatial_exposure_index.statistic
     0.9605053172501217
             
     Notes
     -----
-    This measure is also called the distance decay exposure. It may be interpreted as the probability that the next person a group member meets anywhere in space is from the other group.
+    It may be interpreted as the probability that the next person a group member meets anywhere in space is from the other group.
     
     Based on Morgan, Barrie S. "A distance-decay based interaction index to measure residential segregation." Area (1983): 211-217.
     
@@ -1250,12 +1250,12 @@ class Spatial_Exposure:
     def __init__(self, data, group_pop_var, total_pop_var, alpha=0.6,
                  beta=0.5):
 
-        aux = _spatial_exposure(data, group_pop_var, total_pop_var, alpha,
+        aux = _distance_decay_exposure(data, group_pop_var, total_pop_var, alpha,
                                 beta)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
-        self._function = _spatial_exposure
+        self._function = _distance_decay_exposure
 
 
 def _spatial_proximity(data, group_pop_var, total_pop_var, alpha=0.6,
