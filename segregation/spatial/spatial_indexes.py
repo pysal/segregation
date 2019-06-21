@@ -102,7 +102,7 @@ __all__ = [
     'Distance_Decay_Exposure', 'Spatial_Proximity', 'Absolute_Clustering',
     'Relative_Clustering', 'Delta', 'Absolute_Concentration',
     'Relative_Concentration', 'Absolute_Centralization',
-    'Relative_Centralization'
+    'Relative_Centralization', 'SpatialInformationTheory'
 ]
 
 
