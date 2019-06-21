@@ -4,7 +4,7 @@ Decomposition Segregation based Metrics
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Elijah Knaap <elijah.knaap@ucr.edu>, and Sergio J. Rey <sergio.rey@ucr.edu>"
 
-import numpy as np
+
 import warnings
 from segregation.util.util import _generate_counterfactual
 

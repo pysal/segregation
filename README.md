@@ -98,7 +98,7 @@ Every class of **segregation** has a <tt>statistic</tt> and a <tt>core\_data</tt
 For point estimation, all the measures available can be summarized in the following table:
 
 
-| **Measure**                                       | **Class/Function**                      | **Spatial?** | **Function Inputs** |
+| **Measure**                                       | **Class/Function**                      | **Spatial?** | **Specific Arguments** |
 | :------------------------------------------------ | :-------------------------------------- | :----------: | :-----------------: |
 | Dissimilarity (D)                                 | Dissim                                  |      No      |         \-          |
 | Gini (G)                                          | Gini\_Seg                               |      No      |         \-          |
@@ -116,8 +116,8 @@ For point estimation, all the measures available can be summarized in the follow
 | Spatial Dissimilarity (SD)                        | Spatial\_Dissim                         |     Yes      |   w, standardize    |
 | Boundary Spatial Dissimilarity (BSD)              | Boundary\_Spatial\_Dissim               |     Yes      |     standardize     |
 | Perimeter Area Ratio Spatial Dissimilarity (PARD) | Perimeter\_Area\_Ratio\_Spatial\_Dissim |     Yes      |     standardize     |
-| Spatial Isolation (SxPx)                          | Spatial\_Isolation                      |     Yes      |     alpha, beta     |
-| Spatial Exposure (SxPy)                           | Spatial\_Exposure                       |     Yes      |     alpha, beta     |
+| Distance Decay Isolation (DDxPx)                  | Distance\_Decay\_Isolation              |     Yes      |     alpha, beta     |
+| Distance Decay Exposure (DDxPy)                   | Distance\_Decay\_Exposure               |     Yes      |     alpha, beta     |
 | Spatial Proximity (SP)                            | Spatial\_Proximity                      |     Yes      |     alpha, beta     |
 | Absolute Clustering (ACL)                         | Absolute\_Clustering                    |     Yes      |     alpha, beta     |
 | Relative Clustering (RCL)                         | Relative\_Clustering                    |     Yes      |     alpha, beta     |
@@ -161,7 +161,7 @@ Therefore, a <tt>statistic</tt> attribute will contain the value of this index.
 
 Currently, theses indexes are summarized in the table below:
 
-| **Measure**                                       | **Class/Function**                        | **Spatial?** | **Function Inputs** |
+| **Measure**                                       | **Class/Function**                        | **Spatial?** | **Specific Arguments** |
 | :------------------------------------------------ | :---------------------------------------- | :----------: | :-----------------: |
 | Multigroup Dissimilarity                          | Multi\_Dissim                             |      No      |         \-          |
 | Multigroup Gini                                   | Multi\_Gini\_Seg                          |      No      |         \-          |
@@ -201,4 +201,4 @@ Funding
 
 <img src="figs/nsf_logo.jpg" width="50"> Award #1831615 [RIDIR: Scalable Geospatial Analytics for Social Science Research](https://www.nsf.gov/awardsearch/showAward?AWD_ID=1831615)
 
-<img src="figs/capes_logo.jpg" width="50"> This study was financed in part by the Coordenação de Aperfeiçoamento de Pessoal de Nível Superior - Brasil (CAPES) - Process number 88881.170553/2018-01
+<img src="figs/capes_logo.jpg" width="50"> Renan Xavier Cortes is grateful for the support of Coordenação de Aperfeiçoamento de Pessoal de Nível Superior - Brazil (CAPES) - Process number 88881.170553/2018-01

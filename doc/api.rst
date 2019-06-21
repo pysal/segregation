@@ -32,8 +32,8 @@ Spatial Indices
       spatial.Spatial_Dissim
       spatial.Boundary_Spatial_Dissim
       spatial.Perimeter_Area_Ratio_Spatial_Dissim
-      spatial.Spatial_Isolation
-      spatial.Spatial_Exposure
+      spatial.Distance_Decay_Isolation
+      spatial.Distance_Decay_Exposure
       spatial.Spatial_Proximity
       spatial.Absolute_Clustering
       spatial.Relative_Clustering

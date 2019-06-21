@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 import warnings
+from segregation.util.util import _generate_counterfactual
 
 __all__ = ['Infer_Segregation',
            'Compare_Segregation']
@@ -64,7 +65,7 @@ def _infer_segregation(seg_class, iterations_under_null = 500, null_approach = "
         raise TypeError('two_tailed is not a boolean object')
     
     point_estimation = seg_class.statistic
-    data             = seg_class.core_data
+    data             = seg_class.core_data.copy()
     
     aux = str(type(seg_class))
     _class_name = aux[1 + aux.rfind('.'):-2] # 'rfind' finds the last occurence of a pattern in a string
@@ -335,6 +336,8 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations_under_null = 500, 
         "counterfactual_composition" : randomizes the number of minority population according to both cumulative distribution function of a variable that represents the composition of the minority group. The composition is the division of the minority population of unit i divided by total population of tract i.
 
         "counterfactual_share" : randomizes the number of minority population and total population according to both cumulative distribution function of a variable that represents the share of the minority group. The share is the division of the minority population of unit i divided by total population of minority population.
+        
+        "counterfactual_dual_composition" : applies the "counterfactual_composition" for both minority and complementary groups.
 
     **kwargs : customizable parameters to pass to the segregation measures. Usually they need to be the same as both seg_class_1 and seg_class_2  was built.
     
@@ -360,8 +363,8 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations_under_null = 500, 
 
     '''
     
-    if not null_approach in ['random_label', 'counterfactual_composition', 'counterfactual_share']:
-        raise ValueError('null_approach must one of \'random_label\', \'counterfactual_composition\', \'counterfactual_share\'')
+    if not null_approach in ['random_label', 'counterfactual_composition', 'counterfactual_share', 'counterfactual_dual_composition']:
+        raise ValueError('null_approach must one of \'random_label\', \'counterfactual_composition\', \'counterfactual_share\', \'counterfactual_dual_composition\'')
     
     if(type(seg_class_1) != type(seg_class_2)):
         raise TypeError('seg_class_1 and seg_class_2 must be the same type/class.')
@@ -371,8 +374,8 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations_under_null = 500, 
     aux = str(type(seg_class_1))
     _class_name = aux[1 + aux.rfind('.'):-2]  # 'rfind' finds the last occurence of a pattern in a string
 
-    data_1 = seg_class_1.core_data
-    data_2 = seg_class_2.core_data
+    data_1 = seg_class_1.core_data.copy()
+    data_2 = seg_class_2.core_data.copy()
     
     # This step is just to make sure the each frequecy column is integer for the approaches and from the same type in order to stack them for the random data approach
     data_1['group_pop_var'] = round(data_1['group_pop_var']).astype(int)
@@ -422,58 +425,37 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations_under_null = 500, 
     ##############################
     # COUNTERFACTUAL COMPOSITION #
     ##############################
-    if (null_approach == "counterfactual_composition"):
-
-        data_1['rel'] = np.where(data_1['total_pop_var'] == 0, 0, data_1['group_pop_var'] / data_1['total_pop_var'])
-        data_2['rel'] = np.where(data_2['total_pop_var'] == 0, 0, data_2['group_pop_var'] / data_2['total_pop_var'])
-
-        # Both appends are to force both distribution to have values in all space between 0 and 1
-        x_1_pre = np.sort(data_1['rel'])
-        y_1_pre = np.arange(0, len(x_1_pre)) / (len(x_1_pre))
-
-        x_2_pre = np.sort(data_2['rel'])
-        y_2_pre = np.arange(0, len(x_2_pre)) / (len(x_2_pre))
-
-        x_1 = np.append(np.append(0, x_1_pre), 1)
-        y_1 = np.append(np.append(0, y_1_pre), 1)
-
-        x_2 = np.append(np.append(0, x_2_pre), 1)
-        y_2 = np.append(np.append(0, y_2_pre), 1)
-
-        def inverse_cdf_1(pct):
-            return x_1[np.where(y_1 > pct)[0][0] - 1]
-
-        def inverse_cdf_2(pct):
-            return x_2[np.where(y_2 > pct)[0][0] - 1]
-
-        # Adding the pseudo columns for FIRST spatial context
-        data_1['cumulative_percentage'] = (data_1['rel'].rank() - 1) / len(data_1) # It has to be a minus 1 in the rank, in order to avoid 100% percentile in the max
-        data_1['pseudo_rel'] = data_1['cumulative_percentage'].apply(inverse_cdf_2)
-        data_1['pseudo_group_pop_var'] = round(data_1['pseudo_rel'] * data_1['total_pop_var']).astype(int)
-
-        # Adding the pseudo columns for SECOND spatial context
-        data_2['cumulative_percentage'] = (data_2['rel'].rank() - 1) / len(data_2) # It has to be a minus 1 in the rank, in order to avoid 100% percentile in the max
-        data_2['pseudo_rel'] = data_2['cumulative_percentage'].apply(inverse_cdf_1)
-        data_2['pseudo_group_pop_var'] = round(data_2['pseudo_rel'] * data_2['total_pop_var']).astype(int)
+    if (null_approach in ['counterfactual_composition', 'counterfactual_share', 'counterfactual_dual_composition']):
+        
+        internal_arg = null_approach[15:]  # Remove 'counterfactual_' from the beginning of the string
+        
+        counterfac_df1, counterfac_df2 = _generate_counterfactual(data_1, 
+                                                                  data_2, 
+                                                                  'group_pop_var', 
+                                                                  'total_pop_var',
+                                                                  counterfactual_approach = internal_arg)
+        
+        if (null_approach in ['counterfactual_share', 'counterfactual_dual_composition']):
+            data_1['total_pop_var'] = counterfac_df1['counterfactual_total_pop']
+            data_2['total_pop_var'] = counterfac_df2['counterfactual_total_pop']
 
         for i in np.array(range(iterations_under_null)):
 
             data_1['fair_coin'] = np.random.uniform(size = len(data_1))
-            data_1['test_group_pop_var'] = np.where(data_1['fair_coin'] > 0.5, data_1['group_pop_var'], data_1['pseudo_group_pop_var'])
+            data_1['test_group_pop_var'] = np.where(data_1['fair_coin'] > 0.5, data_1['group_pop_var'], counterfac_df1['counterfactual_group_pop'])
             
             # Dropping to avoid confusion in the internal function
             data_1_test = data_1.drop(['group_pop_var'], axis = 1)
-            
             
             simulations_1 = seg_class_1._function(data_1_test, 'test_group_pop_var', 'total_pop_var', **kwargs)[0]
 
             # Dropping to avoid confusion in the next iteration
             data_1 = data_1.drop(['fair_coin', 'test_group_pop_var'], axis = 1)
             
-
+            
             
             data_2['fair_coin'] = np.random.uniform(size = len(data_2))
-            data_2['test_group_pop_var'] = np.where(data_2['fair_coin'] > 0.5, data_2['group_pop_var'], data_2['pseudo_group_pop_var'])
+            data_2['test_group_pop_var'] = np.where(data_2['fair_coin'] > 0.5, data_2['group_pop_var'], counterfac_df2['counterfactual_group_pop'])
             
             # Dropping to avoid confusion in the internal function
             data_2_test = data_2.drop(['group_pop_var'], axis = 1)
@@ -484,140 +466,10 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations_under_null = 500, 
             data_2 = data_2.drop(['fair_coin', 'test_group_pop_var'], axis = 1)
             
             
-            est_sim[i] = simulations_1 - simulations_2
-            
-            print('Processed {} iterations out of {}.'.format(i + 1, iterations_under_null), end = "\r") 
-            
-            
-            
-            
-            
-            
-            
-    ########################
-    # COUNTERFACTUAL SHARE #
-    ########################
-    if (null_approach == "counterfactual_share"):
-
-        data_1['compl_pop_var'] = data_1['total_pop_var'] - data_1['group_pop_var']
-        data_2['compl_pop_var'] = data_2['total_pop_var'] - data_2['group_pop_var']
-        
-        # Build the share for each group individually
-        data_1['share'] = np.where(data_1['total_pop_var'] == 0, 0, data_1['group_pop_var'] / data_1['group_pop_var'].sum())
-        data_2['share'] = np.where(data_2['total_pop_var'] == 0, 0, data_2['group_pop_var'] / data_2['group_pop_var'].sum())
-
-        data_1['compl_share'] = np.where(data_1['compl_pop_var'] == 0, 0, data_1['compl_pop_var'] / data_1['compl_pop_var'].sum())
-        data_2['compl_share'] = np.where(data_2['compl_pop_var'] == 0, 0, data_2['compl_pop_var'] / data_2['compl_pop_var'].sum())
-
-        # Both appends are to force both distribution to have values in all space between 0 and 1
-        x_1_pre = np.sort(data_1['share'])
-        y_1_pre = np.arange(0, len(x_1_pre)) / (len(x_1_pre))
-
-        x_2_pre = np.sort(data_2['share'])
-        y_2_pre = np.arange(0, len(x_2_pre)) / (len(x_2_pre))
-
-        x_1 = np.append(np.append(0, x_1_pre), 1)
-        y_1 = np.append(np.append(0, y_1_pre), 1)
-
-        x_2 = np.append(np.append(0, x_2_pre), 1)
-        y_2 = np.append(np.append(0, y_2_pre), 1)
-
-        def inverse_cdf_1(pct):
-            return x_1[np.where(y_1 > pct)[0][0] - 1]
-
-        def inverse_cdf_2(pct):
-            return x_2[np.where(y_2 > pct)[0][0] - 1]
-
-
-
-        # Both appends are to force both distribution to have values in all space between 0 and 1
-        compl_x_1_pre = np.sort(data_1['compl_share'])
-        compl_y_1_pre = np.arange(0, len(compl_x_1_pre)) / (len(compl_x_1_pre))
-
-        compl_x_2_pre = np.sort(data_2['compl_share'])
-        compl_y_2_pre = np.arange(0, len(compl_x_2_pre)) / (len(compl_x_2_pre))
-
-        compl_x_1 = np.append(np.append(0, compl_x_1_pre), 1)
-        compl_y_1 = np.append(np.append(0, compl_y_1_pre), 1)
-
-        compl_x_2 = np.append(np.append(0, compl_x_2_pre), 1)
-        compl_y_2 = np.append(np.append(0, compl_y_2_pre), 1)
-
-        def compl_inverse_cdf_1(pct):
-            return compl_x_1[np.where(compl_y_1 > pct)[0][0] - 1]
-
-        def compl_inverse_cdf_2(pct):
-            return compl_x_2[np.where(compl_y_2 > pct)[0][0] - 1]
-
-
-        # Adding the pseudo columns for FIRST spatial context
-        data_1['cumulative_percentage'] = (data_1['share'].rank() - 1) / len(data_1) # It has to be a minus 1 in the rank, in order to avoid 100% percentile in the max
-        data_1['pseudo_share_pre']      = data_1['cumulative_percentage'].apply(inverse_cdf_2)
-        data_1['pseudo_share']          = data_1['pseudo_share_pre'] / data_1['pseudo_share_pre'].sum() # Rescale due to possibility of the summation of the values being grater of lower than 1
-        data_1['pseudo_group_pop_var']  = round(data_1['pseudo_share'] * data_1['group_pop_var'].sum()).astype(int)
-
-
-        data_1['compl_cumulative_percentage'] = (data_1['compl_share'].rank() - 1) / len(data_1) # It has to be a minus 1 in the rank, in order to avoid 100% percentile in the max
-        data_1['compl_pseudo_share_pre']      = data_1['compl_cumulative_percentage'].apply(compl_inverse_cdf_2)
-        data_1['compl_pseudo_share']          = data_1['compl_pseudo_share_pre'] / data_1['compl_pseudo_share_pre'].sum() # Rescale due to possibility of the summation of the values being grater of lower than 1
-        data_1['pseudo_compl_pop_var']        = round(data_1['compl_pseudo_share'] * data_1['compl_pop_var'].sum()).astype(int)
-
-
-        data_1['pseudo_total_pop'] = data_1['pseudo_group_pop_var'] + data_1['pseudo_compl_pop_var']
-
-
-
-
-        # Adding the pseudo columns for SECOND spatial context
-        data_2['cumulative_percentage'] = (data_2['share'].rank() - 1) / len(data_2) # It has to be a minus 1 in the rank, in order to avoid 100% percentile in the max
-        data_2['pseudo_share_pre']      = data_2['cumulative_percentage'].apply(inverse_cdf_1)
-        data_2['pseudo_share']          = data_2['pseudo_share_pre'] / data_2['pseudo_share_pre'].sum() # Rescale due to possibility of the summation of the values being grater of lower than 1
-        data_2['pseudo_group_pop_var']  = round(data_2['pseudo_share'] * data_2['group_pop_var'].sum()).astype(int)
-
-
-        data_2['compl_cumulative_percentage'] = (data_2['compl_share'].rank() - 1) / len(data_2) # It has to be a minus 1 in the rank, in order to avoid 100% percentile in the max
-        data_2['compl_pseudo_share_pre']      = data_2['compl_cumulative_percentage'].apply(compl_inverse_cdf_1)
-        data_2['compl_pseudo_share']          = data_2['compl_pseudo_share_pre'] / data_2['compl_pseudo_share_pre'].sum() # Rescale due to possibility of the summation of the values being grater of lower than 1
-        data_2['pseudo_compl_pop_var']        = round(data_2['compl_pseudo_share'] * data_2['compl_pop_var'].sum()).astype(int)
-
-
-        data_2['pseudo_total_pop'] = data_2['pseudo_group_pop_var'] + data_2['pseudo_compl_pop_var']
-
-        for i in np.array(range(iterations_under_null)):
-
-            # For this 'counterfactual_share' approach, also the group and total population can be swapped during the iterations
-            data_1['fair_coin'] = np.random.uniform(size = len(data_1))
-            data_1['test_group_pop_var'] = np.where(data_1['fair_coin'] > 0.5, data_1['group_pop_var'], data_1['pseudo_group_pop_var'])
-            data_1['test_total_pop_var'] = np.where(data_1['fair_coin'] > 0.5, data_1['total_pop_var'], data_1['pseudo_total_pop'])
-            
-            # Dropping to avoid confusion in the internal function
-            data_1_test = data_1.drop(['group_pop_var', 'total_pop_var'], axis = 1)
-            
-            
-            simulations_1 = seg_class_1._function(data_1_test, 'test_group_pop_var', 'test_total_pop_var', **kwargs)[0]
-
-            # Dropping to avoid confusion in the next iteration
-            data_1 = data_1.drop(['fair_coin', 'test_group_pop_var', 'test_total_pop_var'], axis = 1)
-            
-
-            # For this 'counterfactual_share' approach, also the group and total population can be swapped during the iterations
-            data_2['fair_coin'] = np.random.uniform(size = len(data_2))
-            data_2['test_group_pop_var'] = np.where(data_2['fair_coin'] > 0.5, data_2['group_pop_var'], data_2['pseudo_group_pop_var'])
-            data_2['test_total_pop_var'] = np.where(data_2['fair_coin'] > 0.5, data_2['total_pop_var'], data_2['pseudo_total_pop'])
-            
-            
-            # Dropping to avoid confusion in the internal function
-            data_2_test = data_2.drop(['group_pop_var', 'total_pop_var'], axis = 1)
-            
-            simulations_2 = seg_class_2._function(data_2_test, 'test_group_pop_var', 'test_total_pop_var', **kwargs)[0]
-
-            # Dropping to avoid confusion in the next iteration
-            data_2 = data_2.drop(['fair_coin', 'test_group_pop_var', 'test_total_pop_var'], axis = 1)
-            
             
             est_sim[i] = simulations_1 - simulations_2
-
-            print('Processed {} iterations out of {}.'.format(i + 1, iterations_under_null), end = "\r")            
+            
+            print('Processed {} iterations out of {}.'.format(i + 1, iterations_under_null), end = "\r")         
             
             
             
