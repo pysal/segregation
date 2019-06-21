@@ -142,11 +142,21 @@ def _generate_counterfactual(data1, data2, group_pop_var, total_pop_var, counter
         df1['compl_share'] = np.where(df1['compl_pop_var'] == 0, 0, df1['compl_pop_var'] / df1['compl_pop_var'].sum())
         df2['compl_share'] = np.where(df2['compl_pop_var'] == 0, 0, df2['compl_pop_var'] / df2['compl_pop_var'].sum())
         
-        df1['counterfactual_group_pop'] = df1['share'].rank(pct = True).apply(df2['share'].quantile) * df1[group_pop_var].sum()
-        df2['counterfactual_group_pop'] = df2['share'].rank(pct = True).apply(df1['share'].quantile) * df2[group_pop_var].sum()
+        # Rescale due to possibility of the summation of the counterfactual share values being grater or lower than 1
+        # CT stands for Correction Term
+        CT1_2_group = df1['share'].rank(pct = True).apply(df2['share'].quantile).sum()
+        CT2_1_group = df2['share'].rank(pct = True).apply(df1['share'].quantile).sum()
         
-        df1['counterfactual_compl_pop'] = df1['compl_share'].rank(pct = True).apply(df2['compl_share'].quantile) * df1['compl_pop_var'].sum()
-        df2['counterfactual_compl_pop'] = df2['compl_share'].rank(pct = True).apply(df1['compl_share'].quantile) * df2['compl_pop_var'].sum()
+        df1['counterfactual_group_pop'] = df1['share'].rank(pct = True).apply(df2['share'].quantile) / CT1_2_group * df1[group_pop_var].sum()
+        df2['counterfactual_group_pop'] = df2['share'].rank(pct = True).apply(df1['share'].quantile) / CT2_1_group * df2[group_pop_var].sum()
+        
+        # Rescale due to possibility of the summation of the counterfactual share values being grater or lower than 1
+        # CT stands for Correction Term
+        CT1_2_compl = df1['compl_share'].rank(pct = True).apply(df2['compl_share'].quantile).sum()
+        CT2_1_compl = df2['compl_share'].rank(pct = True).apply(df1['compl_share'].quantile).sum()
+        
+        df1['counterfactual_compl_pop'] = df1['compl_share'].rank(pct = True).apply(df2['compl_share'].quantile) / CT1_2_compl * df1['compl_pop_var'].sum()
+        df2['counterfactual_compl_pop'] = df2['compl_share'].rank(pct = True).apply(df1['compl_share'].quantile) / CT2_1_compl * df2['compl_pop_var'].sum()
         
         df1['counterfactual_total_pop'] = df1['counterfactual_group_pop'] + df1['counterfactual_compl_pop']
         df2['counterfactual_total_pop'] = df2['counterfactual_group_pop'] + df2['counterfactual_compl_pop']
