@@ -4,22 +4,20 @@ Multigroup Aspatial based Segregation Metrics
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
-
-
 import numpy as np
 import pandas as pd
 from sklearn.metrics.pairwise import manhattan_distances
 
-__all__ = ['Multi_Dissim',
-           'Multi_Gini_Seg',
-           'Multi_Normalized_Exposure',
-           'Multi_Information_Theory',
-           'Multi_Relative_Diversity',
-           'Multi_Squared_Coefficient_of_Variation',
-           'Multi_Diversity',
-           'Simpsons_Concentration',
-           'Simpsons_Interaction',
-           'Multi_Divergence']
+__all__ = [
+    'Multi_Dissim', 'Multi_Gini_Seg', 'Multi_Normalized_Exposure',
+    'Multi_Information_Theory', 'Multi_Relative_Diversity',
+    'Multi_Squared_Coefficient_of_Variation', 'Multi_Diversity',
+    'Simpsons_Concentration', 'Simpsons_Interaction', 'Multi_Divergence'
+]
+# suppress numpy divide by zero warnings because it occurs a lot during the
+# calculation of many indices
+np.seterr(divide='ignore', invalid='ignore')
+
 
 def _multi_dissim(data, groups):
     """
@@ -49,24 +47,26 @@ def _multi_dissim(data, groups):
     Reference: :cite:`sakoda1981generalized`.
 
     """
-    
+
     core_data = data[groups]
-    
+
     df = np.array(core_data)
-    
+
     n = df.shape[0]
     K = df.shape[1]
-    
+
     T = df.sum()
-    
-    ti = df.sum(axis = 1)
-    pik = df/ti[:,None]
-    Pk = df.sum(axis = 0) / df.sum()
-    
+
+    ti = df.sum(axis=1)
+    pik = df / ti[:, None]
+    Pk = df.sum(axis=0) / df.sum()
+
     Is = (Pk * (1 - Pk)).sum()
-    
-    multi_D = 1/(2 * T * Is) * np.multiply(abs(pik - Pk), np.repeat(ti, K, axis=0).reshape(n,K)).sum()
-    
+
+    multi_D = 1 / (2 * T * Is) * np.multiply(
+        abs(pik - Pk),
+        np.repeat(ti, K, axis=0).reshape(n, K)).sum()
+
     return multi_D, core_data
 
 
@@ -119,17 +119,16 @@ class Multi_Dissim:
     Reference: :cite:`sakoda1981generalized`.
 
     """
-    
+
     def __init__(self, data, groups):
-        
+
         aux = _multi_dissim(data, groups)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _multi_dissim
-        
-        
-        
+
+
 def _multi_gini_seg(data, groups):
     """
     Calculation of Multigroup Gini Segregation index
@@ -158,27 +157,28 @@ def _multi_gini_seg(data, groups):
     Reference: :cite:`reardon2002measures`.
 
     """
-    
+
     core_data = data[groups]
-    
+
     df = np.array(core_data)
-    
+
     K = df.shape[1]
-    
+
     T = df.sum()
-    
-    ti = df.sum(axis = 1)
-    pik = df/ti[:,None]
-    Pk = df.sum(axis = 0) / df.sum()
+
+    ti = df.sum(axis=1)
+    pik = df / ti[:, None]
+    Pk = df.sum(axis=0) / df.sum()
     Is = (Pk * (1 - Pk)).sum()
-    
+
     elements_sum = np.empty(K)
     for k in range(K):
-        aux = np.multiply(np.outer(ti, ti), manhattan_distances(pik[:,k].reshape(-1, 1))).sum()
+        aux = np.multiply(np.outer(ti, ti),
+                          manhattan_distances(pik[:, k].reshape(-1, 1))).sum()
         elements_sum[k] = aux
-        
-    multi_Gini_Seg = elements_sum.sum() / (2 * (T ** 2) * Is)
-    
+
+    multi_Gini_Seg = elements_sum.sum() / (2 * (T**2) * Is)
+
     return multi_Gini_Seg, core_data
 
 
@@ -231,15 +231,14 @@ class Multi_Gini_Seg:
     Reference: :cite:`reardon2002measures`.
 
     """
-    
+
     def __init__(self, data, groups):
-        
+
         aux = _multi_gini_seg(data, groups)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _multi_gini_seg
-        
 
 
 def _multi_normalized_exposure(data, groups):
@@ -270,19 +269,19 @@ def _multi_normalized_exposure(data, groups):
     Reference: :cite:`reardon2002measures`.
 
     """
-    
+
     core_data = data[groups]
-    
+
     df = np.array(core_data)
-    
+
     T = df.sum()
-    
-    ti = df.sum(axis = 1)
-    pik = df/ti[:,None]
-    Pk = df.sum(axis = 0) / df.sum()
-    
-    MNE = ((ti[:,None] * (pik - Pk) ** 2) / (1 - Pk)).sum() / T
-    
+
+    ti = df.sum(axis=1)
+    pik = df / ti[:, None]
+    Pk = df.sum(axis=0) / df.sum()
+
+    MNE = ((ti[:, None] * (pik - Pk)**2) / (1 - Pk)).sum() / T
+
     return MNE, core_data
 
 
@@ -335,17 +334,16 @@ class Multi_Normalized_Exposure:
     Reference: :cite:`reardon2002measures`.
 
     """
-    
+
     def __init__(self, data, groups):
-        
+
         aux = _multi_normalized_exposure(data, groups)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _multi_normalized_exposure
-        
-        
-        
+
+
 def _multi_information_theory(data, groups):
     """
     Calculation of Multigroup Information Theory index
@@ -374,23 +372,23 @@ def _multi_information_theory(data, groups):
     Reference: :cite:`reardon2002measures`.
 
     """
-    
+
     core_data = data[groups]
-    
+
     df = np.array(core_data)
-    
+
     T = df.sum()
-    
-    ti = df.sum(axis = 1)
-    pik = df/ti[:,None]
-    Pk = df.sum(axis = 0) / df.sum()
-    
+
+    ti = df.sum(axis=1)
+    pik = df / ti[:, None]
+    Pk = df.sum(axis=0) / df.sum()
+
     # The natural logarithm is used, but this could be used with any base following Footnote 3 of pg. 37
     # of Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
-    E = (Pk * np.log(1/Pk)).sum()
-    
-    MIT = np.nansum(ti[:,None] * pik * np.log(pik / Pk)) / (T*E)
-    
+    E = (Pk * np.log(1 / Pk)).sum()
+
+    MIT = np.nansum(ti[:, None] * pik * np.log(pik / Pk)) / (T * E)
+
     return MIT, core_data
 
 
@@ -443,17 +441,16 @@ class Multi_Information_Theory:
     Reference: :cite:`reardon2002measures`.
 
     """
-    
+
     def __init__(self, data, groups):
-        
+
         aux = _multi_information_theory(data, groups)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _multi_information_theory
-        
-        
-        
+
+
 def _multi_relative_diversity(data, groups):
     """
     Calculation of Multigroup Relative Diversity index
@@ -484,24 +481,21 @@ def _multi_relative_diversity(data, groups):
     Reference: :cite:`reardon1998measures`.
 
     """
-    
+
     core_data = data[groups]
-    
+
     df = np.array(core_data)
-    
+
     T = df.sum()
-    
-    ti = df.sum(axis = 1)
-    pik = df/ti[:,None]
-    Pk = df.sum(axis = 0) / df.sum()
+
+    ti = df.sum(axis=1)
+    pik = df / ti[:, None]
+    Pk = df.sum(axis=0) / df.sum()
     Is = (Pk * (1 - Pk)).sum()
-    
-    MRD = (ti[:,None] * (pik - Pk) ** 2).sum() / (T * Is)
-    
+
+    MRD = (ti[:, None] * (pik - Pk)**2).sum() / (T * Is)
+
     return MRD, core_data
-
-
-
 
 
 class Multi_Relative_Diversity:
@@ -555,17 +549,16 @@ class Multi_Relative_Diversity:
     Reference: :cite:`reardon1998measures`.
 
     """
-    
+
     def __init__(self, data, groups):
-        
+
         aux = _multi_relative_diversity(data, groups)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _multi_relative_diversity
-        
-        
-        
+
+
 def _multi_squared_coefficient_of_variation(data, groups):
     """
     Calculation of Multigroup Squared Coefficient of Variation index
@@ -594,24 +587,22 @@ def _multi_squared_coefficient_of_variation(data, groups):
     Reference: :cite:`reardon2002measures`.
 
     """
-    
+
     core_data = data[groups]
-    
+
     df = np.array(core_data)
-    
+
     K = df.shape[1]
-    
+
     T = df.sum()
-    
-    ti = df.sum(axis = 1)
-    pik = df/ti[:,None]
-    Pk = df.sum(axis = 0) / df.sum()
-    
-    C = ((ti[:,None] * (pik - Pk) ** 2) / (T * (K - 1) * Pk)).sum()
-    
+
+    ti = df.sum(axis=1)
+    pik = df / ti[:, None]
+    Pk = df.sum(axis=0) / df.sum()
+
+    C = ((ti[:, None] * (pik - Pk)**2) / (T * (K - 1) * Pk)).sum()
+
     return C, core_data
-
-
 
 
 class Multi_Squared_Coefficient_of_Variation:
@@ -663,17 +654,17 @@ class Multi_Squared_Coefficient_of_Variation:
     Reference: :cite:`reardon2002measures`.
 
     """
-    
+
     def __init__(self, data, groups):
-        
+
         aux = _multi_squared_coefficient_of_variation(data, groups)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _multi_squared_coefficient_of_variation
-        
-        
-def _multi_diversity(data, groups, normalized = False):
+
+
+def _multi_diversity(data, groups, normalized=False):
     """
     Calculation of Multigroup Diversity index
 
@@ -708,19 +699,19 @@ def _multi_diversity(data, groups, normalized = False):
     Reference: :cite:`reardon2002measures`.
 
     """
-    
+
     core_data = data[groups]
-    
+
     df = np.array(core_data)
-    
-    Pk = df.sum(axis = 0) / df.sum()
-    
-    E = - (Pk * np.log(Pk)).sum()
-    
+
+    Pk = df.sum(axis=0) / df.sum()
+
+    E = -(Pk * np.log(Pk)).sum()
+
     if normalized:
         K = df.shape[1]
         E = E / np.log(K)
-    
+
     return E, core_data
 
 
@@ -783,16 +774,15 @@ class Multi_Diversity:
     Reference: :cite:`reardon2002measures`.
 
     """
-    
-    def __init__(self, data, groups, normalized = False):
-        
+
+    def __init__(self, data, groups, normalized=False):
+
         aux = _multi_diversity(data, groups, normalized)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _multi_diversity
-        
-        
+
 
 def _simpsons_concentration(data, groups):
     """
@@ -828,17 +818,16 @@ def _simpsons_concentration(data, groups):
     Reference: :cite:`simpson1949measurement`.
 
     """
-    
-    core_data = data[groups]
-    
-    df = np.array(core_data)
-    
-    Pk = df.sum(axis = 0) / df.sum()
-    
-    Lambda = (Pk * Pk).sum()
-    
-    return Lambda, core_data
 
+    core_data = data[groups]
+
+    df = np.array(core_data)
+
+    Pk = df.sum(axis=0) / df.sum()
+
+    Lambda = (Pk * Pk).sum()
+
+    return Lambda, core_data
 
 
 class Simpsons_Concentration:
@@ -896,17 +885,16 @@ class Simpsons_Concentration:
     Reference: :cite:`simpson1949measurement`.
 
     """
-    
+
     def __init__(self, data, groups):
-        
+
         aux = _simpsons_concentration(data, groups)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _simpsons_concentration
-        
-        
-        
+
+
 def _simpsons_interaction(data, groups):
     """
     Calculation of Simpson's Interaction index
@@ -941,17 +929,16 @@ def _simpsons_interaction(data, groups):
     Reference: :cite:`reardon2002measures`.
 
     """
-    
-    core_data = data[groups]
-    
-    df = np.array(core_data)
-    
-    Pk = df.sum(axis = 0) / df.sum()
-    
-    I = (Pk * (1 - Pk)).sum()
-    
-    return I, core_data
 
+    core_data = data[groups]
+
+    df = np.array(core_data)
+
+    Pk = df.sum(axis=0) / df.sum()
+
+    I = (Pk * (1 - Pk)).sum()
+
+    return I, core_data
 
 
 class Simpsons_Interaction:
@@ -1009,17 +996,16 @@ class Simpsons_Interaction:
     Reference: :cite:`reardon2002measures`.
 
     """
-    
+
     def __init__(self, data, groups):
-        
+
         aux = _simpsons_interaction(data, groups)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _simpsons_interaction
-        
-        
-        
+
+
 def _multi_divergence(data, groups):
     """
     Calculation of Multigroup Divergence index
@@ -1048,21 +1034,21 @@ def _multi_divergence(data, groups):
     Reference: :cite:`roberto2015divergence`.
 
     """
-    
+
     core_data = data[groups]
-    
+
     df = np.array(core_data)
-    
+
     T = df.sum()
-    
-    ti = df.sum(axis = 1)
-    pik = df/ti[:,None]
-    Pk = df.sum(axis = 0) / df.sum()
-    
-    Di = np.nansum(pik * np.log(pik / Pk), axis = 1)
+
+    ti = df.sum(axis=1)
+    pik = df / ti[:, None]
+    Pk = df.sum(axis=0) / df.sum()
+
+    Di = np.nansum(pik * np.log(pik / Pk), axis=1)
 
     Divergence_Index = ((ti / T) * Di).sum()
-    
+
     return Divergence_Index, core_data
 
 
@@ -1115,9 +1101,9 @@ class Multi_Divergence:
     Reference: :cite:`roberto2015divergence`.
 
     """
-    
+
     def __init__(self, data, groups):
-        
+
         aux = _multi_divergence(data, groups)
 
         self.statistic = aux[0]

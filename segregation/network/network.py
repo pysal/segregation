@@ -55,9 +55,7 @@ def get_network(geodataframe, maxdist=5000, quiet=True, **kwargs):
     """
     gdf = geodataframe.copy()
 
-    assert gdf.crs == {
-        'init': 'epsg:4326'
-    }, "geodataframe must be in epsg 4326"
+    assert gdf.crs['init'] == 'epsg:4326', "geodataframe must be in epsg 4326"
 
     gdf = project_gdf(gdf)
     gdf = gdf.buffer(maxdist)

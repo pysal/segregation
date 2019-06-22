@@ -10,7 +10,8 @@ import geopandas as gpd
 import warnings
 import libpysal
 
-from libpysal.weights import Queen, KNN, insert_diagonal, lag_spatial
+from libpysal.weights import Queen, lag_spatial
+from libpysal.weights.util import fill_diagonal
 from numpy import inf
 from sklearn.metrics.pairwise import manhattan_distances, euclidean_distances
 from scipy.ndimage.interpolation import shift
@@ -22,6 +23,10 @@ from segregation.aspatial.aspatial_indexes import _dissim
 from segregation.aspatial.multigroup_aspatial_indexes import Multi_Information_Theory
 from segregation.network import calc_access
 from libpysal.weights.util import attach_islands
+
+# suppress numpy divide by zero warnings because it occurs a lot during the
+# calculation of many indices
+np.seterr(divide='ignore', invalid='ignore')
 
 
 def _build_local_environment(data, groups, w):
@@ -41,7 +46,7 @@ def _build_local_environment(data, groups, w):
 
     """
     new_data = []
-    w = insert_diagonal(w)
+    w = fill_diagonal(w)
     for y in data[groups]:
         new_data.append(lag_spatial(w, data[y]))
     new_data = pd.DataFrame(dict(zip(groups, new_data)))
