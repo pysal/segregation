@@ -24,11 +24,27 @@ from segregation.network import calc_access
 from libpysal.weights.util import attach_islands
 
 
-def _localize(data, w):
+def _build_local_environment(data, groups, w):
+    """Convert observations into spatially-weighted sums.
+
+    Parameters
+    ----------
+    data : DataFrame
+        dataframe with local observations
+    w : libpysal.weights object
+        weights matrix defining the local environment
+
+    Returns
+    -------
+    DataFrame
+        Spatialized data
+
+    """
     new_data = []
     w = insert_diagonal(w)
-    for y in data:
-        new_data.append(lag_spatial(w, y))
+    for y in data[groups]:
+        new_data.append(lag_spatial(w, data[y]))
+    new_data = pd.DataFrame(dict(zip(groups, new_data)))
     return new_data
 
 
@@ -2872,7 +2888,13 @@ class SpatialInformationTheory(Multi_Information_Theory):
 
     """
 
-    def __init__(self, data, groups, network, w, decay, distance):
+    def __init__(self,
+                 data,
+                 groups,
+                 network=None,
+                 w=None,
+                 decay='linear',
+                 distance=2000):
 
         if w and network:
             raise (
@@ -2884,6 +2906,7 @@ class SpatialInformationTheory(Multi_Information_Theory):
                              network=network,
                              distance=distance,
                              decay=decay)
+            groups = ["acc_" + group for group in groups]
         else:
-            df = _localize(data, w)
-        super().__init__(self, df, groups)
+            df = _build_local_environment(data, groups, w)
+        super().__init__(df, groups)
