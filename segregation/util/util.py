@@ -314,5 +314,5 @@ def compute_segregation_profile(gdf,
             w = Kernel.from_dataframe(gdf, bandwidth=distance)
             sit = SpatialInformationTheory(gdf, groups, w=w)
             indices.append(sit.statistic)
-
+    distances.insert(0, 0)
     return dict(zip(distances, indices))
