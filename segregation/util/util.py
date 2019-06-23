@@ -268,7 +268,8 @@ def compute_segregation_profile(gdf,
                                 groups=None,
                                 distances=None,
                                 network=None,
-                                decay='linear'):
+                                decay='linear',
+                                precompute=True):
     """Compute multiscalar segregation profile.
 
     This function calculates several Spatial Information Theory indices with
@@ -299,20 +300,31 @@ def compute_segregation_profile(gdf,
         dictionary with distances as keys and SIT statistics as values
 
     """
-    aspatial = Multi_Information_Theory(gdf, groups)
-    indices = [aspatial.statistic]
+    gdf = gdf.copy()
+    gdf[groups] = gdf[groups].astype(float)
+    indices = {}
+    indices[0] = Multi_Information_Theory(gdf, groups).statistic
 
     if network:
-        maxdist = max(distances)
-        network.precompute(maxdist)
+        if not gdf.crs['init'] == 'epsg:4326':
+            gdf = gdf.to_crs(epsg=4326)
+        groups2 = ['acc_' + group for group in groups]
+        if precompute:
+            maxdist = max(distances)
+            network.precompute(maxdist)
         for distance in distances:
-            access = calc_access(gdf, network, decay=decay, distance=distance)
-            sit = Multi_Information_Theory(access, groups)
-            indices.append(sit.statistic)
+            distance = np.float(distance)
+            access = calc_access(gdf,
+                                 network,
+                                 decay=decay,
+                                 variables=groups,
+                                 distance=distance,
+                                 precompute=False)
+            sit = Multi_Information_Theory(access, groups2)
+            indices[distance] = sit.statistic
     else:
         for distance in distances:
             w = Kernel.from_dataframe(gdf, bandwidth=distance)
             sit = SpatialInformationTheory(gdf, groups, w=w)
-            indices.append(sit.statistic)
-    distances.insert(0, 0)
-    return dict(zip(distances, indices))
+            indices[distance] = sit.statistic
+    return indices

@@ -80,7 +80,8 @@ def calc_access(geodataframe,
                 network,
                 distance=2000,
                 decay="linear",
-                variables=None):
+                variables=None,
+                precompute=True):
     """Calculate access to population groups.
 
     Parameters
@@ -108,7 +109,8 @@ def calc_access(geodataframe,
         on node_ids
 
     """
-    network.precompute(distance)
+    if precompute:
+        network.precompute(distance)
 
     geodataframe["node_ids"] = network.get_node_ids(geodataframe.centroid.x,
                                                     geodataframe.centroid.y)
