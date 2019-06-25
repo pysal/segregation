@@ -6,6 +6,5 @@ coveralls
 matplotlib
 pandas
 ipywidgets
-splot
 pandana
 urbanaccess
