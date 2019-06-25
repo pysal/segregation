@@ -38,7 +38,8 @@ def _multi_location_quocient(data, groups):
     -------
 
     statistics : np.array(n,k)
-                 Location Quocient values for each group and unit
+                 Location Quocient values for each group and unit.
+                 Column k has the Location Quocient of position k in groups.
                 
     core_data  : a pandas DataFrame
                  A pandas DataFrame that contains the columns used to perform the estimate.
@@ -84,7 +85,8 @@ class Multi_Location_Quocient:
     ----------
 
     statistics : np.array(n,k)
-                 Location Quocient values for each group and unit
+                 Location Quocient values for each group and unit.
+                 Column k has the Location Quocient of position k in groups.
                 
     core_data  : a pandas DataFrame
                  A pandas DataFrame that contains the columns used to perform the estimate.
