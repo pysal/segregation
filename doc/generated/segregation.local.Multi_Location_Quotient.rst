@@ -1,9 +1,9 @@
-segregation.local.Multi\_Location\_Quocient
+segregation.local.Multi\_Location\_Quotient
 ===========================================
 
 .. currentmodule:: segregation.local
 
-.. autoclass:: Multi_Location_Quocient
+.. autoclass:: Multi_Location_Quotient
 
    
    .. automethod:: __init__
@@ -13,7 +13,7 @@ segregation.local.Multi\_Location\_Quocient
 
    .. autosummary::
    
-      ~Multi_Location_Quocient.__init__
+      ~Multi_Location_Quotient.__init__
    
    
 
