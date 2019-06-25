@@ -12,6 +12,10 @@ import libpysal as lps
 
 from segregation.spatial import Relative_Centralization
 
+# suppress numpy divide by zero warnings because it occurs a lot during the
+# calculation of many indices
+np.seterr(divide='ignore', invalid='ignore')
+
 
 __all__ = [
     'Multi_Location_Quocient',
