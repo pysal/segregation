@@ -18,7 +18,7 @@ np.seterr(divide='ignore', invalid='ignore')
 
 
 __all__ = [
-    'Multi_Location_Quocient',
+    'Multi_Location_Quotient',
     'Multi_Local_Diversity',
     'Multi_Local_Entropy',
     'Multi_Local_Simpson_Interaction',
@@ -26,9 +26,9 @@ __all__ = [
     'Local_Relative_Centralization'
 ]
 
-def _multi_location_quocient(data, groups):
+def _multi_location_quotient(data, groups):
     """
-    Calculation of Location Quocient index for each group and unit
+    Calculation of Location Quotient index for each group and unit
 
     Parameters
     ----------
@@ -42,8 +42,8 @@ def _multi_location_quocient(data, groups):
     -------
 
     statistics : np.array(n,k)
-                 Location Quocient values for each group and unit.
-                 Column k has the Location Quocient of position k in groups.
+                 Location Quotient values for each group and unit.
+                 Column k has the Location Quotient of position k in groups.
                 
     core_data  : a pandas DataFrame
                  A pandas DataFrame that contains the columns used to perform the estimate.
@@ -73,9 +73,9 @@ def _multi_location_quocient(data, groups):
     return multi_LQ, core_data
 
 
-class Multi_Location_Quocient:
+class Multi_Location_Quotient:
     """
-    Calculation of Location Quocient index for each group and unit
+    Calculation of Location Quotient index for each group and unit
 
     Parameters
     ----------
@@ -89,8 +89,8 @@ class Multi_Location_Quocient:
     ----------
 
     statistics : np.array(n,k)
-                 Location Quocient values for each group and unit.
-                 Column k has the Location Quocient of position k in groups.
+                 Location Quotient values for each group and unit.
+                 Column k has the Location Quotient of position k in groups.
                 
     core_data  : a pandas DataFrame
                  A pandas DataFrame that contains the columns used to perform the estimate.
@@ -103,7 +103,7 @@ class Multi_Location_Quocient:
     
     >>> import libpysal
     >>> import geopandas as gpd
-    >>> from segregation.local import Multi_Location_Quocient
+    >>> from segregation.local import Multi_Location_Quotient
     
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
@@ -112,13 +112,13 @@ class Multi_Location_Quocient:
     
     The value is estimated below.
     
-    >>> index = Multi_Location_Quocient(input_df, groups_list)
+    >>> index = Multi_Location_Quotient(input_df, groups_list)
     >>> index.statistics[0:3,0:3]
     array([[1.36543221, 0.07478049, 0.16245651],
            [1.18002164, 0.        , 0.14836683],
            [0.68072696, 0.03534425, 0.        ]])
 
-    Important to note that column k has the Location Quocient (LQ) of position k in groups. Therefore, the LQ of the first unit of 'WHITE_' is 1.36543221.
+    Important to note that column k has the Location Quotient (LQ) of position k in groups. Therefore, the LQ of the first unit of 'WHITE_' is 1.36543221.
     
     Notes
     -----
@@ -130,11 +130,11 @@ class Multi_Location_Quocient:
     
     def __init__(self, data, groups):
         
-        aux = _multi_location_quocient(data, groups)
+        aux = _multi_location_quotient(data, groups)
 
         self.statistics = aux[0]
         self.core_data  = aux[1]
-        self._function  = _multi_location_quocient
+        self._function  = _multi_location_quotient
         
         
         
