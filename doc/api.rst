@@ -64,7 +64,7 @@ Local Indices
 .. autosummary::
    :toctree: generated/
    
-      local.Multi_Location_Quocient
+      local.Multi_Location_Quotient
       local.Multi_Local_Diversity
       local.Multi_Local_Entropy
       local.Multi_Local_Simpson_Interaction
