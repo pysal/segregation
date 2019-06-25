@@ -59,6 +59,18 @@ Multigroup Indices
       aspatial.Simpsons_Interaction
       aspatial.Multi_Divergence
 	  
+Local Indices
+---------------------
+.. autosummary::
+   :toctree: generated/
+   
+      local.Multi_Location_Quocient
+      local.Multi_Local_Diversity
+      local.Multi_Local_Entropy
+      local.Multi_Local_Simpson_Interaction
+      local.Multi_Local_Simpson_Concentration
+      local.Local_Relative_Centralization
+	  
 Profile Wrappers
 ---------------------
 .. autosummary::
