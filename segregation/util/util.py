@@ -2,14 +2,15 @@
 Useful functions for segregation metrics
 """
 
-__author__ = "Levi Wolf <levi.john.wolf@gmail.com> and Renan X. Cortes <renanc@ucr.edu>"
+__author__ = "Levi Wolf <levi.john.wolf@gmail.com>, Renan X. Cortes <renanc@ucr.edu>, and Eli Knaap <ek@knaaptime.com>"
 
 import numpy as np
 import pandas as pd
 import libpysal
 import geopandas as gpd
+import math
 from warnings import warn
-from libpysal.weights import Queen, KNN, Kernel
+from libpysal.weights import Kernel
 from libpysal.weights.util import attach_islands
 from segregation.network import calc_access
 from segregation.spatial import SpatialInformationTheory
@@ -93,16 +94,16 @@ def _generate_counterfactual(data1,
     ----------
     data1 : pd.DataFrame or gpd.DataFrame
         Pandas or Geopandas dataframe holding data for context 1
-        
+
     data2 : pd.DataFrame or gpd.DataFrame
         Pandas or Geopandas dataframe holding data for context 2
-        
+
     group_pop_var : str
         The name of variable in both data that contains the population size of the group of interest
-        
+
     total_pop_var : str
         The name of variable in both data that contains the total population of the unit
-        
+
     approach : str, ["composition", "share", "dual_composition"]
         Which approach to use for generating the counterfactual.
         Options include "composition", "share", or "dual_composition"
@@ -264,11 +265,61 @@ def _generate_counterfactual(data1,
     return df1, df2
 
 
+def project_gdf(gdf, to_crs=None, to_latlong=False):
+    """Reproject gdf into the appropriate UTM zone.
+
+    Project a GeoDataFrame to the UTM zone appropriate for its geometries'
+    centroid.
+    The simple calculation in this function works well for most latitudes, but
+    won't work for some far northern locations like Svalbard and parts of far
+    northern Norway.
+
+    This function is lovingly modified from osmnx:
+    https://github.com/gboeing/osmnx/
+
+    Parameters
+    ----------
+    gdf : GeoDataFrame
+        the gdf to be projected
+    to_crs : dict
+        if not None, just project to this CRS instead of to UTM
+    to_latlong : bool
+        if True, projects to latlong instead of to UTM
+
+    Returns
+    -------
+    GeoDataFrame
+
+    """
+    assert len(gdf) > 0, 'You cannot project an empty GeoDataFrame.'
+
+    # else, project the gdf to UTM
+    # if GeoDataFrame is already in UTM, just return it
+    if (gdf.crs is not None) and ('+proj=utm ' in gdf.crs):
+        return gdf
+
+    # calculate the centroid of the union of all the geometries in the
+    # GeoDataFrame
+    avg_longitude = gdf['geometry'].unary_union.centroid.x
+
+    # calculate the UTM zone from this avg longitude and define the UTM
+    # CRS to project
+    utm_zone = int(math.floor((avg_longitude + 180) / 6.) + 1)
+    utm_crs = '+proj=utm +zone={} +ellps=WGS84 +datum=WGS84 +units=m +no_defs'.format(
+        utm_zone)
+
+    # project the GeoDataFrame to the UTM CRS
+    projected_gdf = gdf.to_crs(utm_crs)
+
+    return projected_gdf
+
+
 def compute_segregation_profile(gdf,
                                 groups=None,
                                 distances=None,
                                 network=None,
                                 decay='linear',
+                                function='triangular',
                                 precompute=True):
     """Compute multiscalar segregation profile.
 
@@ -285,7 +336,7 @@ def compute_segregation_profile(gdf,
     groups : list
         list of variables .
     distances : list
-        list of integers representing bandwidth distances that define a local
+        list of floats representing bandwidth distances that define a local
         environment.
     network : pandana.Network (optional)
         A pandana.Network likely created with
@@ -293,11 +344,26 @@ def compute_segregation_profile(gdf,
     decay : str (optional)
         decay type to be used in pandana accessibility calculation (the
         default is 'linear').
+    function: 'str' (optional)
+        which weighting function should be passed to libpysal.weights.Kernel
+        must be one of: 'triangular','uniform','quadratic','quartic','gaussian'
+    precompute: bool
+        Whether the pandana.Network instance should precompute the range
+        queries.This is true by default, but if you plan to calculate several
+        segregation profiles using the same network, then you can set this
+        parameter to `False` to avoid precomputing repeatedly inside the
+        function
 
     Returns
     -------
     dict
         dictionary with distances as keys and SIT statistics as values
+
+    Notes
+    -----
+    Based on Sean F. Reardon, Stephen A. Matthews, David O’Sullivan, Barrett A. Lee, Glenn Firebaugh, Chad R. Farrell, & Kendra Bischoff. (2008). The Geographic Scale of Metropolitan Racial Segregation. Demography, 45(3), 489–514. https://doi.org/10.1353/dem.0.0019.
+
+    Reference: :cite:`Reardon2008`.
 
     """
     gdf = gdf.copy()
@@ -324,7 +390,9 @@ def compute_segregation_profile(gdf,
             indices[distance] = sit.statistic
     else:
         for distance in distances:
-            w = Kernel.from_dataframe(gdf, bandwidth=distance)
+            w = Kernel.from_dataframe(gdf,
+                                      bandwidth=distance,
+                                      function=function)
             sit = SpatialInformationTheory(gdf, groups, w=w)
             indices[distance] = sit.statistic
     return indices

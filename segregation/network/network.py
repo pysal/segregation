@@ -4,12 +4,19 @@ __author__ = "Elijah Knaap <elijah.knaap@ucr.edu> Renan X. Cortes <renanc@ucr.ed
 
 import numpy as np
 import pandas as pd
-import pandana as pdna
-from urbanaccess.osm.load import ua_network_from_bbox
-from osmnx import project_gdf
-from segregation.aspatial import Multi_Information_Theory
+from warnings import warn
+from segregation.util import project_gdf
 import os
 import sys
+try:
+    import pandana as pdna
+    from urbanaccess.osm.load import ua_network_from_bbox
+except ImportError:
+    warn(
+        "You need pandana and urbanaccess to work with segregation's network module"
+    )
+    warn("You can install them with  `pip install urbanaccess pandana`"
+         "or `conda install -c udst pandana urbanaccess`")
 
 
 # This class allows us to hide the diagnostic messages from urbanaccess if the `quiet` flag is set
@@ -53,6 +60,7 @@ def get_network(geodataframe, maxdist=5000, quiet=True, **kwargs):
     >>>
 
     """
+
     gdf = geodataframe.copy()
 
     assert gdf.crs['init'] == 'epsg:4326', "geodataframe must be in epsg 4326"
