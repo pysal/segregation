@@ -13,10 +13,9 @@ try:
     from urbanaccess.osm.load import ua_network_from_bbox
 except ImportError:
     warn(
-        "You need pandana and urbanaccess to work with segregation's network module"
-    )
-    warn("You can install them with  `pip install urbanaccess pandana`"
-         "or `conda install -c udst pandana urbanaccess`")
+        "You need pandana and urbanaccess to work with segregation's network module\n"
+        "You can install them with  `pip install urbanaccess pandana` "
+        "or `conda install -c udst pandana urbanaccess`")
 
 
 # This class allows us to hide the diagnostic messages from urbanaccess if the `quiet` flag is set
