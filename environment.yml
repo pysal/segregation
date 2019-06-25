@@ -11,5 +11,4 @@ dependencies:
   - numpy
   - scipy
   - pip
-  - pip:
-    - git+git://github.com/pysal/libpysal.git
+  - libpysal
