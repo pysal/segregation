@@ -111,7 +111,7 @@ For point estimation, all the measures available can be summarized in the follow
 | Modified Dissimilarity (Dct)                      | Modified\_Dissim                        |      No      |     iterations      |
 | Modified Gini (Gct)                               | Modified\_Gini\_Seg                     |      No      |     iterations      |
 | Bias-Corrected Dissimilarity (Dbc)                | Bias\_Corrected\_Dissim                 |      No      |          B          |
-| Density-Corrected Dissimilarity (Ddc)             | Density\_Corrected\_Dissim              |      No      |         \-          |
+| Density-Corrected Dissimilarity (Ddc)             | Density\_Corrected\_Dissim              |      No      |        xtol         |
 | Spatial Proximity Profile (SPP)                   | Spatial\_Prox\_Prof                     |     Yes      |          m          |
 | Spatial Dissimilarity (SD)                        | Spatial\_Dissim                         |     Yes      |   w, standardize    |
 | Boundary Spatial Dissimilarity (BSD)              | Boundary\_Spatial\_Dissim               |     Yes      |     standardize     |
