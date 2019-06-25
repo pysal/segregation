@@ -180,7 +180,7 @@ Also, it is possible to calculate local measures of segregation. A <tt>statistic
 
 | **Measure**                                       | **Class/Function**                        | **Spatial?** | **Specific Arguments** |
 | :------------------------------------------------ | :---------------------------------------- | :----------: | :-----------------: |
-| Location Quocient                                 | Multi\_Location\_Quocient                 |      No      |         \-          |
+| Location Quotient                                 | Multi\_Location\_Quotient                 |      No      |         \-          |
 | Local Diversity                                   | Multi\_Local\_Diversity                   |      No      |         \-          |
 | Local Entropy                                     | Multi\_Local\_Entropy                     |      No      |         \-          |
 | Local Simpson's Concentration                     | Multi\_Local\_Simpson\_Concentration      |      No      |         \-          |
