@@ -11,19 +11,41 @@ import warnings
 from scipy.stats import norm
 from scipy.optimize import minimize
 
+# Including old and new api in __all__ so users can use both
 
 __all__ = ['Dissim', 
-           'Gini_Seg', 
+           
+           'Gini_Seg',
+           'GiniSeg',
+           
            'Entropy', 
            'Isolation',
            'Exposure',
            'Atkinson',
+           
            'Correlation_R',
+           'CorrelationR',
+           
            'Con_Prof',
+           'ConProf',
+           
            'Modified_Dissim',
+           'ModifiedDissim',
+           
            'Modified_Gini_Seg',
+           'ModifiedGiniSeg',
+           
            'Bias_Corrected_Dissim',
-           'Density_Corrected_Dissim']
+           'BiasCorrectedDissim',
+           
+           'Density_Corrected_Dissim',
+           'DensityCorrectedDissim']
+
+# The Deprecation calls of the classes are located in the end of this script #
+
+
+
+
 
 
 def _dissim(data, group_pop_var, total_pop_var):
@@ -224,7 +246,7 @@ def _gini_seg(data, group_pop_var, total_pop_var):
     return G, core_data
 
 
-class Gini_Seg:
+class GiniSeg:
     """
     Classic Gini Segregation Index
     
@@ -917,7 +939,7 @@ def _correlationr(data, group_pop_var, total_pop_var):
     return V, core_data
 
 
-class Correlation_R:
+class CorrelationR:
     """
     Classic Correlation Ratio Index
 
@@ -1065,7 +1087,7 @@ def _conprof(data, group_pop_var, total_pop_var, m = 1000):
     return R, grid, curve, core_data
 
 
-class Con_Prof:
+class ConProf:
     """
     Concentration Profile Index
 
@@ -1237,7 +1259,7 @@ def _modified_dissim(data, group_pop_var, total_pop_var, iterations = 500):
     return Dct, core_data
 
 
-class Modified_Dissim:
+class ModifiedDissim:
     """
     Calculation of Modified Dissimilarity index
 
@@ -1390,7 +1412,7 @@ def _modified_gini_seg(data, group_pop_var, total_pop_var, iterations = 500):
     return Gct, core_data
 
 
-class Modified_Gini_Seg:
+class ModifiedGiniSeg:
     """
     Calculation of Modified Gini Segregation index
 
@@ -1548,7 +1570,7 @@ def _bias_corrected_dissim(data, group_pop_var, total_pop_var, B = 500):
     return Dbc, core_data
 
 
-class Bias_Corrected_Dissim:
+class BiasCorrectedDissim:
     """
     Calculation of Bias Corrected Dissimilarity index
 
@@ -1712,7 +1734,7 @@ def _density_corrected_dissim(data, group_pop_var, total_pop_var, xtol = 1e-5):
     return Ddc, core_data
 
 
-class Density_Corrected_Dissim:
+class DensityCorrectedDissim:
     """
     Calculation of Density Corrected Dissimilarity index
 
@@ -1784,3 +1806,65 @@ class Density_Corrected_Dissim:
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _density_corrected_dissim
+        
+
+
+
+
+
+
+
+
+
+
+
+
+# Deprecation Calls (_dep_message and DeprecationHelper could be moved to some utility class) #
+# However, this was atempted, but I was crashing due to circular calls #
+        
+def _dep_message(original, replacement, when="2020-01-31", version="2.1.0"):
+    msg = "Deprecated (%s): %s" % (version, original)
+    msg += " is being renamed to %s." % replacement
+    msg += " %s will be removed on %s." % (original, when)
+    return msg
+
+class DeprecationHelper(object):
+    def __init__(self, new_target, message="Deprecated"):
+        self.new_target = new_target
+        self.message = message
+
+    def _warn(self):
+        from warnings import warn
+
+        warn(self.message)
+
+    def __call__(self, *args, **kwargs):
+        self._warn()
+        return self.new_target(*args, **kwargs)
+
+    def __getattr__(self, attr):
+        self._warn()
+        return getattr(self.new_target, attr)
+        
+
+        
+msg = _dep_message("Gini_Seg", "GiniSeg")
+Gini_Seg = DeprecationHelper(GiniSeg, message=msg)
+
+msg = _dep_message("Correlation_R", "CorrelationR")
+Correlation_R = DeprecationHelper(CorrelationR, message=msg)
+
+msg = _dep_message("Con_Prof", "ConProf")
+Con_Prof = DeprecationHelper(ConProf, message=msg)
+
+msg = _dep_message("Modified_Dissim", "ModifiedDissim")
+Modified_Dissim = DeprecationHelper(ModifiedDissim, message=msg)
+
+msg = _dep_message("Modified_Gini_Seg", "ModifiedGiniSeg")
+Modified_Gini_Seg = DeprecationHelper(ModifiedGiniSeg, message=msg)
+
+msg = _dep_message("Bias_Corrected_Dissim", "BiasCorrectedDissim")
+Bias_Corrected_Dissim = DeprecationHelper(BiasCorrectedDissim, message=msg)
+
+msg = _dep_message("Density_Corrected_Dissim", "DensityCorrectedDissim")
+Density_Corrected_Dissim = DeprecationHelper(DensityCorrectedDissim, message=msg)
