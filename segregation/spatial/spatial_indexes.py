@@ -311,7 +311,7 @@ class SpatialProxProf:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial import Spatial_Prox_Prof
+    >>> from segregation.spatial import SpatialProxProf
     
     Secondly, we need to read the data:
     
@@ -337,7 +337,7 @@ class SpatialProxProf:
     >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
     
-    >>> spat_prox_index = Spatial_Prox_Prof(gdf, 'nhblk10', 'pop10')
+    >>> spat_prox_index = SpatialProxProf(gdf, 'nhblk10', 'pop10')
     >>> spat_prox_index.statistic
     0.11217269612149207
     
@@ -515,7 +515,7 @@ class SpatialDissim:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial import Spatial_Dissim
+    >>> from segregation.spatial import SpatialDissim
     
     Secondly, we need to read the data:
     
@@ -543,7 +543,7 @@ class SpatialDissim:
     
     The value is estimated below.
     
-    >>> spatial_dissim_index = Spatial_Dissim(gdf, 'nhblk10', 'pop10')
+    >>> spatial_dissim_index = SpatialDissim(gdf, 'nhblk10', 'pop10')
     >>> spatial_dissim_index.statistic
     0.2864885055405311
         
@@ -712,7 +712,7 @@ class BoundarySpatialDissim:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial import Boundary_Spatial_Dissim
+    >>> from segregation.spatial import BoundarySpatialDissim
     
     Secondly, we need to read the data:
     
@@ -740,7 +740,7 @@ class BoundarySpatialDissim:
     
     The value is estimated below.
     
-    >>> boundary_spatial_dissim_index = Boundary_Spatial_Dissim(gdf, 'nhblk10', 'pop10')
+    >>> boundary_spatial_dissim_index = BoundarySpatialDissim(gdf, 'nhblk10', 'pop10')
     >>> boundary_spatial_dissim_index.statistic
     0.28869903953453163
             
@@ -897,7 +897,7 @@ class PerimeterAreaRatioSpatialDissim:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial import Perimeter_Area_Ratio_Spatial_Dissim
+    >>> from segregation.spatial import PerimeterAreaRatioSpatialDissim
     
     Secondly, we need to read the data:
     
@@ -925,7 +925,7 @@ class PerimeterAreaRatioSpatialDissim:
     
     The value is estimated below.
     
-    >>> perimeter_area_ratio_spatial_dissim_index = Perimeter_Area_Ratio_Spatial_Dissim(gdf, 'nhblk10', 'pop10')
+    >>> perimeter_area_ratio_spatial_dissim_index = PerimeterAreaRatioSpatialDissim(gdf, 'nhblk10', 'pop10')
     >>> perimeter_area_ratio_spatial_dissim_index.statistic
     0.31260876347432687
             
@@ -1095,7 +1095,7 @@ class DistanceDecayIsolation:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial import Distance_Decay_Isolation
+    >>> from segregation.spatial import DistanceDecayIsolation
     
     Secondly, we need to read the data:
     
@@ -1123,7 +1123,7 @@ class DistanceDecayIsolation:
     
     The value is estimated below.
     
-    >>> spatial_isolation_index = Distance_Decay_Isolation(gdf, 'nhblk10', 'pop10')
+    >>> spatial_isolation_index = DistanceDecayIsolation(gdf, 'nhblk10', 'pop10')
     >>> spatial_isolation_index.statistic
     0.07214112078134231
             
@@ -1295,7 +1295,7 @@ class DistanceDecayExposure:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial import Distance_Decay_Exposure
+    >>> from segregation.spatial import DistanceDecayExposure
     
     Secondly, we need to read the data:
     
@@ -1323,7 +1323,7 @@ class DistanceDecayExposure:
     
     The value is estimated below.
     
-    >>> spatial_exposure_index = Distance_Decay_Exposure(gdf, 'nhblk10', 'pop10')
+    >>> spatial_exposure_index = DistanceDecayExposure(gdf, 'nhblk10', 'pop10')
     >>> spatial_exposure_index.statistic
     0.9605053172501217
             
@@ -1485,7 +1485,7 @@ class SpatialProximity:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial import Spatial_Proximity
+    >>> from segregation.spatial import SpatialProximity
     
     Secondly, we need to read the data:
     
@@ -1513,7 +1513,7 @@ class SpatialProximity:
     
     The value is estimated below.
     
-    >>> spatial_prox_index = Spatial_Proximity(gdf, 'nhblk10', 'pop10')
+    >>> spatial_prox_index = SpatialProximity(gdf, 'nhblk10', 'pop10')
     >>> spatial_prox_index.statistic
     1.002191883006537
             
@@ -1854,7 +1854,7 @@ class RelativeClustering:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial import Relative_Clustering
+    >>> from segregation.spatial import RelativeClustering
     
     Secondly, we need to read the data:
     
@@ -1882,7 +1882,7 @@ class RelativeClustering:
     
     The value is estimated below.
     
-    >>> relative_clust_index = Relative_Clustering(gdf, 'nhblk10', 'pop10')
+    >>> relative_clust_index = RelativeClustering(gdf, 'nhblk10', 'pop10')
     >>> relative_clust_index.statistic
     0.12418089857347714
             
@@ -2184,7 +2184,7 @@ class AbsoluteConcentration:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial import Absolute_Concentration
+    >>> from segregation.spatial import AbsoluteConcentration
     
     Secondly, we need to read the data:
     
@@ -2212,7 +2212,7 @@ class AbsoluteConcentration:
     
     The value is estimated below.
     
-    >>> absolute_concentration_index = Absolute_Concentration(gdf, 'nhblk10', 'pop10')
+    >>> absolute_concentration_index = AbsoluteConcentration(gdf, 'nhblk10', 'pop10')
     >>> absolute_concentration_index.statistic
     0.5430616390401855
             
@@ -2356,7 +2356,7 @@ class RelativeConcentration:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial import Relative_Concentration
+    >>> from segregation.spatial import RelativeConcentration
     
     Secondly, we need to read the data:
     
@@ -2384,7 +2384,7 @@ class RelativeConcentration:
     
     The value is estimated below.
     
-    >>> relative_concentration_index = Relative_Concentration(gdf, 'nhblk10', 'pop10')
+    >>> relative_concentration_index = RelativeConcentration(gdf, 'nhblk10', 'pop10')
     >>> relative_concentration_index.statistic
     0.5364305924831142
             
@@ -2606,7 +2606,7 @@ class AbsoluteCentralization:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial import Absolute_Centralization
+    >>> from segregation.spatial import AbsoluteCentralization
     
     Secondly, we need to read the data:
     
@@ -2634,7 +2634,7 @@ class AbsoluteCentralization:
     
     The value is estimated below.
     
-    >>> absolute_centralization_index = Absolute_Centralization(gdf, 'nhblk10', 'pop10')
+    >>> absolute_centralization_index = AbsoluteCentralization(gdf, 'nhblk10', 'pop10')
     >>> absolute_centralization_index.statistic
     0.6416113799795511
             
@@ -2857,7 +2857,7 @@ class RelativeCentralization:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial import Relative_Centralization
+    >>> from segregation.spatial import RelativeCentralization
     
     Secondly, we need to read the data:
     
@@ -2885,7 +2885,7 @@ class RelativeCentralization:
     
     The value is estimated below.
     
-    >>> relative_centralization_index = Relative_Centralization(gdf, 'nhblk10', 'pop10')
+    >>> relative_centralization_index = RelativeCentralization(gdf, 'nhblk10', 'pop10')
     >>> relative_centralization_index.statistic
     0.18550429720565376
             
