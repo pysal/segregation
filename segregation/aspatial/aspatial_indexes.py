@@ -277,7 +277,7 @@ class GiniSeg:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.aspatial import Gini_Seg
+    >>> from segregation.aspatial import GiniSeg
     
     Secondly, we need to read the data:
     
@@ -293,7 +293,7 @@ class GiniSeg:
     
     The value is estimated below.
     
-    >>> gini_seg_index = Gini_Seg(df, 'tractid', 'pop10')
+    >>> gini_seg_index = GiniSeg(df, 'tractid', 'pop10')
     >>> gini_seg_index.statistic
     0.44620350030600087
        
@@ -973,7 +973,7 @@ class CorrelationR:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.aspatial import Correlation_R
+    >>> from segregation.aspatial import CorrelationR
     
     Secondly, we need to read the data:
     
@@ -989,7 +989,7 @@ class CorrelationR:
     
     The value is estimated below.
     
-    >>> correlationr_index = Correlation_R(df, 'tractid', 'pop10')
+    >>> correlationr_index = CorrelationR(df, 'tractid', 'pop10')
     >>> correlationr_index.statistic
     0.048716810856363923
     
@@ -1125,7 +1125,7 @@ class ConProf:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.aspatial import Con_Prof
+    >>> from segregation.aspatial import ConProf
     
     Secondly, we need to read the data:
     
@@ -1141,7 +1141,7 @@ class ConProf:
     
     The value is estimated below.
     
-    >>> conprof_index = Con_Prof(df, 'tractid', 'pop10')
+    >>> conprof_index = ConProf(df, 'tractid', 'pop10')
     >>> conprof_index.statistic
     0.06393365660089256
     
@@ -1296,7 +1296,7 @@ class ModifiedDissim:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.aspatial import Modified_Dissim
+    >>> from segregation.aspatial import ModifiedDissim
     
     Secondly, we need to read the data:
     
@@ -1313,7 +1313,7 @@ class ModifiedDissim:
     The value is estimated below.
     
     >>> np.random.seed(1234)
-    >>> modified_dissim_index = Modified_Dissim(df, 'tractid', 'pop10')
+    >>> modified_dissim_index = ModifiedDissim(df, 'tractid', 'pop10')
     >>> modified_dissim_index.statistic
     0.30009504639081996
      
@@ -1449,7 +1449,7 @@ class ModifiedGiniSeg:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.aspatial import Modified_Gini_Seg
+    >>> from segregation.aspatial import ModifiedGiniSeg
     
     Secondly, we need to read the data:
     
@@ -1466,7 +1466,7 @@ class ModifiedGiniSeg:
     The value is estimated below.
     
     >>> np.random.seed(1234)
-    >>> modified_gini_seg_index = Modified_Gini_Seg(df, 'tractid', 'pop10')
+    >>> modified_gini_seg_index = ModifiedGiniSeg(df, 'tractid', 'pop10')
     >>> modified_gini_seg_index.statistic
     0.4280279611418648
      
@@ -1607,7 +1607,7 @@ class BiasCorrectedDissim:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.aspatial import Bias_Corrected_Dissim
+    >>> from segregation.aspatial import BiasCorrectedDissim
     
     Secondly, we need to read the data:
     
@@ -1624,7 +1624,7 @@ class BiasCorrectedDissim:
     The value is estimated below.
     
     >>> np.random.seed(1234)
-    >>> bias_corrected_dissim_index = Bias_Corrected_Dissim(df, 'tractid', 'pop10')
+    >>> bias_corrected_dissim_index = BiasCorrectedDissim(df, 'tractid', 'pop10')
     >>> bias_corrected_dissim_index.statistic
     0.31484636081876954
      
@@ -1771,7 +1771,7 @@ class DensityCorrectedDissim:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.aspatial import Density_Corrected_Dissim
+    >>> from segregation.aspatial import DensityCorrectedDissim
     
     Secondly, we need to read the data:
     
@@ -1787,7 +1787,7 @@ class DensityCorrectedDissim:
     
     The value is estimated below.
     
-    >>> density_corrected_dissim_index = Density_Corrected_Dissim(df, 'tractid', 'pop10')
+    >>> density_corrected_dissim_index = DensityCorrectedDissim(df, 'tractid', 'pop10')
     >>> density_corrected_dissim_index.statistic
     0.29350643204887517
      
