@@ -174,7 +174,18 @@ Currently, theses indexes are summarized in the table below:
 | Simpson's Interaction                             | Simpsons\_Interaction                     |      No      |         \-          |
 | Multigroup Divergence                             | Multi\_Divergence                         |      No      |         \-          |
 
+### Local measures
 
+Also, it is possible to calculate local measures of segregation. A <tt>statistics</tt> (the attribute is in the plural since, many statistics are fitted) attribute will contain the values of these indexes. Currently, they are summarized in the table below:
+
+| **Measure**                                       | **Class/Function**                        | **Spatial?** | **Specific Arguments** |
+| :------------------------------------------------ | :---------------------------------------- | :----------: | :-----------------: |
+| Location Quotient                                 | Multi\_Location\_Quotient                 |      No      |         \-          |
+| Local Diversity                                   | Multi\_Local\_Diversity                   |      No      |         \-          |
+| Local Entropy                                     | Multi\_Local\_Entropy                     |      No      |         \-          |
+| Local Simpson's Concentration                     | Multi\_Local\_Simpson\_Concentration      |      No      |         \-          |
+| Local Simpson's Interaction                       | Multi\_Local\_Simpson\_Interaction        |      No      |         \-          |
+| Local Centralization                              | Local\_Relative\_Centralization           |      Yes     |         \-          |
 
 If you are new to segregation and PySAL you will best get started with our documentation! We encourage you to take a look at some examples of this module in the <tt>notebooks</tt> repo!
 

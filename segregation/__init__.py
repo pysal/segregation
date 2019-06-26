@@ -10,3 +10,4 @@ from . import inference
 from . import decomposition
 from . import util
 from . import network
+from . import local
