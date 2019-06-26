@@ -24,6 +24,58 @@ from segregation.aspatial.multigroup_aspatial_indexes import Multi_Information_T
 from segregation.network import calc_access
 from libpysal.weights.util import attach_islands
 
+
+# Including old and new api in __all__ so users can use both
+
+__all__ = [
+    'Spatial_Prox_Prof', 
+    'SpatialProxProf',
+    
+    'Spatial_Dissim', 
+    'SpatialDissim',
+    
+    'Boundary_Spatial_Dissim',
+    'BoundarySpatialDissim',
+    
+    'Perimeter_Area_Ratio_Spatial_Dissim', 
+    'PerimeterAreaRatioSpatialDissim', 
+    
+    'Distance_Decay_Isolation',
+    'DistanceDecayIsolation',
+    
+    'Distance_Decay_Exposure', 
+    'DistanceDecayExposure', 
+    
+    'Spatial_Proximity', 
+    'SpatialProximity',
+    
+    'Absolute_Clustering',
+    'AbsoluteClustering',
+    
+    'Relative_Clustering', 
+    'RelativeClustering', 
+    
+    'Delta', 
+    
+    'Absolute_Concentration',
+    'AbsoluteConcentration',
+    
+    'Relative_Concentration', 
+    'RelativeConcentration', 
+    
+    'Absolute_Centralization',
+    'AbsoluteCentralization',
+    
+    'Relative_Centralization', 
+    'RelativeCentralization', 
+    
+    'SpatialInformationTheory',
+    'compute_segregation_profile'
+]
+
+# The Deprecation calls of the classes are located in the end of this script #
+
+
 # suppress numpy divide by zero warnings because it occurs a lot during the
 # calculation of many indices
 np.seterr(divide='ignore', invalid='ignore')
@@ -117,15 +169,6 @@ def _return_length_weighted_w(data):
     return length_weighted_w
 
 
-__all__ = [
-    'Spatial_Prox_Prof', 'Spatial_Dissim', 'Boundary_Spatial_Dissim',
-    'Perimeter_Area_Ratio_Spatial_Dissim', 'Distance_Decay_Isolation',
-    'Distance_Decay_Exposure', 'Spatial_Proximity', 'Absolute_Clustering',
-    'Relative_Clustering', 'Delta', 'Absolute_Concentration',
-    'Relative_Concentration', 'Absolute_Centralization',
-    'Relative_Centralization', 'SpatialInformationTheory',
-    'compute_segregation_profile'
-]
 
 
 def _spatial_prox_profile(data, group_pop_var, total_pop_var, m=1000):
@@ -230,7 +273,7 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, m=1000):
     return SPP, grid, curve, core_data
 
 
-class Spatial_Prox_Prof:
+class SpatialProxProf:
     """
     Calculation of Spatial Proximity Profile
 
@@ -430,7 +473,7 @@ def _spatial_dissim(data,
     return SD, core_data
 
 
-class Spatial_Dissim:
+class SpatialDissim:
     """
     Calculation of Spatial Dissimilarity index
 
@@ -629,7 +672,7 @@ def _boundary_spatial_dissim(data,
     return BSD, core_data
 
 
-class Boundary_Spatial_Dissim:
+class BoundarySpatialDissim:
     """
     Calculation of Boundary Spatial Dissimilarity index
 
@@ -816,7 +859,7 @@ def _perimeter_area_ratio_spatial_dissim(data,
     return PARD, core_data
 
 
-class Perimeter_Area_Ratio_Spatial_Dissim:
+class PerimeterAreaRatioSpatialDissim:
     """
     Calculation of Perimeter/Area Ratio Spatial Dissimilarity index
 
@@ -1012,7 +1055,7 @@ def _distance_decay_isolation(data,
     return DDxPx, core_data
 
 
-class Distance_Decay_Isolation:
+class DistanceDecayIsolation:
     """
     Calculation of Distance Decay Isolation index
 
@@ -1212,7 +1255,7 @@ def _distance_decay_exposure(data,
     return DDxPy, core_data
 
 
-class Distance_Decay_Exposure:
+class DistanceDecayExposure:
     """
     Calculation of Distance Decay Exposure index
 
@@ -1404,7 +1447,7 @@ def _spatial_proximity(data, group_pop_var, total_pop_var, alpha=0.6,
     return SP, core_data
 
 
-class Spatial_Proximity:
+class SpatialProximity:
     """
     Calculation of Spatial Proximity index
     
@@ -1593,7 +1636,7 @@ def _absolute_clustering(data,
     return ACL, core_data
 
 
-class Absolute_Clustering:
+class AbsoluteClustering:
     """
     Calculation of Absolute Clustering index
     
@@ -1773,7 +1816,7 @@ def _relative_clustering(data,
     return RCL, core_data
 
 
-class Relative_Clustering:
+class RelativeClustering:
     """
     Calculation of Relative Clustering index
     
@@ -2107,7 +2150,7 @@ def _absolute_concentration(data, group_pop_var, total_pop_var):
     return ACO, core_data
 
 
-class Absolute_Concentration:
+class AbsoluteConcentration:
     """
     Calculation of Absolute Concentration index
 
@@ -2279,7 +2322,7 @@ def _relative_concentration(data, group_pop_var, total_pop_var):
     return RCO, core_data
 
 
-class Relative_Concentration:
+class RelativeConcentration:
     """
     Calculation of Relative Concentration index
 
@@ -2511,7 +2554,7 @@ def _absolute_centralization(data, group_pop_var, total_pop_var,
     return ACE, core_data, center_values
 
 
-class Absolute_Centralization:
+class AbsoluteCentralization:
     """
     Calculation of Absolute Centralization index
 
@@ -2762,7 +2805,7 @@ def _relative_centralization(data, group_pop_var, total_pop_var,
     return RCE, core_data, center_values
 
 
-class Relative_Centralization:
+class RelativeCentralization:
     """
     Calculation of Relative Centralization index
 
@@ -3000,3 +3043,78 @@ def compute_segregation_profile(gdf,
             sit = SpatialInformationTheory(gdf, groups, w=w)
             indices[distance] = sit.statistic
     return indices
+
+
+
+
+
+
+
+
+# Deprecation Calls (_dep_message and DeprecationHelper could be moved to some utility class) #
+# However, this was atempted, but I was crashing due to circular calls #
+        
+def _dep_message(original, replacement, when="2020-01-31", version="2.1.0"):
+    msg = "Deprecated (%s): %s" % (version, original)
+    msg += " is being renamed to %s." % replacement
+    msg += " %s will be removed on %s." % (original, when)
+    return msg
+
+class DeprecationHelper(object):
+    def __init__(self, new_target, message="Deprecated"):
+        self.new_target = new_target
+        self.message = message
+
+    def _warn(self):
+        from warnings import warn
+
+        warn(self.message)
+
+    def __call__(self, *args, **kwargs):
+        self._warn()
+        return self.new_target(*args, **kwargs)
+
+    def __getattr__(self, attr):
+        self._warn()
+        return getattr(self.new_target, attr)
+        
+
+        
+msg = _dep_message("Spatial_Prox_Prof", "SpatialProxProf")
+Spatial_Prox_Prof = DeprecationHelper(SpatialProxProf, message=msg)
+
+msg = _dep_message("Spatial_Dissim", "SpatialDissim")
+Spatial_Dissim = DeprecationHelper(SpatialDissim, message=msg)
+
+msg = _dep_message("Boundary_Spatial_Dissim", "BoundarySpatialDissim")
+Boundary_Spatial_Dissim = DeprecationHelper(BoundarySpatialDissim, message=msg)
+
+msg = _dep_message("Perimeter_Area_Ratio_Spatial_Dissim", "PerimeterAreaRatioSpatialDissim")
+Perimeter_Area_Ratio_Spatial_Dissim = DeprecationHelper(PerimeterAreaRatioSpatialDissim, message=msg)
+
+msg = _dep_message("Distance_Decay_Isolation", "DistanceDecayIsolation")
+Distance_Decay_Isolation = DeprecationHelper(DistanceDecayIsolation, message=msg)
+
+msg = _dep_message("Distance_Decay_Exposure", "DistanceDecayExposure")
+Distance_Decay_Exposure = DeprecationHelper(DistanceDecayExposure, message=msg)
+
+msg = _dep_message("Spatial_Proximity", "SpatialProximity")
+Spatial_Proximity = DeprecationHelper(SpatialProximity, message=msg)
+
+msg = _dep_message("Absolute_Clustering", "AbsoluteClustering")
+Absolute_Clustering = DeprecationHelper(AbsoluteClustering, message=msg)
+
+msg = _dep_message("Relative_Clustering", "RelativeClustering")
+Relative_Clustering = DeprecationHelper(RelativeClustering, message=msg)
+
+msg = _dep_message("Absolute_Concentration", "AbsoluteConcentration")
+Absolute_Concentration = DeprecationHelper(AbsoluteConcentration, message=msg)
+
+msg = _dep_message("Relative_Concentration", "RelativeConcentration")
+Relative_Concentration = DeprecationHelper(RelativeConcentration, message=msg)
+
+msg = _dep_message("Absolute_Centralization", "AbsoluteCentralization")
+Absolute_Centralization = DeprecationHelper(AbsoluteCentralization, message=msg)
+
+msg = _dep_message("Relative_Centralization", "RelativeCentralization")
+Relative_Centralization = DeprecationHelper(RelativeCentralization, message=msg)
