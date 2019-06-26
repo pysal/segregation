@@ -1,16 +1,24 @@
-"""Calculate population accessibility."""
+"""Calculate street network-based segregation measures."""
 
 __author__ = "Elijah Knaap <elijah.knaap@ucr.edu> Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr.edu>"
 
 import numpy as np
 import pandas as pd
-import pandana as pdna
-from urbanaccess.osm.load import ua_network_from_bbox
-from osmnx import project_gdf
+from warnings import warn
+from segregation.util import project_gdf
 import os
 import sys
+try:
+    import pandana as pdna
+    from urbanaccess.osm.load import ua_network_from_bbox
+except ImportError:
+    warn(
+        "You need pandana and urbanaccess to work with segregation's network module\n"
+        "You can install them with  `pip install urbanaccess pandana` "
+        "or `conda install -c udst pandana urbanaccess`")
 
 
+# This class allows us to hide the diagnostic messages from urbanaccess if the `quiet` flag is set
 class _HiddenPrints:  # from https://stackoverflow.com/questions/8391411/suppress-calls-to-print-python
     def __enter__(self):
         self._original_stdout = sys.stdout
@@ -32,6 +40,8 @@ def get_network(geodataframe, maxdist=5000, quiet=True, **kwargs):
         Total distance (in meters) of the network queries you may need.
         This is used to buffer the network to ensure theres enough to satisfy
         your largest query, otherwise there may be edge effects.
+    quiet: bool
+        If True, diagnostic messages from urbanaccess will be suppressed
     **kwargs : dict
         additional kwargs passed through to
         urbanaccess.ua_network_from_bbox
@@ -49,11 +59,10 @@ def get_network(geodataframe, maxdist=5000, quiet=True, **kwargs):
     >>>
 
     """
+
     gdf = geodataframe.copy()
 
-    assert gdf.crs == {
-        'init': 'epsg:4326'
-    }, "geodataframe must be in epsg 4326"
+    assert gdf.crs['init'] == 'epsg:4326', "geodataframe must be in epsg 4326"
 
     gdf = project_gdf(gdf)
     gdf = gdf.buffer(maxdist)
@@ -78,7 +87,8 @@ def calc_access(geodataframe,
                 network,
                 distance=2000,
                 decay="linear",
-                variables=None):
+                variables=None,
+                precompute=True):
     """Calculate access to population groups.
 
     Parameters
@@ -89,7 +99,7 @@ def calc_access(geodataframe,
         pandana.Network instance. This is likely created with `get_network` or
         via helper functions from OSMnet or UrbanAccess.
     distance : int
-        maximum distance to consider `accessible` (the default is 5000).
+        maximum distance to consider `accessible` (the default is 2000).
     decay : str
         decay type pandana should use "linear", "exp", or "flat"
         (which means no decay). The default is "linear".
@@ -106,7 +116,8 @@ def calc_access(geodataframe,
         on node_ids
 
     """
-    network.precompute(distance)
+    if precompute:
+        network.precompute(distance)
 
     geodataframe["node_ids"] = network.get_node_ids(geodataframe.centroid.x,
                                                     geodataframe.centroid.y)
@@ -130,7 +141,23 @@ def calc_access(geodataframe,
 
 
 def local_entropy(gdf, groups):
+    """Calculate local entropy scores.
 
+    Parameters
+    ----------
+    gdf : geopandas.GeoDataFrame
+        Description of parameter `gdf`.
+    groups : list
+        list of columns on gdf representing population groups for which the
+        entropy score should be calculated
+
+    Returns
+    -------
+    pandas.Series
+        pandas Series whose values represent local entropy scores for each
+        input location
+
+    """
     gdf = gdf.copy()
 
     tau_p = gdf[groups].sum(
@@ -148,7 +175,25 @@ def local_entropy(gdf, groups):
 
 
 def total_entropy(gdf, groups):
+    """Calculate entropy score.
 
+    Parameters
+    ----------
+    gdf : geopandas.GeoDataFrame
+         A GeoPandas GeoDataFrame with rows as observations (e.g. tracts)
+         and columns as population groups
+          .
+    groups : list
+        list of columns on gdf representing population groups for which the
+        entropy score should be calculated
+        into consideration.
+
+    Returns
+    -------
+    float
+        total entropy statistic.
+
+    """
     gdf = gdf.copy()
 
     T = gdf[groups].sum().sum()  # total population (sum of all group sums)
@@ -162,21 +207,3 @@ def total_entropy(gdf, groups):
     E = -(pi_m * np.log(pi_m) / np.log(m)).sum()
 
     return E
-
-
-def nbsit(gdf, groups):
-
-    T = gdf[groups].sum().sum()  # total population (sum of all group sums)
-
-    Ep = local_entropy(gdf, groups)
-    E = total_entropy(gdf, groups)
-
-    total = T * E
-
-    tau_p = gdf[groups].sum(axis=1)  # overall density
-
-    t = tau_p.mul(Ep, axis=0)
-
-    H = 1 - (t.sum() / total)
-
-    return H

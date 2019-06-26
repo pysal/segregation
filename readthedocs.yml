@@ -11,9 +11,6 @@ formats: all
 python:
     version: 3.7
     install:
-        - requirements: requirements.txt
+        - requirements: requirements_docs.txt
         - method: pip
           path: .
-          extra_requirements:
-              - tests
-              - docs

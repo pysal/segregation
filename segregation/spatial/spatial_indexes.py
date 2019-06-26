@@ -10,7 +10,8 @@ import geopandas as gpd
 import warnings
 import libpysal
 
-from libpysal.weights import Queen, KNN
+from libpysal.weights import Queen, Kernel, lag_spatial
+from libpysal.weights.util import fill_diagonal
 from numpy import inf
 from sklearn.metrics.pairwise import manhattan_distances, euclidean_distances
 from scipy.ndimage.interpolation import shift
@@ -19,8 +20,38 @@ from scipy.sparse.csgraph import floyd_warshall
 from scipy.sparse import csr_matrix
 
 from segregation.aspatial.aspatial_indexes import _dissim
-
+from segregation.aspatial.multigroup_aspatial_indexes import Multi_Information_Theory
+from segregation.network import calc_access
 from libpysal.weights.util import attach_islands
+
+# suppress numpy divide by zero warnings because it occurs a lot during the
+# calculation of many indices
+np.seterr(divide='ignore', invalid='ignore')
+
+
+def _build_local_environment(data, groups, w):
+    """Convert observations into spatially-weighted sums.
+
+    Parameters
+    ----------
+    data : DataFrame
+        dataframe with local observations
+    w : libpysal.weights object
+        weights matrix defining the local environment
+
+    Returns
+    -------
+    DataFrame
+        Spatialized data
+
+    """
+    new_data = []
+    w = fill_diagonal(w)
+    for y in data[groups]:
+        new_data.append(lag_spatial(w, data[y]))
+    new_data = pd.DataFrame(dict(zip(groups, new_data)))
+    return new_data
+
 
 def _return_length_weighted_w(data):
     """
@@ -38,46 +69,53 @@ def _return_length_weighted_w(data):
     Currently it's not making any projection.
 
     """
-    
-    w = libpysal.weights.Rook.from_dataframe(data, 
-                                             ids = data.index.tolist(),
-                                             geom_col = data._geometry_column_name)
-    
+
+    w = libpysal.weights.Rook.from_dataframe(
+        data, ids=data.index.tolist(), geom_col=data._geometry_column_name)
+
     if (len(w.islands) == 0):
         w = w
     else:
         warnings('There are some islands in the GeoDataFrame.')
-        w_aux = libpysal.weights.KNN.from_dataframe(data, 
-                                                    ids = data.index.tolist(),
-                                                    geom_col = data._geometry_column_name,
-                                                    k = 1)
+        w_aux = libpysal.weights.KNN.from_dataframe(
+            data,
+            ids=data.index.tolist(),
+            geom_col=data._geometry_column_name,
+            k=1)
         w = attach_islands(w, w_aux)
-    
+
     adjlist = w.to_adjlist()
-    islands = pd.DataFrame.from_records([{'focal':island, 'neighbor':island, 'weight':0} for island in w.islands])
+    islands = pd.DataFrame.from_records([{
+        'focal': island,
+        'neighbor': island,
+        'weight': 0
+    } for island in w.islands])
     merged = adjlist.merge(data.geometry.to_frame('geometry'), left_on='focal',
                            right_index=True, how='left')\
                     .merge(data.geometry.to_frame('geometry'), left_on='neighbor',
                            right_index=True, how='left', suffixes=("_focal", "_neighbor"))\
-    
+
     # Transforming from pandas to geopandas
     merged = gpd.GeoDataFrame(merged, geometry='geometry_focal')
     merged['geometry_neighbor'] = gpd.GeoSeries(merged.geometry_neighbor)
-    
+
     # Getting the shared boundaries
-    merged['shared_boundary'] = merged.geometry_focal.intersection(merged.set_geometry('geometry_neighbor'))
-    
+    merged['shared_boundary'] = merged.geometry_focal.intersection(
+        merged.set_geometry('geometry_neighbor'))
+
     # Putting it back to a matrix
     merged['weight'] = merged.set_geometry('shared_boundary').length
     merged_with_islands = pd.concat((merged, islands))
-    length_weighted_w = libpysal.weights.W.from_adjlist(merged_with_islands[['focal', 'neighbor', 'weight']])
+    length_weighted_w = libpysal.weights.W.from_adjlist(
+        merged_with_islands[['focal', 'neighbor', 'weight']])
     for island in w.islands:
         length_weighted_w.neighbors[island] = []
         del length_weighted_w.weights[island]
-    
+
     length_weighted_w._reset()
-    
+
     return length_weighted_w
+
 
 __all__ = [
     'Spatial_Prox_Prof', 'Spatial_Dissim', 'Boundary_Spatial_Dissim',
@@ -85,8 +123,9 @@ __all__ = [
     'Distance_Decay_Exposure', 'Spatial_Proximity', 'Absolute_Clustering',
     'Relative_Clustering', 'Delta', 'Absolute_Concentration',
     'Relative_Concentration', 'Absolute_Centralization',
-    'Relative_Centralization'
+    'Relative_Centralization', 'SpatialInformationTheory'
 ]
+
 
 def _spatial_prox_profile(data, group_pop_var, total_pop_var, m=1000):
     """
@@ -167,7 +206,9 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, m=1000):
         g_t_i = np.where(data.group_pop_var / data.total_pop_var >= t, True,
                          False)
         k = g_t_i.sum()
-        sub_delta_ij = delta[g_t_i,:][:,g_t_i]  # i and j only varies in the units subset within the threshold in eta_t of Hong (2014).
+        sub_delta_ij = delta[
+            g_t_i, :][:,
+                      g_t_i]  # i and j only varies in the units subset within the threshold in eta_t of Hong (2014).
         den = sub_delta_ij.sum()
         eta_t = (k**2 - k) / den
         return eta_t
@@ -866,8 +907,11 @@ class Perimeter_Area_Ratio_Spatial_Dissim:
         self._function = _perimeter_area_ratio_spatial_dissim
 
 
-def _distance_decay_isolation(data, group_pop_var, total_pop_var, alpha=0.6,
-                       beta=0.5):
+def _distance_decay_isolation(data,
+                              group_pop_var,
+                              total_pop_var,
+                              alpha=0.6,
+                              beta=0.5):
     """
     Calculation of Distance Decay Isolation index
 
@@ -960,7 +1004,7 @@ def _distance_decay_isolation(data, group_pop_var, total_pop_var, alpha=0.6,
 
     Pij = np.multiply(c, t) / np.sum(np.multiply(c, t), axis=1)
     DDxPx = (np.array(x / X) *
-            np.nansum(np.multiply(Pij, np.array(x / t)), axis=1)).sum()
+             np.nansum(np.multiply(Pij, np.array(x / t)), axis=1)).sum()
 
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
 
@@ -1054,15 +1098,19 @@ class Distance_Decay_Isolation:
     def __init__(self, data, group_pop_var, total_pop_var, alpha=0.6,
                  beta=0.5):
 
-        aux = _distance_decay_isolation(data, group_pop_var, total_pop_var, alpha,
-                                 beta)
+        aux = _distance_decay_isolation(data, group_pop_var, total_pop_var,
+                                        alpha, beta)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _distance_decay_isolation
 
 
-def _distance_decay_exposure(data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5):
+def _distance_decay_exposure(data,
+                             group_pop_var,
+                             total_pop_var,
+                             alpha=0.6,
+                             beta=0.5):
     """
     Calculation of Distance Decay Exposure index
 
@@ -1250,8 +1298,8 @@ class Distance_Decay_Exposure:
     def __init__(self, data, group_pop_var, total_pop_var, alpha=0.6,
                  beta=0.5):
 
-        aux = _distance_decay_exposure(data, group_pop_var, total_pop_var, alpha,
-                                beta)
+        aux = _distance_decay_exposure(data, group_pop_var, total_pop_var,
+                                       alpha, beta)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -1521,10 +1569,10 @@ def _absolute_clustering(data,
             'Group of interest population must equal or lower than the total population of the units.'
         )
 
-    data = data.assign(xi = data.group_pop_var,
-                       yi = data.total_pop_var - data.group_pop_var,
-                       c_lons = data.centroid.map(lambda p: p.x),
-                       c_lats = data.centroid.map(lambda p: p.y))
+    data = data.assign(xi=data.group_pop_var,
+                       yi=data.total_pop_var - data.group_pop_var,
+                       c_lons=data.centroid.map(lambda p: p.x),
+                       c_lats=data.centroid.map(lambda p: p.y))
 
     X = data.xi.sum()
 
@@ -1703,10 +1751,10 @@ def _relative_clustering(data,
             'Group of interest population must equal or lower than the total population of the units.'
         )
 
-    data = data.assign(xi = data.group_pop_var,
-                       yi = data.total_pop_var - data.group_pop_var,
-                       c_lons = data.centroid.map(lambda p: p.x),
-                       c_lats = data.centroid.map(lambda p: p.y))
+    data = data.assign(xi=data.group_pop_var,
+                       yi=data.total_pop_var - data.group_pop_var,
+                       c_lons=data.centroid.map(lambda p: p.x),
+                       c_lats=data.centroid.map(lambda p: p.y))
 
     X = data.xi.sum()
     Y = data.yi.sum()
@@ -2816,3 +2864,138 @@ class Relative_Centralization:
         self.core_data = aux[1]
         self.center_values = aux[2]
         self._function = _relative_centralization
+
+
+class SpatialInformationTheory(Multi_Information_Theory):
+    """Spatial Multigroup Information Theory Index.
+
+    This class calculates the spatial version of the multigroup information
+    theory index. The data are "spatialized" by converting each observation
+    to a "local environment" by creating a weighted sum of the focal unit with
+    its neighboring observations, where the neighborhood is defined by a libpysal
+    weights matrix of a pandana Network instance.
+
+    Parameters
+    ----------
+    data : geopandas.GeoDataFrame
+        geodataframe with
+    groups : list
+        list of columns on gdf representing population groups for which the SIT
+        index should be calculated
+    network : pandana.Network
+        pandana.Network instance. This is likely created with `get_network` or
+        via helper functions from OSMnet or UrbanAccess.
+    distance : int
+        maximum distance to consider `accessible` (the default is 2000).
+    decay : str
+        decay type pandana should use "linear", "exp", or "flat"
+        (which means no decay). The default is "linear".
+
+    """
+
+    def __init__(self,
+                 data,
+                 groups,
+                 network=None,
+                 w=None,
+                 decay='linear',
+                 distance=2000):
+
+        if w and network:
+            raise (
+                "must pass either a pandana network or a pysal weights object but not both"
+            )
+        elif network:
+            df = calc_access(data,
+                             variables=groups,
+                             network=network,
+                             distance=distance,
+                             decay=decay)
+            groups = ["acc_" + group for group in groups]
+        else:
+            df = _build_local_environment(data, groups, w)
+        super().__init__(df, groups)
+
+
+def compute_segregation_profile(gdf,
+                                groups=None,
+                                distances=None,
+                                network=None,
+                                decay='linear',
+                                function='triangular',
+                                precompute=True):
+    """Compute multiscalar segregation profile.
+
+    This function calculates several Spatial Information Theory indices with
+    increasing distance parameters.
+
+    Parameters
+    ----------
+    gdf : geopandas.GeoDataFrame
+        geodataframe with rows as observations and columns as population
+        variables. Note that if using a network distance, the coordinate
+        system for this gdf should be 4326. If using euclidian distance,
+        this must be projected into planar coordinates like state plane or UTM.
+    groups : list
+        list of variables .
+    distances : list
+        list of floats representing bandwidth distances that define a local
+        environment.
+    network : pandana.Network (optional)
+        A pandana.Network likely created with
+        `segregation.network.get_network`.
+    decay : str (optional)
+        decay type to be used in pandana accessibility calculation (the
+        default is 'linear').
+    function: 'str' (optional)
+        which weighting function should be passed to libpysal.weights.Kernel
+        must be one of: 'triangular','uniform','quadratic','quartic','gaussian'
+    precompute: bool
+        Whether the pandana.Network instance should precompute the range
+        queries.This is true by default, but if you plan to calculate several
+        segregation profiles using the same network, then you can set this
+        parameter to `False` to avoid precomputing repeatedly inside the
+        function
+
+    Returns
+    -------
+    dict
+        dictionary with distances as keys and SIT statistics as values
+
+    Notes
+    -----
+    Based on Sean F. Reardon, Stephen A. Matthews, David O’Sullivan, Barrett A. Lee, Glenn Firebaugh, Chad R. Farrell, & Kendra Bischoff. (2008). The Geographic Scale of Metropolitan Racial Segregation. Demography, 45(3), 489–514. https://doi.org/10.1353/dem.0.0019.
+
+    Reference: :cite:`Reardon2008`.
+
+    """
+    gdf = gdf.copy()
+    gdf[groups] = gdf[groups].astype(float)
+    indices = {}
+    indices[0] = Multi_Information_Theory(gdf, groups).statistic
+
+    if network:
+        if not gdf.crs['init'] == 'epsg:4326':
+            gdf = gdf.to_crs(epsg=4326)
+        groups2 = ['acc_' + group for group in groups]
+        if precompute:
+            maxdist = max(distances)
+            network.precompute(maxdist)
+        for distance in distances:
+            distance = np.float(distance)
+            access = calc_access(gdf,
+                                 network,
+                                 decay=decay,
+                                 variables=groups,
+                                 distance=distance,
+                                 precompute=False)
+            sit = Multi_Information_Theory(access, groups2)
+            indices[distance] = sit.statistic
+    else:
+        for distance in distances:
+            w = Kernel.from_dataframe(gdf,
+                                      bandwidth=distance,
+                                      function=function)
+            sit = SpatialInformationTheory(gdf, groups, w=w)
+            indices[distance] = sit.statistic
+    return indices

@@ -2,7 +2,6 @@ name: segregation
 channels:
   - defaults
   - conda-forge
-  - udst
 dependencies:
   - pandas
   - geopandas
@@ -11,9 +10,5 @@ dependencies:
   - seaborn
   - numpy
   - scipy
-  - urbanaccess
-  - pandana
-  - osmnx
   - pip
-  - pip:
-    - git+git://github.com/pysal/libpysal.git
+  - libpysal
