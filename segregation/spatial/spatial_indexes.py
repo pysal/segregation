@@ -10,7 +10,7 @@ import geopandas as gpd
 import warnings
 import libpysal
 
-from libpysal.weights import Queen, lag_spatial
+from libpysal.weights import Queen, Kernel, lag_spatial
 from libpysal.weights.util import fill_diagonal
 from numpy import inf
 from sklearn.metrics.pairwise import manhattan_distances, euclidean_distances
@@ -2915,3 +2915,87 @@ class SpatialInformationTheory(Multi_Information_Theory):
         else:
             df = _build_local_environment(data, groups, w)
         super().__init__(df, groups)
+
+
+def compute_segregation_profile(gdf,
+                                groups=None,
+                                distances=None,
+                                network=None,
+                                decay='linear',
+                                function='triangular',
+                                precompute=True):
+    """Compute multiscalar segregation profile.
+
+    This function calculates several Spatial Information Theory indices with
+    increasing distance parameters.
+
+    Parameters
+    ----------
+    gdf : geopandas.GeoDataFrame
+        geodataframe with rows as observations and columns as population
+        variables. Note that if using a network distance, the coordinate
+        system for this gdf should be 4326. If using euclidian distance,
+        this must be projected into planar coordinates like state plane or UTM.
+    groups : list
+        list of variables .
+    distances : list
+        list of floats representing bandwidth distances that define a local
+        environment.
+    network : pandana.Network (optional)
+        A pandana.Network likely created with
+        `segregation.network.get_network`.
+    decay : str (optional)
+        decay type to be used in pandana accessibility calculation (the
+        default is 'linear').
+    function: 'str' (optional)
+        which weighting function should be passed to libpysal.weights.Kernel
+        must be one of: 'triangular','uniform','quadratic','quartic','gaussian'
+    precompute: bool
+        Whether the pandana.Network instance should precompute the range
+        queries.This is true by default, but if you plan to calculate several
+        segregation profiles using the same network, then you can set this
+        parameter to `False` to avoid precomputing repeatedly inside the
+        function
+
+    Returns
+    -------
+    dict
+        dictionary with distances as keys and SIT statistics as values
+
+    Notes
+    -----
+    Based on Sean F. Reardon, Stephen A. Matthews, David O’Sullivan, Barrett A. Lee, Glenn Firebaugh, Chad R. Farrell, & Kendra Bischoff. (2008). The Geographic Scale of Metropolitan Racial Segregation. Demography, 45(3), 489–514. https://doi.org/10.1353/dem.0.0019.
+
+    Reference: :cite:`Reardon2008`.
+
+    """
+    gdf = gdf.copy()
+    gdf[groups] = gdf[groups].astype(float)
+    indices = {}
+    indices[0] = Multi_Information_Theory(gdf, groups).statistic
+
+    if network:
+        if not gdf.crs['init'] == 'epsg:4326':
+            gdf = gdf.to_crs(epsg=4326)
+        groups2 = ['acc_' + group for group in groups]
+        if precompute:
+            maxdist = max(distances)
+            network.precompute(maxdist)
+        for distance in distances:
+            distance = np.float(distance)
+            access = calc_access(gdf,
+                                 network,
+                                 decay=decay,
+                                 variables=groups,
+                                 distance=distance,
+                                 precompute=False)
+            sit = Multi_Information_Theory(access, groups2)
+            indices[distance] = sit.statistic
+    else:
+        for distance in distances:
+            w = Kernel.from_dataframe(gdf,
+                                      bandwidth=distance,
+                                      function=function)
+            sit = SpatialInformationTheory(gdf, groups, w=w)
+            indices[distance] = sit.statistic
+    return indices
