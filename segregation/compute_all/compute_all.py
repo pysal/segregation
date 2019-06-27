@@ -275,9 +275,9 @@ def _compute_all_segregation(data, group_pop_var, total_pop_var):
     
     '''
 
-    x = Compute_All_Aspatial_Segregation(data, group_pop_var,
+    x = ComputeAllAspatialSegregation(data, group_pop_var,
                                      total_pop_var).computed
-    y = Compute_All_Spatial_Segregation(data, group_pop_var, total_pop_var).computed
+    y = ComputeAllSpatialSegregation(data, group_pop_var, total_pop_var).computed
 
     z = pd.concat([x, y], ignore_index = True)
 
