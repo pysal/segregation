@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from segregation.aspatial import Multi_Diversity
+from segregation.aspatial import MultiDiversity
 
 
 class Multi_Diversity_Tester(unittest.TestCase):
@@ -10,10 +10,10 @@ class Multi_Diversity_Tester(unittest.TestCase):
         s_map = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
         groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
         df = s_map[groups_list]
-        index = Multi_Diversity(df, groups_list)
+        index = MultiDiversity(df, groups_list)
         np.testing.assert_almost_equal(index.statistic, 0.9733112243997906)
         
-        index_norm = Multi_Diversity(df, groups_list, normalized = True)
+        index_norm = MultiDiversity(df, groups_list, normalized = True)
         np.testing.assert_almost_equal(index_norm.statistic, 0.7020956383415715)
 
 

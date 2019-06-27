@@ -11,19 +11,43 @@ import warnings
 from scipy.stats import norm
 from scipy.optimize import minimize
 
+from segregation.util.util import _dep_message, DeprecationHelper
+
+# Including old and new api in __all__ so users can use both
 
 __all__ = ['Dissim', 
-           'Gini_Seg', 
+           
+           'Gini_Seg',
+           'GiniSeg',
+           
            'Entropy', 
            'Isolation',
            'Exposure',
            'Atkinson',
+           
            'Correlation_R',
+           'CorrelationR',
+           
            'Con_Prof',
+           'ConProf',
+           
            'Modified_Dissim',
+           'ModifiedDissim',
+           
            'Modified_Gini_Seg',
+           'ModifiedGiniSeg',
+           
            'Bias_Corrected_Dissim',
-           'Density_Corrected_Dissim']
+           'BiasCorrectedDissim',
+           
+           'Density_Corrected_Dissim',
+           'DensityCorrectedDissim']
+
+# The Deprecation calls of the classes are located in the end of this script #
+
+
+
+
 
 
 def _dissim(data, group_pop_var, total_pop_var):
@@ -224,7 +248,7 @@ def _gini_seg(data, group_pop_var, total_pop_var):
     return G, core_data
 
 
-class Gini_Seg:
+class GiniSeg:
     """
     Classic Gini Segregation Index
     
@@ -255,7 +279,7 @@ class Gini_Seg:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.aspatial import Gini_Seg
+    >>> from segregation.aspatial import GiniSeg
     
     Secondly, we need to read the data:
     
@@ -271,7 +295,7 @@ class Gini_Seg:
     
     The value is estimated below.
     
-    >>> gini_seg_index = Gini_Seg(df, 'tractid', 'pop10')
+    >>> gini_seg_index = GiniSeg(df, 'tractid', 'pop10')
     >>> gini_seg_index.statistic
     0.44620350030600087
        
@@ -917,7 +941,7 @@ def _correlationr(data, group_pop_var, total_pop_var):
     return V, core_data
 
 
-class Correlation_R:
+class CorrelationR:
     """
     Classic Correlation Ratio Index
 
@@ -951,7 +975,7 @@ class Correlation_R:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.aspatial import Correlation_R
+    >>> from segregation.aspatial import CorrelationR
     
     Secondly, we need to read the data:
     
@@ -967,7 +991,7 @@ class Correlation_R:
     
     The value is estimated below.
     
-    >>> correlationr_index = Correlation_R(df, 'tractid', 'pop10')
+    >>> correlationr_index = CorrelationR(df, 'tractid', 'pop10')
     >>> correlationr_index.statistic
     0.048716810856363923
     
@@ -1065,7 +1089,7 @@ def _conprof(data, group_pop_var, total_pop_var, m = 1000):
     return R, grid, curve, core_data
 
 
-class Con_Prof:
+class ConProf:
     """
     Concentration Profile Index
 
@@ -1103,7 +1127,7 @@ class Con_Prof:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.aspatial import Con_Prof
+    >>> from segregation.aspatial import ConProf
     
     Secondly, we need to read the data:
     
@@ -1119,7 +1143,7 @@ class Con_Prof:
     
     The value is estimated below.
     
-    >>> conprof_index = Con_Prof(df, 'tractid', 'pop10')
+    >>> conprof_index = ConProf(df, 'tractid', 'pop10')
     >>> conprof_index.statistic
     0.06393365660089256
     
@@ -1237,7 +1261,7 @@ def _modified_dissim(data, group_pop_var, total_pop_var, iterations = 500):
     return Dct, core_data
 
 
-class Modified_Dissim:
+class ModifiedDissim:
     """
     Calculation of Modified Dissimilarity index
 
@@ -1274,7 +1298,7 @@ class Modified_Dissim:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.aspatial import Modified_Dissim
+    >>> from segregation.aspatial import ModifiedDissim
     
     Secondly, we need to read the data:
     
@@ -1291,7 +1315,7 @@ class Modified_Dissim:
     The value is estimated below.
     
     >>> np.random.seed(1234)
-    >>> modified_dissim_index = Modified_Dissim(df, 'tractid', 'pop10')
+    >>> modified_dissim_index = ModifiedDissim(df, 'tractid', 'pop10')
     >>> modified_dissim_index.statistic
     0.30009504639081996
      
@@ -1390,7 +1414,7 @@ def _modified_gini_seg(data, group_pop_var, total_pop_var, iterations = 500):
     return Gct, core_data
 
 
-class Modified_Gini_Seg:
+class ModifiedGiniSeg:
     """
     Calculation of Modified Gini Segregation index
 
@@ -1427,7 +1451,7 @@ class Modified_Gini_Seg:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.aspatial import Modified_Gini_Seg
+    >>> from segregation.aspatial import ModifiedGiniSeg
     
     Secondly, we need to read the data:
     
@@ -1444,7 +1468,7 @@ class Modified_Gini_Seg:
     The value is estimated below.
     
     >>> np.random.seed(1234)
-    >>> modified_gini_seg_index = Modified_Gini_Seg(df, 'tractid', 'pop10')
+    >>> modified_gini_seg_index = ModifiedGiniSeg(df, 'tractid', 'pop10')
     >>> modified_gini_seg_index.statistic
     0.4280279611418648
      
@@ -1548,7 +1572,7 @@ def _bias_corrected_dissim(data, group_pop_var, total_pop_var, B = 500):
     return Dbc, core_data
 
 
-class Bias_Corrected_Dissim:
+class BiasCorrectedDissim:
     """
     Calculation of Bias Corrected Dissimilarity index
 
@@ -1585,7 +1609,7 @@ class Bias_Corrected_Dissim:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.aspatial import Bias_Corrected_Dissim
+    >>> from segregation.aspatial import BiasCorrectedDissim
     
     Secondly, we need to read the data:
     
@@ -1602,7 +1626,7 @@ class Bias_Corrected_Dissim:
     The value is estimated below.
     
     >>> np.random.seed(1234)
-    >>> bias_corrected_dissim_index = Bias_Corrected_Dissim(df, 'tractid', 'pop10')
+    >>> bias_corrected_dissim_index = BiasCorrectedDissim(df, 'tractid', 'pop10')
     >>> bias_corrected_dissim_index.statistic
     0.31484636081876954
      
@@ -1712,7 +1736,7 @@ def _density_corrected_dissim(data, group_pop_var, total_pop_var, xtol = 1e-5):
     return Ddc, core_data
 
 
-class Density_Corrected_Dissim:
+class DensityCorrectedDissim:
     """
     Calculation of Density Corrected Dissimilarity index
 
@@ -1749,7 +1773,7 @@ class Density_Corrected_Dissim:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.aspatial import Density_Corrected_Dissim
+    >>> from segregation.aspatial import DensityCorrectedDissim
     
     Secondly, we need to read the data:
     
@@ -1765,7 +1789,7 @@ class Density_Corrected_Dissim:
     
     The value is estimated below.
     
-    >>> density_corrected_dissim_index = Density_Corrected_Dissim(df, 'tractid', 'pop10')
+    >>> density_corrected_dissim_index = DensityCorrectedDissim(df, 'tractid', 'pop10')
     >>> density_corrected_dissim_index.statistic
     0.29350643204887517
      
@@ -1784,3 +1808,38 @@ class Density_Corrected_Dissim:
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _density_corrected_dissim
+        
+
+
+
+
+
+
+
+
+
+
+
+
+# Deprecation Calls
+        
+msg = _dep_message("Gini_Seg", "GiniSeg")
+Gini_Seg = DeprecationHelper(GiniSeg, message=msg)
+
+msg = _dep_message("Correlation_R", "CorrelationR")
+Correlation_R = DeprecationHelper(CorrelationR, message=msg)
+
+msg = _dep_message("Con_Prof", "ConProf")
+Con_Prof = DeprecationHelper(ConProf, message=msg)
+
+msg = _dep_message("Modified_Dissim", "ModifiedDissim")
+Modified_Dissim = DeprecationHelper(ModifiedDissim, message=msg)
+
+msg = _dep_message("Modified_Gini_Seg", "ModifiedGiniSeg")
+Modified_Gini_Seg = DeprecationHelper(ModifiedGiniSeg, message=msg)
+
+msg = _dep_message("Bias_Corrected_Dissim", "BiasCorrectedDissim")
+Bias_Corrected_Dissim = DeprecationHelper(BiasCorrectedDissim, message=msg)
+
+msg = _dep_message("Density_Corrected_Dissim", "DensityCorrectedDissim")
+Density_Corrected_Dissim = DeprecationHelper(DensityCorrectedDissim, message=msg)

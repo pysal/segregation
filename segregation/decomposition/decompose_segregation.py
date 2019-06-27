@@ -6,10 +6,14 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Elijah Knaap <elijah.knaap@ucr.e
 
 
 import warnings
-from segregation.util.util import _generate_counterfactual
+from segregation.util.util import _generate_counterfactual, _dep_message, DeprecationHelper
 
-__all__ = ['Decompose_Segregation']
+# Including old and new api in __all__ so users can use both
 
+__all__ = ['Decompose_Segregation',
+           'DecomposeSegregation']
+
+# The Deprecation calls of the classes are located in the end of this script #
 
 def _decompose_segregation(index1,
                            index2,
@@ -79,7 +83,7 @@ def _decompose_segregation(index1,
     return C_S, C_A, df1, df2, counterfac_df1, counterfac_df2, counterfactual_approach
 
 
-class Decompose_Segregation:
+class DecomposeSegregation:
     """Decompose segregation differences into spatial and attribute components.
 
     Given two segregation indices of the same type, use Shapley decomposition
@@ -287,3 +291,15 @@ class Decompose_Segregation:
                                       ax=axs[1, 1])
             axs[1, 1].title.set_text('Original Second Context Composition')
             axs[1, 1].axis('off')
+
+
+
+
+
+
+
+
+# Deprecation Calls
+
+msg = _dep_message("Decompose_Segregation", "DecomposeSegregation")
+Decompose_Segregation = DeprecationHelper(DecomposeSegregation, message=msg)

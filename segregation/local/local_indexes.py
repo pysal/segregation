@@ -10,21 +10,40 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Elijah Knaap <elijah.knaap@ucr.e
 import numpy as np
 import libpysal as lps
 
-from segregation.spatial import Relative_Centralization
+from segregation.spatial import RelativeCentralization
+
+from segregation.util.util import _dep_message, DeprecationHelper
+
+# Including old and new api in __all__ so users can use both
+
+__all__ = [
+    'Multi_Location_Quotient',
+    'MultiLocationQuotient',
+    
+    'Multi_Local_Diversity',
+    'MultiLocalDiversity',
+    
+    'Multi_Local_Entropy',
+    'MultiLocalEntropy',
+    
+    'Multi_Local_Simpson_Interaction',
+    'MultiLocalSimpsonInteraction',
+    
+    'Multi_Local_Simpson_Concentration',
+    'MultiLocalSimpsonConcentration',
+    
+    'Local_Relative_Centralization',
+    'LocalRelativeCentralization'
+]
+
+# The Deprecation calls of the classes are located in the end of this script #
+
+
+
 
 # suppress numpy divide by zero warnings because it occurs a lot during the
 # calculation of many indices
 np.seterr(divide='ignore', invalid='ignore')
-
-
-__all__ = [
-    'Multi_Location_Quotient',
-    'Multi_Local_Diversity',
-    'Multi_Local_Entropy',
-    'Multi_Local_Simpson_Interaction',
-    'Multi_Local_Simpson_Concentration',
-    'Local_Relative_Centralization'
-]
 
 def _multi_location_quotient(data, groups):
     """
@@ -73,7 +92,7 @@ def _multi_location_quotient(data, groups):
     return multi_LQ, core_data
 
 
-class Multi_Location_Quotient:
+class MultiLocationQuotient:
     """
     Calculation of Location Quotient index for each group and unit
 
@@ -103,7 +122,7 @@ class Multi_Location_Quotient:
     
     >>> import libpysal
     >>> import geopandas as gpd
-    >>> from segregation.local import Multi_Location_Quotient
+    >>> from segregation.local import MultiLocationQuotient
     
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
@@ -112,7 +131,7 @@ class Multi_Location_Quotient:
     
     The value is estimated below.
     
-    >>> index = Multi_Location_Quotient(input_df, groups_list)
+    >>> index = MultiLocationQuotient(input_df, groups_list)
     >>> index.statistics[0:3,0:3]
     array([[1.36543221, 0.07478049, 0.16245651],
            [1.18002164, 0.        , 0.14836683],
@@ -180,7 +199,7 @@ def _multi_local_diversity(data, groups):
     return multi_LD, core_data
 
 
-class Multi_Local_Diversity:
+class MultiLocalDiversity:
     """
     Calculation of Local Diversity index for each group and unit
 
@@ -209,7 +228,7 @@ class Multi_Local_Diversity:
     
     >>> import libpysal
     >>> import geopandas as gpd
-    >>> from segregation.local import Multi_Local_Diversity
+    >>> from segregation.local import MultiLocalDiversity
     
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
@@ -218,7 +237,7 @@ class Multi_Local_Diversity:
     
     The value is estimated below.
     
-    >>> index = Multi_Local_Diversity(input_df, groups_list)
+    >>> index = MultiLocalDiversity(input_df, groups_list)
     >>> index.statistics[0:10] # Values of first 10 units
     array([0.34332326, 0.56109229, 0.70563225, 0.29713472, 0.22386084,
            0.29742517, 0.12322789, 0.11274579, 0.09402405, 0.25129616])
@@ -283,7 +302,7 @@ def _multi_local_entropy(data, groups):
     return multi_LE, core_data
 
 
-class Multi_Local_Entropy:
+class MultiLocalEntropy:
     """
     Calculation of Local Entropy index for each unit
 
@@ -312,7 +331,7 @@ class Multi_Local_Entropy:
     
     >>> import libpysal
     >>> import geopandas as gpd
-    >>> from segregation.local import Multi_Local_Entropy
+    >>> from segregation.local import MultiLocalEntropy
     
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
@@ -321,7 +340,7 @@ class Multi_Local_Entropy:
     
     The value is estimated below.
     
-    >>> index = Multi_Local_Entropy(input_df, groups_list)
+    >>> index = MultiLocalEntropy(input_df, groups_list)
     >>> index.statistics[0:10] # Values of first 10 units
     array([0.24765538, 0.40474253, 0.50900607, 0.21433739, 0.16148146,
            0.21454691, 0.08889013, 0.08132889, 0.06782401, 0.18127186])
@@ -391,7 +410,7 @@ def _multi_local_simpson_interaction(data, groups):
     return local_SI, core_data
 
 
-class Multi_Local_Simpson_Interaction:
+class MultiLocalSimpsonInteraction:
     """
     Calculation of Local Simpson Interaction index for each unit
 
@@ -420,7 +439,7 @@ class Multi_Local_Simpson_Interaction:
     
     >>> import libpysal
     >>> import geopandas as gpd
-    >>> from segregation.local import Multi_Local_Simpson_Interaction
+    >>> from segregation.local import MultiLocalSimpsonInteraction
     
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
@@ -429,7 +448,7 @@ class Multi_Local_Simpson_Interaction:
     
     The value is estimated below.
     
-    >>> index = Multi_Local_Simpson_Interaction(input_df, groups_list)
+    >>> index = MultiLocalSimpsonInteraction(input_df, groups_list)
     >>> index.statistics[0:10] # Values of first 10 units
     array([0.15435993, 0.33391595, 0.49909747, 0.1299449 , 0.09805056,
            0.13128178, 0.04447356, 0.0398933 , 0.03723054, 0.11758548])
@@ -504,7 +523,7 @@ def _multi_local_simpson_concentration(data, groups):
     return local_SC, core_data
 
 
-class Multi_Local_Simpson_Concentration:
+class MultiLocalSimpsonConcentration:
     """
     Calculation of Local Simpson concentration index for each unit
 
@@ -533,7 +552,7 @@ class Multi_Local_Simpson_Concentration:
     
     >>> import libpysal
     >>> import geopandas as gpd
-    >>> from segregation.local import Multi_Local_Simpson_Concentration
+    >>> from segregation.local import MultiLocalSimpsonConcentration
     
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
@@ -542,7 +561,7 @@ class Multi_Local_Simpson_Concentration:
     
     The value is estimated below.
     
-    >>> index = Multi_Local_Simpson_Concentration(input_df, groups_list)
+    >>> index = MultiLocalSimpsonConcentration(input_df, groups_list)
     >>> index.statistics[0:10] # Values of first 10 units
     array([0.84564007, 0.66608405, 0.50090253, 0.8700551 , 0.90194944,
            0.86871822, 0.95552644, 0.9601067 , 0.96276946, 0.88241452])
@@ -625,14 +644,14 @@ def _local_relative_centralization(data, group_pop_var, total_pop_var, k_neigh =
         local_data = data.iloc[x,:].copy()
         
         # The center is given by the last position (i.e. the current unit i)
-        local_RCE = Relative_Centralization(local_data, group_pop_var, total_pop_var, center = len(local_data) - 1)
+        local_RCE = RelativeCentralization(local_data, group_pop_var, total_pop_var, center = len(local_data) - 1)
         
         local_RCEs[i] = local_RCE.statistic
         
     return local_RCEs, core_data
 
 
-class Local_Relative_Centralization:
+class LocalRelativeCentralization:
     """
     Calculation of Local Relative Centralization index for each unit
 
@@ -667,7 +686,7 @@ class Local_Relative_Centralization:
     
     >>> import libpysal
     >>> import geopandas as gpd
-    >>> from segregation.local import Local_Relative_Centralization
+    >>> from segregation.local import LocalRelativeCentralization
     
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
@@ -675,7 +694,7 @@ class Local_Relative_Centralization:
     
     The value is estimated below.
     
-    >>> index = Local_Relative_Centralization(input_df, 'BLACK_', 'TOT_POP')
+    >>> index = LocalRelativeCentralization(input_df, 'BLACK_', 'TOT_POP')
     >>> index.statistics[0:10] # Values of first 10 units
     array([ 0.03443055, -0.29063264, -0.19110976,  0.24978919,  0.01252249,
             0.61152941,  0.78917647,  0.53129412,  0.04436346, -0.20216325])
@@ -694,3 +713,29 @@ class Local_Relative_Centralization:
         self.statistics = aux[0]
         self.core_data  = aux[1]
         self._function  = _local_relative_centralization
+        
+        
+        
+
+
+
+
+# Deprecation Calls
+
+msg = _dep_message("Multi_Location_Quotient", "MultiLocationQuotient")
+Multi_Location_Quotient = DeprecationHelper(MultiLocationQuotient, message=msg)
+
+msg = _dep_message("Multi_Local_Diversity", "MultiLocalDiversity")
+Multi_Local_Diversity = DeprecationHelper(MultiLocalDiversity, message=msg)
+
+msg = _dep_message("Multi_Local_Entropy", "MultiLocalEntropy")
+Multi_Local_Entropy = DeprecationHelper(MultiLocalEntropy, message=msg)
+
+msg = _dep_message("Multi_Local_Simpson_Interaction", "MultiLocalSimpsonInteraction")
+Multi_Local_Simpson_Interaction = DeprecationHelper(MultiLocalSimpsonInteraction, message=msg)
+
+msg = _dep_message("Multi_Local_Simpson_Concentration", "MultiLocalSimpsonConcentration")
+Multi_Local_Simpson_Concentration = DeprecationHelper(MultiLocalSimpsonConcentration, message=msg)
+
+msg = _dep_message("Local_Relative_Centralization", "LocalRelativeCentralization")
+Local_Relative_Centralization = DeprecationHelper(LocalRelativeCentralization, message=msg)

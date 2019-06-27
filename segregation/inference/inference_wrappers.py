@@ -9,10 +9,17 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 import warnings
-from segregation.util.util import _generate_counterfactual
+from segregation.util.util import _generate_counterfactual, _dep_message, DeprecationHelper
+
+# Including old and new api in __all__ so users can use both
 
 __all__ = ['Infer_Segregation',
-           'Compare_Segregation']
+           'InferSegregation',
+           
+           'Compare_Segregation',
+           'CompareSegregation']
+
+# The Deprecation calls of the classes are located in the end of this script #
 
 def _infer_segregation(seg_class, iterations_under_null = 500, null_approach = "systematic", two_tailed = True, **kwargs):
     '''
@@ -232,7 +239,7 @@ def _infer_segregation(seg_class, iterations_under_null = 500, null_approach = "
 
 
 
-class Infer_Segregation:
+class InferSegregation:
     '''
     Perform inference for a single segregation measure
 
@@ -489,7 +496,7 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations_under_null = 500, 
 
 
 
-class Compare_Segregation:
+class CompareSegregation:
     '''
     Perform inference comparison for a two segregation measures
 
@@ -565,3 +572,18 @@ class Compare_Segregation:
         plt.axvline(self.est_point_diff, color = 'red')
         plt.title('{} (Diff. value = {})'.format(self._class_name, round(self.est_point_diff, 3)))
         return plt.show()
+    
+    
+    
+    
+    
+
+
+
+# Deprecation Calls
+
+msg = _dep_message("Infer_Segregation", "InferSegregation")
+Infer_Segregation = DeprecationHelper(InferSegregation, message=msg)
+
+msg = _dep_message("Compare_Segregation", "CompareSegregation")
+Compare_Segregation = DeprecationHelper(CompareSegregation, message=msg)

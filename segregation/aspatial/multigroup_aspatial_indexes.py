@@ -5,15 +5,46 @@ Multigroup Aspatial based Segregation Metrics
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
 import numpy as np
-import pandas as pd
 from sklearn.metrics.pairwise import manhattan_distances
 
+from segregation.util.util import _dep_message, DeprecationHelper
+
+# Including old and new api in __all__ so users can use both
+
 __all__ = [
-    'Multi_Dissim', 'Multi_Gini_Seg', 'Multi_Normalized_Exposure',
-    'Multi_Information_Theory', 'Multi_Relative_Diversity',
-    'Multi_Squared_Coefficient_of_Variation', 'Multi_Diversity',
-    'Simpsons_Concentration', 'Simpsons_Interaction', 'Multi_Divergence'
+    'Multi_Dissim', 
+    'MultiDissim',
+    
+    'Multi_Gini_Seg', 
+    'MultiGiniSeg', 
+    
+    'Multi_Normalized_Exposure',
+    'MultiNormalizedExposure',
+    
+    'Multi_Information_Theory', 
+    'MultiInformationTheory', 
+    
+    'Multi_Relative_Diversity',
+    'MultiRelativeDiversity',
+    
+    'Multi_Squared_Coefficient_of_Variation', 
+    'MultiSquaredCoefficientVariation',
+    
+    'Multi_Diversity',
+    'MultiDiversity',
+    
+    'Simpsons_Concentration', 
+    'SimpsonsConcentration', 
+    
+    'Simpsons_Interaction', 
+    'SimpsonsInteraction', 
+    
+    'Multi_Divergence',
+    'MultiDivergence'
 ]
+
+# The Deprecation calls of the classes are located in the end of this script #
+
 # suppress numpy divide by zero warnings because it occurs a lot during the
 # calculation of many indices
 np.seterr(divide='ignore', invalid='ignore')
@@ -70,7 +101,7 @@ def _multi_dissim(data, groups):
     return multi_D, core_data
 
 
-class Multi_Dissim:
+class MultiDissim:
     """
     Calculation of Multigroup Dissimilarity index
 
@@ -99,7 +130,7 @@ class Multi_Dissim:
     
     >>> import libpysal
     >>> import geopandas as gpd
-    >>> from segregation.multigroup_aspatial import Multi_Dissim
+    >>> from segregation.multigroup_aspatial import MultiDissim
     
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
@@ -108,7 +139,7 @@ class Multi_Dissim:
     
     The value is estimated below.
     
-    >>> index = Multi_Dissim(input_df, groups_list)
+    >>> index = MultiDissim(input_df, groups_list)
     >>> index.statistic
     0.41340872573177806
 
@@ -182,7 +213,7 @@ def _multi_gini_seg(data, groups):
     return multi_Gini_Seg, core_data
 
 
-class Multi_Gini_Seg:
+class MultiGiniSeg:
     """
     Calculation of Multigroup Gini Segregation index
 
@@ -211,7 +242,7 @@ class Multi_Gini_Seg:
     
     >>> import libpysal
     >>> import geopandas as gpd
-    >>> from segregation.multigroup_aspatial import Multi_Gini_Seg
+    >>> from segregation.multigroup_aspatial import MultiGiniSeg
     
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
@@ -220,7 +251,7 @@ class Multi_Gini_Seg:
     
     The value is estimated below.
     
-    >>> index = Multi_Gini_Seg(input_df, groups_list)
+    >>> index = MultiGiniSeg(input_df, groups_list)
     >>> index.statistic
     0.5456349992598081
 
@@ -285,7 +316,7 @@ def _multi_normalized_exposure(data, groups):
     return MNE, core_data
 
 
-class Multi_Normalized_Exposure:
+class MultiNormalizedExposure:
     """
     Calculation of Multigroup Normalized Exposure index
 
@@ -314,7 +345,7 @@ class Multi_Normalized_Exposure:
     
     >>> import libpysal
     >>> import geopandas as gpd
-    >>> from segregation.multigroup_aspatial import Multi_Normalized_Exposure
+    >>> from segregation.multigroup_aspatial import MultiNormalizedExposure
     
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
@@ -323,7 +354,7 @@ class Multi_Normalized_Exposure:
     
     The value is estimated below.
     
-    >>> index = Multi_Normalized_Exposure(input_df, groups_list)
+    >>> index = MultiNormalizedExposure(input_df, groups_list)
     >>> index.statistic
     0.18821879029994157
 
@@ -392,7 +423,7 @@ def _multi_information_theory(data, groups):
     return MIT, core_data
 
 
-class Multi_Information_Theory:
+class MultiInformationTheory:
     """
     Calculation of Multigroup Information Theory index
 
@@ -421,7 +452,7 @@ class Multi_Information_Theory:
     
     >>> import libpysal
     >>> import geopandas as gpd
-    >>> from segregation.multigroup_aspatial import Multi_Information_Theory
+    >>> from segregation.multigroup_aspatial import MultiInformationTheory
     
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
@@ -430,7 +461,7 @@ class Multi_Information_Theory:
     
     The value is estimated below.
     
-    >>> index = Multi_Information_Theory(input_df, groups_list)
+    >>> index = MultiInformationTheory(input_df, groups_list)
     >>> index.statistic
     0.1710160297858887
 
@@ -498,7 +529,7 @@ def _multi_relative_diversity(data, groups):
     return MRD, core_data
 
 
-class Multi_Relative_Diversity:
+class MultiRelativeDiversity:
     """
     Calculation of Multigroup Relative Diversity index
 
@@ -527,7 +558,7 @@ class Multi_Relative_Diversity:
     
     >>> import libpysal
     >>> import geopandas as gpd
-    >>> from segregation.multigroup_aspatial import Multi_Relative_Diversity
+    >>> from segregation.multigroup_aspatial import MultiRelativeDiversity
     
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
@@ -536,7 +567,7 @@ class Multi_Relative_Diversity:
     
     The value is estimated below.
     
-    >>> index = Multi_Relative_Diversity(input_df, groups_list)
+    >>> index = MultiRelativeDiversity(input_df, groups_list)
     >>> index.statistic
     0.15820019878220337
 
@@ -605,7 +636,7 @@ def _multi_squared_coefficient_of_variation(data, groups):
     return C, core_data
 
 
-class Multi_Squared_Coefficient_of_Variation:
+class MultiSquaredCoefficientVariation:
     """
     Calculation of Multigroup Squared Coefficient of Variation index
 
@@ -634,7 +665,7 @@ class Multi_Squared_Coefficient_of_Variation:
     
     >>> import libpysal
     >>> import geopandas as gpd
-    >>> from segregation.multigroup_aspatial import Multi_Squared_Coefficient_of_Variation
+    >>> from segregation.multigroup_aspatial import MultiSquaredCoefficientVariation
     
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
@@ -643,7 +674,7 @@ class Multi_Squared_Coefficient_of_Variation:
     
     The value is estimated below.
     
-    >>> index = Multi_Squared_Coefficient_of_Variation(input_df, groups_list)
+    >>> index = MultiSquaredCoefficientVariation(input_df, groups_list)
     >>> index.statistic
     0.11875484641127525
     
@@ -715,7 +746,7 @@ def _multi_diversity(data, groups, normalized=False):
     return E, core_data
 
 
-class Multi_Diversity:
+class MultiDiversity:
     """
     Calculation of Multigroup Diversity index
 
@@ -744,7 +775,7 @@ class Multi_Diversity:
     
     >>> import libpysal
     >>> import geopandas as gpd
-    >>> from segregation.multigroup_aspatial import Multi_Diversity
+    >>> from segregation.multigroup_aspatial import MultiDiversity
     
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
@@ -753,7 +784,7 @@ class Multi_Diversity:
     
     The value is estimated below.
     
-    >>> index = Multi_Diversity(input_df, groups_list)
+    >>> index = MultiDiversity(input_df, groups_list)
     >>> index.statistic
     0.9733112243997906
     
@@ -830,7 +861,7 @@ def _simpsons_concentration(data, groups):
     return Lambda, core_data
 
 
-class Simpsons_Concentration:
+class SimpsonsConcentration:
     """
     Calculation of Simpson's Concentration index
 
@@ -859,7 +890,7 @@ class Simpsons_Concentration:
     
     >>> import libpysal
     >>> import geopandas as gpd
-    >>> from segregation.multigroup_aspatial import Simpsons_Concentration
+    >>> from segregation.multigroup_aspatial import SimpsonsConcentration
     
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
@@ -868,7 +899,7 @@ class Simpsons_Concentration:
     
     The value is estimated below.
     
-    >>> index = Simpsons_Concentration(input_df, groups_list)
+    >>> index = SimpsonsConcentration(input_df, groups_list)
     >>> index.statistic
     0.49182413151957904
     
@@ -941,7 +972,7 @@ def _simpsons_interaction(data, groups):
     return I, core_data
 
 
-class Simpsons_Interaction:
+class SimpsonsInteraction:
     """
     Calculation of Simpson's Interaction index
 
@@ -970,7 +1001,7 @@ class Simpsons_Interaction:
     
     >>> import libpysal
     >>> import geopandas as gpd
-    >>> from segregation.multigroup_aspatial import Simpsons_Interaction
+    >>> from segregation.multigroup_aspatial import SimpsonsInteraction
     
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
@@ -979,7 +1010,7 @@ class Simpsons_Interaction:
     
     The value is estimated below.
     
-    >>> index = Simpsons_Interaction(input_df, groups_list)
+    >>> index = SimpsonsInteraction(input_df, groups_list)
     >>> index.statistic
     0.508175868480421
     
@@ -1052,7 +1083,7 @@ def _multi_divergence(data, groups):
     return Divergence_Index, core_data
 
 
-class Multi_Divergence:
+class MultiDivergence:
     """
     Calculation of Multigroup Divergence index
 
@@ -1081,7 +1112,7 @@ class Multi_Divergence:
     
     >>> import libpysal
     >>> import geopandas as gpd
-    >>> from segregation.multigroup_aspatial import Multi_Divergence
+    >>> from segregation.multigroup_aspatial import MultiDivergence
     
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
@@ -1090,7 +1121,7 @@ class Multi_Divergence:
     
     The value is estimated below.
     
-    >>> index = Multi_Divergence(input_df, groups_list)
+    >>> index = MultiDivergence(input_df, groups_list)
     >>> index.statistic
     0.16645182134289443
 
@@ -1109,3 +1140,38 @@ class Multi_Divergence:
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _multi_divergence
+
+
+
+
+# Deprecation Calls
+
+msg = _dep_message("Multi_Dissim", "MultiDissim")
+Multi_Dissim = DeprecationHelper(MultiDissim, message=msg)
+
+msg = _dep_message("Multi_Gini_Seg", "MultiGiniSeg")
+Multi_Gini_Seg = DeprecationHelper(MultiGiniSeg, message=msg)
+
+msg = _dep_message("Multi_Normalized_Exposure", "MultiNormalizedExposure")
+Multi_Normalized_Exposure = DeprecationHelper(MultiNormalizedExposure, message=msg)
+
+msg = _dep_message("Multi_Information_Theory", "MultiInformationTheory")
+Multi_Information_Theory = DeprecationHelper(MultiInformationTheory, message=msg)
+
+msg = _dep_message("Multi_Relative_Diversity", "MultiRelativeDiversity")
+Multi_Relative_Diversity = DeprecationHelper(MultiRelativeDiversity, message=msg)
+
+msg = _dep_message("Multi_Squared_Coefficient_of_Variation", "MultiSquaredCoefficientVariation")
+Multi_Squared_Coefficient_of_Variation = DeprecationHelper(MultiSquaredCoefficientVariation, message=msg)
+
+msg = _dep_message("Multi_Diversity", "MultiDiversity")
+Multi_Diversity = DeprecationHelper(MultiDiversity, message=msg)
+
+msg = _dep_message("Simpsons_Concentration", "SimpsonsConcentration")
+Simpsons_Concentration = DeprecationHelper(SimpsonsConcentration, message=msg)
+
+msg = _dep_message("Simpsons_Interaction", "SimpsonsInteraction")
+Simpsons_Interaction = DeprecationHelper(SimpsonsInteraction, message=msg)
+
+msg = _dep_message("Multi_Divergence", "MultiDivergence")
+Multi_Divergence = DeprecationHelper(MultiDivergence, message=msg)

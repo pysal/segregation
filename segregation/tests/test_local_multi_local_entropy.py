@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from segregation.local import Multi_Local_Entropy
+from segregation.local import MultiLocalEntropy
 
 
 class Multi_Local_Entropy_Tester(unittest.TestCase):
@@ -10,7 +10,7 @@ class Multi_Local_Entropy_Tester(unittest.TestCase):
         s_map = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
         groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
         df = s_map[groups_list]
-        index = Multi_Local_Entropy(df, groups_list)
+        index = MultiLocalEntropy(df, groups_list)
         np.testing.assert_almost_equal(index.statistics[0:10], np.array([0.24765538, 0.40474253, 0.50900607, 0.21433739, 0.16148146,
 																		 0.21454691, 0.08889013, 0.08132889, 0.06782401, 0.18127186]))
 

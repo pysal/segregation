@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from segregation.aspatial import Simpsons_Interaction
+from segregation.aspatial import SimpsonsInteraction
 
 
 class Simpsons_Interaction_Tester(unittest.TestCase):
@@ -10,7 +10,7 @@ class Simpsons_Interaction_Tester(unittest.TestCase):
         s_map = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
         groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
         df = s_map[groups_list]
-        index = Simpsons_Interaction(df, groups_list)
+        index = SimpsonsInteraction(df, groups_list)
         np.testing.assert_almost_equal(index.statistic, 0.508175868480421)
 
 

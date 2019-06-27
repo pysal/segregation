@@ -1,0 +1,22 @@
+segregation.spatial.DistanceDecayExposure
+=========================================
+
+.. currentmodule:: segregation.spatial
+
+.. autoclass:: DistanceDecayExposure
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~DistanceDecayExposure.__init__
+   
+   
+
+   
+   
+   

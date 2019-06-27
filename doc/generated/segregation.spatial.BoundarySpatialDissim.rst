@@ -1,0 +1,22 @@
+segregation.spatial.BoundarySpatialDissim
+=========================================
+
+.. currentmodule:: segregation.spatial
+
+.. autoclass:: BoundarySpatialDissim
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~BoundarySpatialDissim.__init__
+   
+   
+
+   
+   
+   

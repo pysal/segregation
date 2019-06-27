@@ -20,9 +20,63 @@ from scipy.sparse.csgraph import floyd_warshall
 from scipy.sparse import csr_matrix
 
 from segregation.aspatial.aspatial_indexes import _dissim
-from segregation.aspatial.multigroup_aspatial_indexes import Multi_Information_Theory
+from segregation.aspatial.multigroup_aspatial_indexes import MultiInformationTheory
 from segregation.network import calc_access
 from libpysal.weights.util import attach_islands
+
+from segregation.util.util import _dep_message, DeprecationHelper
+
+
+# Including old and new api in __all__ so users can use both
+
+__all__ = [
+    'Spatial_Prox_Prof', 
+    'SpatialProxProf',
+    
+    'Spatial_Dissim', 
+    'SpatialDissim',
+    
+    'Boundary_Spatial_Dissim',
+    'BoundarySpatialDissim',
+    
+    'Perimeter_Area_Ratio_Spatial_Dissim', 
+    'PerimeterAreaRatioSpatialDissim', 
+    
+    'Distance_Decay_Isolation',
+    'DistanceDecayIsolation',
+    
+    'Distance_Decay_Exposure', 
+    'DistanceDecayExposure', 
+    
+    'Spatial_Proximity', 
+    'SpatialProximity',
+    
+    'Absolute_Clustering',
+    'AbsoluteClustering',
+    
+    'Relative_Clustering', 
+    'RelativeClustering', 
+    
+    'Delta', 
+    
+    'Absolute_Concentration',
+    'AbsoluteConcentration',
+    
+    'Relative_Concentration', 
+    'RelativeConcentration', 
+    
+    'Absolute_Centralization',
+    'AbsoluteCentralization',
+    
+    'Relative_Centralization', 
+    'RelativeCentralization', 
+    
+    'SpatialInformationTheory',
+    'compute_segregation_profile'
+]
+
+# The Deprecation calls of the classes are located in the end of this script #
+
 
 # suppress numpy divide by zero warnings because it occurs a lot during the
 # calculation of many indices
@@ -117,15 +171,6 @@ def _return_length_weighted_w(data):
     return length_weighted_w
 
 
-__all__ = [
-    'Spatial_Prox_Prof', 'Spatial_Dissim', 'Boundary_Spatial_Dissim',
-    'Perimeter_Area_Ratio_Spatial_Dissim', 'Distance_Decay_Isolation',
-    'Distance_Decay_Exposure', 'Spatial_Proximity', 'Absolute_Clustering',
-    'Relative_Clustering', 'Delta', 'Absolute_Concentration',
-    'Relative_Concentration', 'Absolute_Centralization',
-    'Relative_Centralization', 'SpatialInformationTheory',
-    'compute_segregation_profile'
-]
 
 
 def _spatial_prox_profile(data, group_pop_var, total_pop_var, m=1000):
@@ -230,7 +275,7 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, m=1000):
     return SPP, grid, curve, core_data
 
 
-class Spatial_Prox_Prof:
+class SpatialProxProf:
     """
     Calculation of Spatial Proximity Profile
 
@@ -268,7 +313,7 @@ class Spatial_Prox_Prof:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial import Spatial_Prox_Prof
+    >>> from segregation.spatial import SpatialProxProf
     
     Secondly, we need to read the data:
     
@@ -294,7 +339,7 @@ class Spatial_Prox_Prof:
     >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
     
-    >>> spat_prox_index = Spatial_Prox_Prof(gdf, 'nhblk10', 'pop10')
+    >>> spat_prox_index = SpatialProxProf(gdf, 'nhblk10', 'pop10')
     >>> spat_prox_index.statistic
     0.11217269612149207
     
@@ -430,7 +475,7 @@ def _spatial_dissim(data,
     return SD, core_data
 
 
-class Spatial_Dissim:
+class SpatialDissim:
     """
     Calculation of Spatial Dissimilarity index
 
@@ -472,7 +517,7 @@ class Spatial_Dissim:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial import Spatial_Dissim
+    >>> from segregation.spatial import SpatialDissim
     
     Secondly, we need to read the data:
     
@@ -500,7 +545,7 @@ class Spatial_Dissim:
     
     The value is estimated below.
     
-    >>> spatial_dissim_index = Spatial_Dissim(gdf, 'nhblk10', 'pop10')
+    >>> spatial_dissim_index = SpatialDissim(gdf, 'nhblk10', 'pop10')
     >>> spatial_dissim_index.statistic
     0.2864885055405311
         
@@ -629,7 +674,7 @@ def _boundary_spatial_dissim(data,
     return BSD, core_data
 
 
-class Boundary_Spatial_Dissim:
+class BoundarySpatialDissim:
     """
     Calculation of Boundary Spatial Dissimilarity index
 
@@ -669,7 +714,7 @@ class Boundary_Spatial_Dissim:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial import Boundary_Spatial_Dissim
+    >>> from segregation.spatial import BoundarySpatialDissim
     
     Secondly, we need to read the data:
     
@@ -697,7 +742,7 @@ class Boundary_Spatial_Dissim:
     
     The value is estimated below.
     
-    >>> boundary_spatial_dissim_index = Boundary_Spatial_Dissim(gdf, 'nhblk10', 'pop10')
+    >>> boundary_spatial_dissim_index = BoundarySpatialDissim(gdf, 'nhblk10', 'pop10')
     >>> boundary_spatial_dissim_index.statistic
     0.28869903953453163
             
@@ -816,7 +861,7 @@ def _perimeter_area_ratio_spatial_dissim(data,
     return PARD, core_data
 
 
-class Perimeter_Area_Ratio_Spatial_Dissim:
+class PerimeterAreaRatioSpatialDissim:
     """
     Calculation of Perimeter/Area Ratio Spatial Dissimilarity index
 
@@ -854,7 +899,7 @@ class Perimeter_Area_Ratio_Spatial_Dissim:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial import Perimeter_Area_Ratio_Spatial_Dissim
+    >>> from segregation.spatial import PerimeterAreaRatioSpatialDissim
     
     Secondly, we need to read the data:
     
@@ -882,7 +927,7 @@ class Perimeter_Area_Ratio_Spatial_Dissim:
     
     The value is estimated below.
     
-    >>> perimeter_area_ratio_spatial_dissim_index = Perimeter_Area_Ratio_Spatial_Dissim(gdf, 'nhblk10', 'pop10')
+    >>> perimeter_area_ratio_spatial_dissim_index = PerimeterAreaRatioSpatialDissim(gdf, 'nhblk10', 'pop10')
     >>> perimeter_area_ratio_spatial_dissim_index.statistic
     0.31260876347432687
             
@@ -1012,7 +1057,7 @@ def _distance_decay_isolation(data,
     return DDxPx, core_data
 
 
-class Distance_Decay_Isolation:
+class DistanceDecayIsolation:
     """
     Calculation of Distance Decay Isolation index
 
@@ -1052,7 +1097,7 @@ class Distance_Decay_Isolation:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial import Distance_Decay_Isolation
+    >>> from segregation.spatial import DistanceDecayIsolation
     
     Secondly, we need to read the data:
     
@@ -1080,7 +1125,7 @@ class Distance_Decay_Isolation:
     
     The value is estimated below.
     
-    >>> spatial_isolation_index = Distance_Decay_Isolation(gdf, 'nhblk10', 'pop10')
+    >>> spatial_isolation_index = DistanceDecayIsolation(gdf, 'nhblk10', 'pop10')
     >>> spatial_isolation_index.statistic
     0.07214112078134231
             
@@ -1212,7 +1257,7 @@ def _distance_decay_exposure(data,
     return DDxPy, core_data
 
 
-class Distance_Decay_Exposure:
+class DistanceDecayExposure:
     """
     Calculation of Distance Decay Exposure index
 
@@ -1252,7 +1297,7 @@ class Distance_Decay_Exposure:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial import Distance_Decay_Exposure
+    >>> from segregation.spatial import DistanceDecayExposure
     
     Secondly, we need to read the data:
     
@@ -1280,7 +1325,7 @@ class Distance_Decay_Exposure:
     
     The value is estimated below.
     
-    >>> spatial_exposure_index = Distance_Decay_Exposure(gdf, 'nhblk10', 'pop10')
+    >>> spatial_exposure_index = DistanceDecayExposure(gdf, 'nhblk10', 'pop10')
     >>> spatial_exposure_index.statistic
     0.9605053172501217
             
@@ -1404,7 +1449,7 @@ def _spatial_proximity(data, group_pop_var, total_pop_var, alpha=0.6,
     return SP, core_data
 
 
-class Spatial_Proximity:
+class SpatialProximity:
     """
     Calculation of Spatial Proximity index
     
@@ -1442,7 +1487,7 @@ class Spatial_Proximity:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial import Spatial_Proximity
+    >>> from segregation.spatial import SpatialProximity
     
     Secondly, we need to read the data:
     
@@ -1470,7 +1515,7 @@ class Spatial_Proximity:
     
     The value is estimated below.
     
-    >>> spatial_prox_index = Spatial_Proximity(gdf, 'nhblk10', 'pop10')
+    >>> spatial_prox_index = SpatialProximity(gdf, 'nhblk10', 'pop10')
     >>> spatial_prox_index.statistic
     1.002191883006537
             
@@ -1593,7 +1638,7 @@ def _absolute_clustering(data,
     return ACL, core_data
 
 
-class Absolute_Clustering:
+class AbsoluteClustering:
     """
     Calculation of Absolute Clustering index
     
@@ -1773,7 +1818,7 @@ def _relative_clustering(data,
     return RCL, core_data
 
 
-class Relative_Clustering:
+class RelativeClustering:
     """
     Calculation of Relative Clustering index
     
@@ -1811,7 +1856,7 @@ class Relative_Clustering:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial import Relative_Clustering
+    >>> from segregation.spatial import RelativeClustering
     
     Secondly, we need to read the data:
     
@@ -1839,7 +1884,7 @@ class Relative_Clustering:
     
     The value is estimated below.
     
-    >>> relative_clust_index = Relative_Clustering(gdf, 'nhblk10', 'pop10')
+    >>> relative_clust_index = RelativeClustering(gdf, 'nhblk10', 'pop10')
     >>> relative_clust_index.statistic
     0.12418089857347714
             
@@ -2107,7 +2152,7 @@ def _absolute_concentration(data, group_pop_var, total_pop_var):
     return ACO, core_data
 
 
-class Absolute_Concentration:
+class AbsoluteConcentration:
     """
     Calculation of Absolute Concentration index
 
@@ -2141,7 +2186,7 @@ class Absolute_Concentration:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial import Absolute_Concentration
+    >>> from segregation.spatial import AbsoluteConcentration
     
     Secondly, we need to read the data:
     
@@ -2169,7 +2214,7 @@ class Absolute_Concentration:
     
     The value is estimated below.
     
-    >>> absolute_concentration_index = Absolute_Concentration(gdf, 'nhblk10', 'pop10')
+    >>> absolute_concentration_index = AbsoluteConcentration(gdf, 'nhblk10', 'pop10')
     >>> absolute_concentration_index.statistic
     0.5430616390401855
             
@@ -2279,7 +2324,7 @@ def _relative_concentration(data, group_pop_var, total_pop_var):
     return RCO, core_data
 
 
-class Relative_Concentration:
+class RelativeConcentration:
     """
     Calculation of Relative Concentration index
 
@@ -2313,7 +2358,7 @@ class Relative_Concentration:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial import Relative_Concentration
+    >>> from segregation.spatial import RelativeConcentration
     
     Secondly, we need to read the data:
     
@@ -2341,7 +2386,7 @@ class Relative_Concentration:
     
     The value is estimated below.
     
-    >>> relative_concentration_index = Relative_Concentration(gdf, 'nhblk10', 'pop10')
+    >>> relative_concentration_index = RelativeConcentration(gdf, 'nhblk10', 'pop10')
     >>> relative_concentration_index.statistic
     0.5364305924831142
             
@@ -2511,7 +2556,7 @@ def _absolute_centralization(data, group_pop_var, total_pop_var,
     return ACE, core_data, center_values
 
 
-class Absolute_Centralization:
+class AbsoluteCentralization:
     """
     Calculation of Absolute Centralization index
 
@@ -2563,7 +2608,7 @@ class Absolute_Centralization:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial import Absolute_Centralization
+    >>> from segregation.spatial import AbsoluteCentralization
     
     Secondly, we need to read the data:
     
@@ -2591,7 +2636,7 @@ class Absolute_Centralization:
     
     The value is estimated below.
     
-    >>> absolute_centralization_index = Absolute_Centralization(gdf, 'nhblk10', 'pop10')
+    >>> absolute_centralization_index = AbsoluteCentralization(gdf, 'nhblk10', 'pop10')
     >>> absolute_centralization_index.statistic
     0.6416113799795511
             
@@ -2762,7 +2807,7 @@ def _relative_centralization(data, group_pop_var, total_pop_var,
     return RCE, core_data, center_values
 
 
-class Relative_Centralization:
+class RelativeCentralization:
     """
     Calculation of Relative Centralization index
 
@@ -2814,7 +2859,7 @@ class Relative_Centralization:
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
-    >>> from segregation.spatial import Relative_Centralization
+    >>> from segregation.spatial import RelativeCentralization
     
     Secondly, we need to read the data:
     
@@ -2842,7 +2887,7 @@ class Relative_Centralization:
     
     The value is estimated below.
     
-    >>> relative_centralization_index = Relative_Centralization(gdf, 'nhblk10', 'pop10')
+    >>> relative_centralization_index = RelativeCentralization(gdf, 'nhblk10', 'pop10')
     >>> relative_centralization_index.statistic
     0.18550429720565376
             
@@ -2867,7 +2912,7 @@ class Relative_Centralization:
         self._function = _relative_centralization
 
 
-class SpatialInformationTheory(Multi_Information_Theory):
+class SpatialInformationTheory(MultiInformationTheory):
     """Spatial Multigroup Information Theory Index.
 
     This class calculates the spatial version of the multigroup information
@@ -2973,7 +3018,7 @@ def compute_segregation_profile(gdf,
     gdf = gdf.copy()
     gdf[groups] = gdf[groups].astype(float)
     indices = {}
-    indices[0] = Multi_Information_Theory(gdf, groups).statistic
+    indices[0] = MultiInformationTheory(gdf, groups).statistic
 
     if network:
         if not gdf.crs['init'] == 'epsg:4326':
@@ -2990,7 +3035,7 @@ def compute_segregation_profile(gdf,
                                  variables=groups,
                                  distance=distance,
                                  precompute=False)
-            sit = Multi_Information_Theory(access, groups2)
+            sit = MultiInformationTheory(access, groups2)
             indices[distance] = sit.statistic
     else:
         for distance in distances:
@@ -3000,3 +3045,53 @@ def compute_segregation_profile(gdf,
             sit = SpatialInformationTheory(gdf, groups, w=w)
             indices[distance] = sit.statistic
     return indices
+
+
+
+
+
+
+
+
+
+        
+# Deprecation Calls
+        
+msg = _dep_message("Spatial_Prox_Prof", "SpatialProxProf")
+Spatial_Prox_Prof = DeprecationHelper(SpatialProxProf, message=msg)
+
+msg = _dep_message("Spatial_Dissim", "SpatialDissim")
+Spatial_Dissim = DeprecationHelper(SpatialDissim, message=msg)
+
+msg = _dep_message("Boundary_Spatial_Dissim", "BoundarySpatialDissim")
+Boundary_Spatial_Dissim = DeprecationHelper(BoundarySpatialDissim, message=msg)
+
+msg = _dep_message("Perimeter_Area_Ratio_Spatial_Dissim", "PerimeterAreaRatioSpatialDissim")
+Perimeter_Area_Ratio_Spatial_Dissim = DeprecationHelper(PerimeterAreaRatioSpatialDissim, message=msg)
+
+msg = _dep_message("Distance_Decay_Isolation", "DistanceDecayIsolation")
+Distance_Decay_Isolation = DeprecationHelper(DistanceDecayIsolation, message=msg)
+
+msg = _dep_message("Distance_Decay_Exposure", "DistanceDecayExposure")
+Distance_Decay_Exposure = DeprecationHelper(DistanceDecayExposure, message=msg)
+
+msg = _dep_message("Spatial_Proximity", "SpatialProximity")
+Spatial_Proximity = DeprecationHelper(SpatialProximity, message=msg)
+
+msg = _dep_message("Absolute_Clustering", "AbsoluteClustering")
+Absolute_Clustering = DeprecationHelper(AbsoluteClustering, message=msg)
+
+msg = _dep_message("Relative_Clustering", "RelativeClustering")
+Relative_Clustering = DeprecationHelper(RelativeClustering, message=msg)
+
+msg = _dep_message("Absolute_Concentration", "AbsoluteConcentration")
+Absolute_Concentration = DeprecationHelper(AbsoluteConcentration, message=msg)
+
+msg = _dep_message("Relative_Concentration", "RelativeConcentration")
+Relative_Concentration = DeprecationHelper(RelativeConcentration, message=msg)
+
+msg = _dep_message("Absolute_Centralization", "AbsoluteCentralization")
+Absolute_Centralization = DeprecationHelper(AbsoluteCentralization, message=msg)
+
+msg = _dep_message("Relative_Centralization", "RelativeCentralization")
+Relative_Centralization = DeprecationHelper(RelativeCentralization, message=msg)

@@ -11,3 +11,4 @@ from . import decomposition
 from . import util
 from . import network
 from . import local
+from . import compute_all

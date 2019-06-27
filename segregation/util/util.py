@@ -6,74 +6,7 @@ __author__ = "Levi Wolf <levi.john.wolf@gmail.com>, Renan X. Cortes <renanc@ucr.
 
 
 import numpy as np
-import pandas as pd
-import libpysal
-import geopandas as gpd
 import math
-from warnings import warn
-from libpysal.weights.util import attach_islands
-
-
-def _return_length_weighted_w(data):
-    """
-    Returns a PySAL weights object that the weights represent the length of the commom boudary of two areal units that share border.
-
-    Parameters
-    ----------
-
-    data          : a geopandas DataFrame with a 'geometry' column.
-
-    Notes
-    -----
-    Currently it's not making any projection.
-
-    """
-
-    w = libpysal.weights.Rook.from_dataframe(
-        data, ids=data.index.tolist(), geom_col=data._geometry_column_name)
-
-    if (len(w.islands) == 0):
-        w = w
-    else:
-        warn('There are some islands in the GeoDataFrame.')
-        w_aux = libpysal.weights.KNN.from_dataframe(
-            data,
-            ids=data.index.tolist(),
-            geom_col=data._geometry_column_name,
-            k=1)
-        w = attach_islands(w, w_aux)
-
-    adjlist = w.to_adjlist()
-    islands = pd.DataFrame.from_records([{
-        'focal': island,
-        'neighbor': island,
-        'weight': 0
-    } for island in w.islands])
-    merged = adjlist.merge(data.geometry.to_frame('geometry'), left_on='focal',
-                           right_index=True, how='left')\
-                    .merge(data.geometry.to_frame('geometry'), left_on='neighbor',
-                           right_index=True, how='left', suffixes=("_focal", "_neighbor"))\
-
-    # Transforming from pandas to geopandas
-    merged = gpd.GeoDataFrame(merged, geometry='geometry_focal')
-    merged['geometry_neighbor'] = gpd.GeoSeries(merged.geometry_neighbor)
-
-    # Getting the shared boundaries
-    merged['shared_boundary'] = merged.geometry_focal.intersection(
-        merged.set_geometry('geometry_neighbor'))
-
-    # Putting it back to a matrix
-    merged['weight'] = merged.set_geometry('shared_boundary').length
-    merged_with_islands = pd.concat((merged, islands))
-    length_weighted_w = libpysal.weights.W.from_adjlist(
-        merged_with_islands[['focal', 'neighbor', 'weight']])
-    for island in w.islands:
-        length_weighted_w.neighbors[island] = []
-        del length_weighted_w.weights[island]
-
-    length_weighted_w._reset()
-
-    return length_weighted_w
 
 
 def _generate_counterfactual(data1,
@@ -309,3 +242,29 @@ def project_gdf(gdf, to_crs=None, to_latlong=False):
     projected_gdf = gdf.to_crs(utm_crs)
 
     return projected_gdf
+
+
+        
+def _dep_message(original, replacement, when="2020-01-31", version="2.1.0"):
+    msg = "Deprecated (%s): %s" % (version, original)
+    msg += " is being renamed to %s." % replacement
+    msg += " %s will be removed on %s." % (original, when)
+    return msg
+
+class DeprecationHelper(object):
+    def __init__(self, new_target, message="Deprecated"):
+        self.new_target = new_target
+        self.message = message
+
+    def _warn(self):
+        from warnings import warn
+
+        warn(self.message)
+
+    def __call__(self, *args, **kwargs):
+        self._warn()
+        return self.new_target(*args, **kwargs)
+
+    def __getattr__(self, attr):
+        self._warn()
+        return getattr(self.new_target, attr)

@@ -69,9 +69,6 @@ $ pip install git+https://github.com/pysal/segregation
 - numpy
 - scipy
 - libpysal
-- osmnx
-- pandana
-- urbanaccess
 
 ## Getting started
 
@@ -90,7 +87,7 @@ If a user would want to fit a spatial dissimilarity index (SD) to a geopandas Da
 
 ```python
 from segregation.spatial import Spatial_Dissim
-spatial_index = Spatial_Dissim(gdf, "freq", "population")
+spatial_index = SpatialDissim(gdf, "freq", "population")
 ```
 
 Every class of **segregation** has a <tt>statistic</tt> and a <tt>core\_data</tt> attributes. The first is a direct access to the point estimation of the specific segregation measure and the second attribute gives access to the main data that the module uses internally to perform the estimates. To see the estimated D in the first generic example above, the user would have just to run <tt>index.statistic</tt> to see the fitted value.
@@ -101,31 +98,31 @@ For point estimation, all the measures available can be summarized in the follow
 | **Measure**                                       | **Class/Function**                      | **Spatial?** | **Specific Arguments** |
 | :------------------------------------------------ | :-------------------------------------- | :----------: | :-----------------: |
 | Dissimilarity (D)                                 | Dissim                                  |      No      |         \-          |
-| Gini (G)                                          | Gini\_Seg                               |      No      |         \-          |
+| Gini (G)                                          | GiniSeg                                 |      No      |         \-          |
 | Entropy (H)                                       | Entropy                                 |      No      |         \-          |
 | Isolation (xPx)                                   | Isolation                               |      No      |         \-          |
 | Exposure (xPy)                                    | Exposure                                |      No      |         \-          |
 | Atkinson (A)                                      | Atkinson                                |      No      |          b          |
-| Correlation Ratio (V)                             | Correlation\_R                          |      No      |         \-          |
-| Concentration Profile (R)                         | Con\_Prof                               |      No      |          m          |
-| Modified Dissimilarity (Dct)                      | Modified\_Dissim                        |      No      |     iterations      |
-| Modified Gini (Gct)                               | Modified\_Gini\_Seg                     |      No      |     iterations      |
-| Bias-Corrected Dissimilarity (Dbc)                | Bias\_Corrected\_Dissim                 |      No      |          B          |
-| Density-Corrected Dissimilarity (Ddc)             | Density\_Corrected\_Dissim              |      No      |        xtol         |
-| Spatial Proximity Profile (SPP)                   | Spatial\_Prox\_Prof                     |     Yes      |          m          |
-| Spatial Dissimilarity (SD)                        | Spatial\_Dissim                         |     Yes      |   w, standardize    |
-| Boundary Spatial Dissimilarity (BSD)              | Boundary\_Spatial\_Dissim               |     Yes      |     standardize     |
-| Perimeter Area Ratio Spatial Dissimilarity (PARD) | Perimeter\_Area\_Ratio\_Spatial\_Dissim |     Yes      |     standardize     |
-| Distance Decay Isolation (DDxPx)                  | Distance\_Decay\_Isolation              |     Yes      |     alpha, beta     |
-| Distance Decay Exposure (DDxPy)                   | Distance\_Decay\_Exposure               |     Yes      |     alpha, beta     |
-| Spatial Proximity (SP)                            | Spatial\_Proximity                      |     Yes      |     alpha, beta     |
-| Absolute Clustering (ACL)                         | Absolute\_Clustering                    |     Yes      |     alpha, beta     |
-| Relative Clustering (RCL)                         | Relative\_Clustering                    |     Yes      |     alpha, beta     |
+| Correlation Ratio (V)                             | CorrelationR                            |      No      |         \-          |
+| Concentration Profile (R)                         | ConProf                                 |      No      |          m          |
+| Modified Dissimilarity (Dct)                      | ModifiedDissim                          |      No      |     iterations      |
+| Modified Gini (Gct)                               | ModifiedGiniSeg                         |      No      |     iterations      |
+| Bias-Corrected Dissimilarity (Dbc)                | BiasCorrectedDissim                     |      No      |          B          |
+| Density-Corrected Dissimilarity (Ddc)             | DensityCorrectedDissim                  |      No      |        xtol         |
+| Spatial Proximity Profile (SPP)                   | SpatialProxProf                         |     Yes      |          m          |
+| Spatial Dissimilarity (SD)                        | SpatialDissim                           |     Yes      |   w, standardize    |
+| Boundary Spatial Dissimilarity (BSD)              | BoundarySpatialDissim                   |     Yes      |     standardize     |
+| Perimeter Area Ratio Spatial Dissimilarity (PARD) | PerimeterAreaRatioSpatialDissim         |     Yes      |     standardize     |
+| Distance Decay Isolation (DDxPx)                  | DistanceDecayIsolation                  |     Yes      |     alpha, beta     |
+| Distance Decay Exposure (DDxPy)                   | DistanceDecayExposure                   |     Yes      |     alpha, beta     |
+| Spatial Proximity (SP)                            | SpatialProximity                        |     Yes      |     alpha, beta     |
+| Absolute Clustering (ACL)                         | AbsoluteClustering                      |     Yes      |     alpha, beta     |
+| Relative Clustering (RCL)                         | RelativeClustering                      |     Yes      |     alpha, beta     |
 | Delta (DEL)                                       | Delta                                   |     Yes      |         \-          |
-| Absolute Concentration (ACO)                      | Absolute\_Concentration                 |     Yes      |         \-          |
-| Relative Concentration (RCO)                      | Relative\_Concentration                 |     Yes      |         \-          |
-| Absolute Centralization (ACE)                     | Absolute\_Centralization                |     Yes      |         \-          |
-| Relative Centralization (RCE)                     | Relative\_Centralization                |     Yes      |         \-          |
+| Absolute Concentration (ACO)                      | AbsoluteConcentration                   |     Yes      |         \-          |
+| Relative Concentration (RCO)                      | RelativeConcentration                   |     Yes      |         \-          |
+| Absolute Centralization (ACE)                     | AbsoluteCentralization                  |     Yes      |         \-          |
+| Relative Centralization (RCE)                     | RelativeCentralization                  |     Yes      |         \-          |
 
 
 Once the segregation indexes are fitted, the user can perform inference to shed light for statistical significance in regional analysis. The summary of the inference framework is presented in the table below:
@@ -133,8 +130,8 @@ Once the segregation indexes are fitted, the user can perform inference to shed 
 
 | **Inference Type** | **Class/Function**   |                 **Function main Inputs**                 |         **Function Outputs**         |
 | :----------------- | :------------------- | :------------------------------------------------------: | :----------------------------------: |
-| Single Value       | Infer\_Segregation   |   seg\_class, iterations\_under\_null, null\_approach, two\_tailed    |    p\_value, est\_sim, statistic     |
-| Two Values         | Compare\_Segregation | seg\_class\_1, seg\_class\_2, iterations\_under\_null, null\_approach | p\_value, est\_sim, est\_point\_diff |
+| Single Value       | InferSegregation   |   seg\_class, iterations\_under\_null, null\_approach, two\_tailed    |    p\_value, est\_sim, statistic     |
+| Two Values         | CompareSegregation | seg\_class\_1, seg\_class\_2, iterations\_under\_null, null\_approach | p\_value, est\_sim, est\_point\_diff |
 
 
 Another useful analytics that can be performed with the **segregation** module is a decompositional approach where two different indexes can be brake down into spatial components (<tt>c_s</tt>) and attribute component (<tt>c_a</tt>). This framework is summarized in the table below:
@@ -142,7 +139,7 @@ Another useful analytics that can be performed with the **segregation** module i
 
 | **Framework** | **Class/Function**   |                 **Function main Inputs**                 |         **Function Outputs**         |
 | :----------------- | :------------------- | :------------------------------------------------------: | :----------------------------------: |
-| Decomposition       | Decompose\_Segregation   |   index1, index2, counterfactual\_approach    |    c\_a, c\_s     |
+| Decomposition       | DecomposeSegregation   |   index1, index2, counterfactual\_approach    |    c\_a, c\_s     |
 
 
 ### Multigroup measures
@@ -153,7 +150,7 @@ Suppose you have a DataFrame called <tt>df</tt> that has populations of some gro
 
 ```python
 from segregation.aspatial import Multi_Dissim
-index = Multi_Dissim(df, ['Group A', 'Group B', 'Group C'])
+index = MultiDissim(df, ['Group A', 'Group B', 'Group C'])
 ```
 
 Therefore, a <tt>statistic</tt> attribute will contain the value of this index.
@@ -163,16 +160,16 @@ Currently, theses indexes are summarized in the table below:
 
 | **Measure**                                       | **Class/Function**                        | **Spatial?** | **Specific Arguments** |
 | :------------------------------------------------ | :---------------------------------------- | :----------: | :-----------------: |
-| Multigroup Dissimilarity                          | Multi\_Dissim                             |      No      |         \-          |
-| Multigroup Gini                                   | Multi\_Gini\_Seg                          |      No      |         \-          |
-| Multigroup Normalized Exposure                    | Multi\_Normalized\_Exposure               |      No      |         \-          |
-| Multigroup Information Theory                     | Multi\_Information\_Theory                |      No      |         \-          |
-| Multigroup Relative Diversity                     | Multi\_Relative\_Diversity                |      No      |         \-          |
-| Multigroup Squared Coefficient of Variation       | Multi\_Squared\_Coefficient\_of\_Variation|      No      |         \-          |
-| Multigroup Diversity                              | Multi\_Diversity                          |      No      |     normalized      |
-| Simpson's Concentration                           | Simpsons\_Concentration                   |      No      |         \-          |
-| Simpson's Interaction                             | Simpsons\_Interaction                     |      No      |         \-          |
-| Multigroup Divergence                             | Multi\_Divergence                         |      No      |         \-          |
+| Multigroup Dissimilarity                          | MultiDissim                               |      No      |         \-          |
+| Multigroup Gini                                   | MultiGiniSeg                              |      No      |         \-          |
+| Multigroup Normalized Exposure                    | MultiNormalizedExposure                   |      No      |         \-          |
+| Multigroup Information Theory                     | MultiInformationTheory                    |      No      |         \-          |
+| Multigroup Relative Diversity                     | MultiRelativeDiversity                    |      No      |         \-          |
+| Multigroup Squared Coefficient of Variation       | MultiSquaredCoefficientVariation          |      No      |         \-          |
+| Multigroup Diversity                              | MultiDiversity                            |      No      |     normalized      |
+| Simpson's Concentration                           | SimpsonsConcentration                     |      No      |         \-          |
+| Simpson's Interaction                             | SimpsonsInteraction                       |      No      |         \-          |
+| Multigroup Divergence                             | MultiDivergence                           |      No      |         \-          |
 
 ### Local measures
 
@@ -180,12 +177,12 @@ Also, it is possible to calculate local measures of segregation. A <tt>statistic
 
 | **Measure**                                       | **Class/Function**                        | **Spatial?** | **Specific Arguments** |
 | :------------------------------------------------ | :---------------------------------------- | :----------: | :-----------------: |
-| Location Quotient                                 | Multi\_Location\_Quotient                 |      No      |         \-          |
-| Local Diversity                                   | Multi\_Local\_Diversity                   |      No      |         \-          |
-| Local Entropy                                     | Multi\_Local\_Entropy                     |      No      |         \-          |
-| Local Simpson's Concentration                     | Multi\_Local\_Simpson\_Concentration      |      No      |         \-          |
-| Local Simpson's Interaction                       | Multi\_Local\_Simpson\_Interaction        |      No      |         \-          |
-| Local Centralization                              | Local\_Relative\_Centralization           |      Yes     |         \-          |
+| Location Quotient                                 | MultiLocationQuotient                     |      No      |         \-          |
+| Local Diversity                                   | MultiLocalDiversity                       |      No      |         \-          |
+| Local Entropy                                     | MultiLocalEntropy                         |      No      |         \-          |
+| Local Simpson's Concentration                     | MultiLocalSimpsonConcentration            |      No      |         \-          |
+| Local Simpson's Interaction                       | MultiLocalSimpsonInteraction              |      No      |         \-          |
+| Local Centralization                              | LocalRelativeCentralization               |      Yes     |         \-          |
 
 If you are new to segregation and PySAL you will best get started with our documentation! We encourage you to take a look at some examples of this module in the <tt>notebooks</tt> repo!
 
