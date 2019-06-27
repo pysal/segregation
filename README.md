@@ -130,8 +130,8 @@ Once the segregation indexes are fitted, the user can perform inference to shed 
 
 | **Inference Type** | **Class/Function**   |                 **Function main Inputs**                 |         **Function Outputs**         |
 | :----------------- | :------------------- | :------------------------------------------------------: | :----------------------------------: |
-| Single Value       | Infer\_Segregation   |   seg\_class, iterations\_under\_null, null\_approach, two\_tailed    |    p\_value, est\_sim, statistic     |
-| Two Values         | Compare\_Segregation | seg\_class\_1, seg\_class\_2, iterations\_under\_null, null\_approach | p\_value, est\_sim, est\_point\_diff |
+| Single Value       | InferSegregation   |   seg\_class, iterations\_under\_null, null\_approach, two\_tailed    |    p\_value, est\_sim, statistic     |
+| Two Values         | CompareSegregation | seg\_class\_1, seg\_class\_2, iterations\_under\_null, null\_approach | p\_value, est\_sim, est\_point\_diff |
 
 
 Another useful analytics that can be performed with the **segregation** module is a decompositional approach where two different indexes can be brake down into spatial components (<tt>c_s</tt>) and attribute component (<tt>c_a</tt>). This framework is summarized in the table below:
@@ -139,7 +139,7 @@ Another useful analytics that can be performed with the **segregation** module i
 
 | **Framework** | **Class/Function**   |                 **Function main Inputs**                 |         **Function Outputs**         |
 | :----------------- | :------------------- | :------------------------------------------------------: | :----------------------------------: |
-| Decomposition       | Decompose\_Segregation   |   index1, index2, counterfactual\_approach    |    c\_a, c\_s     |
+| Decomposition       | DecomposeSegregation   |   index1, index2, counterfactual\_approach    |    c\_a, c\_s     |
 
 
 ### Multigroup measures
