@@ -9,8 +9,9 @@ from segregation.aspatial import *
 from segregation.spatial import *
 
 __all__ = [
-    'Compute_All_Aspatial_Segregation', 'Compute_All_Spatial_Segregation',
-    'Compute_All_Segregation'
+    'ComputeAllAspatialSegregation', 
+    'ComputeAllSpatialSegregation',
+    'ComputeAllSegregation'
 ]
 
 
@@ -41,17 +42,17 @@ def _compute_all_aspatial_segregation(data, group_pop_var, total_pop_var):
     '''
 
     D = Dissim(data, group_pop_var, total_pop_var)
-    G = Gini_Seg(data, group_pop_var, total_pop_var)
+    G = GiniSeg(data, group_pop_var, total_pop_var)
     H = Entropy(data, group_pop_var, total_pop_var)
     A = Atkinson(data, group_pop_var, total_pop_var)
     xPy = Exposure(data, group_pop_var, total_pop_var)
     xPx = Isolation(data, group_pop_var, total_pop_var)
-    R = Con_Prof(data, group_pop_var, total_pop_var)
-    Dbc = Bias_Corrected_Dissim(data, group_pop_var, total_pop_var)
-    Ddc = Density_Corrected_Dissim(data, group_pop_var, total_pop_var)
-    V = Correlation_R(data, group_pop_var, total_pop_var)
-    Dct = Modified_Dissim(data, group_pop_var, total_pop_var)
-    Gct = Modified_Gini_Seg(data, group_pop_var, total_pop_var)
+    R = ConProf(data, group_pop_var, total_pop_var)
+    Dbc = BiasCorrectedDissim(data, group_pop_var, total_pop_var)
+    Ddc = DensityCorrectedDissim(data, group_pop_var, total_pop_var)
+    V = CorrelationR(data, group_pop_var, total_pop_var)
+    Dct = ModifiedDissim(data, group_pop_var, total_pop_var)
+    Gct = ModifiedGiniSeg(data, group_pop_var, total_pop_var)
 
     dictionary = {
         'Dissimilarity': D.statistic,
@@ -75,7 +76,7 @@ def _compute_all_aspatial_segregation(data, group_pop_var, total_pop_var):
     return computed
 
 
-class Compute_All_Aspatial_Segregation:
+class ComputeAllAspatialSegregation:
     '''
     Perform point estimation of selected Aspatial segregation measures at once
 
@@ -104,7 +105,7 @@ class Compute_All_Aspatial_Segregation:
     >>> import geopandas as gpd
     >>> import segregation
     >>> import libpysal
-    >>> from segregation.util import Compute_All_Aspatial_Segregation
+    >>> from segregation.util import ComputeAllAspatialSegregation
     
     Then it's time to load some data to estimate segregation. We use the data of 2000 Census Tract Data for the metropolitan area of Sacramento, CA, USA.
 
@@ -120,7 +121,7 @@ class Compute_All_Aspatial_Segregation:
     
     Now the measures are fitted.
     
-    >>> aspatial_fit = Compute_All_Aspatial_Segregation(gdf, 'HISP_', 'TOT_POP')
+    >>> aspatial_fit = ComputeAllAspatialSegregation(gdf, 'HISP_', 'TOT_POP')
     >>> aspatial_fit.computed
     
     '''
@@ -155,21 +156,21 @@ def _compute_all_spatial_segregation(data, group_pop_var, total_pop_var):
                   
     '''
 
-    SD = Spatial_Dissim(data, group_pop_var, total_pop_var)
-    PARD = Perimeter_Area_Ratio_Spatial_Dissim(data, group_pop_var,
+    SD = SpatialDissim(data, group_pop_var, total_pop_var)
+    PARD = PerimeterAreaRatioSpatialDissim(data, group_pop_var,
                                                total_pop_var)
-    BSD = Boundary_Spatial_Dissim(data, group_pop_var, total_pop_var)
-    ACE = Absolute_Centralization(data, group_pop_var, total_pop_var)
-    ACO = Absolute_Concentration(data, group_pop_var, total_pop_var)
+    BSD = BoundarySpatialDissim(data, group_pop_var, total_pop_var)
+    ACE = AbsoluteCentralization(data, group_pop_var, total_pop_var)
+    ACO = AbsoluteConcentration(data, group_pop_var, total_pop_var)
     DEL = Delta(data, group_pop_var, total_pop_var)
-    RCE = Relative_Centralization(data, group_pop_var, total_pop_var)
-    ACL = Absolute_Clustering(data, group_pop_var, total_pop_var)
-    RCL = Relative_Clustering(data, group_pop_var, total_pop_var)
-    RCO = Relative_Concentration(data, group_pop_var, total_pop_var)
-    DDxPy = Distance_Decay_Exposure(data, group_pop_var, total_pop_var)
-    DDxPx = Distance_Decay_Isolation(data, group_pop_var, total_pop_var)
-    SPP = Spatial_Prox_Prof(data, group_pop_var, total_pop_var)
-    SP = Spatial_Proximity(data, group_pop_var, total_pop_var)
+    RCE = RelativeCentralization(data, group_pop_var, total_pop_var)
+    ACL = AbsoluteClustering(data, group_pop_var, total_pop_var)
+    RCL = RelativeClustering(data, group_pop_var, total_pop_var)
+    RCO = RelativeConcentration(data, group_pop_var, total_pop_var)
+    DDxPy = DistanceDecayExposure(data, group_pop_var, total_pop_var)
+    DDxPx = DistanceDecayIsolation(data, group_pop_var, total_pop_var)
+    SPP = SpatialProxProf(data, group_pop_var, total_pop_var)
+    SP = SpatialProximity(data, group_pop_var, total_pop_var)
 
     dictionary = {
         'Spatial Dissimilarity': SD.statistic,
@@ -195,7 +196,7 @@ def _compute_all_spatial_segregation(data, group_pop_var, total_pop_var):
     return computed
 
 
-class Compute_All_Spatial_Segregation:
+class ComputeAllSpatialSegregation:
     '''
     Perform point estimation of selected spatial segregation measures at once
 
@@ -224,7 +225,7 @@ class Compute_All_Spatial_Segregation:
     >>> import geopandas as gpd
     >>> import segregation
     >>> import libpysal
-    >>> from segregation.util import Compute_All_Spatial_Segregation
+    >>> from segregation.util import ComputeAllSpatialSegregation
     
     Then it's time to load some data to estimate segregation. We use the data of 2000 Census Tract Data for the metropolitan area of Sacramento, CA, USA.
 
@@ -240,7 +241,7 @@ class Compute_All_Spatial_Segregation:
     
     Now the measures are fitted.
     
-    >>> spatial_fit = Compute_All_Spatial_Segregation(gdf, 'HISP_', 'TOT_POP')
+    >>> spatial_fit = ComputeAllSpatialSegregation(gdf, 'HISP_', 'TOT_POP')
     >>> spatial_fit.computed
     
     '''
@@ -283,7 +284,7 @@ def _compute_all_segregation(data, group_pop_var, total_pop_var):
     return z
 
 
-class Compute_All_Segregation:
+class ComputeAllSegregation:
     '''
     Perform point estimation of selected segregation measures at once
 
@@ -312,7 +313,7 @@ class Compute_All_Segregation:
     >>> import geopandas as gpd
     >>> import segregation
     >>> import libpysal
-    >>> from segregation.util import Compute_All_Segregation
+    >>> from segregation.util import ComputeAllSegregation
     
     Then it's time to load some data to estimate segregation. We use the data of 2000 Census Tract Data for the metropolitan area of Sacramento, CA, USA.
 
@@ -328,7 +329,7 @@ class Compute_All_Segregation:
     
     Now the measures are fitted.
     
-    >>> segregation_fit = Compute_All_Segregation(gdf, 'HISP_', 'TOT_POP')
+    >>> segregation_fit = ComputeAllSegregation(gdf, 'HISP_', 'TOT_POP')
     >>> segregation_fit.computed
     
     '''
