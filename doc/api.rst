@@ -20,7 +20,7 @@ Aspatial Indices
       aspatial.ConProf
       aspatial.ModifiedDissim
       aspatial.ModifiedGiniSeg
-      aspatial.Bias_CorrectedDissim
+      aspatial.BiasCorrectedDissim
       aspatial.DensityCorrectedDissim
 
 Spatial Indices
@@ -67,8 +67,8 @@ Local Indices
       local.MultiLocationQuotient
       local.MultiLocalDiversity
       local.MultiLocalEntropy
-      local.MultiLocalSimpson_Interaction
-      local.MultiLocalSimpson_Concentration
+      local.MultiLocalSimpsonInteraction
+      local.MultiLocalSimpsonConcentration
       local.LocalRelativeCentralization
 	  
 Profile Wrappers
