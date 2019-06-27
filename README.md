@@ -86,7 +86,7 @@ index = Dissim(df, "freq", "population")
 If a user would want to fit a spatial dissimilarity index (SD) to a geopandas DataFrame called <tt>gdf</tt> to a specific group with frequency <tt>freq</tt> with each total population <tt>population</tt>, a usual call would be something like this:
 
 ```python
-from segregation.spatial import Spatial_Dissim
+from segregation.spatial import SpatialDissim
 spatial_index = SpatialDissim(gdf, "freq", "population")
 ```
 
