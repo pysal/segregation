@@ -11,74 +11,74 @@ Aspatial Indices
    :toctree: generated/
    
       aspatial.Dissim 
-      aspatial.Gini_Seg
+      aspatial.GiniSeg
       aspatial.Entropy
       aspatial.Isolation
       aspatial.Exposure
       aspatial.Atkinson
-      aspatial.Correlation_R
-      aspatial.Con_Prof
-      aspatial.Modified_Dissim
-      aspatial.Modified_Gini_Seg
-      aspatial.Bias_Corrected_Dissim
-      aspatial.Density_Corrected_Dissim
+      aspatial.CorrelationR
+      aspatial.ConProf
+      aspatial.ModifiedDissim
+      aspatial.ModifiedGiniSeg
+      aspatial.Bias_CorrectedDissim
+      aspatial.DensityCorrectedDissim
 
 Spatial Indices
 ---------------------
 .. autosummary::
    :toctree: generated/
    
-      spatial.Spatial_Prox_Prof
-      spatial.Spatial_Dissim
-      spatial.Boundary_Spatial_Dissim
-      spatial.Perimeter_Area_Ratio_Spatial_Dissim
-      spatial.Distance_Decay_Isolation
-      spatial.Distance_Decay_Exposure
-      spatial.Spatial_Proximity
-      spatial.Absolute_Clustering
-      spatial.Relative_Clustering
+      spatial.SpatialProxProf
+      spatial.SpatialDissim
+      spatial.BoundarySpatialDissim
+      spatial.PerimeterAreaRatioSpatialDissim
+      spatial.DistanceDecayIsolation
+      spatial.DistanceDecayExposure
+      spatial.SpatialProximity
+      spatial.AbsoluteClustering
+      spatial.RelativeClustering
       spatial.Delta
-      spatial.Absolute_Concentration
-      spatial.Relative_Concentration
-      spatial.Absolute_Centralization
-      spatial.Relative_Centralization
+      spatial.AbsoluteConcentration
+      spatial.RelativeConcentration
+      spatial.AbsoluteCentralization
+      spatial.RelativeCentralization
 	  
 Multigroup Indices
 ---------------------
 .. autosummary::
    :toctree: generated/
    
-      aspatial.Multi_Dissim
-      aspatial.Multi_Gini_Seg
-      aspatial.Multi_Normalized_Exposure
-      aspatial.Multi_Information_Theory
-      aspatial.Multi_Relative_Diversity
-      aspatial.Multi_Squared_Coefficient_of_Variation
-      aspatial.Multi_Diversity
-      aspatial.Simpsons_Concentration
-      aspatial.Simpsons_Interaction
-      aspatial.Multi_Divergence
+      aspatial.MultiDissim
+      aspatial.MultiGiniSeg
+      aspatial.MultiNormalizedExposure
+      aspatial.MultiInformationTheory
+      aspatial.MultiRelativeDiversity
+      aspatial.MultiSquaredCoefficientVariation
+      aspatial.MultiDiversity
+      aspatial.SimpsonsConcentration
+      aspatial.SimpsonsInteraction
+      aspatial.MultiDivergence
 	  
 Local Indices
 ---------------------
 .. autosummary::
    :toctree: generated/
    
-      local.Multi_Location_Quotient
-      local.Multi_Local_Diversity
-      local.Multi_Local_Entropy
-      local.Multi_Local_Simpson_Interaction
-      local.Multi_Local_Simpson_Concentration
-      local.Local_Relative_Centralization
+      local.MultiLocationQuotient
+      local.MultiLocalDiversity
+      local.MultiLocalEntropy
+      local.MultiLocalSimpson_Interaction
+      local.MultiLocalSimpson_Concentration
+      local.LocalRelativeCentralization
 	  
 Profile Wrappers
 ---------------------
 .. autosummary::
    :toctree: generated/
    
-	  profile.Profile_Aspatial_Segregation
-	  profile.Profile_Spatial_Segregation
-	  profile.Profile_Segregation
+	  compute_all.ComputeAllAspatialSegregation
+	  compute_all.ComputeAllSpatialSegregation
+	  compute_all.ComputeAllSegregation
 	  
 Inference Wrappers
 ---------------------
