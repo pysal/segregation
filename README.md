@@ -149,7 +149,7 @@ It also possible to estimate Multigroup measures. This framework also relies on 
 Suppose you have a DataFrame called <tt>df</tt> that has populations of some groups, for example, <tt>Group A</tt>, <tt>Group B</tt> and <tt>Group C</tt>. A usual call for a multigroup Dissimilarity index would be:
 
 ```python
-from segregation.aspatial import Multi_Dissim
+from segregation.aspatial import MultiDissim
 index = MultiDissim(df, ['Group A', 'Group B', 'Group C'])
 ```
 
