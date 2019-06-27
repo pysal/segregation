@@ -20,7 +20,7 @@ from scipy.sparse.csgraph import floyd_warshall
 from scipy.sparse import csr_matrix
 
 from segregation.aspatial.aspatial_indexes import _dissim
-from segregation.aspatial.multigroup_aspatial_indexes import Multi_Information_Theory
+from segregation.aspatial.multigroup_aspatial_indexes import MultiInformationTheory
 from segregation.network import calc_access
 from libpysal.weights.util import attach_islands
 
@@ -2910,7 +2910,7 @@ class RelativeCentralization:
         self._function = _relative_centralization
 
 
-class SpatialInformationTheory(Multi_Information_Theory):
+class SpatialInformationTheory(MultiInformationTheory):
     """Spatial Multigroup Information Theory Index.
 
     This class calculates the spatial version of the multigroup information
@@ -3016,7 +3016,7 @@ def compute_segregation_profile(gdf,
     gdf = gdf.copy()
     gdf[groups] = gdf[groups].astype(float)
     indices = {}
-    indices[0] = Multi_Information_Theory(gdf, groups).statistic
+    indices[0] = MultiInformationTheory(gdf, groups).statistic
 
     if network:
         if not gdf.crs['init'] == 'epsg:4326':
@@ -3033,7 +3033,7 @@ def compute_segregation_profile(gdf,
                                  variables=groups,
                                  distance=distance,
                                  precompute=False)
-            sit = Multi_Information_Theory(access, groups2)
+            sit = MultiInformationTheory(access, groups2)
             indices[distance] = sit.statistic
     else:
         for distance in distances:
