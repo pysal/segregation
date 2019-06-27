@@ -10,7 +10,7 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Elijah Knaap <elijah.knaap@ucr.e
 import numpy as np
 import libpysal as lps
 
-from segregation.spatial import Relative_Centralization
+from segregation.spatial import RelativeCentralization
 
 # Including old and new api in __all__ so users can use both
 
@@ -642,7 +642,7 @@ def _local_relative_centralization(data, group_pop_var, total_pop_var, k_neigh =
         local_data = data.iloc[x,:].copy()
         
         # The center is given by the last position (i.e. the current unit i)
-        local_RCE = Relative_Centralization(local_data, group_pop_var, total_pop_var, center = len(local_data) - 1)
+        local_RCE = RelativeCentralization(local_data, group_pop_var, total_pop_var, center = len(local_data) - 1)
         
         local_RCEs[i] = local_RCE.statistic
         
