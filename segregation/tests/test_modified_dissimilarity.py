@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from segregation.aspatial import Modified_Dissim
+from segregation.aspatial import ModifiedDissim
 
 
 class Modified_Dissim_Tester(unittest.TestCase):
@@ -10,7 +10,7 @@ class Modified_Dissim_Tester(unittest.TestCase):
         s_map = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
         df = s_map[['geometry', 'HISP_', 'TOT_POP']]
         np.random.seed(1234)
-        index = Modified_Dissim(df, 'HISP_', 'TOT_POP')
+        index = ModifiedDissim(df, 'HISP_', 'TOT_POP')
         np.testing.assert_almost_equal(index.statistic, 0.31075891224250635)
 
 

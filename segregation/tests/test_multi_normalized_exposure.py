@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from segregation.aspatial import Multi_Normalized_Exposure
+from segregation.aspatial import MultiNormalizedExposure
 
 
 class Multi_Normalized_Exposure_Tester(unittest.TestCase):
@@ -10,7 +10,7 @@ class Multi_Normalized_Exposure_Tester(unittest.TestCase):
         s_map = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
         groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
         df = s_map[groups_list]
-        index = Multi_Normalized_Exposure(df, groups_list)
+        index = MultiNormalizedExposure(df, groups_list)
         np.testing.assert_almost_equal(index.statistic, 0.18821879029994157)
 
 
