@@ -85,12 +85,12 @@ Inference Wrappers
 .. autosummary::
    :toctree: generated/
    
-	  inference.Infer_Segregation
-	  inference.Compare_Segregation
+	  inference.InferSegregation
+	  inference.CompareSegregation
 	  
 Decomposition
 ---------------------
 .. autosummary::
    :toctree: generated/
    
-      decomposition.Decompose_Segregation
+      decomposition.DecomposeSegregation
