@@ -11,8 +11,15 @@ import geopandas as gpd
 import warnings
 from segregation.util.util import _generate_counterfactual
 
+# Including old and new api in __all__ so users can use both
+
 __all__ = ['Infer_Segregation',
-           'Compare_Segregation']
+           'InferSegregation',
+           
+           'Compare_Segregation',
+           'CompareSegregation']
+
+# The Deprecation calls of the classes are located in the end of this script #
 
 def _infer_segregation(seg_class, iterations_under_null = 500, null_approach = "systematic", two_tailed = True, **kwargs):
     '''
@@ -232,7 +239,7 @@ def _infer_segregation(seg_class, iterations_under_null = 500, null_approach = "
 
 
 
-class Infer_Segregation:
+class InferSegregation:
     '''
     Perform inference for a single segregation measure
 
@@ -489,7 +496,7 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations_under_null = 500, 
 
 
 
-class Compare_Segregation:
+class CompareSegregation:
     '''
     Perform inference comparison for a two segregation measures
 
@@ -565,3 +572,45 @@ class Compare_Segregation:
         plt.axvline(self.est_point_diff, color = 'red')
         plt.title('{} (Diff. value = {})'.format(self._class_name, round(self.est_point_diff, 3)))
         return plt.show()
+    
+    
+    
+    
+    
+
+
+
+# Deprecation Calls (_dep_message and DeprecationHelper could be moved to some utility class) #
+# However, this was atempted, but I was crashing due to circular calls #
+        
+def _dep_message(original, replacement, when="2020-01-31", version="2.1.0"):
+    msg = "Deprecated (%s): %s" % (version, original)
+    msg += " is being renamed to %s." % replacement
+    msg += " %s will be removed on %s." % (original, when)
+    return msg
+
+class DeprecationHelper(object):
+    def __init__(self, new_target, message="Deprecated"):
+        self.new_target = new_target
+        self.message = message
+
+    def _warn(self):
+        from warnings import warn
+
+        warn(self.message)
+
+    def __call__(self, *args, **kwargs):
+        self._warn()
+        return self.new_target(*args, **kwargs)
+
+    def __getattr__(self, attr):
+        self._warn()
+        return getattr(self.new_target, attr)
+        
+
+        
+msg = _dep_message("Infer_Segregation", "InferSegregation")
+Infer_Segregation = DeprecationHelper(InferSegregation, message=msg)
+
+msg = _dep_message("Compare_Segregation", "CompareSegregation")
+Compare_Segregation = DeprecationHelper(CompareSegregation, message=msg)
