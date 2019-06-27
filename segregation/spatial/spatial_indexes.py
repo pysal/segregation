@@ -24,6 +24,8 @@ from segregation.aspatial.multigroup_aspatial_indexes import MultiInformationThe
 from segregation.network import calc_access
 from libpysal.weights.util import attach_islands
 
+from segregation.util.util import _dep_message, DeprecationHelper
+
 
 # Including old and new api in __all__ so users can use both
 
@@ -3051,34 +3053,9 @@ def compute_segregation_profile(gdf,
 
 
 
-# Deprecation Calls (_dep_message and DeprecationHelper could be moved to some utility class) #
-# However, this was atempted, but I was crashing due to circular calls #
+
         
-def _dep_message(original, replacement, when="2020-01-31", version="2.1.0"):
-    msg = "Deprecated (%s): %s" % (version, original)
-    msg += " is being renamed to %s." % replacement
-    msg += " %s will be removed on %s." % (original, when)
-    return msg
-
-class DeprecationHelper(object):
-    def __init__(self, new_target, message="Deprecated"):
-        self.new_target = new_target
-        self.message = message
-
-    def _warn(self):
-        from warnings import warn
-
-        warn(self.message)
-
-    def __call__(self, *args, **kwargs):
-        self._warn()
-        return self.new_target(*args, **kwargs)
-
-    def __getattr__(self, attr):
-        self._warn()
-        return getattr(self.new_target, attr)
-        
-
+# Deprecation Calls
         
 msg = _dep_message("Spatial_Prox_Prof", "SpatialProxProf")
 Spatial_Prox_Prof = DeprecationHelper(SpatialProxProf, message=msg)

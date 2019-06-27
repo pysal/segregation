@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 import warnings
-from segregation.util.util import _generate_counterfactual
+from segregation.util.util import _generate_counterfactual, _dep_message, DeprecationHelper
 
 # Including old and new api in __all__ so users can use both
 
@@ -580,35 +580,8 @@ class CompareSegregation:
 
 
 
-# Deprecation Calls (_dep_message and DeprecationHelper could be moved to some utility class) #
-# However, this was atempted, but I was crashing due to circular calls #
-        
-def _dep_message(original, replacement, when="2020-01-31", version="2.1.0"):
-    msg = "Deprecated (%s): %s" % (version, original)
-    msg += " is being renamed to %s." % replacement
-    msg += " %s will be removed on %s." % (original, when)
-    return msg
+# Deprecation Calls
 
-class DeprecationHelper(object):
-    def __init__(self, new_target, message="Deprecated"):
-        self.new_target = new_target
-        self.message = message
-
-    def _warn(self):
-        from warnings import warn
-
-        warn(self.message)
-
-    def __call__(self, *args, **kwargs):
-        self._warn()
-        return self.new_target(*args, **kwargs)
-
-    def __getattr__(self, attr):
-        self._warn()
-        return getattr(self.new_target, attr)
-        
-
-        
 msg = _dep_message("Infer_Segregation", "InferSegregation")
 Infer_Segregation = DeprecationHelper(InferSegregation, message=msg)
 

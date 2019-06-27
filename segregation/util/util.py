@@ -242,3 +242,29 @@ def project_gdf(gdf, to_crs=None, to_latlong=False):
     projected_gdf = gdf.to_crs(utm_crs)
 
     return projected_gdf
+
+
+        
+def _dep_message(original, replacement, when="2020-01-31", version="2.1.0"):
+    msg = "Deprecated (%s): %s" % (version, original)
+    msg += " is being renamed to %s." % replacement
+    msg += " %s will be removed on %s." % (original, when)
+    return msg
+
+class DeprecationHelper(object):
+    def __init__(self, new_target, message="Deprecated"):
+        self.new_target = new_target
+        self.message = message
+
+    def _warn(self):
+        from warnings import warn
+
+        warn(self.message)
+
+    def __call__(self, *args, **kwargs):
+        self._warn()
+        return self.new_target(*args, **kwargs)
+
+    def __getattr__(self, attr):
+        self._warn()
+        return getattr(self.new_target, attr)
