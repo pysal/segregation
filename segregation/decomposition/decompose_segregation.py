@@ -8,8 +8,12 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Elijah Knaap <elijah.knaap@ucr.e
 import warnings
 from segregation.util.util import _generate_counterfactual
 
-__all__ = ['Decompose_Segregation']
+# Including old and new api in __all__ so users can use both
 
+__all__ = ['Decompose_Segregation',
+           'DecomposeSegregation']
+
+# The Deprecation calls of the classes are located in the end of this script #
 
 def _decompose_segregation(index1,
                            index2,
@@ -79,7 +83,7 @@ def _decompose_segregation(index1,
     return C_S, C_A, df1, df2, counterfac_df1, counterfac_df2, counterfactual_approach
 
 
-class Decompose_Segregation:
+class DecomposeSegregation:
     """Decompose segregation differences into spatial and attribute components.
 
     Given two segregation indices of the same type, use Shapley decomposition
@@ -287,3 +291,42 @@ class Decompose_Segregation:
                                       ax=axs[1, 1])
             axs[1, 1].title.set_text('Original Second Context Composition')
             axs[1, 1].axis('off')
+
+
+
+
+
+
+
+
+# Deprecation Calls (_dep_message and DeprecationHelper could be moved to some utility class) #
+# However, this was atempted, but I was crashing due to circular calls #
+        
+def _dep_message(original, replacement, when="2020-01-31", version="2.1.0"):
+    msg = "Deprecated (%s): %s" % (version, original)
+    msg += " is being renamed to %s." % replacement
+    msg += " %s will be removed on %s." % (original, when)
+    return msg
+
+class DeprecationHelper(object):
+    def __init__(self, new_target, message="Deprecated"):
+        self.new_target = new_target
+        self.message = message
+
+    def _warn(self):
+        from warnings import warn
+
+        warn(self.message)
+
+    def __call__(self, *args, **kwargs):
+        self._warn()
+        return self.new_target(*args, **kwargs)
+
+    def __getattr__(self, attr):
+        self._warn()
+        return getattr(self.new_target, attr)
+        
+
+        
+msg = _dep_message("Decompose_Segregation", "DecomposeSegregation")
+Decompose_Segregation = DeprecationHelper(DecomposeSegregation, message=msg)
