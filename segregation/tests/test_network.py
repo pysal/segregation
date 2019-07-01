@@ -17,14 +17,6 @@ class Network_Tester(unittest.TestCase):
         acc = calc_access(df, test_net, distance=1., variables=variables)
         assert acc.acc_WHITE_.sum() == 692010.0
 
-    def test_aget_osm_network(self):
-        df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
-        df = df[df.FIPS.str.startswith('06061')]
-        df = df[(df.centroid.x < -121) & (df.centroid.y < 38.85)]
-        df.crs = {'init': 'epsg:4326'}
-        test_net = get_osm_network(df, maxdist=0)
-        assert len(test_net.nodes_df) > 30000
-
 
 if __name__ == '__main__':
     unittest.main()
