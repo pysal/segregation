@@ -1,5 +1,5 @@
 segregation.inference.TwoValueTest
-========================================
+==================================
 
 .. currentmodule:: segregation.inference
 
