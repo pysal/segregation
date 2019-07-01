@@ -9,6 +9,7 @@ class Network_Tester(unittest.TestCase):
         df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
         df = df[df.FIPS.str.startswith('06061')]
         df = df[(df.centroid.x < -121) & (df.centroid.y < 38.85)]
+        df.crs = {'init': 'epsg:4326'}
         test_net = get_osm_network(df, maxdist=0)
         assert len(test_net.edges_df) == 89018
 
@@ -18,6 +19,7 @@ class Network_Tester(unittest.TestCase):
         df = s_map[['FIPS', 'geometry'] + variables]
         df = df[df.FIPS.str.startswith('06061')]
         df = df[(df.centroid.x < -121) & (df.centroid.y < 38.85)]
+        df.crs = {'init': 'epsg:4326'}
         test_net = get_osm_network(df, maxdist=0)
         df[variables] = df[variables].astype(float)
         acc = calc_access(df, test_net, distance=1., variables=variables)
