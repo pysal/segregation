@@ -71,7 +71,7 @@ Local Indices
       local.MultiLocalSimpsonConcentration
       local.LocalRelativeCentralization
 	  
-Profile Wrappers
+Batch Compute Wrappers
 ---------------------
 .. autosummary::
    :toctree: generated/
@@ -85,12 +85,20 @@ Inference Wrappers
 .. autosummary::
    :toctree: generated/
    
-	  inference.InferSegregation
-	  inference.CompareSegregation
+	  inference.SingleValueTest
+	  inference.TwoValueTest
 	  
 Decomposition
 ---------------------
 .. autosummary::
    :toctree: generated/
-   
+  
       decomposition.DecomposeSegregation
+
+Network
+---------------------
+.. autosummary::
+ :toctree: generated/
+
+      network.get_osm_network
+      network.calc_access

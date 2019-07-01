@@ -29,13 +29,14 @@ class _HiddenPrints:  # from https://stackoverflow.com/questions/8391411/suppres
         sys.stdout = self._original_stdout
 
 
-def get_network(geodataframe, maxdist=5000, quiet=True, **kwargs):
+def get_osm_network(geodataframe, maxdist=5000, quiet=True, **kwargs):
     """Download a street network from OSM.
 
     Parameters
     ----------
     geodataframe : geopandas.GeoDataFrame
         geopandas.GeoDataFrame of the study area.
+        Coordinate system should be in WGS84
     maxdist : int
         Total distance (in meters) of the network queries you may need.
         This is used to buffer the network to ensure theres enough to satisfy
@@ -61,9 +62,6 @@ def get_network(geodataframe, maxdist=5000, quiet=True, **kwargs):
     """
 
     gdf = geodataframe.copy()
-
-    assert gdf.crs['init'] == 'epsg:4326', "geodataframe must be in epsg 4326"
-
     gdf = project_gdf(gdf)
     gdf = gdf.buffer(maxdist)
     bounds = gdf.to_crs(epsg=4326).total_bounds
@@ -96,7 +94,7 @@ def calc_access(geodataframe,
     geodataframe : geopandas.GeoDataFrame
         geodataframe with demographic data
     network : pandana.Network
-        pandana.Network instance. This is likely created with `get_network` or
+        pandana.Network instance. This is likely created with `get_osm_network` or
         via helper functions from OSMnet or UrbanAccess.
     distance : int
         maximum distance to consider `accessible` (the default is 2000).
@@ -138,72 +136,3 @@ def calc_access(geodataframe,
     access = pd.DataFrame(dict(zip(names, access)))
 
     return access
-
-
-def local_entropy(gdf, groups):
-    """Calculate local entropy scores.
-
-    Parameters
-    ----------
-    gdf : geopandas.GeoDataFrame
-        Description of parameter `gdf`.
-    groups : list
-        list of columns on gdf representing population groups for which the
-        entropy score should be calculated
-
-    Returns
-    -------
-    pandas.Series
-        pandas Series whose values represent local entropy scores for each
-        input location
-
-    """
-    gdf = gdf.copy()
-
-    tau_p = gdf[groups].sum(
-        axis=1)  # total population accessible from location p
-
-    m = len(groups)  # number of groups
-
-    tau_pm = gdf[groups]  # group densities
-
-    pi_pm = tau_pm.div(tau_p, axis=0)  # group proportions at location p
-
-    Ep = -(pi_pm * np.log(pi_pm) / np.log(m)).sum(axis=1)
-
-    return Ep
-
-
-def total_entropy(gdf, groups):
-    """Calculate entropy score.
-
-    Parameters
-    ----------
-    gdf : geopandas.GeoDataFrame
-         A GeoPandas GeoDataFrame with rows as observations (e.g. tracts)
-         and columns as population groups
-          .
-    groups : list
-        list of columns on gdf representing population groups for which the
-        entropy score should be calculated
-        into consideration.
-
-    Returns
-    -------
-    float
-        total entropy statistic.
-
-    """
-    gdf = gdf.copy()
-
-    T = gdf[groups].sum().sum()  # total population (sum of all group sums)
-
-    m = len(groups)  # number of groups
-
-    tau_m = gdf[groups].values  # group densities
-
-    pi_m = tau_m.sum(axis=0) / T  # overall group proportions
-
-    E = -(pi_m * np.log(pi_m) / np.log(m)).sum()
-
-    return E

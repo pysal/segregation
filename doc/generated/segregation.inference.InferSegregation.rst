@@ -1,9 +1,9 @@
-segregation.inference.InferSegregation
+segregation.inference.SingleValueTest
 ======================================
 
 .. currentmodule:: segregation.inference
 
-.. autoclass:: InferSegregation
+.. autoclass:: SingleValueTest
 
    
    .. automethod:: __init__
@@ -13,8 +13,8 @@ segregation.inference.InferSegregation
 
    .. autosummary::
    
-      ~InferSegregation.__init__
-      ~InferSegregation.plot
+      ~SingleValueTest.__init__
+      ~SingleValueTest.plot
    
    
 

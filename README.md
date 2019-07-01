@@ -1,212 +1,263 @@
-Segregation Measures Framework in PySAL
-=======================================
+# Segregation Analysis, Inference, and Decomposition with PySAL
 
 [![Build Status](https://travis-ci.com/pysal/segregation.svg?branch=master)](https://travis-ci.org/pysal/segregation)
+[![Coverage Status](https://coveralls.io/repos/github/pysal/segregation/badge.svg?branch=master)](https://coveralls.io/github/pysal/segregation?branch=master)
 
-## Analytics for spatial and aspatial segregation in Python.
+![](doc/_static/images/heatmaps.png)
 
-**Easily estimate several segregation measures:**
+The PySAL **segregation** package is a tool for analyzing patterns of urban segregation.
+With only a few lines of code, **segregation** users can
 
-![Multiple Segregation Measures in Los Angeles in 2010](figs/la_nhblk_2010_profile_wrapper_example.png)
+Calculate over 40 segregation measures from simple to state-of-the art, including:
 
+- [aspatial segregation indices](https://github.com/pysal/segregation/blob/master/notebooks/aspatial_examples.ipynb)
+- spatial segregation indices
+  - [using spatial weights matrices, euclidian distances, or topological relationships](https://github.com/pysal/segregation/blob/master/notebooks/spatial_examples.ipynb)
+  - [using street network distances](https://github.com/pysal/segregation/blob/master/notebooks/network_measures.ipynb)
+  - [using multiscalar definitions](https://github.com/pysal/segregation/blob/master/notebooks/multiscalar_segregation_profiles.ipynb)
+- [local segregation indices](https://github.com/pysal/segregation/blob/master/notebooks/local_measures_example.ipynb)
 
-**Perform comparative segregation:**
+Test whether segregation estimates are statistically significant:
 
-![Los Angeles and New York Comparison Illustration](figs/la_vs_ny_comparison_illustration.png)
+- [single value inference](https://github.com/pysal/segregation/blob/master/notebooks/inference_wrappers_example.ipynb)
+- [comparative inference](https://github.com/pysal/segregation/blob/master/notebooks/inference_wrappers_example.ipynb)
 
-![Los Angeles and New York Comparison Results](figs/la_vs_ny_comparison_results.png)
+[Decompose](https://github.com/pysal/segregation/blob/master/notebooks/decomposition_wrapper_example.ipynb)
+segregation comparisons into
 
+- differences arising from spatial structure 
+- differences arising from demographic structure
 
+## Installation
 
-## What is segregation?
+Released versions of segregation are available on pip and anaconda
 
-The PySAL **segregation** module allows users to estimate several segregation measures, perform inference for single values and for comparison between values and decompose comparative segregation.
+pip:
 
-It can be divided into frameworks: 
-
-- Point Estimation: point estimation of many aspatial and spatial segregation indexes.
-- Inference Wrappers: present functions to perform inference for a single measure or for comparison between two measures.
-- Decompose Segregation: decompose comparative segregation into spatial and attribute components.
-
-Installation
-------------
-
-i) `pip` directly running in the prompt:
-
-```
+```bash
 pip install segregation
 ```
 
-ii) Using the `conda-forge` channel as described in https://github.com/conda-forge/segregation-feedstock:
+[anaconda](https://www.anaconda.com/download/):
 
-```
-conda config --add channels conda-forge
-conda install segregation
-```
-
-iii) Another recommended method for installing segregation is with [anaconda](https://www.anaconda.com/download/). Clone this repository or download it manually then `cd` into the directory and run the following commands (this will install the development version):
-
-```
-$ conda env create -f environment.yml
-$ source activate segregation
-$ python setup.py develop
+```bash
+conda install -c conda-forge segregation
 ```
 
-iv) `pip` directly from this repository running in the prompt (if you experience an issue trying to install this way, take a look at this discussion: https://github.com/pysal/segregation/issues/15):
+You can also install the current development version from this repository 
 
+ download [anaconda](https://www.anaconda.com/download/):
+
+`cd` into the directory and run the following commands
+
+```bash
+conda env create -f environment.yml
+conda activate segregation
+python setup.py develop
 ```
-$ pip install git+https://github.com/pysal/segregation
-```
-
-
-#### Segregation uses:
-
-- pandas
-- geopandas
-- matplotlib
-- scikit-learn
-- seaborn
-- numpy
-- scipy
-- libpysal
 
 ## Getting started
 
+For a complete guide to the `segregation` API, see the online
+[documentation](http://segregation.readthedocs.io). 
+
+For code walkthroughs and sample analyses, see the
+[example notebooks](https://github.com/pysal/segregation/tree/master/notebooks)
+
+## Calculating Segregation Measures
+
+Each index in the **segregation** module is implemented as a class, which is built from a `pandas.DataFrame`
+or a `geopandas.GeoDataFrame`. To estimate a segregation statistic, a user needs to call the segregation class
+she wishes to estimate, and pass three arguments:
+
+- the DataFrame containing population data
+- the name of the column with population counts for the group of interest
+- the name of the column with the total population for each enumeration unit
+
+Every class in **segregation** has a `statistic` and a `core_data` attributes.
+The first is a direct access to the point estimation of the specific segregation measure
+and the second attribute gives access to the main data that the module uses internally to
+perform the estimates.
+To see the estimated D in the first generic example above, the user would have just to run
+`index.statistic` to see the fitted value.
+
 ### Single group measures
 
-All input data for this module rely on [pandas](https://github.com/pandas-dev/pandas) DataFrames for the aspatial measures and [geopandas](https://github.com/geopandas/geopandas) DataFrames for spatial ones. In a nutshell, the user needs to pass the pandas DataFrame as its first argument and then two string that represent the variable name of population frequency of the group of interest (variable <tt>group_pop_var</tt>) and the total population of the unit (variable <tt>total_pop_var</tt>).
+If, for example, a user was studying income segregation and wanted to know whether
+high-income residents tend to be more segregated from others.
+This user may want would want to fit a dissimilarity index (D) to a DataFrame called `df` to
+a specific group with columns like `"hi_income"`, `"med_income"` and `"low_income"` that store counts of people in each income
+bracket, and a total column called `"total_population"`
 
-So, for example, if a user would want to fit a dissimilarity index (D) to a DataFrame called <tt>df</tt> to a specific group with frequency <tt>freq</tt> with each total population <tt>population</tt>, a usual call would be something like this:
+a typical call would be something like this:
 
 ```python
 from segregation.aspatial import Dissim
-index = Dissim(df, "freq", "population")
+d_index = Dissim(df, "hi_income", "total_population")
 ```
 
-If a user would want to fit a spatial dissimilarity index (SD) to a geopandas DataFrame called <tt>gdf</tt> to a specific group with frequency <tt>freq</tt> with each total population <tt>population</tt>, a usual call would be something like this:
+If a user would want to fit a *spatial* dissimilarity index (SD), the call would be nearly
+identical, save for the fact that the `DataFrame` now needs to be a `GeoDataFrame` with an appropriate `geometry` column
 
 ```python
 from segregation.spatial import SpatialDissim
-spatial_index = SpatialDissim(gdf, "freq", "population")
+spatial_index = SpatialDissim(gdf, "hi_income", "total_population")
 ```
 
-Every class of **segregation** has a <tt>statistic</tt> and a <tt>core\_data</tt> attributes. The first is a direct access to the point estimation of the specific segregation measure and the second attribute gives access to the main data that the module uses internally to perform the estimates. To see the estimated D in the first generic example above, the user would have just to run <tt>index.statistic</tt> to see the fitted value.
+Some spatial indices can also accept either a [PySAL](http://pysal.org) `W` object, or a [pandana](https://github.com/UDST/pandana) `Network` object,
+which allows the user full control over how to parameterize spatial effects.
+The network functions can be particularly useful for teasing out differences in
+segregation measures caused by two cities that have two very different spatial structures,
+like for example Detroit MI (left) and Monroe LA (right):
 
-For point estimation, all the measures available can be summarized in the following table:
+![](doc/_static/images/networks.png)
 
+For point estimation, all single-group indices available are summarized in the following
+table:
 
-| **Measure**                                       | **Class/Function**                      | **Spatial?** | **Specific Arguments** |
-| :------------------------------------------------ | :-------------------------------------- | :----------: | :-----------------: |
-| Dissimilarity (D)                                 | Dissim                                  |      No      |         \-          |
-| Gini (G)                                          | GiniSeg                                 |      No      |         \-          |
-| Entropy (H)                                       | Entropy                                 |      No      |         \-          |
-| Isolation (xPx)                                   | Isolation                               |      No      |         \-          |
-| Exposure (xPy)                                    | Exposure                                |      No      |         \-          |
-| Atkinson (A)                                      | Atkinson                                |      No      |          b          |
-| Correlation Ratio (V)                             | CorrelationR                            |      No      |         \-          |
-| Concentration Profile (R)                         | ConProf                                 |      No      |          m          |
-| Modified Dissimilarity (Dct)                      | ModifiedDissim                          |      No      |     iterations      |
-| Modified Gini (Gct)                               | ModifiedGiniSeg                         |      No      |     iterations      |
-| Bias-Corrected Dissimilarity (Dbc)                | BiasCorrectedDissim                     |      No      |          B          |
-| Density-Corrected Dissimilarity (Ddc)             | DensityCorrectedDissim                  |      No      |        xtol         |
-| Spatial Proximity Profile (SPP)                   | SpatialProxProf                         |     Yes      |          m          |
-| Spatial Dissimilarity (SD)                        | SpatialDissim                           |     Yes      |   w, standardize    |
-| Boundary Spatial Dissimilarity (BSD)              | BoundarySpatialDissim                   |     Yes      |     standardize     |
-| Perimeter Area Ratio Spatial Dissimilarity (PARD) | PerimeterAreaRatioSpatialDissim         |     Yes      |     standardize     |
-| Distance Decay Isolation (DDxPx)                  | DistanceDecayIsolation                  |     Yes      |     alpha, beta     |
-| Distance Decay Exposure (DDxPy)                   | DistanceDecayExposure                   |     Yes      |     alpha, beta     |
-| Spatial Proximity (SP)                            | SpatialProximity                        |     Yes      |     alpha, beta     |
-| Absolute Clustering (ACL)                         | AbsoluteClustering                      |     Yes      |     alpha, beta     |
-| Relative Clustering (RCL)                         | RelativeClustering                      |     Yes      |     alpha, beta     |
-| Delta (DEL)                                       | Delta                                   |     Yes      |         \-          |
-| Absolute Concentration (ACO)                      | AbsoluteConcentration                   |     Yes      |         \-          |
-| Relative Concentration (RCO)                      | RelativeConcentration                   |     Yes      |         \-          |
-| Absolute Centralization (ACE)                     | AbsoluteCentralization                  |     Yes      |         \-          |
-| Relative Centralization (RCE)                     | RelativeCentralization                  |     Yes      |         \-          |
-
-
-Once the segregation indexes are fitted, the user can perform inference to shed light for statistical significance in regional analysis. The summary of the inference framework is presented in the table below:
-
-
-| **Inference Type** | **Class/Function**   |                 **Function main Inputs**                 |         **Function Outputs**         |
-| :----------------- | :------------------- | :------------------------------------------------------: | :----------------------------------: |
-| Single Value       | InferSegregation   |   seg\_class, iterations\_under\_null, null\_approach, two\_tailed    |    p\_value, est\_sim, statistic     |
-| Two Values         | CompareSegregation | seg\_class\_1, seg\_class\_2, iterations\_under\_null, null\_approach | p\_value, est\_sim, est\_point\_diff |
-
-
-Another useful analytics that can be performed with the **segregation** module is a decompositional approach where two different indexes can be brake down into spatial components (<tt>c_s</tt>) and attribute component (<tt>c_a</tt>). This framework is summarized in the table below:
-
-
-| **Framework** | **Class/Function**   |                 **Function main Inputs**                 |         **Function Outputs**         |
-| :----------------- | :------------------- | :------------------------------------------------------: | :----------------------------------: |
-| Decomposition       | DecomposeSegregation   |   index1, index2, counterfactual\_approach    |    c\_a, c\_s     |
-
+| **Measure**                                       | **Class/Function**              | **Spatial?** | **Specific Arguments** |
+|:--------------------------------------------------|:--------------------------------|:------------:|:----------------------:|
+| Dissimilarity (D)                                 | Dissim                          |      No      |           -            |
+| Gini (G)                                          | GiniSeg                         |      No      |           -            |
+| Entropy (H)                                       | Entropy                         |      No      |           -            |
+| Isolation (xPx)                                   | Isolation                       |      No      |           -            |
+| Exposure (xPy)                                    | Exposure                        |      No      |           -            |
+| Atkinson (A)                                      | Atkinson                        |      No      |           b            |
+| Correlation Ratio (V)                             | CorrelationR                    |      No      |           -            |
+| Concentration Profile (R)                         | ConProf                         |      No      |           m            |
+| Modified Dissimilarity (Dct)                      | ModifiedDissim                  |      No      |       iterations       |
+| Modified Gini (Gct)                               | ModifiedGiniSeg                 |      No      |       iterations       |
+| Bias-Corrected Dissimilarity (Dbc)                | BiasCorrectedDissim             |      No      |           B            |
+| Density-Corrected Dissimilarity (Ddc)             | DensityCorrectedDissim          |      No      |          xtol          |
+| Spatial Proximity Profile (SPP)                   | SpatialProxProf                 |     Yes      |           m            |
+| Spatial Dissimilarity (SD)                        | SpatialDissim                   |     Yes      |     w, standardize     |
+| Boundary Spatial Dissimilarity (BSD)              | BoundarySpatialDissim           |     Yes      |      standardize       |
+| Perimeter Area Ratio Spatial Dissimilarity (PARD) | PerimeterAreaRatioSpatialDissim |     Yes      |      standardize       |
+| Distance Decay Isolation (DDxPx)                  | DistanceDecayIsolation          |     Yes      |      alpha, beta       |
+| Distance Decay Exposure (DDxPy)                   | DistanceDecayExposure           |     Yes      |      alpha, beta       |
+| Spatial Proximity (SP)                            | SpatialProximity                |     Yes      |      alpha, beta       |
+| Absolute Clustering (ACL)                         | AbsoluteClustering              |     Yes      |      alpha, beta       |
+| Relative Clustering (RCL)                         | RelativeClustering              |     Yes      |      alpha, beta       |
+| Delta (DEL)                                       | Delta                           |     Yes      |           -            |
+| Absolute Concentration (ACO)                      | AbsoluteConcentration           |     Yes      |           -            |
+| Relative Concentration (RCO)                      | RelativeConcentration           |     Yes      |           -            |
+| Absolute Centralization (ACE)                     | AbsoluteCentralization          |     Yes      |           -            |
+| Relative Centralization (RCE)                     | RelativeCentralization          |     Yes      |           -            |
 
 ### Multigroup measures
 
-It also possible to estimate Multigroup measures. This framework also relies on [pandas](https://github.com/pandas-dev/pandas) DataFrames for the aspatial measures.
+**segregation** also facilitates the estimation of multigroup segregation measures.
 
-Suppose you have a DataFrame called <tt>df</tt> that has populations of some groups, for example, <tt>Group A</tt>, <tt>Group B</tt> and <tt>Group C</tt>. A usual call for a multigroup Dissimilarity index would be:
+In this case, the call is nearly identical to the single-group, only now we pass a list of
+column names rather than a single string;
+reprising the income segregation example above, an example call might look like this  
+*though
+note, again, that now we requre a GeoDataFrame for proper estimation*
 
 ```python
 from segregation.aspatial import MultiDissim
-index = MultiDissim(df, ['Group A', 'Group B', 'Group C'])
+index = MultiDissim(df, ['hi_income', 'med_income', 'low_income'])
 ```
 
-Therefore, a <tt>statistic</tt> attribute will contain the value of this index.
+```python
+index.statistic
+```
 
+Available multi-group indices are summarized in the table below:
 
-Currently, theses indexes are summarized in the table below:
-
-| **Measure**                                       | **Class/Function**                        | **Spatial?** | **Specific Arguments** |
-| :------------------------------------------------ | :---------------------------------------- | :----------: | :-----------------: |
-| Multigroup Dissimilarity                          | MultiDissim                               |      No      |         \-          |
-| Multigroup Gini                                   | MultiGiniSeg                              |      No      |         \-          |
-| Multigroup Normalized Exposure                    | MultiNormalizedExposure                   |      No      |         \-          |
-| Multigroup Information Theory                     | MultiInformationTheory                    |      No      |         \-          |
-| Multigroup Relative Diversity                     | MultiRelativeDiversity                    |      No      |         \-          |
-| Multigroup Squared Coefficient of Variation       | MultiSquaredCoefficientVariation          |      No      |         \-          |
-| Multigroup Diversity                              | MultiDiversity                            |      No      |     normalized      |
-| Simpson's Concentration                           | SimpsonsConcentration                     |      No      |         \-          |
-| Simpson's Interaction                             | SimpsonsInteraction                       |      No      |         \-          |
-| Multigroup Divergence                             | MultiDivergence                           |      No      |         \-          |
+| **Measure**                                 | **Class/Function**               | **Spatial?** | **Specific Arguments** |
+|:--------------------------------------------|:---------------------------------|:------------:|:----------------------:|
+| Multigroup Dissimilarity                    | MultiDissim                      |      No      |           -            |
+| Multigroup Gini                             | MultiGiniSeg                     |      No      |           -            |
+| Multigroup Normalized Exposure              | MultiNormalizedExposure          |      No      |           -            |
+| Multigroup Information Theory               | MultiInformationTheory           |      No      |           -            |
+| Multigroup Relative Diversity               | MultiRelativeDiversity           |      No      |           -            |
+| Multigroup Squared Coefficient of Variation | MultiSquaredCoefficientVariation |      No      |           -            |
+| Multigroup Diversity                        | MultiDiversity                   |      No      |       normalized       |
+| Simpson’s Concentration                     | SimpsonsConcentration            |      No      |           -            |
+| Simpson’s Interaction                       | SimpsonsInteraction              |      No      |           -            |
+| Multigroup Divergence                       | MultiDivergence                  |      No      |           -            |
 
 ### Local measures
 
-Also, it is possible to calculate local measures of segregation. A <tt>statistics</tt> (the attribute is in the plural since, many statistics are fitted) attribute will contain the values of these indexes. Currently, they are summarized in the table below:
+Also, it is possible to calculate local measures of segregation.
+A `statistics` attribute will contain the values of these indexes. **Note:
+in this case the attribute is in the plural since, many statistics are fitted, one for
+each enumeration unit** Local segregation indices have the same signature as their global
+cousins and are summarized in the table below:
 
-| **Measure**                                       | **Class/Function**                        | **Spatial?** | **Specific Arguments** |
-| :------------------------------------------------ | :---------------------------------------- | :----------: | :-----------------: |
-| Location Quotient                                 | MultiLocationQuotient                     |      No      |         \-          |
-| Local Diversity                                   | MultiLocalDiversity                       |      No      |         \-          |
-| Local Entropy                                     | MultiLocalEntropy                         |      No      |         \-          |
-| Local Simpson's Concentration                     | MultiLocalSimpsonConcentration            |      No      |         \-          |
-| Local Simpson's Interaction                       | MultiLocalSimpsonInteraction              |      No      |         \-          |
-| Local Centralization                              | LocalRelativeCentralization               |      Yes     |         \-          |
+| **Measure**                   | **Class/Function**             | **Spatial?** | **Specific Arguments** |
+|:------------------------------|:-------------------------------|:------------:|:----------------------:|
+| Location Quotient             | MultiLocationQuotient          |      No      |           -            |
+| Local Diversity               | MultiLocalDiversity            |      No      |           -            |
+| Local Entropy                 | MultiLocalEntropy              |      No      |           -            |
+| Local Simpson’s Concentration | MultiLocalSimpsonConcentration |      No      |           -            |
+| Local Simpson’s Interaction   | MultiLocalSimpsonInteraction   |      No      |           -            |
+| Local Centralization          | LocalRelativeCentralization    |     Yes      |           -            |
 
-If you are new to segregation and PySAL you will best get started with our documentation! We encourage you to take a look at some examples of this module in the <tt>notebooks</tt> repo!
+## Testing for Statistical Significance
 
+Once the segregation indexes are fitted, the user can perform inference to shed light for
+statistical significance in regional analysis.
+The summary of the inference framework is presented in the table below:
 
-Contribute
-----------
+| **Inference Type** | **Class/Function** |                    **Function main Inputs**                    |       **Function Outputs**       |
+|:-------------------|:-------------------|:--------------------------------------------------------------:|:--------------------------------:|
+| Single Value       | SingleValueTest    |  seg_class, iterations_under_null, null_approach, two_tailed   |   p_value, est_sim, statistic    |
+| Two Values         | TwoValueTest       | seg_class_1, seg_class_2, iterations_under_null, null_approach | p_value, est_sim, est_point_diff |
+
+### [Single Value Inference](https://github.com/pysal/segregation/blob/master/notebooks/inference_wrappers_example.ipynb)
+
+![](doc/_static/images/singleval_inference.png)
+
+### [Two-Value Inference](https://github.com/pysal/segregation/blob/master/notebooks/inference_wrappers_example.ipynb)
+
+![](doc/_static/images/twoval_inference.png)
+
+### [Decomposition](https://github.com/pysal/segregation/blob/master/notebooks/decomposition_wrapper_example.ipynb)
+
+Another useful analysis that can be performed with the **segregation** module is a
+decompositional approach where two different indexes can be broken down into their spatial
+component (`c_s`) and attribute component (`c_a`). This framework is summarized in the table
+below:
+
+| **Framework** | **Class/Function**   |        **Function main Inputs**         | **Function Outputs** |
+|:--------------|:---------------------|:---------------------------------------:|:--------------------:|
+| Decomposition | DecomposeSegregation | index1, index2, counterfactual_approach |       c_a, c_s       |
+
+![](doc/_static/images/decomp_example.png)
+
+In this case, the difference in measured D statistics between Detroit and Monroe is
+attributable primarily to their demographic makeup, rather than the spatial structure of
+the two cities.
+(Note, this is to be expected since *D* is not a spatial index)
+
+## Contributing
 
 PySAL-segregation is under active development and contributors are welcome.
 
-If you have any suggestion, feature request, or bug report, please open a new [issue](https://github.com/pysal/inequality/issues) on GitHub. To submit patches, please follow the PySAL development [guidelines](http://pysal.readthedocs.io/en/latest/developers/index.html) and open a [pull request](https://github.com/pysal/segregation). Once your changes get merged, you’ll automatically be added to the [Contributors List](https://github.com/pysal/segregation/graphs/contributors).
+If you have any suggestion, feature request, or bug report, please open a new
+[issue](https://github.com/pysal/inequality/issues) on GitHub.
+To submit patches, please follow the PySAL development
+[guidelines](http://pysal.readthedocs.io/en/latest/developers/index.html) and open a
+[pull request](https://github.com/pysal/segregation). Once your changes get merged, you’ll
+automatically be added to the
+[Contributors List](https://github.com/pysal/segregation/graphs/contributors).
 
-Support
--------
+## Support
 
-If you are having issues, please talk to us in the [gitter room](https://gitter.im/pysal/pysal).
+If you are having issues, please talk to us in the
+[gitter room](https://gitter.im/pysal/pysal).
 
-License
--------
+## License
 
-The project is licensed under the [BSD license](https://github.com/pysal/pysal/blob/master/LICENSE.txt).
+The project is licensed under the
+[BSD license](https://github.com/pysal/pysal/blob/master/LICENSE.txt).
 
-Funding
--------
+## Funding
 
-<img src="figs/nsf_logo.jpg" width="50"> Award #1831615 [RIDIR: Scalable Geospatial Analytics for Social Science Research](https://www.nsf.gov/awardsearch/showAward?AWD_ID=1831615)
+<img src="figs/nsf_logo.jpg" width="50"> Award #1831615
+[RIDIR: Scalable Geospatial Analytics for Social Science Research](https://www.nsf.gov/awardsearch/showAward?AWD_ID=1831615)
 
-<img src="figs/capes_logo.jpg" width="50"> Renan Xavier Cortes is grateful for the support of Coordenação de Aperfeiçoamento de Pessoal de Nível Superior - Brazil (CAPES) - Process number 88881.170553/2018-01
+<img src="figs/capes_logo.jpg" width="50"> Renan Xavier Cortes is grateful for the support of Coordenação de Aperfeiçoamento de
+Pessoal de Nível Superior - Brazil (CAPES) - Process number 88881.170553/2018-01

@@ -1,9 +1,9 @@
-segregation.inference.CompareSegregation
+segregation.inference.TwoValueTest
 ========================================
 
 .. currentmodule:: segregation.inference
 
-.. autoclass:: CompareSegregation
+.. autoclass:: TwoValueTest
 
    
    .. automethod:: __init__
@@ -13,8 +13,8 @@ segregation.inference.CompareSegregation
 
    .. autosummary::
    
-      ~CompareSegregation.__init__
-      ~CompareSegregation.plot
+      ~TwoValueTest.__init__
+      ~TwoValueTest.plot
    
    
 
