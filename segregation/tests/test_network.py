@@ -13,7 +13,8 @@ class Network_Tester(unittest.TestCase):
         df = df[(df.centroid.x < -121) & (df.centroid.y < 38.85)]
         df.crs = {'init': 'epsg:4326'}
         df[variables] = df[variables].astype(float)
-        acc = calc_access(df, self.test_net, distance=1., variables=variables)
+        test_net = get_osm_network(df, maxdist=0)
+        acc = calc_access(df, test_net, distance=1., variables=variables)
         assert acc.acc_WHITE_.sum() == 692010.0
 
     def test_aget_osm_network(self):
@@ -21,8 +22,8 @@ class Network_Tester(unittest.TestCase):
         df = df[df.FIPS.str.startswith('06061')]
         df = df[(df.centroid.x < -121) & (df.centroid.y < 38.85)]
         df.crs = {'init': 'epsg:4326'}
-        self.test_net = get_osm_network(df, maxdist=0)
-        assert len(self.test_net.nodes_df) > 30000
+        test_net = get_osm_network(df, maxdist=0)
+        assert len(test_net.nodes_df) > 30000
 
 
 if __name__ == '__main__':
