@@ -50,7 +50,7 @@ script:
   - ls -al
   - python setup.py sdist >/dev/null
   - python setup.py install
-  - nosetests -v segregation;
+  - nosetests -v segregation --with-coverage
 
 notifications:
     email:
