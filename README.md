@@ -1,19 +1,21 @@
 # Segregation Analysis, Inference, and Decomposition with PySAL
+
 [![Build Status](https://travis-ci.com/pysal/segregation.svg?branch=master)](https://travis-ci.org/pysal/segregation)
+[![Coverage Status](https://coveralls.io/repos/github/pysal/segregation/badge.svg?branch=master)](https://coveralls.io/github/pysal/segregation?branch=master)
 
 ![](doc/_static/images/heatmaps.png)
 
-The PySAL `segregation` package is a tool for analyzing patterns of urban segregation.
-With only a few lines of code, `segregation` users can:
+The PySAL **segregation** package is a tool for analyzing patterns of urban segregation.
+With only a few lines of code, **segregation** users can
 
 Calculate over 40 segregation measures from simple to state-of-the art, including:
 
-- [aspatial measures](https://github.com/pysal/segregation/blob/master/notebooks/aspatial_examples.ipynb)
-- spatial measures
-  - [using euclidian distances](https://github.com/pysal/segregation/blob/master/notebooks/spatial_examples.ipynb)
+- [aspatial segregation indices](https://github.com/pysal/segregation/blob/master/notebooks/aspatial_examples.ipynb)
+- spatial segregation indices
+  - [using spatial weights matrices & euclidian distances](https://github.com/pysal/segregation/blob/master/notebooks/spatial_examples.ipynb)
   - [using street network distances](https://github.com/pysal/segregation/blob/master/notebooks/network_measures.ipynb)
   - [using multiscalar definitions](https://github.com/pysal/segregation/blob/master/notebooks/multiscalar_segregation_profiles.ipynb)
-- [local measures](https://github.com/pysal/segregation/blob/master/notebooks/local_measures_example.ipynb)
+- [local segregation indices](https://github.com/pysal/segregation/blob/master/notebooks/local_measures_example.ipynb)
 
 Test whether segregation estimates are statistically significant:
 
@@ -26,66 +28,51 @@ segregation comparisons into
 - differences arising from spatial structure 
 - differences arising from demographic structure
 
-
 ## Installation
+
 Released versions of segregation are available on pip and anaconda
 
 pip:
+
 ```bash
 pip install segregation
 ```
 
 [anaconda](https://www.anaconda.com/download/):
+
 ```bash
 conda install -c conda-forge segregation
 ```
-
 
 You can also install the current development version from this repository 
 
  download [anaconda](https://www.anaconda.com/download/):
 
 `cd` into the directory and run the following commands
+
 ```bash
 conda env create -f environment.yml
 conda activate segregation
 python setup.py develop
 ```
 
-
 ## Getting started
 
-For a complete guide to the `segregation` API, see the online [documentation](http://segregation.readthedocs.io).  
+For a complete guide to the `segregation` API, see the online
+[documentation](http://segregation.readthedocs.io). 
 
-For code walkthroughs and sample analyses, see the [example notebooks](https://github.com/pysal/segregation/tree/master/notebooks)
+For code walkthroughs and sample analyses, see the
+[example notebooks](https://github.com/pysal/segregation/tree/master/notebooks)
 
-### Single group measures
+## Calculating Segregation Measures
 
-Each index in the **segregation** module is implemented as a class, which is built from a `pandas.DataFrame` or a `geopandas.GeoDataFrame`.
-To estimate a segregation statistic, a user needs to call the segregation class she wishes to estimate, and pass three arguments:
+Each index in the **segregation** module is implemented as a class, which is built from a `pandas.DataFrame`
+or a `geopandas.GeoDataFrame`. To estimate a segregation statistic, a user needs to call the segregation class
+she wishes to estimate, and pass three arguments:
+
 - the DataFrame containing population data
-- the name of the column with population totals for the group of interest
-- the name of the column with the total population for each spatial unit
-
-If, for example, a user would want to fit a dissimilarity index (D) to a DataFrame
-called `df` to a specific group with 
-
-frequency <tt>freq</tt> with each total population <tt>
-population</tt>, a usual call would be something like this:
-
-```python
-from segregation.aspatial import Dissim
-d_index = Dissim(df, "freq", "population")
-```
-
-If a user would want to fit a spatial dissimilarity index (SD) to a geopandas DataFrame
-called `gdf` to a specific group with frequency `freq` with each total population 
-`population`, a usual call would be something like this:
-
-```python
-from segregation.spatial import SpatialDissim
-spatial_index = SpatialDissim(gdf, "freq", "population")
-```
+- the name of the column with population counts for the group of interest
+- the name of the column with the total population for each enumeration unit
 
 Every class in **segregation** has a `statistic` and a `core_data` attributes.
 The first is a direct access to the point estimation of the specific segregation measure
@@ -94,7 +81,39 @@ perform the estimates.
 To see the estimated D in the first generic example above, the user would have just to run
 `index.statistic` to see the fitted value.
 
-For point estimation, all the measures available can be summarized in the following table:
+### Single group measures
+
+If, for example, a user was studying income segregation and wanted to know whether
+high-income residents tend to be more segregated from others.
+This user may want would want to fit a dissimilarity index (D) to a DataFrame called `df` to
+a specific group with columns like `"hi_income"`, `"med_income"` and `"low_income"` that store counts of people in each income
+bracket, and a total column called `"total_population"`
+
+a typical call would be something like this:
+
+```python
+from segregation.aspatial import Dissim
+d_index = Dissim(df, "hi_income", "total_population")
+```
+
+If a user would want to fit a *spatial* dissimilarity index (SD), the call would be nearly
+identical, save for the fact that the `DataFrame` now needs to be a `GeoDataFrame` with an appropriate `geometry` column
+
+```python
+from segregation.spatial import SpatialDissim
+spatial_index = SpatialDissim(gdf, "freq", "population")
+```
+
+Some spatial indices can also accept either a [PySAL](http://pysal.org) `W` object, or a [pandana](https://github.com/UDST/pandana) `Network` object,
+which allows the user full control over how to parameterize spatial effects.
+The network functions can be particularly useful for teasing out differences in
+segregation measures caused by two cities that have two very different spatial structures,
+like for example Detroit MI (left) and Monroe LA (right):
+
+![](doc/_static/images/networks.png)
+
+For point estimation, all single-group indices available are summarized in the following
+table:
 
 | **Measure**                                       | **Class/Function**              | **Spatial?** | **Specific Arguments** |
 |:--------------------------------------------------|:--------------------------------|:------------:|:----------------------:|
@@ -127,22 +146,26 @@ For point estimation, all the measures available can be summarized in the follow
 
 ### Multigroup measures
 
-It also possible to estimate Multigroup measures.
-This framework also relies on [pandas](https://github.com/pandas-dev/pandas) DataFrames for
-the aspatial measures.
+**segregation** also facilitates the estimation of multigroup segregation measures.
 
-Suppose you have a DataFrame called <tt>df</tt> that has populations of some groups, for example,
-`Group A`, `Group B` and <tt>Group C</tt>. A usual call for a multigroup Dissimilarity index would
-be:
+In this case, the call is nearly identical to the single-group, only now we pass a list of
+column names rather than a single string;
+reprising the income segregation example above, an example call might look like this  
+*though
+note, again, that now we requre a GeoDataFrame for proper estimation*
 
 ```python
 from segregation.aspatial import MultiDissim
-index = MultiDissim(df, ['Group A', 'Group B', 'Group C'])
+index = MultiDissim(df, ['hi_income', 'med_income', 'low_income'])
 ```
 
-Therefore, a `statistic` attribute will contain the value of this index.
+again, the estimated index value is stored in the `statistic` attribute and could be accceseed with 
 
-Currently, theses indexes are summarized in the table below:
+```python
+index.statistic
+```
+
+Available multi-group indices are summarized in the table below:
 
 | **Measure**                                 | **Class/Function**               | **Spatial?** | **Specific Arguments** |
 |:--------------------------------------------|:---------------------------------|:------------:|:----------------------:|
@@ -160,9 +183,10 @@ Currently, theses indexes are summarized in the table below:
 ### Local measures
 
 Also, it is possible to calculate local measures of segregation.
-A <tt>statistics</tt> (the attribute is in the plural since, many statistics are fitted)
-attribute will contain the values of these indexes.
-Currently, they are summarized in the table below:
+A `statistics` attribute will contain the values of these indexes. **Note:
+in this case the attribute is in the plural since, many statistics are fitted, one for
+each enumeration unit** Local segregation indices have the same signature as their global
+cousins and are summarized in the table below:
 
 | **Measure**                   | **Class/Function**             | **Spatial?** | **Specific Arguments** |
 |:------------------------------|:-------------------------------|:------------:|:----------------------:|
@@ -173,7 +197,7 @@ Currently, they are summarized in the table below:
 | Local Simpson’s Interaction   | MultiLocalSimpsonInteraction   |      No      |           -            |
 | Local Centralization          | LocalRelativeCentralization    |     Yes      |           -            |
 
-### Inference
+## Testing for Statistical Significance
 
 Once the segregation indexes are fitted, the user can perform inference to shed light for
 statistical significance in regional analysis.
@@ -184,15 +208,31 @@ The summary of the inference framework is presented in the table below:
 | Single Value       | SingleValueTest    |  seg_class, iterations_under_null, null_approach, two_tailed   |   p_value, est_sim, statistic    |
 | Two Values         | TwoValueTest       | seg_class_1, seg_class_2, iterations_under_null, null_approach | p_value, est_sim, est_point_diff |
 
-Another useful analytics that can be performed with the **segregation** module is a
-decompositional approach where two different indexes can be brake down into spatial
-components (`c_s`) and attribute component (`c_a`). This framework is summarized in the
-table below:
+### [Single Value Inference](https://github.com/pysal/segregation/blob/master/notebooks/inference_wrappers_example.ipynb)
 
-### Decomposition
+![](doc/_static/images/singleval_inference.png)
+
+### [Two-Value Inference](https://github.com/pysal/segregation/blob/master/notebooks/inference_wrappers_example.ipynb)
+
+![](doc/_static/images/twoval_inference.png)
+
+### [Decomposition](https://github.com/pysal/segregation/blob/master/notebooks/decomposition_wrapper_example.ipynb)
+
+Another useful analysis that can be performed with the **segregation** module is a
+decompositional approach where two different indexes can be broken down into their spatial
+component (`c_s`) and attribute component (`c_a`). This framework is summarized in the table
+below:
+
 | **Framework** | **Class/Function**   |        **Function main Inputs**         | **Function Outputs** |
 |:--------------|:---------------------|:---------------------------------------:|:--------------------:|
 | Decomposition | DecomposeSegregation | index1, index2, counterfactual_approach |       c_a, c_s       |
+
+![](doc/_static/images/decomp_example.png)
+
+In this case, the difference in measured D statistics between Detroit and Monroe is
+attributable primarily to their demographic makeup, rather than the spatial structure of
+the two cities.
+(Note, this is to be expected since *D* is not a spatial index)
 
 ## Contributing
 
