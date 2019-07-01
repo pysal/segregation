@@ -14,10 +14,10 @@ from segregation.util.util import _generate_counterfactual, _dep_message, Deprec
 # Including old and new api in __all__ so users can use both
 
 __all__ = ['Infer_Segregation',
-           'InferSegregation',
+           'SingleValueTest',
            
            'Compare_Segregation',
-           'CompareSegregation']
+           'TwoValueTest']
 
 # The Deprecation calls of the classes are located in the end of this script #
 
@@ -239,7 +239,7 @@ def _infer_segregation(seg_class, iterations_under_null = 500, null_approach = "
 
 
 
-class InferSegregation:
+class SingleValueTest:
     '''
     Perform inference for a single segregation measure
 
@@ -496,7 +496,7 @@ def _compare_segregation(seg_class_1, seg_class_2, iterations_under_null = 500, 
 
 
 
-class CompareSegregation:
+class TwoValueTest:
     '''
     Perform inference comparison for a two segregation measures
 
@@ -582,8 +582,8 @@ class CompareSegregation:
 
 # Deprecation Calls
 
-msg = _dep_message("Infer_Segregation", "InferSegregation")
-Infer_Segregation = DeprecationHelper(InferSegregation, message=msg)
+msg = _dep_message("Infer_Segregation", "SingleValueTest")
+Infer_Segregation = DeprecationHelper(SingleValueTest, message=msg)
 
-msg = _dep_message("Compare_Segregation", "CompareSegregation")
-Compare_Segregation = DeprecationHelper(CompareSegregation, message=msg)
+msg = _dep_message("Compare_Segregation", "TwoValueTest")
+Compare_Segregation = DeprecationHelper(TwoValueTest, message=msg)

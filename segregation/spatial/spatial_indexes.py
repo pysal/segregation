@@ -2929,7 +2929,7 @@ class SpatialInformationTheory(MultiInformationTheory):
         list of columns on gdf representing population groups for which the SIT
         index should be calculated
     network : pandana.Network
-        pandana.Network instance. This is likely created with `get_network` or
+        pandana.Network instance. This is likely created with `get_osm_network` or
         via helper functions from OSMnet or UrbanAccess.
     distance : int
         maximum distance to consider `accessible` (the default is 2000).
@@ -2989,7 +2989,7 @@ def compute_segregation_profile(gdf,
         environment.
     network : pandana.Network (optional)
         A pandana.Network likely created with
-        `segregation.network.get_network`.
+        `segregation.network.get_osm_network`.
     decay : str (optional)
         decay type to be used in pandana accessibility calculation (the
         default is 'linear').

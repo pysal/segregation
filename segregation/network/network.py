@@ -29,7 +29,7 @@ class _HiddenPrints:  # from https://stackoverflow.com/questions/8391411/suppres
         sys.stdout = self._original_stdout
 
 
-def get_network(geodataframe, maxdist=5000, quiet=True, **kwargs):
+def get_osm_network(geodataframe, maxdist=5000, quiet=True, **kwargs):
     """Download a street network from OSM.
 
     Parameters
@@ -62,7 +62,8 @@ def get_network(geodataframe, maxdist=5000, quiet=True, **kwargs):
 
     gdf = geodataframe.copy()
 
-    assert gdf.crs['init'] == 'epsg:4326', "geodataframe must be in epsg 4326"
+    if not gdf.crs['init'] == 'epsg:4326':
+        warn("geodataframe must be in epsg 4326")
 
     gdf = project_gdf(gdf)
     gdf = gdf.buffer(maxdist)
@@ -96,7 +97,7 @@ def calc_access(geodataframe,
     geodataframe : geopandas.GeoDataFrame
         geodataframe with demographic data
     network : pandana.Network
-        pandana.Network instance. This is likely created with `get_network` or
+        pandana.Network instance. This is likely created with `get_osm_network` or
         via helper functions from OSMnet or UrbanAccess.
     distance : int
         maximum distance to consider `accessible` (the default is 2000).
