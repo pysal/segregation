@@ -12,7 +12,7 @@ Calculate over 40 segregation measures from simple to state-of-the art, includin
 
 - [aspatial segregation indices](https://github.com/pysal/segregation/blob/master/notebooks/aspatial_examples.ipynb)
 - spatial segregation indices
-  - [using spatial weights matrices & euclidian distances](https://github.com/pysal/segregation/blob/master/notebooks/spatial_examples.ipynb)
+  - [using spatial weights matrices, euclidian distances, or topological relationships](https://github.com/pysal/segregation/blob/master/notebooks/spatial_examples.ipynb)
   - [using street network distances](https://github.com/pysal/segregation/blob/master/notebooks/network_measures.ipynb)
   - [using multiscalar definitions](https://github.com/pysal/segregation/blob/master/notebooks/multiscalar_segregation_profiles.ipynb)
 - [local segregation indices](https://github.com/pysal/segregation/blob/master/notebooks/local_measures_example.ipynb)
@@ -101,7 +101,7 @@ identical, save for the fact that the `DataFrame` now needs to be a `GeoDataFram
 
 ```python
 from segregation.spatial import SpatialDissim
-spatial_index = SpatialDissim(gdf, "freq", "population")
+spatial_index = SpatialDissim(gdf, "hi_income", "total_population")
 ```
 
 Some spatial indices can also accept either a [PySAL](http://pysal.org) `W` object, or a [pandana](https://github.com/UDST/pandana) `Network` object,
@@ -158,8 +158,6 @@ note, again, that now we requre a GeoDataFrame for proper estimation*
 from segregation.aspatial import MultiDissim
 index = MultiDissim(df, ['hi_income', 'med_income', 'low_income'])
 ```
-
-again, the estimated index value is stored in the `statistic` attribute and could be accceseed with 
 
 ```python
 index.statistic
