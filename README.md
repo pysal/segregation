@@ -152,8 +152,6 @@ table:
 In this case, the call is nearly identical to the single-group, only now we pass a list of
 column names rather than a single string;
 reprising the income segregation example above, an example call might look like this  
-*though
-note, again, that now we requre a GeoDataFrame for proper estimation*
 
 ```python
 from segregation.aspatial import MultiDissim
