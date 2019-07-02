@@ -134,11 +134,11 @@ table:
 | Spatial Dissimilarity (SD)                        | SpatialDissim                   |     Yes      |     w, standardize     |
 | Boundary Spatial Dissimilarity (BSD)              | BoundarySpatialDissim           |     Yes      |      standardize       |
 | Perimeter Area Ratio Spatial Dissimilarity (PARD) | PerimeterAreaRatioSpatialDissim |     Yes      |      standardize       |
-| Distance Decay Isolation (DDxPx)                  | DistanceDecayIsolation          |     Yes      |      alpha, beta       |
-| Distance Decay Exposure (DDxPy)                   | DistanceDecayExposure           |     Yes      |      alpha, beta       |
-| Spatial Proximity (SP)                            | SpatialProximity                |     Yes      |      alpha, beta       |
-| Absolute Clustering (ACL)                         | AbsoluteClustering              |     Yes      |      alpha, beta       |
-| Relative Clustering (RCL)                         | RelativeClustering              |     Yes      |      alpha, beta       |
+| Distance Decay Isolation (DDxPx)                  | DistanceDecayIsolation          |     Yes      |      alpha, beta, metric       |
+| Distance Decay Exposure (DDxPy)                   | DistanceDecayExposure           |     Yes      |      alpha, beta, metric       |
+| Spatial Proximity (SP)                            | SpatialProximity                |     Yes      |      alpha, beta, metric       |
+| Absolute Clustering (ACL)                         | AbsoluteClustering              |     Yes      |      alpha, beta, metric       |
+| Relative Clustering (RCL)                         | RelativeClustering              |     Yes      |      alpha, beta, metric       |
 | Delta (DEL)                                       | Delta                           |     Yes      |           -            |
 | Absolute Concentration (ACO)                      | AbsoluteConcentration           |     Yes      |           -            |
 | Relative Concentration (RCO)                      | RelativeConcentration           |     Yes      |           -            |
