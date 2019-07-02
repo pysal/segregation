@@ -11,7 +11,7 @@ The PySAL `segregation` package provides a suite of tools for measuring segregat
     <div class="container-fluid">
       <div class="row equal-height">
         <div class="col-md-6 col-xs-12">
-            <a href="https://github.com/pysal/segregation/blob/master/notebooks/profile_wrappers_example.ipynb" class="thumbnail">
+            <a href="https://github.com/pysal/segregation/blob/master/notebooks/compute_all_example.ipynb" class="thumbnail">
                 <img src="_static/images/la_nhblk_2010_profile_wrapper_example.png" class="img-responsive center-block">
                 <div class="caption text-center">
                 <h6>Fit multiple indexes at once</h6>
