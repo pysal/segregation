@@ -1004,6 +1004,10 @@ def _distance_decay_isolation(data,
     Reference: :cite:`morgan1983distance`.
 
     """
+    
+    if not metric in ['euclidean', 'haversine']:
+        raise ValueError('metric must one of \'euclidean\', \'haversine\'')
+    
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
             'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
@@ -1213,6 +1217,10 @@ def _distance_decay_exposure(data,
     Reference: :cite:`morgan1983distance`.
 
     """
+    
+    if not metric in ['euclidean', 'haversine']:
+        raise ValueError('metric must one of \'euclidean\', \'haversine\'')
+    
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
             'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
@@ -1413,6 +1421,9 @@ def _spatial_proximity(data, group_pop_var, total_pop_var, alpha=0.6,
     Reference: :cite:`massey1988dimensions`.
     
     """
+    
+    if not metric in ['euclidean', 'haversine']:
+        raise ValueError('metric must one of \'euclidean\', \'haversine\'')
 
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
@@ -1619,6 +1630,9 @@ def _absolute_clustering(data,
     Reference: :cite:`massey1988dimensions`.
     
     """
+    
+    if not metric in ['euclidean', 'haversine']:
+        raise ValueError('metric must one of \'euclidean\', \'haversine\'')
 
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
@@ -1816,6 +1830,9 @@ def _relative_clustering(data,
     Reference: :cite:`massey1988dimensions`.
     
     """
+    
+    if not metric in ['euclidean', 'haversine']:
+        raise ValueError('metric must one of \'euclidean\', \'haversine\'')
 
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
@@ -2527,6 +2544,9 @@ def _absolute_centralization(data, group_pop_var, total_pop_var,
     Reference: :cite:`massey1988dimensions`.
 
     """
+    
+    if not metric in ['euclidean', 'haversine']:
+        raise ValueError('metric must one of \'euclidean\', \'haversine\'')
 
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
@@ -2790,6 +2810,10 @@ def _relative_centralization(data, group_pop_var, total_pop_var,
     A discussion of defining the center in this function can be found in https://github.com/pysal/segregation/issues/18.
 
     """
+    
+    if not metric in ['euclidean', 'haversine']:
+        raise ValueError('metric must one of \'euclidean\', \'haversine\'')
+    
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
             'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
