@@ -103,7 +103,10 @@ def calc_access(geodataframe,
         (which means no decay). The default is "linear".
     variables : list
         list of variable names present on gdf that should be calculated
-
+    precompute: bool (default True)
+        whether pandana should precompute the distance matrix. It can only be
+        precomputed once, so If you plan to pass the same network to this
+        function several times, you should set precompute=False for later runs
 
     Returns
     -------
