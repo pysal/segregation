@@ -3085,6 +3085,12 @@ class SpatialInformationTheory(MultiInformationTheory):
     decay : str
         decay type pandana should use "linear", "exp", or "flat"
         (which means no decay). The default is "linear".
+    precompute: bool
+        Whether the pandana.Network instance should precompute the range
+        queries.This is true by default, but if you plan to calculate several
+        indices using the same network, then you can set this
+        parameter to `False` to avoid precomputing repeatedly inside the
+        function
 
     """
 
@@ -3140,7 +3146,12 @@ class SpatialDivergence(MultiDivergence):
     decay : str
         decay type pandana should use "linear", "exp", or "flat"
         (which means no decay). The default is "linear".
-
+    precompute: bool
+        Whether the pandana.Network instance should precompute the range
+        queries.This is true by default, but if you plan to calculate several
+        indices using the same network, then you can set this
+        parameter to `False` to avoid precomputing repeatedly inside the
+        function
     """
 
     def __init__(self,

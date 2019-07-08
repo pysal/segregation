@@ -53,14 +53,7 @@ def get_osm_network(geodataframe, maxdist=5000, quiet=True, **kwargs):
         A pandana Network instance for use in accessibility calculations or
         spatial segregation measures that include a distance decay
 
-    Examples
-    -------
-    Examples should be written in doctest format, and
-    should illustrate how to use the function/class.
-    >>>
-
     """
-
     gdf = geodataframe.copy()
     gdf = project_gdf(gdf)
     gdf = gdf.buffer(maxdist)
@@ -94,8 +87,8 @@ def calc_access(geodataframe,
     geodataframe : geopandas.GeoDataFrame
         geodataframe with demographic data
     network : pandana.Network
-        pandana.Network instance. This is likely created with `get_osm_network` or
-        via helper functions from OSMnet or UrbanAccess.
+        pandana.Network instance. This is likely created with `get_osm_network`
+        or via helper functions from OSMnet or UrbanAccess.
     distance : int
         maximum distance to consider `accessible` (the default is 2000).
     decay : str
