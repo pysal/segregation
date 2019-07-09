@@ -8,3 +8,4 @@ pandas
 ipywidgets
 pandana
 urbanaccess
+descartes
