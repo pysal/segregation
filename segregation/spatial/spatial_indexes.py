@@ -970,6 +970,10 @@ def _distance_decay_isolation(data,
     Reference: :cite:`morgan1983distance`.
 
     """
+    
+    if not metric in ['euclidean', 'haversine']:
+        raise ValueError('metric must one of \'euclidean\', \'haversine\'')
+    
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
             'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
@@ -1030,6 +1034,10 @@ def _distance_decay_isolation(data,
     c = np.exp(-dist)
 
     Pij = np.multiply(c, t) / np.sum(np.multiply(c, t), axis=1)
+    
+    if np.isnan(Pij).sum() > 0:
+        raise ValueError('It not possible to determine the distance between, at least, one pair of units. This is probably due to the magnitude of the number of the centroids. We recommend to reproject the geopandas DataFrame.')
+        
     DDxPx = (np.array(x / X) *
              np.nansum(np.multiply(Pij, np.array(x / t)), axis=1)).sum()
 
@@ -1192,6 +1200,10 @@ def _distance_decay_exposure(data,
     Reference: :cite:`morgan1983distance`.
 
     """
+    
+    if not metric in ['euclidean', 'haversine']:
+        raise ValueError('metric must one of \'euclidean\', \'haversine\'')
+    
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
             'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
@@ -1253,6 +1265,10 @@ def _distance_decay_exposure(data,
     c = np.exp(-dist)
 
     Pij = np.multiply(c, t) / np.sum(np.multiply(c, t), axis=1)
+    
+    if np.isnan(Pij).sum() > 0:
+        raise ValueError('It not possible to determine the distance between, at least, one pair of units. This is probably due to the magnitude of the number of the centroids. We recommend to reproject the geopandas DataFrame.')
+    
     DDxPy = (x / X * np.nansum(np.multiply(Pij, y / t), axis=1)).sum()
 
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
@@ -1409,6 +1425,9 @@ def _spatial_proximity(data,
     Reference: :cite:`massey1988dimensions`.
     
     """
+    
+    if not metric in ['euclidean', 'haversine']:
+        raise ValueError('metric must one of \'euclidean\', \'haversine\'')
 
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
@@ -1477,6 +1496,9 @@ def _spatial_proximity(data,
     Pyy = ((np.array(data.yi) * c).T * np.array(data.yi)).sum() / Y**2
     Ptt = ((np.array(data.ti) * c).T * np.array(data.ti)).sum() / T**2
     SP = (X * Pxx + Y * Pyy) / (T * Ptt)
+    
+    if np.isnan(SP):
+        raise ValueError('It not possible to determine the distance between, at least, one pair of units. This is probably due to the magnitude of the number of the centroids. We recommend to reproject the geopandas DataFrame.')
 
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
 
@@ -1628,6 +1650,9 @@ def _absolute_clustering(data,
     Reference: :cite:`massey1988dimensions`.
     
     """
+    
+    if not metric in ['euclidean', 'haversine']:
+        raise ValueError('metric must one of \'euclidean\', \'haversine\'')
 
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
@@ -1694,6 +1719,9 @@ def _absolute_clustering(data,
 
     ACL = ((((x/X) * (c * x).sum(axis = 1)).sum()) - ((X / n**2) * c.sum())) / \
           ((((x/X) * (c * t).sum(axis = 1)).sum()) - ((X / n**2) * c.sum()))
+          
+    if np.isnan(ACL):
+        raise ValueError('It not possible to determine the distance between, at least, one pair of units. This is probably due to the magnitude of the number of the centroids. We recommend to reproject the geopandas DataFrame.')
 
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
 
@@ -1838,6 +1866,9 @@ def _relative_clustering(data,
     Reference: :cite:`massey1988dimensions`.
     
     """
+    
+    if not metric in ['euclidean', 'haversine']:
+        raise ValueError('metric must one of \'euclidean\', \'haversine\'')
 
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
@@ -1902,6 +1933,9 @@ def _relative_clustering(data,
     Pxx = ((np.array(data.xi) * c).T * np.array(data.xi)).sum() / X**2
     Pyy = ((np.array(data.yi) * c).T * np.array(data.yi)).sum() / Y**2
     RCL = Pxx / Pyy - 1
+    
+    if np.isnan(RCL):
+        raise ValueError('It not possible to determine the distance between, at least, one pair of units. This is probably due to the magnitude of the number of the centroids. We recommend to reproject the geopandas DataFrame.')
 
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
 
@@ -2565,6 +2599,9 @@ def _absolute_centralization(data,
     Reference: :cite:`massey1988dimensions`.
 
     """
+    
+    if not metric in ['euclidean', 'haversine']:
+        raise ValueError('metric must one of \'euclidean\', \'haversine\'')
 
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
@@ -2652,11 +2689,11 @@ def _absolute_centralization(data,
         center_dist = np.sqrt((dlon)**2 + (dlat)**2)
 
     if (metric == 'haversine'):
-        center_dist = 2 * np.arcsin(
-            np.sqrt(
-                np.sin(dlat / 2)**2 +
-                np.cos(center_lat) * np.cos(c_lats) * np.sin(dlon / 2)**2))
-
+        center_dist = 2 * np.arcsin(np.sqrt(np.sin(dlat/2)**2 + np.cos(center_lat) * np.cos(c_lats) * np.sin(dlon/2)**2))
+    
+    if np.isnan(center_dist).sum() > 0:
+        raise ValueError('It not possible to determine the center distance for, at least, one unit. This is probably due to the magnitude of the number of the centroids. We recommend to reproject the geopandas DataFrame.')
+    
     asc_ind = center_dist.argsort()
 
     Xi = np.cumsum(x[asc_ind]) / X
@@ -2839,6 +2876,10 @@ def _relative_centralization(data,
     A discussion of defining the center in this function can be found in https://github.com/pysal/segregation/issues/18.
 
     """
+    
+    if not metric in ['euclidean', 'haversine']:
+        raise ValueError('metric must one of \'euclidean\', \'haversine\'')
+    
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
             'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
@@ -2929,6 +2970,9 @@ def _relative_centralization(data,
             np.sqrt(
                 np.sin(dlat / 2)**2 +
                 np.cos(center_lat) * np.cos(c_lats) * np.sin(dlon / 2)**2))
+
+    if np.isnan(center_dist).sum() > 0:
+        raise ValueError('It not possible to determine the center distance for, at least, one unit. This is probably due to the magnitude of the number of the centroids. We recommend to reproject the geopandas DataFrame.')
 
     asc_ind = center_dist.argsort()
 

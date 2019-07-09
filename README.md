@@ -116,34 +116,34 @@ like for example Detroit MI (left) and Monroe LA (right):
 For point estimation, all single-group indices available are summarized in the following
 table:
 
-| **Measure**                                       | **Class/Function**              | **Spatial?** | **Specific Arguments** |
-|:--------------------------------------------------|:--------------------------------|:------------:|:----------------------:|
-| Dissimilarity (D)                                 | Dissim                          |      No      |           -            |
-| Gini (G)                                          | GiniSeg                         |      No      |           -            |
-| Entropy (H)                                       | Entropy                         |      No      |           -            |
-| Isolation (xPx)                                   | Isolation                       |      No      |           -            |
-| Exposure (xPy)                                    | Exposure                        |      No      |           -            |
-| Atkinson (A)                                      | Atkinson                        |      No      |           b            |
-| Correlation Ratio (V)                             | CorrelationR                    |      No      |           -            |
-| Concentration Profile (R)                         | ConProf                         |      No      |           m            |
-| Modified Dissimilarity (Dct)                      | ModifiedDissim                  |      No      |       iterations       |
-| Modified Gini (Gct)                               | ModifiedGiniSeg                 |      No      |       iterations       |
-| Bias-Corrected Dissimilarity (Dbc)                | BiasCorrectedDissim             |      No      |           B            |
-| Density-Corrected Dissimilarity (Ddc)             | DensityCorrectedDissim          |      No      |          xtol          |
-| Spatial Proximity Profile (SPP)                   | SpatialProxProf                 |     Yes      |           m            |
-| Spatial Dissimilarity (SD)                        | SpatialDissim                   |     Yes      |     w, standardize     |
-| Boundary Spatial Dissimilarity (BSD)              | BoundarySpatialDissim           |     Yes      |      standardize       |
-| Perimeter Area Ratio Spatial Dissimilarity (PARD) | PerimeterAreaRatioSpatialDissim |     Yes      |      standardize       |
+| **Measure**                                       | **Class/Function**              | **Spatial?** |    **Specific Arguments**      |
+|:--------------------------------------------------|:--------------------------------|:------------:|:-----------------------------: |
+| Dissimilarity (D)                                 | Dissim                          |      No      |           -                    |
+| Gini (G)                                          | GiniSeg                         |      No      |           -                    |
+| Entropy (H)                                       | Entropy                         |      No      |           -                    |
+| Isolation (xPx)                                   | Isolation                       |      No      |           -                    |
+| Exposure (xPy)                                    | Exposure                        |      No      |           -                    |
+| Atkinson (A)                                      | Atkinson                        |      No      |           b                    |
+| Correlation Ratio (V)                             | CorrelationR                    |      No      |           -                    |
+| Concentration Profile (R)                         | ConProf                         |      No      |           m                    |
+| Modified Dissimilarity (Dct)                      | ModifiedDissim                  |      No      |       iterations               |
+| Modified Gini (Gct)                               | ModifiedGiniSeg                 |      No      |       iterations               |
+| Bias-Corrected Dissimilarity (Dbc)                | BiasCorrectedDissim             |      No      |           B                    |
+| Density-Corrected Dissimilarity (Ddc)             | DensityCorrectedDissim          |      No      |          xtol                  |
+| Spatial Proximity Profile (SPP)                   | SpatialProxProf                 |     Yes      |           m                    |
+| Spatial Dissimilarity (SD)                        | SpatialDissim                   |     Yes      |     w, standardize             |
+| Boundary Spatial Dissimilarity (BSD)              | BoundarySpatialDissim           |     Yes      |      standardize               |
+| Perimeter Area Ratio Spatial Dissimilarity (PARD) | PerimeterAreaRatioSpatialDissim |     Yes      |      standardize               |
 | Distance Decay Isolation (DDxPx)                  | DistanceDecayIsolation          |     Yes      |      alpha, beta, metric       |
 | Distance Decay Exposure (DDxPy)                   | DistanceDecayExposure           |     Yes      |      alpha, beta, metric       |
 | Spatial Proximity (SP)                            | SpatialProximity                |     Yes      |      alpha, beta, metric       |
 | Absolute Clustering (ACL)                         | AbsoluteClustering              |     Yes      |      alpha, beta, metric       |
 | Relative Clustering (RCL)                         | RelativeClustering              |     Yes      |      alpha, beta, metric       |
-| Delta (DEL)                                       | Delta                           |     Yes      |           -            |
-| Absolute Concentration (ACO)                      | AbsoluteConcentration           |     Yes      |           -            |
-| Relative Concentration (RCO)                      | RelativeConcentration           |     Yes      |           -            |
-| Absolute Centralization (ACE)                     | AbsoluteCentralization          |     Yes      |           -            |
-| Relative Centralization (RCE)                     | RelativeCentralization          |     Yes      |           -            |
+| Delta (DEL)                                       | Delta                           |     Yes      |           -                    |
+| Absolute Concentration (ACO)                      | AbsoluteConcentration           |     Yes      |           -                    |
+| Relative Concentration (RCO)                      | RelativeConcentration           |     Yes      |           -                    |
+| Absolute Centralization (ACE)                     | AbsoluteCentralization          |     Yes      |           -                    |
+| Relative Centralization (RCE)                     | RelativeCentralization          |     Yes      |           -                    |
 
 ### Multigroup measures
 
@@ -236,7 +236,7 @@ the two cities.
 PySAL-segregation is under active development and contributors are welcome.
 
 If you have any suggestion, feature request, or bug report, please open a new
-[issue](https://github.com/pysal/inequality/issues) on GitHub.
+[issue](https://github.com/pysal/segregation/issues) on GitHub.
 To submit patches, please follow the PySAL development
 [guidelines](http://pysal.readthedocs.io/en/latest/developers/index.html) and open a
 [pull request](https://github.com/pysal/segregation). Once your changes get merged, you’ll
