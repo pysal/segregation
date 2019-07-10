@@ -47,7 +47,7 @@ install:
 addons:
   apt:
     packages:
-    - libcfitsio
+    - libcfitsio-dev
 
 script:
   - pwd
