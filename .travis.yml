@@ -44,6 +44,10 @@ install:
       pip install https://github.com/pysal/libpysal/archive/master.zip;
     fi;
 
+addons:
+  apt:
+    packages:
+    - libcfitsio.so.5
 
 script:
   - pwd
