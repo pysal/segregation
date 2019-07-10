@@ -377,7 +377,7 @@ class SingleValueTest:
         self.statistic = aux[2]
         self._class_name = aux[3]
 
-    def plot(self):
+    def plot(self, ax=None):
         """
         Plot the Infer_Segregation class
         """
@@ -388,15 +388,16 @@ class SingleValueTest:
             warnings.warn(
                 'This method relies on importing `matplotlib` and `seaborn`')
 
-        sns.distplot(self.est_sim,
-                     hist=True,
-                     color='darkblue',
-                     hist_kws={'edgecolor': 'black'},
-                     kde_kws={'linewidth': 2})
+        f = sns.distplot(self.est_sim,
+                         hist=True,
+                         color='darkblue',
+                         hist_kws={'edgecolor': 'black'},
+                         kde_kws={'linewidth': 2},
+                         ax=ax)
         plt.axvline(self.statistic, color='red')
         plt.title('{} (Value = {})'.format(self._class_name,
                                            round(self.statistic, 3)))
-        return plt.show()
+        return f
 
 
 def _compare_segregation(seg_class_1,
@@ -680,7 +681,7 @@ class TwoValueTest:
         self.est_point_diff = aux[2]
         self._class_name = aux[3]
 
-    def plot(self):
+    def plot(self, ax=None):
         """
         Plot the Compare_Segregation class
         """
@@ -691,16 +692,17 @@ class TwoValueTest:
             warnings.warn(
                 'This method relies on importing `matplotlib` and `seaborn`')
 
-        sns.distplot(self.est_sim,
-                     hist=True,
-                     color='darkblue',
-                     hist_kws={'edgecolor': 'black'},
-                     kde_kws={'linewidth': 2})
+        f = sns.distplot(self.est_sim,
+                         hist=True,
+                         color='darkblue',
+                         hist_kws={'edgecolor': 'black'},
+                         kde_kws={'linewidth': 2},
+                         ax=ax)
         plt.axvline(self.est_point_diff, color='red')
         plt.title('{} (Diff. value = {})'.format(self._class_name,
                                                  round(self.est_point_diff,
                                                        3)))
-        return plt.show()
+        return f
 
 
 # Deprecation Calls
