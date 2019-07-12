@@ -109,7 +109,7 @@ def _build_local_environment(data, groups, w):
 
 def _return_length_weighted_w(data):
     """
-    Returns a PySAL weights object that the weights represent the length of the commom boudary of two areal units that share border.
+    Returns a PySAL weights object that the weights represent the length of the common boundary of two areal units that share border.
     Author: Levi Wolf <levi.john.wolf@gmail.com>. 
     Thank you, Levi!
 
