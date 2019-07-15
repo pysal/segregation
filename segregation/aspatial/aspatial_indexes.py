@@ -7,7 +7,6 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.ed
 import numpy as np
 import pandas as pd
 import warnings
-import geopandas as gpd
 
 from scipy.stats import norm
 from scipy.optimize import minimize
@@ -42,128 +41,10 @@ __all__ = ['Dissim',
            'BiasCorrectedDissim',
            
            'Density_Corrected_Dissim',
-           'DensityCorrectedDissim',
-           
-           'MinMax']
+           'DensityCorrectedDissim']
 
 # The Deprecation calls of the classes are located in the end of this script #
 
-
-
-def _min_max(data, group_pop_var, total_pop_var):
-    """
-    Calculation of the Aspatial version of SpatialMinMax
-
-    Parameters
-    ----------
-
-    data          : a pandas DataFrame
-    
-    group_pop_var : string
-                    The name of variable in data that contains the population size of the group of interest
-                    
-    total_pop_var : string
-                    The name of variable in data that contains the total population of the unit
-
-    Returns
-    ----------
-
-    statistic : float
-                MinMax Index
-                
-    core_data : a pandas DataFrame
-                A pandas DataFrame that contains the columns used to perform the estimate.
-
-    Notes
-    -----
-    Based on O'Sullivan & Wong (2007). A Surface‐Based Approach to Measuring Spatial Segregation.
-    Geographical Analysis 39 (2). https://doi.org/10.1111/j.1538-4632.2007.00699.x
-
-    Reference: :cite:`osullivanwong2007surface`.
-    
-    We'd like to thank @AnttiHaerkoenen for this contribution!
-    
-    """
-    
-    if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
-        raise TypeError('group_pop_var and total_pop_var must be strings')
-    
-    if ((group_pop_var not in data.columns) or (total_pop_var not in data.columns)):    
-        raise ValueError('group_pop_var and total_pop_var must be variables of data')
-        
-    data = data.rename(columns={group_pop_var: 'group_pop_var', 
-                                total_pop_var: 'total_pop_var'})
-    
-    if any(data.total_pop_var < data.group_pop_var):    
-        raise ValueError('Group of interest population must equal or lower than the total population of the units.')
-   
-    data['group_2_pop_var'] = data['total_pop_var'] - data['group_pop_var']
-    
-    data['group_1_pop_var_norm'] = data['group_pop_var'] / data['group_pop_var'].sum()
-    data['group_2_pop_var_norm'] = data['group_2_pop_var'] / data['group_2_pop_var'].sum()
-    
-    density_1 = data['group_1_pop_var_norm'].values
-    density_2 = data['group_2_pop_var_norm'].values
-    densities = np.vstack([
-        density_1,
-        density_2
-    ])
-    v_union = densities.max(axis=0).sum()
-    v_intersect = densities.min(axis=0).sum()
-    
-    MM = 1 - v_intersect / v_union
-    
-    if not isinstance(data, gpd.GeoDataFrame):
-        core_data = data[['group_pop_var', 'total_pop_var']]
-    
-    else:    
-        core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
-    
-    return MM, core_data
-
-
-class MinMax:
-    """
-    Calculation of the Aspatial version of SpatialMinMax
-
-    Parameters
-    ----------
-
-    data          : a pandas DataFrame
-    
-    group_pop_var : string
-                    The name of variable in data that contains the population size of the group of interest
-                    
-    total_pop_var : string
-                    The name of variable in data that contains the total population of the unit
-
-    Attributes
-    ----------
-
-    statistic : float
-                MinMax Index
-                
-    core_data : a pandas DataFrame
-                A pandas DataFrame that contains the columns used to perform the estimate.
-
-    Notes
-    -----
-    Based on O'Sullivan & Wong (2007). A Surface‐Based Approach to Measuring Spatial Segregation.
-    Geographical Analysis 39 (2). https://doi.org/10.1111/j.1538-4632.2007.00699.x
-
-    Reference: :cite:`osullivanwong2007surface`.
-    
-    We'd like to thank @AnttiHaerkoenen for this contribution!
-    
-    """
-
-    def __init__(self, data, group_pop_var, total_pop_var):
-        
-        aux = _min_max(data, group_pop_var, total_pop_var)
-
-        self.statistic = aux[0]
-        self.core_data = aux[1]
-        self._function = _min_max
 
 
 

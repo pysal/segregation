@@ -10,7 +10,7 @@ import geopandas as gpd
 import warnings
 import libpysal
 
-from libpysal.weights import W, Queen, Kernel, lag_spatial
+from libpysal.weights import Queen, Kernel, lag_spatial
 from libpysal.weights.util import fill_diagonal
 from numpy import inf
 from sklearn.metrics.pairwise import manhattan_distances, euclidean_distances, haversine_distances
@@ -19,7 +19,7 @@ from scipy.ndimage.interpolation import shift
 from scipy.sparse.csgraph import floyd_warshall
 from scipy.sparse import csr_matrix
 
-from segregation.aspatial.aspatial_indexes import _dissim, MinMax
+from segregation.aspatial.aspatial_indexes import _dissim
 from segregation.aspatial.multigroup_aspatial_indexes import MultiInformationTheory, MultiDivergence
 from segregation.network import calc_access
 from libpysal.weights.util import attach_islands
@@ -29,53 +29,18 @@ from segregation.util.util import _dep_message, DeprecationHelper
 # Including old and new api in __all__ so users can use both
 
 __all__ = [
-
-    'Spatial_Prox_Prof', 
-    'SpatialProxProf',
-    
-    'Spatial_Dissim', 
-    'SpatialDissim',
-    
-    'Boundary_Spatial_Dissim',
-    'BoundarySpatialDissim',
-    
-    'Perimeter_Area_Ratio_Spatial_Dissim', 
-    'PerimeterAreaRatioSpatialDissim',
-    
-    'SpatialMinMax',
-    
-    'Distance_Decay_Isolation',
-    'DistanceDecayIsolation',
-    
-    'Distance_Decay_Exposure', 
-    'DistanceDecayExposure', 
-    
-    'Spatial_Proximity', 
-    'SpatialProximity',
-    
-    'Absolute_Clustering',
-    'AbsoluteClustering',
-    
-    'Relative_Clustering', 
-    'RelativeClustering', 
-    
-    'Delta', 
-    
-    'Absolute_Concentration',
-    'AbsoluteConcentration',
-    
-    'Relative_Concentration', 
-    'RelativeConcentration', 
-    
-    'Absolute_Centralization',
-    'AbsoluteCentralization',
-    
-    'Relative_Centralization', 
-    'RelativeCentralization', 
-    
-    'SpatialInformationTheory',
-    'SpatialDivergence',
-
+    'Spatial_Prox_Prof', 'SpatialProxProf', 'Spatial_Dissim', 'SpatialDissim',
+    'Boundary_Spatial_Dissim', 'BoundarySpatialDissim',
+    'Perimeter_Area_Ratio_Spatial_Dissim', 'PerimeterAreaRatioSpatialDissim',
+    'Distance_Decay_Isolation', 'DistanceDecayIsolation',
+    'Distance_Decay_Exposure', 'DistanceDecayExposure', 'Spatial_Proximity',
+    'SpatialProximity', 'Absolute_Clustering', 'AbsoluteClustering',
+    'Relative_Clustering', 'RelativeClustering', 'Delta',
+    'Absolute_Concentration', 'AbsoluteConcentration',
+    'Relative_Concentration', 'RelativeConcentration',
+    'Absolute_Centralization', 'AbsoluteCentralization',
+    'Relative_Centralization', 'RelativeCentralization',
+    'SpatialInformationTheory', 'SpatialDivergence',
     'compute_segregation_profile'
 ]
 
@@ -112,7 +77,7 @@ def _build_local_environment(data, groups, w):
 
 def _return_length_weighted_w(data):
     """
-    Returns a PySAL weights object that the weights represent the length of the common boundary of two areal units that share border.
+    Returns a PySAL weights object that the weights represent the length of the commom boudary of two areal units that share border.
     Author: Levi Wolf <levi.john.wolf@gmail.com>. 
     Thank you, Levi!
 
@@ -953,103 +918,6 @@ class PerimeterAreaRatioSpatialDissim:
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _perimeter_area_ratio_spatial_dissim
-        
-
-
-class SpatialMinMax(MinMax):
-    """Spatial MinMax Index.
-
-    This class calculates the spatial version of the MinMax
-    index. The data are "spatialized" by converting each observation
-    to a "local environment" by creating a weighted sum of the focal unit with
-    its neighboring observations, where the neighborhood is defined by a
-    libpysal weights matrix or a pandana Network instance.
-
-    Parameters
-    ----------
-    data : geopandas.GeoDataFrame
-        geodataframe with
-    group_pop_var : string
-        The name of variable in data that contains the population size of the group of interest
-    total_pop_var : string
-        The name of variable in data that contains the total population of the unit
-    w   : libpysal.W
-        distance-based PySAL spatial weights matrix instance
-    network : pandana.Network
-        pandana.Network instance. This is likely created with `get_osm_network`
-        or via helper functions from OSMnet or UrbanAccess.
-    distance : int
-        maximum distance to consider `accessible` (the default is 2000).
-    decay : str
-        decay type pandana should use "linear", "exp", or "flat"
-        (which means no decay). The default is "linear".
-    precompute: bool
-        Whether the pandana.Network instance should precompute the range
-        queries.This is true by default, but if you plan to calculate several
-        indices using the same network, then you can set this
-        parameter to `False` to avoid precomputing repeatedly inside the
-        function
-        
-    Attributes
-    ----------
-
-    statistic : float
-                SpatialMinMax Index
-                
-    core_data : a pandas DataFrame
-                A pandas DataFrame that contains the columns used to perform the estimate.
-
-    Notes
-    -----
-    Based on O'Sullivan & Wong (2007). A Surface‐Based Approach to Measuring Spatial Segregation.
-    Geographical Analysis 39 (2). https://doi.org/10.1111/j.1538-4632.2007.00699.x
-
-    Reference: :cite:`osullivanwong2007surface`.
-    
-    We'd like to thank @AnttiHaerkoenen for this contribution!
-    
-    """
-
-    def __init__(self, 
-                 data, 
-                 group_pop_var, 
-                 total_pop_var,
-                 network=None,
-                 w=None,
-                 decay='linear',
-                 distance=2000,
-                 precompute=True):
-        
-        data = data.rename(columns={group_pop_var: 'group_pop_var', 
-                                    total_pop_var: 'total_pop_var'})
-    
-        data['group_2_pop_var'] = data['total_pop_var'] - data['group_pop_var']
-        
-        groups = ['group_pop_var', 'group_2_pop_var']
-        
-        if w is None and network is None:
-            points = [(p.x, p.y) for p in data.centroid]
-            w = Kernel(points)
-
-        if w and network:
-            raise (
-                "must pass either a pandana network or a pysal weights object\
-                 but not both")
-        elif network:
-            df = calc_access(data,
-                             variables=groups,
-                             network=network,
-                             distance=distance,
-                             decay=decay,
-                             precompute=precompute)
-            groups = ["acc_" + group for group in groups]
-        else:
-            df = _build_local_environment(data, groups, w)
-        
-        df['resulting_total'] = df['group_pop_var'] + df['group_2_pop_var']
-        
-        super().__init__(df, 'group_pop_var', 'resulting_total')
-
 
 
 def _distance_decay_isolation(data,
@@ -2519,7 +2387,7 @@ def _relative_concentration(data, group_pop_var, total_pop_var):
     
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-
+                    
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
 
@@ -3491,4 +3359,5 @@ Absolute_Centralization = DeprecationHelper(AbsoluteCentralization,
                                             message=msg)
 
 msg = _dep_message("Relative_Centralization", "RelativeCentralization")
-Relative_Centralization = DeprecationHelper(RelativeCentralization, message=msg)
+Relative_Centralization = DeprecationHelper(RelativeCentralization,
+                                            message=msg)
