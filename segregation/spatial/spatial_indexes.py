@@ -13,23 +13,23 @@ import libpysal
 from libpysal.weights import W, Queen, Kernel, lag_spatial
 from libpysal.weights.util import fill_diagonal
 from numpy import inf
-from sklearn.metrics.pairwise import manhattan_distances, euclidean_distances
+from sklearn.metrics.pairwise import manhattan_distances, euclidean_distances, haversine_distances
 from scipy.ndimage.interpolation import shift
 
 from scipy.sparse.csgraph import floyd_warshall
 from scipy.sparse import csr_matrix
 
 from segregation.aspatial.aspatial_indexes import _dissim
-from segregation.aspatial.multigroup_aspatial_indexes import MultiInformationTheory
+from segregation.aspatial.multigroup_aspatial_indexes import MultiInformationTheory, MultiDivergence
 from segregation.network import calc_access
 from libpysal.weights.util import attach_islands
 
 from segregation.util.util import _dep_message, DeprecationHelper
 
-
 # Including old and new api in __all__ so users can use both
 
 __all__ = [
+
     'Spatial_Prox_Prof', 
     'SpatialProxProf',
     
@@ -74,11 +74,12 @@ __all__ = [
     'RelativeCentralization', 
     
     'SpatialInformationTheory',
+    'SpatialDivergence',
+
     'compute_segregation_profile'
 ]
 
 # The Deprecation calls of the classes are located in the end of this script #
-
 
 # suppress numpy divide by zero warnings because it occurs a lot during the
 # calculation of many indices
@@ -252,9 +253,10 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, m=1000):
         g_t_i = np.where(data.group_pop_var / data.total_pop_var >= t, True,
                          False)
         k = g_t_i.sum()
-        sub_delta_ij = delta[
-            g_t_i, :][:,
-                      g_t_i]  # i and j only varies in the units subset within the threshold in eta_t of Hong (2014).
+
+        # i and j only varies in the units subset within the threshold in eta_t of Hong (2014).
+        sub_delta_ij = delta[g_t_i, :][:, g_t_i]
+
         den = sub_delta_ij.sum()
         eta_t = (k**2 - k) / den
         return eta_t
@@ -1095,7 +1097,8 @@ def _distance_decay_isolation(data,
                               group_pop_var,
                               total_pop_var,
                               alpha=0.6,
-                              beta=0.5):
+                              beta=0.5,
+                              metric='euclidean'):
     """
     Calculation of Distance Decay Isolation index
 
@@ -1115,6 +1118,10 @@ def _distance_decay_isolation(data,
     
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
+                    
+    metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
+                    The metric used for the distance between spatial units. 
+                    If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
 
     Returns
     ----------
@@ -1136,6 +1143,10 @@ def _distance_decay_isolation(data,
     Reference: :cite:`morgan1983distance`.
 
     """
+    
+    if not metric in ['euclidean', 'haversine']:
+        raise ValueError('metric must one of \'euclidean\', \'haversine\'')
+    
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
             'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
@@ -1173,20 +1184,33 @@ def _distance_decay_isolation(data,
             'Group of interest population must equal or lower than the total population of the units.'
         )
 
+    X = x.sum()
+
     c_lons = np.array(data.centroid.x)
     c_lats = np.array(data.centroid.y)
 
-    X = x.sum()
+    if (metric == 'euclidean'):
+        dist = euclidean_distances(
+            pd.DataFrame({
+                'c_lats': c_lats,
+                'c_lons': c_lons
+            }))
 
-    dist = euclidean_distances(
-        pd.DataFrame({
-            'c_lons': c_lons,
-            'c_lats': c_lats
-        }))
+    if (metric == 'haversine'):
+        dist = haversine_distances(
+            pd.DataFrame({
+                'c_lats': c_lats,
+                'c_lons': c_lons
+            }))  # This needs to be latitude first!
+
     np.fill_diagonal(dist, val=(alpha * data.area)**(beta))
     c = np.exp(-dist)
 
     Pij = np.multiply(c, t) / np.sum(np.multiply(c, t), axis=1)
+    
+    if np.isnan(Pij).sum() > 0:
+        raise ValueError('It not possible to determine the distance between, at least, one pair of units. This is probably due to the magnitude of the number of the centroids. We recommend to reproject the geopandas DataFrame.')
+        
     DDxPx = (np.array(x / X) *
              np.nansum(np.multiply(Pij, np.array(x / t)), axis=1)).sum()
 
@@ -1215,6 +1239,10 @@ class DistanceDecayIsolation:
     
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
+                    
+    metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
+                    The metric used for the distance between spatial units. 
+                    If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
 
     Attributes
     ----------
@@ -1279,11 +1307,16 @@ class DistanceDecayIsolation:
     
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, alpha=0.6,
-                 beta=0.5):
+    def __init__(self,
+                 data,
+                 group_pop_var,
+                 total_pop_var,
+                 alpha=0.6,
+                 beta=0.5,
+                 metric='euclidean'):
 
         aux = _distance_decay_isolation(data, group_pop_var, total_pop_var,
-                                        alpha, beta)
+                                        alpha, beta, metric)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -1294,7 +1327,8 @@ def _distance_decay_exposure(data,
                              group_pop_var,
                              total_pop_var,
                              alpha=0.6,
-                             beta=0.5):
+                             beta=0.5,
+                             metric='euclidean'):
     """
     Calculation of Distance Decay Exposure index
 
@@ -1314,6 +1348,10 @@ def _distance_decay_exposure(data,
     
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
+                    
+    metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
+                    The metric used for the distance between spatial units. 
+                    If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
 
     Returns
     ----------
@@ -1335,6 +1373,10 @@ def _distance_decay_exposure(data,
     Reference: :cite:`morgan1983distance`.
 
     """
+    
+    if not metric in ['euclidean', 'haversine']:
+        raise ValueError('metric must one of \'euclidean\', \'haversine\'')
+    
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
             'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
@@ -1373,21 +1415,33 @@ def _distance_decay_exposure(data,
         )
 
     y = t - x
+    X = x.sum()
 
     c_lons = np.array(data.centroid.x)
     c_lats = np.array(data.centroid.y)
 
-    X = x.sum()
+    if (metric == 'euclidean'):
+        dist = euclidean_distances(
+            pd.DataFrame({
+                'c_lats': c_lats,
+                'c_lons': c_lons
+            }))
 
-    dist = euclidean_distances(
-        pd.DataFrame({
-            'c_lons': c_lons,
-            'c_lats': c_lats
-        }))
+    if (metric == 'haversine'):
+        dist = haversine_distances(
+            pd.DataFrame({
+                'c_lats': c_lats,
+                'c_lons': c_lons
+            }))  # This needs to be latitude first!
+
     np.fill_diagonal(dist, val=(alpha * data.area)**(beta))
     c = np.exp(-dist)
 
     Pij = np.multiply(c, t) / np.sum(np.multiply(c, t), axis=1)
+    
+    if np.isnan(Pij).sum() > 0:
+        raise ValueError('It not possible to determine the distance between, at least, one pair of units. This is probably due to the magnitude of the number of the centroids. We recommend to reproject the geopandas DataFrame.')
+    
     DDxPy = (x / X * np.nansum(np.multiply(Pij, y / t), axis=1)).sum()
 
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
@@ -1415,6 +1469,10 @@ class DistanceDecayExposure:
     
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
+                    
+    metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
+                    The metric used for the distance between spatial units. 
+                    If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
 
     Attributes
     ----------
@@ -1479,19 +1537,28 @@ class DistanceDecayExposure:
     
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, alpha=0.6,
-                 beta=0.5):
+    def __init__(self,
+                 data,
+                 group_pop_var,
+                 total_pop_var,
+                 alpha=0.6,
+                 beta=0.5,
+                 metric='euclidean'):
 
         aux = _distance_decay_exposure(data, group_pop_var, total_pop_var,
-                                       alpha, beta)
+                                       alpha, beta, metric)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _distance_decay_exposure
 
 
-def _spatial_proximity(data, group_pop_var, total_pop_var, alpha=0.6,
-                       beta=0.5):
+def _spatial_proximity(data,
+                       group_pop_var,
+                       total_pop_var,
+                       alpha=0.6,
+                       beta=0.5,
+                       metric='euclidean'):
     """
     Calculation of Spatial Proximity index
     
@@ -1511,6 +1578,10 @@ def _spatial_proximity(data, group_pop_var, total_pop_var, alpha=0.6,
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
                     
+    metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
+                    The metric used for the distance between spatial units. 
+                    If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
+                    
     Returns
     ----------
     statistic : float
@@ -1527,6 +1598,9 @@ def _spatial_proximity(data, group_pop_var, total_pop_var, alpha=0.6,
     Reference: :cite:`massey1988dimensions`.
     
     """
+    
+    if not metric in ['euclidean', 'haversine']:
+        raise ValueError('metric must one of \'euclidean\', \'haversine\'')
 
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
@@ -1566,14 +1640,28 @@ def _spatial_proximity(data, group_pop_var, total_pop_var, alpha=0.6,
 
     data = data.assign(xi=data.group_pop_var,
                        yi=data.total_pop_var - data.group_pop_var,
-                       ti=data.total_pop_var,
-                       c_lons=data.centroid.map(lambda p: p.x),
-                       c_lats=data.centroid.map(lambda p: p.y))
+                       ti=data.total_pop_var)
 
     X = data.xi.sum()
     Y = data.yi.sum()
 
-    dist = euclidean_distances(data[['c_lons', 'c_lats']])
+    c_lons = np.array(data.centroid.x)
+    c_lats = np.array(data.centroid.y)
+
+    if (metric == 'euclidean'):
+        dist = euclidean_distances(
+            pd.DataFrame({
+                'c_lats': c_lats,
+                'c_lons': c_lons
+            }))
+
+    if (metric == 'haversine'):
+        dist = haversine_distances(
+            pd.DataFrame({
+                'c_lats': c_lats,
+                'c_lons': c_lons
+            }))  # This needs to be latitude first!
+
     np.fill_diagonal(dist, val=(alpha * data.area)**(beta))
     c = np.exp(-dist)
 
@@ -1581,6 +1669,9 @@ def _spatial_proximity(data, group_pop_var, total_pop_var, alpha=0.6,
     Pyy = ((np.array(data.yi) * c).T * np.array(data.yi)).sum() / Y**2
     Ptt = ((np.array(data.ti) * c).T * np.array(data.ti)).sum() / T**2
     SP = (X * Pxx + Y * Pyy) / (T * Ptt)
+    
+    if np.isnan(SP):
+        raise ValueError('It not possible to determine the distance between, at least, one pair of units. This is probably due to the magnitude of the number of the centroids. We recommend to reproject the geopandas DataFrame.')
 
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
 
@@ -1606,6 +1697,10 @@ class SpatialProximity:
     
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
+                    
+    metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
+                    The metric used for the distance between spatial units. 
+                    If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
                     
     Attributes
     ----------
@@ -1667,11 +1762,16 @@ class SpatialProximity:
     
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, alpha=0.6,
-                 beta=0.5):
+    def __init__(self,
+                 data,
+                 group_pop_var,
+                 total_pop_var,
+                 alpha=0.6,
+                 beta=0.5,
+                 metric='euclidean'):
 
         aux = _spatial_proximity(data, group_pop_var, total_pop_var, alpha,
-                                 beta)
+                                 beta, metric)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -1682,7 +1782,8 @@ def _absolute_clustering(data,
                          group_pop_var,
                          total_pop_var,
                          alpha=0.6,
-                         beta=0.5):
+                         beta=0.5,
+                         metric='euclidean'):
     """
     Calculation of Absolute Clustering index
     
@@ -1702,6 +1803,10 @@ def _absolute_clustering(data,
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
                     
+    metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
+                    The metric used for the distance between spatial units. 
+                    If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
+                    
     Returns
     ----------
     statistic : float
@@ -1718,6 +1823,9 @@ def _absolute_clustering(data,
     Reference: :cite:`massey1988dimensions`.
     
     """
+    
+    if not metric in ['euclidean', 'haversine']:
+        raise ValueError('metric must one of \'euclidean\', \'haversine\'')
 
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
@@ -1754,9 +1862,7 @@ def _absolute_clustering(data,
         )
 
     data = data.assign(xi=data.group_pop_var,
-                       yi=data.total_pop_var - data.group_pop_var,
-                       c_lons=data.centroid.map(lambda p: p.x),
-                       c_lats=data.centroid.map(lambda p: p.y))
+                       yi=data.total_pop_var - data.group_pop_var)
 
     X = data.xi.sum()
 
@@ -1764,12 +1870,31 @@ def _absolute_clustering(data,
     t = np.array(data.total_pop_var)
     n = len(data)
 
-    dist = euclidean_distances(data[['c_lons', 'c_lats']])
+    c_lons = np.array(data.centroid.x)
+    c_lats = np.array(data.centroid.y)
+
+    if (metric == 'euclidean'):
+        dist = euclidean_distances(
+            pd.DataFrame({
+                'c_lats': c_lats,
+                'c_lons': c_lons
+            }))
+
+    if (metric == 'haversine'):
+        dist = haversine_distances(
+            pd.DataFrame({
+                'c_lats': c_lats,
+                'c_lons': c_lons
+            }))  # This needs to be latitude first!
+
     np.fill_diagonal(dist, val=(alpha * data.area)**(beta))
     c = np.exp(-dist)
 
     ACL = ((((x/X) * (c * x).sum(axis = 1)).sum()) - ((X / n**2) * c.sum())) / \
           ((((x/X) * (c * t).sum(axis = 1)).sum()) - ((X / n**2) * c.sum()))
+          
+    if np.isnan(ACL):
+        raise ValueError('It not possible to determine the distance between, at least, one pair of units. This is probably due to the magnitude of the number of the centroids. We recommend to reproject the geopandas DataFrame.')
 
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
 
@@ -1795,6 +1920,10 @@ class AbsoluteClustering:
     
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
+                    
+    metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
+                    The metric used for the distance between spatial units. 
+                    If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
                     
     Attributes
     ----------
@@ -1849,11 +1978,16 @@ class AbsoluteClustering:
     
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, alpha=0.6,
-                 beta=0.5):
+    def __init__(self,
+                 data,
+                 group_pop_var,
+                 total_pop_var,
+                 alpha=0.6,
+                 beta=0.5,
+                 metric='euclidean'):
 
         aux = _absolute_clustering(data, group_pop_var, total_pop_var, alpha,
-                                   beta)
+                                   beta, metric)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -1864,7 +1998,8 @@ def _relative_clustering(data,
                          group_pop_var,
                          total_pop_var,
                          alpha=0.6,
-                         beta=0.5):
+                         beta=0.5,
+                         metric='euclidean'):
     """
     Calculation of Relative Clustering index
     
@@ -1884,6 +2019,10 @@ def _relative_clustering(data,
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
                     
+    metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
+                    The metric used for the distance between spatial units. 
+                    If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
+                    
     Returns
     ----------
     statistic : float
@@ -1900,6 +2039,9 @@ def _relative_clustering(data,
     Reference: :cite:`massey1988dimensions`.
     
     """
+    
+    if not metric in ['euclidean', 'haversine']:
+        raise ValueError('metric must one of \'euclidean\', \'haversine\'')
 
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
@@ -1936,20 +2078,37 @@ def _relative_clustering(data,
         )
 
     data = data.assign(xi=data.group_pop_var,
-                       yi=data.total_pop_var - data.group_pop_var,
-                       c_lons=data.centroid.map(lambda p: p.x),
-                       c_lats=data.centroid.map(lambda p: p.y))
+                       yi=data.total_pop_var - data.group_pop_var)
 
     X = data.xi.sum()
     Y = data.yi.sum()
 
-    dist = euclidean_distances(data[['c_lons', 'c_lats']])
+    c_lons = np.array(data.centroid.x)
+    c_lats = np.array(data.centroid.y)
+
+    if (metric == 'euclidean'):
+        dist = euclidean_distances(
+            pd.DataFrame({
+                'c_lats': c_lats,
+                'c_lons': c_lons
+            }))
+
+    if (metric == 'haversine'):
+        dist = haversine_distances(
+            pd.DataFrame({
+                'c_lats': c_lats,
+                'c_lons': c_lons
+            }))  # This needs to be latitude first!
+
     np.fill_diagonal(dist, val=(alpha * data.area)**(beta))
     c = np.exp(-dist)
 
     Pxx = ((np.array(data.xi) * c).T * np.array(data.xi)).sum() / X**2
     Pyy = ((np.array(data.yi) * c).T * np.array(data.yi)).sum() / Y**2
     RCL = Pxx / Pyy - 1
+    
+    if np.isnan(RCL):
+        raise ValueError('It not possible to determine the distance between, at least, one pair of units. This is probably due to the magnitude of the number of the centroids. We recommend to reproject the geopandas DataFrame.')
 
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
 
@@ -1975,6 +2134,10 @@ class RelativeClustering:
     
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
+                    
+    metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
+                    The metric used for the distance between spatial units. 
+                    If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
                     
     Attributes
     ----------
@@ -2036,11 +2199,16 @@ class RelativeClustering:
     
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, alpha=0.6,
-                 beta=0.5):
+    def __init__(self,
+                 data,
+                 group_pop_var,
+                 total_pop_var,
+                 alpha=0.6,
+                 beta=0.5,
+                 metric='euclidean'):
 
         aux = _relative_clustering(data, group_pop_var, total_pop_var, alpha,
-                                   beta)
+                                   beta, metric)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -2545,8 +2713,11 @@ class RelativeConcentration:
         self._function = _relative_concentration
 
 
-def _absolute_centralization(data, group_pop_var, total_pop_var,
-                             center="mean"):
+def _absolute_centralization(data,
+                             group_pop_var,
+                             total_pop_var,
+                             center="mean",
+                             metric='euclidean'):
     """
     Calculation of Absolute Centralization index
 
@@ -2576,6 +2747,10 @@ def _absolute_centralization(data, group_pop_var, total_pop_var,
                     If integer, the center will be the centroid of the polygon from data corresponding to the integer interpreted as index. 
                     For example, if `center = 0` the centroid of the first row of data is used as center, if `center = 1` the second row will be used, and so on.
 
+    metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
+                    The metric used for the distance between spatial units. 
+                    If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
+
     Returns
     ----------
 
@@ -2597,6 +2772,9 @@ def _absolute_centralization(data, group_pop_var, total_pop_var,
     Reference: :cite:`massey1988dimensions`.
 
     """
+    
+    if not metric in ['euclidean', 'haversine']:
+        raise ValueError('metric must one of \'euclidean\', \'haversine\'')
 
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
@@ -2677,8 +2855,18 @@ def _absolute_centralization(data, group_pop_var, total_pop_var,
     X = x.sum()
     A = area.sum()
 
-    center_dist = np.sqrt((c_lons - center_lon)**2 + (c_lats - center_lat)**2)
+    dlon = c_lons - center_lon
+    dlat = c_lats - center_lat
 
+    if (metric == 'euclidean'):
+        center_dist = np.sqrt((dlon)**2 + (dlat)**2)
+
+    if (metric == 'haversine'):
+        center_dist = 2 * np.arcsin(np.sqrt(np.sin(dlat/2)**2 + np.cos(center_lat) * np.cos(c_lats) * np.sin(dlon/2)**2))
+    
+    if np.isnan(center_dist).sum() > 0:
+        raise ValueError('It not possible to determine the center distance for, at least, one unit. This is probably due to the magnitude of the number of the centroids. We recommend to reproject the geopandas DataFrame.')
+    
     asc_ind = center_dist.argsort()
 
     Xi = np.cumsum(x[asc_ind]) / X
@@ -2788,10 +2976,15 @@ class AbsoluteCentralization:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, center="mean"):
+    def __init__(self,
+                 data,
+                 group_pop_var,
+                 total_pop_var,
+                 center="mean",
+                 metric='euclidean'):
 
         aux = _absolute_centralization(data, group_pop_var, total_pop_var,
-                                       center)
+                                       center, metric)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -2799,8 +2992,11 @@ class AbsoluteCentralization:
         self._function = _absolute_centralization
 
 
-def _relative_centralization(data, group_pop_var, total_pop_var,
-                             center="mean"):
+def _relative_centralization(data,
+                             group_pop_var,
+                             total_pop_var,
+                             center="mean",
+                             metric='euclidean'):
     """
     Calculation of Relative Centralization index
 
@@ -2830,6 +3026,10 @@ def _relative_centralization(data, group_pop_var, total_pop_var,
                     If integer, the center will be the centroid of the polygon from data corresponding to the integer interpreted as index. 
                     For example, if `center = 0` the centroid of the first row of data is used as center, if `center = 1` the second row will be used, and so on.
 
+    metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
+                    The metric used for the distance between spatial units. 
+                    If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
+
     Returns
     ----------
 
@@ -2849,6 +3049,10 @@ def _relative_centralization(data, group_pop_var, total_pop_var,
     A discussion of defining the center in this function can be found in https://github.com/pysal/segregation/issues/18.
 
     """
+    
+    if not metric in ['euclidean', 'haversine']:
+        raise ValueError('metric must one of \'euclidean\', \'haversine\'')
+    
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
             'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
@@ -2928,7 +3132,20 @@ def _relative_centralization(data, group_pop_var, total_pop_var,
     X = x.sum()
     Y = y.sum()
 
-    center_dist = np.sqrt((c_lons - center_lon)**2 + (c_lats - center_lat)**2)
+    dlon = c_lons - center_lon
+    dlat = c_lats - center_lat
+
+    if (metric == 'euclidean'):
+        center_dist = np.sqrt((dlon)**2 + (dlat)**2)
+
+    if (metric == 'haversine'):
+        center_dist = 2 * np.arcsin(
+            np.sqrt(
+                np.sin(dlat / 2)**2 +
+                np.cos(center_lat) * np.cos(c_lats) * np.sin(dlon / 2)**2))
+
+    if np.isnan(center_dist).sum() > 0:
+        raise ValueError('It not possible to determine the center distance for, at least, one unit. This is probably due to the magnitude of the number of the centroids. We recommend to reproject the geopandas DataFrame.')
 
     asc_ind = center_dist.argsort()
 
@@ -2974,6 +3191,10 @@ class RelativeCentralization:
                     
                     If integer, the center will be the centroid of the polygon from data corresponding to the integer interpreted as index. 
                     For example, if `center = 0` the centroid of the first row of data is used as center, if `center = 1` the second row will be used, and so on.
+    
+    metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
+                    The metric used for the distance between spatial units. 
+                    If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
 
     Attributes
     ----------
@@ -3039,10 +3260,15 @@ class RelativeCentralization:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, center="mean"):
+    def __init__(self,
+                 data,
+                 group_pop_var,
+                 total_pop_var,
+                 center="mean",
+                 metric='euclidean'):
 
         aux = _relative_centralization(data, group_pop_var, total_pop_var,
-                                       center)
+                                       center, metric)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -3056,8 +3282,8 @@ class SpatialInformationTheory(MultiInformationTheory):
     This class calculates the spatial version of the multigroup information
     theory index. The data are "spatialized" by converting each observation
     to a "local environment" by creating a weighted sum of the focal unit with
-    its neighboring observations, where the neighborhood is defined by a libpysal
-    weights matrix of a pandana Network instance.
+    its neighboring observations, where the neighborhood is defined by a
+    libpysal weights matrix or a pandana Network instance.
 
     Parameters
     ----------
@@ -3067,13 +3293,21 @@ class SpatialInformationTheory(MultiInformationTheory):
         list of columns on gdf representing population groups for which the SIT
         index should be calculated
     network : pandana.Network
-        pandana.Network instance. This is likely created with `get_osm_network` or
-        via helper functions from OSMnet or UrbanAccess.
+        pandana.Network instance. This is likely created with `get_osm_network`
+        or via helper functions from OSMnet or UrbanAccess.
+    w   : libpysal.W
+        distance-based PySAL spatial weights matrix instance
     distance : int
         maximum distance to consider `accessible` (the default is 2000).
     decay : str
         decay type pandana should use "linear", "exp", or "flat"
         (which means no decay). The default is "linear".
+    precompute: bool
+        Whether the pandana.Network instance should precompute the range
+        queries.This is true by default, but if you plan to calculate several
+        indices using the same network, then you can set this
+        parameter to `False` to avoid precomputing repeatedly inside the
+        function
 
     """
 
@@ -3083,18 +3317,80 @@ class SpatialInformationTheory(MultiInformationTheory):
                  network=None,
                  w=None,
                  decay='linear',
-                 distance=2000):
+                 distance=2000,
+                 precompute=True):
 
         if w and network:
             raise (
-                "must pass either a pandana network or a pysal weights object but not both"
-            )
+                "must pass either a pandana network or a pysal weights object\
+                 but not both")
         elif network:
             df = calc_access(data,
                              variables=groups,
                              network=network,
                              distance=distance,
-                             decay=decay)
+                             decay=decay,
+                             precompute=precompute)
+            groups = ["acc_" + group for group in groups]
+        else:
+            df = _build_local_environment(data, groups, w)
+        super().__init__(df, groups)
+
+
+class SpatialDivergence(MultiDivergence):
+    """Spatial Multigroup Divergence Index.
+
+    This class calculates the spatial version of the multigroup divergence
+    index. The data are "spatialized" by converting each observation
+    to a "local environment" by creating a weighted sum of the focal unit with
+    its neighboring observations, where the neighborhood is defined by a
+    libpysal weights matrix or a pandana Network instance.
+
+    Parameters
+    ----------
+    data : geopandas.GeoDataFrame
+        geodataframe with
+    groups : list
+        list of columns on gdf representing population groups for which the
+        divergence index should be calculated
+    w   : libpysal.W
+        distance-based PySAL spatial weights matrix instance
+    network : pandana.Network
+        pandana.Network instance. This is likely created with `get_osm_network`
+        or via helper functions from OSMnet or UrbanAccess.
+    distance : int
+        maximum distance to consider `accessible` (the default is 2000).
+    decay : str
+        decay type pandana should use "linear", "exp", or "flat"
+        (which means no decay). The default is "linear".
+    precompute: bool
+        Whether the pandana.Network instance should precompute the range
+        queries.This is true by default, but if you plan to calculate several
+        indices using the same network, then you can set this
+        parameter to `False` to avoid precomputing repeatedly inside the
+        function
+    """
+
+    def __init__(self,
+                 data,
+                 groups,
+                 network=None,
+                 w=None,
+                 decay='linear',
+                 distance=2000,
+                 precompute=True):
+
+        if w and network:
+            raise (
+                "must pass either a pandana network or a pysal weights object\
+                 but not both")
+        elif network:
+            df = calc_access(data,
+                             variables=groups,
+                             network=network,
+                             distance=distance,
+                             decay=decay,
+                             precompute=precompute)
             groups = ["acc_" + group for group in groups]
         else:
             df = _build_local_environment(data, groups, w)
@@ -3185,16 +3481,8 @@ def compute_segregation_profile(gdf,
     return indices
 
 
-
-
-
-
-
-
-
-        
 # Deprecation Calls
-        
+
 msg = _dep_message("Spatial_Prox_Prof", "SpatialProxProf")
 Spatial_Prox_Prof = DeprecationHelper(SpatialProxProf, message=msg)
 
@@ -3204,11 +3492,14 @@ Spatial_Dissim = DeprecationHelper(SpatialDissim, message=msg)
 msg = _dep_message("Boundary_Spatial_Dissim", "BoundarySpatialDissim")
 Boundary_Spatial_Dissim = DeprecationHelper(BoundarySpatialDissim, message=msg)
 
-msg = _dep_message("Perimeter_Area_Ratio_Spatial_Dissim", "PerimeterAreaRatioSpatialDissim")
-Perimeter_Area_Ratio_Spatial_Dissim = DeprecationHelper(PerimeterAreaRatioSpatialDissim, message=msg)
+msg = _dep_message("Perimeter_Area_Ratio_Spatial_Dissim",
+                   "PerimeterAreaRatioSpatialDissim")
+Perimeter_Area_Ratio_Spatial_Dissim = DeprecationHelper(
+    PerimeterAreaRatioSpatialDissim, message=msg)
 
 msg = _dep_message("Distance_Decay_Isolation", "DistanceDecayIsolation")
-Distance_Decay_Isolation = DeprecationHelper(DistanceDecayIsolation, message=msg)
+Distance_Decay_Isolation = DeprecationHelper(DistanceDecayIsolation,
+                                             message=msg)
 
 msg = _dep_message("Distance_Decay_Exposure", "DistanceDecayExposure")
 Distance_Decay_Exposure = DeprecationHelper(DistanceDecayExposure, message=msg)
@@ -3229,7 +3520,8 @@ msg = _dep_message("Relative_Concentration", "RelativeConcentration")
 Relative_Concentration = DeprecationHelper(RelativeConcentration, message=msg)
 
 msg = _dep_message("Absolute_Centralization", "AbsoluteCentralization")
-Absolute_Centralization = DeprecationHelper(AbsoluteCentralization, message=msg)
+Absolute_Centralization = DeprecationHelper(AbsoluteCentralization,
+                                            message=msg)
 
 msg = _dep_message("Relative_Centralization", "RelativeCentralization")
 Relative_Centralization = DeprecationHelper(RelativeCentralization, message=msg)
