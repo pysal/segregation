@@ -1,7 +1,6 @@
 """
 Spatial based Segregation Metrics
 """
-from typing import Sequence
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
@@ -41,7 +40,9 @@ __all__ = [
     'BoundarySpatialDissim',
     
     'Perimeter_Area_Ratio_Spatial_Dissim', 
-    'PerimeterAreaRatioSpatialDissim', 
+    'PerimeterAreaRatioSpatialDissim',
+
+    'MinMaxS',
     
     'Distance_Decay_Isolation',
     'DistanceDecayIsolation',
@@ -952,37 +953,42 @@ class PerimeterAreaRatioSpatialDissim:
         self._function = _perimeter_area_ratio_spatial_dissim
 
 
-def _surface_spatial_dissim(
+def _min_max_s(
         data: gpd.GeoDataFrame,
-        groups: Sequence[str],
+        group_pop_var: str,
+        total_pop_var: str,
         w: W = None,
 ):
     """
-    Calculation of Surface-Based Dissimilarity index S
+    Calculation of Dissimilarity index S
 
     Parameters
     ----------
 
-    data    : gpd.GeoDataFrame
-                a geopandas DataFrame with a geometry column.
+    data            : gpd.GeoDataFrame
+                    a geopandas DataFrame with a geometry column.
 
-    groups  : Sequence[str]
-                A list of the names of variables in data that contain the population sizes of the two groups of interest
+    group_pop_var   : string
+                    The name of variable in data that contains the population size of the group of interest
 
-    w       : W
-                A PySAL weights object. If not provided, a Kernel with default parameters is created.
+    total_pop_var   : string
+                    The name of variable in data that contains the total population of the unit
+
+    w               : W
+                    A PySAL weights object. If not provided, a Kernel with default parameters is created.
 
     Returns
-    ----------
+    -------
 
     statistic : float
-                Surface-Based Spatial Dissimilarity Index S
+                Spatial Dissimilarity Index S
 
     core_data : gpd.GeoDataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
+
     Based on O'Sullivan & Wong (2007). A Surface‐Based Approach to Measuring Spatial Segregation.
     Geographical Analysis 39 (2) https://doi.org/10.1111/j.1538-4632.2007.00699.x
 
@@ -1006,52 +1012,56 @@ def _surface_spatial_dissim(
     if not isinstance(w_object, W):
         raise TypeError('w is not a PySAL weights object')
 
-    if len(groups) != 2:
-        raise TypeError('only two groups allowed')
-
     data = data.rename(columns={
-        groups[0]: 'group_1_pop_var',
-        groups[1]: 'group_2_pop_var',
+        group_pop_var: 'group_pop_var',
+        total_pop_var: 'total_pop_var',
     })
-    data['group_1_pop_var_norm'] = data['group_1_pop_var'] / data['group_1_pop_var'].sum()
+    data['group_2_pop_var'] = data['total_pop_var'] - data['group_pop_var']
+    data['group_1_pop_var_norm'] = data['group_pop_var'] / data['group_pop_var'].sum()
     data['group_2_pop_var_norm'] = data['group_2_pop_var'] / data['group_2_pop_var'].sum()
 
     w, _ = w_object.full()
 
     density_1 = w * data['group_1_pop_var_norm'].values
     density_2 = w * data['group_2_pop_var_norm'].values
-    densities = np.vstack([density_1.sum(axis=1), density_2.sum(axis=1)])
+    densities = np.vstack([
+        density_1.sum(axis=1),
+        density_2.sum(axis=1),
+    ])
     v_union = densities.max(axis=0).sum()
     v_intersect = densities.min(axis=0).sum()
 
     s = 1 - v_intersect / v_union
 
-    core_data = data[['group_1_pop_var', 'group_2_pop_var', 'geometry']]
+    core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
 
     return s, core_data
 
 
-class SurfaceSpatialDissim:
+class MinMaxS:
     """
-    Calculation of Surface-Based Dissimilarity index S
+    Calculation of Dissimilarity index S
 
     Parameters
     ----------
 
-    data    : gpd.GeoDataFrame
-                a geopandas DataFrame with a geometry column.
+    data            : gpd.GeoDataFrame
+                    a geopandas DataFrame with a geometry column.
 
-    groups  : Sequence[str]
-                A list of the names of variables in data that contain the population sizes of the two groups of interest
+    group_pop_var   : string
+                    The name of variable in data that contains the population size of the group of interest
 
-    w       : W
-                A PySAL weights object. If not provided, a Kernel with default parameters is created.
+    total_pop_var   : string
+                    The name of variable in data that contains the total population of the unit
+
+    w               : W
+                    A PySAL weights object. If not provided, a Kernel with default parameters is created.
 
     Attributes
     ----------
 
     statistic : float
-                Surface-Based Spatial Dissimilarity Index S
+                Spatial Dissimilarity Index S
 
     core_data : gpd.GeoDataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
@@ -1068,15 +1078,17 @@ class SurfaceSpatialDissim:
     def __init__(
             self,
             data,
-            groups,
+            group_pop_var,
+            total_pop_var,
             w=None,
     ):
-        self.statistic, self.core_data = _surface_spatial_dissim(
+        self.statistic, self.core_data = _min_max_s(
             data,
-            groups,
+            group_pop_var,
+            total_pop_var,
             w,
         )
-        self._function = _surface_spatial_dissim
+        self._function = _min_max_s
 
 
 def _distance_decay_isolation(data,
