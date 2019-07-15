@@ -10,7 +10,7 @@ import geopandas as gpd
 import warnings
 import libpysal
 
-from libpysal.weights import W, Queen, Kernel, lag_spatial
+from libpysal.weights import Queen, Kernel, lag_spatial
 from libpysal.weights.util import fill_diagonal
 from numpy import inf
 from sklearn.metrics.pairwise import manhattan_distances, euclidean_distances, haversine_distances
