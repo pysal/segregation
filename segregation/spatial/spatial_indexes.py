@@ -1030,13 +1030,14 @@ def _distance_decay_isolation(data,
                 'c_lons': c_lons
             }))  # This needs to be latitude first!
 
-    np.fill_diagonal(dist, val=(alpha * data.area)**(beta))
     c = np.exp(-dist)
-
-    Pij = np.multiply(c, t) / np.sum(np.multiply(c, t), axis=1)
     
-    if np.isnan(Pij).sum() > 0:
-        raise ValueError('It not possible to determine the distance between, at least, one pair of units. This is probably due to the magnitude of the number of the centroids. We recommend to reproject the geopandas DataFrame.')
+    if c.sum() < 10 ** (-15): 
+        raise ValueError('It not possible to determine accurately the exponential of the negative distances. This is probably due to the large magnitude of the centroids numbers. It is recommended to reproject the geopandas DataFrame. Also, if this is a not lat-long CRS, it is recommended to set metric to \'haversine\'')
+    
+    np.fill_diagonal(c, val = np.exp(-(alpha * data.area)**(beta)))
+    
+    Pij = np.multiply(c, t) / np.sum(np.multiply(c, t), axis=1)
         
     DDxPx = (np.array(x / X) *
              np.nansum(np.multiply(Pij, np.array(x / t)), axis=1)).sum()
@@ -1261,13 +1262,14 @@ def _distance_decay_exposure(data,
                 'c_lons': c_lons
             }))  # This needs to be latitude first!
 
-    np.fill_diagonal(dist, val=(alpha * data.area)**(beta))
     c = np.exp(-dist)
-
-    Pij = np.multiply(c, t) / np.sum(np.multiply(c, t), axis=1)
     
-    if np.isnan(Pij).sum() > 0:
-        raise ValueError('It not possible to determine the distance between, at least, one pair of units. This is probably due to the magnitude of the number of the centroids. We recommend to reproject the geopandas DataFrame.')
+    if c.sum() < 10 ** (-15): 
+        raise ValueError('It not possible to determine accurately the exponential of the negative distances. This is probably due to the large magnitude of the centroids numbers. It is recommended to reproject the geopandas DataFrame. Also, if this is a not lat-long CRS, it is recommended to set metric to \'haversine\'')
+    
+    np.fill_diagonal(c, val = np.exp(-(alpha * data.area)**(beta)))
+    
+    Pij = np.multiply(c, t) / np.sum(np.multiply(c, t), axis=1)
     
     DDxPy = (x / X * np.nansum(np.multiply(Pij, y / t), axis=1)).sum()
 
@@ -1489,16 +1491,17 @@ def _spatial_proximity(data,
                 'c_lons': c_lons
             }))  # This needs to be latitude first!
 
-    np.fill_diagonal(dist, val=(alpha * data.area)**(beta))
     c = np.exp(-dist)
-
+    
+    if c.sum() < 10 ** (-15): 
+        raise ValueError('It not possible to determine accurately the exponential of the negative distances. This is probably due to the large magnitude of the centroids numbers. It is recommended to reproject the geopandas DataFrame. Also, if this is a not lat-long CRS, it is recommended to set metric to \'haversine\'')
+    
+    np.fill_diagonal(c, val = np.exp(-(alpha * data.area)**(beta)))
+    
     Pxx = ((np.array(data.xi) * c).T * np.array(data.xi)).sum() / X**2
     Pyy = ((np.array(data.yi) * c).T * np.array(data.yi)).sum() / Y**2
     Ptt = ((np.array(data.ti) * c).T * np.array(data.ti)).sum() / T**2
     SP = (X * Pxx + Y * Pyy) / (T * Ptt)
-    
-    if np.isnan(SP):
-        raise ValueError('It not possible to determine the distance between, at least, one pair of units. This is probably due to the magnitude of the number of the centroids. We recommend to reproject the geopandas DataFrame.')
 
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
 
@@ -1714,14 +1717,15 @@ def _absolute_clustering(data,
                 'c_lons': c_lons
             }))  # This needs to be latitude first!
 
-    np.fill_diagonal(dist, val=(alpha * data.area)**(beta))
     c = np.exp(-dist)
-
+    
+    if c.sum() < 10 ** (-15): 
+        raise ValueError('It not possible to determine accurately the exponential of the negative distances. This is probably due to the large magnitude of the centroids numbers. It is recommended to reproject the geopandas DataFrame. Also, if this is a not lat-long CRS, it is recommended to set metric to \'haversine\'')
+    
+    np.fill_diagonal(c, val = np.exp(-(alpha * data.area)**(beta)))
+    
     ACL = ((((x/X) * (c * x).sum(axis = 1)).sum()) - ((X / n**2) * c.sum())) / \
           ((((x/X) * (c * t).sum(axis = 1)).sum()) - ((X / n**2) * c.sum()))
-          
-    if np.isnan(ACL):
-        raise ValueError('It not possible to determine the distance between, at least, one pair of units. This is probably due to the magnitude of the number of the centroids. We recommend to reproject the geopandas DataFrame.')
 
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
 
@@ -1927,9 +1931,13 @@ def _relative_clustering(data,
                 'c_lons': c_lons
             }))  # This needs to be latitude first!
 
-    np.fill_diagonal(dist, val=(alpha * data.area)**(beta))
     c = np.exp(-dist)
-
+    
+    if c.sum() < 10 ** (-15): 
+        raise ValueError('It not possible to determine accurately the exponential of the negative distances. This is probably due to the large magnitude of the centroids numbers. It is recommended to reproject the geopandas DataFrame. Also, if this is a not lat-long CRS, it is recommended to set metric to \'haversine\'')
+    
+    np.fill_diagonal(c, val = np.exp(-(alpha * data.area)**(beta)))
+    
     Pxx = ((np.array(data.xi) * c).T * np.array(data.xi)).sum() / X**2
     Pyy = ((np.array(data.yi) * c).T * np.array(data.yi)).sum() / Y**2
     RCL = Pxx / Pyy - 1
