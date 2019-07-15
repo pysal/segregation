@@ -19,7 +19,7 @@ from scipy.ndimage.interpolation import shift
 from scipy.sparse.csgraph import floyd_warshall
 from scipy.sparse import csr_matrix
 
-from segregation.aspatial.aspatial_indexes import _dissim
+from segregation.aspatial.aspatial_indexes import _dissim, MinMax
 from segregation.aspatial.multigroup_aspatial_indexes import MultiInformationTheory, MultiDivergence
 from segregation.network import calc_access
 from libpysal.weights.util import attach_islands
@@ -41,8 +41,8 @@ __all__ = [
     
     'Perimeter_Area_Ratio_Spatial_Dissim', 
     'PerimeterAreaRatioSpatialDissim',
-
-    'MinMaxS',
+    
+    'SpatialMinMax',
     
     'Distance_Decay_Isolation',
     'DistanceDecayIsolation',
@@ -953,120 +953,51 @@ class PerimeterAreaRatioSpatialDissim:
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _perimeter_area_ratio_spatial_dissim
+        
 
 
-def _min_max_s(
-        data: gpd.GeoDataFrame,
-        group_pop_var: str,
-        total_pop_var: str,
-        w: W = None,
-):
-    """
-    Calculation of Dissimilarity index S
+class SpatialMinMax(MinMax):
+    """Spatial MinMax Index.
 
-    Parameters
-    ----------
-
-    data            : gpd.GeoDataFrame
-                    a geopandas DataFrame with a geometry column.
-
-    group_pop_var   : string
-                    The name of variable in data that contains the population size of the group of interest
-
-    total_pop_var   : string
-                    The name of variable in data that contains the total population of the unit
-
-    w               : W
-                    A PySAL weights object. If not provided, a Kernel with default parameters is created.
-
-    Returns
-    -------
-
-    statistic : float
-                Spatial Dissimilarity Index S
-
-    core_data : gpd.GeoDataFrame
-                A geopandas DataFrame that contains the columns used to perform the estimate.
-
-    Notes
-    -----
-
-    Based on O'Sullivan & Wong (2007). A Surface‐Based Approach to Measuring Spatial Segregation.
-    Geographical Analysis 39 (2) https://doi.org/10.1111/j.1538-4632.2007.00699.x
-
-    Reference: :cite:`osullivanwong2007surface`.
-
-    """
-    if not isinstance(data, gpd.GeoDataFrame):
-        raise TypeError('data should be a geopandas GeoDataFrame')
-
-    if 'geometry' not in data.columns:
-        data['geometry'] = data[data._geometry_column_name]
-        data = data.drop([data._geometry_column_name], axis=1)
-        data = data.set_geometry('geometry')
-
-    if w is None:
-        points = [(p.x, p.y) for p in data.centroid]
-        w_object = Kernel(points)
-    else:
-        w_object = w
-
-    if not isinstance(w_object, W):
-        raise TypeError('w is not a PySAL weights object')
-
-    data = data.rename(columns={
-        group_pop_var: 'group_pop_var',
-        total_pop_var: 'total_pop_var',
-    })
-    data['group_2_pop_var'] = data['total_pop_var'] - data['group_pop_var']
-    data['group_1_pop_var_norm'] = data['group_pop_var'] / data['group_pop_var'].sum()
-    data['group_2_pop_var_norm'] = data['group_2_pop_var'] / data['group_2_pop_var'].sum()
-
-    w, _ = w_object.full()
-
-    density_1 = w * data['group_1_pop_var_norm'].values
-    density_2 = w * data['group_2_pop_var_norm'].values
-    densities = np.vstack([
-        density_1.sum(axis=1),
-        density_2.sum(axis=1),
-    ])
-    v_union = densities.max(axis=0).sum()
-    v_intersect = densities.min(axis=0).sum()
-
-    s = 1 - v_intersect / v_union
-
-    core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
-
-    return s, core_data
-
-
-class MinMaxS:
-    """
-    Calculation of Dissimilarity index S
+    This class calculates the spatial version of the MinMax
+    index. The data are "spatialized" by converting each observation
+    to a "local environment" by creating a weighted sum of the focal unit with
+    its neighboring observations, where the neighborhood is defined by a
+    libpysal weights matrix or a pandana Network instance.
 
     Parameters
     ----------
-
-    data            : gpd.GeoDataFrame
-                    a geopandas DataFrame with a geometry column.
-
-    group_pop_var   : string
-                    The name of variable in data that contains the population size of the group of interest
-
-    total_pop_var   : string
-                    The name of variable in data that contains the total population of the unit
-
-    w               : W
-                    A PySAL weights object. If not provided, a Kernel with default parameters is created.
-
+    data : geopandas.GeoDataFrame
+        geodataframe with
+    group_pop_var : string
+        The name of variable in data that contains the population size of the group of interest
+    total_pop_var : string
+        The name of variable in data that contains the total population of the unit
+    w   : libpysal.W
+        distance-based PySAL spatial weights matrix instance
+    network : pandana.Network
+        pandana.Network instance. This is likely created with `get_osm_network`
+        or via helper functions from OSMnet or UrbanAccess.
+    distance : int
+        maximum distance to consider `accessible` (the default is 2000).
+    decay : str
+        decay type pandana should use "linear", "exp", or "flat"
+        (which means no decay). The default is "linear".
+    precompute: bool
+        Whether the pandana.Network instance should precompute the range
+        queries.This is true by default, but if you plan to calculate several
+        indices using the same network, then you can set this
+        parameter to `False` to avoid precomputing repeatedly inside the
+        function
+        
     Attributes
     ----------
 
     statistic : float
-                Spatial Dissimilarity Index S
-
-    core_data : gpd.GeoDataFrame
-                A geopandas DataFrame that contains the columns used to perform the estimate.
+                SpatialMinMax Index
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
@@ -1074,23 +1005,51 @@ class MinMaxS:
     Geographical Analysis 39 (2). https://doi.org/10.1111/j.1538-4632.2007.00699.x
 
     Reference: :cite:`osullivanwong2007surface`.
-
+    
+    We'd like to thank @AnttiHaerkoenen for this contribution!
+    
     """
 
-    def __init__(
-            self,
-            data,
-            group_pop_var,
-            total_pop_var,
-            w=None,
-    ):
-        self.statistic, self.core_data = _min_max_s(
-            data,
-            group_pop_var,
-            total_pop_var,
-            w,
-        )
-        self._function = _min_max_s
+    def __init__(self, 
+                 data, 
+                 group_pop_var, 
+                 total_pop_var,
+                 network=None,
+                 w=None,
+                 decay='linear',
+                 distance=2000,
+                 precompute=True):
+        
+        data = data.rename(columns={group_pop_var: 'group_pop_var', 
+                                    total_pop_var: 'total_pop_var'})
+    
+        data['group_2_pop_var'] = data['total_pop_var'] - data['group_pop_var']
+        
+        groups = ['group_pop_var', 'group_2_pop_var']
+        
+        if w is None and network is None:
+            points = [(p.x, p.y) for p in data.centroid]
+            w = Kernel(points)
+
+        if w and network:
+            raise (
+                "must pass either a pandana network or a pysal weights object\
+                 but not both")
+        elif network:
+            df = calc_access(data,
+                             variables=groups,
+                             network=network,
+                             distance=distance,
+                             decay=decay,
+                             precompute=precompute)
+            groups = ["acc_" + group for group in groups]
+        else:
+            df = _build_local_environment(data, groups, w)
+        
+        df['resulting_total'] = df['group_pop_var'] + df['group_2_pop_var']
+        
+        super().__init__(df, 'group_pop_var', 'resulting_total')
+
 
 
 def _distance_decay_isolation(data,

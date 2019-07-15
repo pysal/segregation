@@ -10,7 +10,7 @@ class Min_Max_S_Tester(unittest.TestCase):
         s_map = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
         df = s_map[['geometry', 'HISP_', 'TOT_POP']]
         index = MinMaxS(df, 'HISP_', 'TOT_POP')
-        np.testing.assert_almost_equal(index.statistic, 0.1749958)
+        np.testing.assert_almost_equal(index.statistic, 0.17119951092816454)
 
 
 if __name__ == '__main__':
