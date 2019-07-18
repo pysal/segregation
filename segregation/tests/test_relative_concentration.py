@@ -10,7 +10,7 @@ class Relative_Concentration_Tester(unittest.TestCase):
         s_map = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
         df = s_map[['geometry', 'HISP_', 'TOT_POP']]
         index = RelativeConcentration(df, 'HISP_', 'TOT_POP')
-        np.testing.assert_almost_equal(index.statistic, 0.13100189111249014)
+        np.testing.assert_almost_equal(index.statistic, 0.12733820870675222)
 
 
 if __name__ == '__main__':
