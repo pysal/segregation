@@ -2270,8 +2270,10 @@ def _absolute_concentration(data, group_pop_var, total_pop_var):
     des_ind = (-area).argsort()
     asc_ind = area.argsort()
 
-    n1 = np.where(((np.cumsum(t[asc_ind]) / T) < X / T) == False)[0][0]
-    n2 = np.where(((np.cumsum(t[des_ind]) / T) < X / T) == False)[0][0]
+    # A discussion about the extraction of n1 and n2 can be found in https://github.com/pysal/segregation/issues/43
+    n1 = np.where(((np.cumsum(t[asc_ind]) / T) < X / T) == False)[0][0] + 1
+    n2_aux = np.where(((np.cumsum(t[des_ind]) / T) < X / T) == False)[0][0] + 1
+    n2 = len(data) - n2_aux
 
     n = data.shape[0]
     T1 = t[asc_ind][0:n1].sum()
@@ -2349,7 +2351,7 @@ class AbsoluteConcentration:
     
     >>> absolute_concentration_index = AbsoluteConcentration(gdf, 'nhblk10', 'pop10')
     >>> absolute_concentration_index.statistic
-    0.5430616390401855
+    0.9577607171503524
             
     Notes
     -----
@@ -2442,8 +2444,10 @@ def _relative_concentration(data, group_pop_var, total_pop_var):
     des_ind = (-area).argsort()
     asc_ind = area.argsort()
 
-    n1 = np.where(((np.cumsum(t[asc_ind]) / T) < X / T) == False)[0][0]
-    n2 = np.where(((np.cumsum(t[des_ind]) / T) < X / T) == False)[0][0]
+    # A discussion about the extraction of n1 and n2 can be found in https://github.com/pysal/segregation/issues/43
+    n1 = np.where(((np.cumsum(t[asc_ind]) / T) < X / T) == False)[0][0] + 1
+    n2_aux = np.where(((np.cumsum(t[des_ind]) / T) < X / T) == False)[0][0] + 1
+    n2 = len(data) - n2_aux
 
     n = data.shape[0]
     T1 = t[asc_ind][0:n1].sum()
@@ -2521,7 +2525,7 @@ class RelativeConcentration:
     
     >>> relative_concentration_index = RelativeConcentration(gdf, 'nhblk10', 'pop10')
     >>> relative_concentration_index.statistic
-    0.5364305924831142
+    0.5204046784837685
             
     Notes
     -----
