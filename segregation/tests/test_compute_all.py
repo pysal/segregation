@@ -18,7 +18,7 @@ class ComputeAll_Tester(unittest.TestCase):
         np.random.seed(123)
         res = ComputeAllSpatialSegregation(s_map, 'HISP_', 'TOT_POP')
         np.testing.assert_almost_equal(np.array(res.computed['Value']), np.array([ 0.26119743,  0.68914224,  0.00518929,  0.85128245,  0.80449692,
-       -0.11194178,  0.00909563,  0.13100189,  0.83965834,  0.15621625,
+       -0.11194178,  0.00909563,  0.12733821,  0.83965834,  0.15621625,
         0.22847334,  1.00266235,  0.26676264,  0.31117181]))
     
         np.random.seed(123)
