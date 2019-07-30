@@ -187,12 +187,13 @@ def _infer_segregation(seg_class,
                     
         if ('multigroup' in str(type(seg_class))):
             
+            df = np.array(seg_class.core_data)
+            global_prob_vector = df.sum(axis = 0) / df.sum()
+            t = df.sum(axis = 1)
+            
             with tqdm(total=iterations_under_null) as pbar:
                 for i in np.array(range(iterations_under_null)):
             
-                    df = np.array(seg_class.core_data)
-                    global_prob_vector = df.sum(axis = 0) / df.sum()
-                    t = df.sum(axis = 1)
                     simul = map(lambda i: list(np.random.multinomial(i, global_prob_vector)), t)
                     df_simul = pd.DataFrame(list(simul), columns = seg_class._groups)
                     
