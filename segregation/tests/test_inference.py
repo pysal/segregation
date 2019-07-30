@@ -2,7 +2,7 @@ import unittest
 import libpysal
 import geopandas as gpd
 import numpy as np
-from segregation.aspatial import Dissim
+from segregation.aspatial import Dissim, MultiDissim
 from segregation.inference import SingleValueTest, TwoValueTest
 
 
@@ -11,6 +11,9 @@ class Inference_Tester(unittest.TestCase):
         s_map = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
         index1 = Dissim(s_map, 'HISP_', 'TOT_POP')
         index2 = Dissim(s_map, 'BLACK_', 'TOT_POP')
+        
+        groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+        m_index = MultiDissim(s_map, groups_list)
         
         # Single Value Tests #
         np.random.seed(123)
@@ -36,6 +39,14 @@ class Inference_Tester(unittest.TestCase):
         np.random.seed(123)
         res = SingleValueTest(index1, null_approach = "even_permutation", iterations_under_null = 50)
         np.testing.assert_almost_equal(res.est_sim.mean(), 0.01619436868061094)
+        
+        np.random.seed(123)
+        res = SingleValueTest(m_index, null_approach = "bootstrap", iterations_under_null = 50)
+        np.testing.assert_almost_equal(res.est_sim.mean(), 0.4143544081847027)
+        
+        np.random.seed(123)
+        res = SingleValueTest(m_index, null_approach = "evenness", iterations_under_null = 50)
+        np.testing.assert_almost_equal(res.est_sim.mean(), 0.01633979237418177)
 
         # Two Value Tests #
         np.random.seed(123)
