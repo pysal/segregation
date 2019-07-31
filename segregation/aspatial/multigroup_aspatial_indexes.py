@@ -98,7 +98,7 @@ def _multi_dissim(data, groups):
         abs(pik - Pk),
         np.repeat(ti, K, axis=0).reshape(n, K)).sum()
 
-    return multi_D, core_data
+    return multi_D, core_data, groups
 
 
 class MultiDissim:
@@ -157,6 +157,7 @@ class MultiDissim:
 
         self.statistic = aux[0]
         self.core_data = aux[1]
+        self._groups   = aux[2]
         self._function = _multi_dissim
 
 
@@ -210,7 +211,7 @@ def _multi_gini_seg(data, groups):
 
     multi_Gini_Seg = elements_sum.sum() / (2 * (T**2) * Is)
 
-    return multi_Gini_Seg, core_data
+    return multi_Gini_Seg, core_data, groups
 
 
 class MultiGiniSeg:
@@ -269,6 +270,7 @@ class MultiGiniSeg:
 
         self.statistic = aux[0]
         self.core_data = aux[1]
+        self._groups   = aux[2]
         self._function = _multi_gini_seg
 
 
@@ -313,7 +315,7 @@ def _multi_normalized_exposure(data, groups):
 
     MNE = ((ti[:, None] * (pik - Pk)**2) / (1 - Pk)).sum() / T
 
-    return MNE, core_data
+    return MNE, core_data, groups
 
 
 class MultiNormalizedExposure:
@@ -372,6 +374,7 @@ class MultiNormalizedExposure:
 
         self.statistic = aux[0]
         self.core_data = aux[1]
+        self._groups   = aux[2]
         self._function = _multi_normalized_exposure
 
 
@@ -420,7 +423,7 @@ def _multi_information_theory(data, groups):
 
     MIT = np.nansum(ti[:, None] * pik * np.log(pik / Pk)) / (T * E)
 
-    return MIT, core_data
+    return MIT, core_data, groups
 
 
 class MultiInformationTheory:
@@ -479,6 +482,7 @@ class MultiInformationTheory:
 
         self.statistic = aux[0]
         self.core_data = aux[1]
+        self._groups   = aux[2]
         self._function = _multi_information_theory
 
 
@@ -526,7 +530,7 @@ def _multi_relative_diversity(data, groups):
 
     MRD = (ti[:, None] * (pik - Pk)**2).sum() / (T * Is)
 
-    return MRD, core_data
+    return MRD, core_data, groups
 
 
 class MultiRelativeDiversity:
@@ -587,6 +591,7 @@ class MultiRelativeDiversity:
 
         self.statistic = aux[0]
         self.core_data = aux[1]
+        self._groups   = aux[2]
         self._function = _multi_relative_diversity
 
 
@@ -633,7 +638,7 @@ def _multi_squared_coefficient_of_variation(data, groups):
 
     C = ((ti[:, None] * (pik - Pk)**2) / (T * (K - 1) * Pk)).sum()
 
-    return C, core_data
+    return C, core_data, groups
 
 
 class MultiSquaredCoefficientVariation:
@@ -692,6 +697,7 @@ class MultiSquaredCoefficientVariation:
 
         self.statistic = aux[0]
         self.core_data = aux[1]
+        self._groups   = aux[2]
         self._function = _multi_squared_coefficient_of_variation
 
 
@@ -743,7 +749,7 @@ def _multi_diversity(data, groups, normalized=False):
         K = df.shape[1]
         E = E / np.log(K)
 
-    return E, core_data
+    return E, core_data, groups
 
 
 class MultiDiversity:
@@ -812,6 +818,7 @@ class MultiDiversity:
 
         self.statistic = aux[0]
         self.core_data = aux[1]
+        self._groups   = aux[2]
         self._function = _multi_diversity
 
 
@@ -858,7 +865,7 @@ def _simpsons_concentration(data, groups):
 
     Lambda = (Pk * Pk).sum()
 
-    return Lambda, core_data
+    return Lambda, core_data, groups
 
 
 class SimpsonsConcentration:
@@ -923,6 +930,7 @@ class SimpsonsConcentration:
 
         self.statistic = aux[0]
         self.core_data = aux[1]
+        self._groups   = aux[2]
         self._function = _simpsons_concentration
 
 
@@ -969,7 +977,7 @@ def _simpsons_interaction(data, groups):
 
     I = (Pk * (1 - Pk)).sum()
 
-    return I, core_data
+    return I, core_data, groups
 
 
 class SimpsonsInteraction:
@@ -1034,6 +1042,7 @@ class SimpsonsInteraction:
 
         self.statistic = aux[0]
         self.core_data = aux[1]
+        self._groups   = aux[2]
         self._function = _simpsons_interaction
 
 
@@ -1080,7 +1089,7 @@ def _multi_divergence(data, groups):
 
     Divergence_Index = ((ti / T) * Di).sum()
 
-    return Divergence_Index, core_data
+    return Divergence_Index, core_data, groups
 
 
 class MultiDivergence:
@@ -1139,6 +1148,7 @@ class MultiDivergence:
 
         self.statistic = aux[0]
         self.core_data = aux[1]
+        self._groups   = aux[2]
         self._function = _multi_divergence
 
 
