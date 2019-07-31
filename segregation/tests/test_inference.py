@@ -14,6 +14,9 @@ class Inference_Tester(unittest.TestCase):
         
         groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
         m_index = MultiDissim(s_map, groups_list)
+		
+        m_index_1 = MultiDissim(s_map[0:200], groups_list)
+        m_index_2 = MultiDissim(s_map[200:] , groups_list)
         
         # Single Value Tests #
         np.random.seed(123)
@@ -51,7 +54,7 @@ class Inference_Tester(unittest.TestCase):
         # Two Value Tests #
         np.random.seed(123)
         res = TwoValueTest(index1, index2, null_approach = "random_label", iterations_under_null = 50)
-        np.testing.assert_almost_equal(res.est_sim.mean(), -0.0013532591859387643)
+        np.testing.assert_almost_equal(res.est_sim.mean(), -0.0031386146371949076)
         
         np.random.seed(123)
         res = TwoValueTest(index1, index2, null_approach = "counterfactual_composition", iterations_under_null = 50)
@@ -64,6 +67,10 @@ class Inference_Tester(unittest.TestCase):
         np.random.seed(123)
         res = TwoValueTest(index1, index2, null_approach = "counterfactual_dual_composition", iterations_under_null = 50)
         np.testing.assert_almost_equal(res.est_sim.mean(), -0.004771386292706747)
+		
+        np.random.seed(123)
+        res = TwoValueTest(m_index_1, m_index_2, null_approach = "random_label", iterations_under_null = 50)
+        np.testing.assert_almost_equal(res.est_sim.mean(), -0.0024327144012562685)
 
 
 if __name__ == '__main__':
