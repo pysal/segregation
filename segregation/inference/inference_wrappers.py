@@ -126,7 +126,6 @@ def _infer_segregation(seg_class,
                     pbar.update(1)
                     
         if ('multigroup' in str(type(seg_class))):
-            
             raise ValueError('Not implemented for MultiGroup indexes.')
 
     #############
@@ -221,7 +220,6 @@ def _infer_segregation(seg_class,
                     pbar.update(1)
                     
         if ('multigroup' in str(type(seg_class))):
-            
             raise ValueError('Not implemented for MultiGroup indexes.')
             
     ##########################
@@ -269,7 +267,6 @@ def _infer_segregation(seg_class,
                     pbar.update(1)
                     
         if ('multigroup' in str(type(seg_class))):
-            
             raise ValueError('Not implemented for MultiGroup indexes.')
             
     ########################
@@ -308,7 +305,6 @@ def _infer_segregation(seg_class,
                     pbar.update(1)
                     
         if ('multigroup' in str(type(seg_class))):
-            
             raise ValueError('Not implemented for MultiGroup indexes.')
             
     # Check and, if the case, remove iterations_under_null that resulted in nan or infinite values
@@ -477,85 +473,90 @@ def _compare_segregation(seg_class_1,
         )
 
     if (type(seg_class_1) != type(seg_class_2)):
-        raise TypeError(
-            'seg_class_1 and seg_class_2 must be the same type/class.')
+        raise TypeError('seg_class_1 and seg_class_2 must be the same type/class.')
 
     point_estimation = seg_class_1.statistic - seg_class_2.statistic
 
     aux = str(type(seg_class_1))
-    _class_name = aux[1 + aux.rfind(
-        '.'):-2]  # 'rfind' finds the last occurence of a pattern in a string
+    _class_name = aux[1 + aux.rfind('.'):-2]  # 'rfind' finds the last occurence of a pattern in a string
 
     data_1 = seg_class_1.core_data.copy()
     data_2 = seg_class_2.core_data.copy()
-
-    # This step is just to make sure the each frequecy column is integer for the approaches and from the same type in order to stack them for the random data approach
-    data_1['group_pop_var'] = round(data_1['group_pop_var']).astype(int)
-    data_1['total_pop_var'] = round(data_1['total_pop_var']).astype(int)
-
-    data_2['group_pop_var'] = round(data_2['group_pop_var']).astype(int)
-    data_2['total_pop_var'] = round(data_2['total_pop_var']).astype(int)
-
+    
     est_sim = np.empty(iterations_under_null)
 
     ################
     # RANDOM LABEL #
     ################
     if (null_approach == "random_label"):
-
+        
         data_1['grouping_variable'] = 'Group_1'
         data_2['grouping_variable'] = 'Group_2'
-
-        stacked_data = pd.concat([data_1, data_2], ignore_index=True)
-
-        with tqdm(total=iterations_under_null) as pbar:
-            for i in np.array(range(iterations_under_null)):
-
-                aux_rand = list(
-                    np.random.choice(stacked_data.shape[0],
-                                     stacked_data.shape[0],
-                                     replace=False))
-
-                stacked_data['rand_group_pop'] = stacked_data.group_pop_var[
-                    aux_rand].reset_index()['group_pop_var']
-                stacked_data['rand_total_pop'] = stacked_data.total_pop_var[
-                    aux_rand].reset_index()['total_pop_var']
-
-                # Dropping variable to avoid confusion in the calculate_segregation function
-                # Building auxiliar data to avoid affecting the next iteration
-                stacked_data_aux = stacked_data.drop(
-                    ['group_pop_var', 'total_pop_var'], axis=1)
-
-                stacked_data_1 = stacked_data_aux.loc[
-                    stacked_data_aux['grouping_variable'] == 'Group_1']
-                stacked_data_2 = stacked_data_aux.loc[
-                    stacked_data_aux['grouping_variable'] == 'Group_2']
-
-                simulations_1 = seg_class_1._function(stacked_data_1,
-                                                      'rand_group_pop',
-                                                      'rand_total_pop',
-                                                      **kwargs)[0]
-                simulations_2 = seg_class_2._function(stacked_data_2,
-                                                      'rand_group_pop',
-                                                      'rand_total_pop',
-                                                      **kwargs)[0]
-
-                est_sim[i] = simulations_1 - simulations_2
-                pbar.set_description(
-                    'Processed {} iterations out of {}'.format(
-                        i + 1, iterations_under_null))
-                pbar.update(1)
-
+        
+        if ('multigroup' not in str(type(seg_class_1))):
+            
+            # This step is just to make sure the each frequecy column is integer for the approaches and from the same type in order to be able to stack them
+            data_1['group_pop_var'] = round(data_1['group_pop_var']).astype(int)
+            data_1['total_pop_var'] = round(data_1['total_pop_var']).astype(int)
+        
+            data_2['group_pop_var'] = round(data_2['group_pop_var']).astype(int)
+            data_2['total_pop_var'] = round(data_2['total_pop_var']).astype(int)
+            
+            stacked_data = pd.concat([data_1, data_2], ignore_index=True)
+    
+            with tqdm(total=iterations_under_null) as pbar:
+                for i in np.array(range(iterations_under_null)):
+                    
+                    stacked_data['grouping_variable'] = np.random.permutation(stacked_data['grouping_variable'])
+    
+                    stacked_data_1 = stacked_data.loc[stacked_data['grouping_variable'] == 'Group_1']
+                    stacked_data_2 = stacked_data.loc[stacked_data['grouping_variable'] == 'Group_2']
+    
+                    simulations_1 = seg_class_1._function(stacked_data_1,'group_pop_var','total_pop_var',**kwargs)[0]
+                    simulations_2 = seg_class_2._function(stacked_data_2,'group_pop_var','total_pop_var',**kwargs)[0]
+    
+                    est_sim[i] = simulations_1 - simulations_2
+                    pbar.set_description('Processed {} iterations out of {}'.format(i + 1, iterations_under_null))
+                    pbar.update(1)
+                    
+        if ('multigroup' in str(type(seg_class_1))):
+            
+            groups_list = seg_class_1._groups
+            
+            for i in range(len(groups_list)):
+                data_1[groups_list[i]] = round(data_1[groups_list[i]]).astype(int)
+                data_2[groups_list[i]] = round(data_2[groups_list[i]]).astype(int)
+            
+            if (seg_class_1._groups != seg_class_2._groups):
+                raise ValueError('MultiGroup groups should be the same')
+                
+            stacked_data = pd.concat([data_1, data_2], ignore_index=True)
+            
+            with tqdm(total=iterations_under_null) as pbar:
+                for i in np.array(range(iterations_under_null)):
+                    
+                    stacked_data['grouping_variable'] = np.random.permutation(stacked_data['grouping_variable'])
+    
+                    stacked_data_1 = stacked_data.loc[stacked_data['grouping_variable'] == 'Group_1']
+                    stacked_data_2 = stacked_data.loc[stacked_data['grouping_variable'] == 'Group_2']
+    
+                    simulations_1 = seg_class_1._function(stacked_data_1, groups_list, **kwargs)[0]
+                    simulations_2 = seg_class_2._function(stacked_data_2, groups_list, **kwargs)[0]
+    
+                    est_sim[i] = simulations_1 - simulations_2
+                    pbar.set_description('Processed {} iterations out of {}'.format(i + 1, iterations_under_null))
+                    pbar.update(1)
+    
+    
     ##############################
     # COUNTERFACTUAL COMPOSITION #
     ##############################
-    if (null_approach in [
-            'counterfactual_composition', 'counterfactual_share',
-            'counterfactual_dual_composition'
-    ]):
+    if (null_approach in ['counterfactual_composition', 'counterfactual_share','counterfactual_dual_composition']):
+        
+        if ('multigroup' in str(type(seg_class_1))):
+            raise ValueError('Not implemented for MultiGroup indexes.')
 
-        internal_arg = null_approach[
-            15:]  # Remove 'counterfactual_' from the beginning of the string
+        internal_arg = null_approach[15:]  # Remove 'counterfactual_' from the beginning of the string
 
         counterfac_df1, counterfac_df2 = _generate_counterfactual(
             data_1,
