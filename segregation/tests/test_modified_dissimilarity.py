@@ -11,7 +11,7 @@ class Modified_Dissim_Tester(unittest.TestCase):
         df = s_map[['geometry', 'HISP_', 'TOT_POP']]
         np.random.seed(1234)
         index = ModifiedDissim(df, 'HISP_', 'TOT_POP')
-        np.testing.assert_almost_equal(index.statistic, 0.31075891224250635)
+        np.testing.assert_almost_equal(index.statistic, 0.31075891224250635, decimal = 3)
 
 
 if __name__ == '__main__':
