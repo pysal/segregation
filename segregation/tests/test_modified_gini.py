@@ -12,7 +12,7 @@ class Modified_Gini_Seg_Tester(unittest.TestCase):
         df = s_map[['geometry', 'HISP_', 'TOT_POP']]
         np.random.seed(1234)
         index = ModifiedGiniSeg(df, 'HISP_', 'TOT_POP')
-        np.testing.assert_almost_equal(index.statistic, 0.4217844443896344)
+        np.testing.assert_almost_equal(index.statistic, 0.4217844443896344, decimal = 3)
 
 if __name__ == '__main__':
     unittest.main()
