@@ -87,213 +87,226 @@ def _infer_segregation(seg_class,
     _class_name = aux[1 + aux.rfind(
         '.'):-2]  # 'rfind' finds the last occurence of a pattern in a string
 
+    Estimates_Stars = np.empty(iterations_under_null)
+
     ##############
     # SYSTEMATIC #
     ##############
     if (null_approach == "systematic"):
+        
+        if ('multigroup' not in str(type(seg_class))):
 
-        data['other_group_pop'] = data['total_pop_var'] - data['group_pop_var']
-        p_j = data['total_pop_var'] / data['total_pop_var'].sum()
-
-        # Group 0: minority group
-        p0_i = p_j
-        n0 = data['group_pop_var'].sum()
-        sim0 = np.random.multinomial(n0, p0_i, size=iterations_under_null)
-
-        # Group 1: complement group
-        p1_i = p_j
-        n1 = data['other_group_pop'].sum()
-        sim1 = np.random.multinomial(n1, p1_i, size=iterations_under_null)
-
-        Estimates_Stars = np.empty(iterations_under_null)
-
-        with tqdm(total=iterations_under_null) as pbar:
-            for i in np.array(range(iterations_under_null)):
-                data_aux = {
-                    'simul_group': sim0[i].tolist(),
-                    'simul_tot': (sim0[i] + sim1[i]).tolist()
-                }
-                df_aux = pd.DataFrame.from_dict(data_aux)
-
-                if (str(type(data)) ==
-                        '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
-                    df_aux = gpd.GeoDataFrame(df_aux)
-                    df_aux['geometry'] = data['geometry']
-
-                Estimates_Stars[i] = seg_class._function(
-                    df_aux, 'simul_group', 'simul_tot', **kwargs)[0]
-                pbar.set_description(
-                    'Processed {} iterations out of {}'.format(
-                        i + 1, iterations_under_null))
-                pbar.update(1)
+            data['other_group_pop'] = data['total_pop_var'] - data['group_pop_var']
+            p_j = data['total_pop_var'] / data['total_pop_var'].sum()
+    
+            # Group 0: minority group
+            p0_i = p_j
+            n0 = data['group_pop_var'].sum()
+            sim0 = np.random.multinomial(n0, p0_i, size=iterations_under_null)
+    
+            # Group 1: complement group
+            p1_i = p_j
+            n1 = data['other_group_pop'].sum()
+            sim1 = np.random.multinomial(n1, p1_i, size=iterations_under_null)
+    
+            with tqdm(total=iterations_under_null) as pbar:
+                for i in np.array(range(iterations_under_null)):
+                    data_aux = {
+                        'simul_group': sim0[i].tolist(),
+                        'simul_tot': (sim0[i] + sim1[i]).tolist()
+                    }
+                    df_aux = pd.DataFrame.from_dict(data_aux)
+    
+                    if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+                        df_aux = gpd.GeoDataFrame(df_aux)
+                        df_aux['geometry'] = data['geometry']
+    
+                    Estimates_Stars[i] = seg_class._function(df_aux, 'simul_group', 'simul_tot', **kwargs)[0]
+                    pbar.set_description('Processed {} iterations out of {}'.format(i + 1, iterations_under_null))
+                    pbar.update(1)
+                    
+        if ('multigroup' in str(type(seg_class))):
+            raise ValueError('Not implemented for MultiGroup indexes.')
 
     #############
     # BOOTSTRAP #
     #############
     if (null_approach == "bootstrap"):
+        
+        if ('multigroup' not in str(type(seg_class))):
+    
+            with tqdm(total=iterations_under_null) as pbar:
+                for i in np.array(range(iterations_under_null)):
+    
+                    sample_index = np.random.choice(data.index, size=len(data), replace=True)
+                    df_aux = data.iloc[sample_index]
+                    Estimates_Stars[i] = seg_class._function(df_aux, 'group_pop_var', 'total_pop_var', **kwargs)[0]
+    
+                    pbar.set_description('Processed {} iterations out of {}'.format(i + 1, iterations_under_null))
+                    pbar.update(1)
 
-        Estimates_Stars = np.empty(iterations_under_null)
-
-        with tqdm(total=iterations_under_null) as pbar:
-            for i in np.array(range(iterations_under_null)):
-
-                sample_index = np.random.choice(data.index,
-                                                size=len(data),
-                                                replace=True)
-                df_aux = data.iloc[sample_index]
-                Estimates_Stars[i] = seg_class._function(
-                    df_aux, 'group_pop_var', 'total_pop_var', **kwargs)[0]
-
-                pbar.set_description(
-                    'Processed {} iterations out of {}'.format(
-                        i + 1, iterations_under_null))
-                pbar.update(1)
+        if ('multigroup' in str(type(seg_class))):
+            
+            with tqdm(total=iterations_under_null) as pbar:
+                for i in np.array(range(iterations_under_null)):
+    
+                    sample_index = np.random.choice(data.index, size=len(data), replace=True)
+                    df_aux = data.iloc[sample_index]
+                    Estimates_Stars[i] = seg_class._function(df_aux, seg_class._groups, **kwargs)[0]
+    
+                    pbar.set_description('Processed {} iterations out of {}'.format(i + 1, iterations_under_null))
+                    pbar.update(1)
 
     ############
     # EVENNESS #
     ############
     if (null_approach == "evenness"):
+        
+        if ('multigroup' not in str(type(seg_class))):
 
-        p_null = data['group_pop_var'].sum() / data['total_pop_var'].sum()
-
-        Estimates_Stars = np.empty(iterations_under_null)
-
-        with tqdm(total=iterations_under_null) as pbar:
-            for i in np.array(range(iterations_under_null)):
-                sim = np.random.binomial(n=np.array(
-                    [data['total_pop_var'].tolist()]),
-                                         p=p_null)
-                data_aux = {
-                    'simul_group': sim[0],
-                    'simul_tot': data['total_pop_var'].tolist()
-                }
-                df_aux = pd.DataFrame.from_dict(data_aux)
-
-                if (str(type(data)) ==
-                        '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
-                    df_aux = gpd.GeoDataFrame(df_aux)
-                    df_aux['geometry'] = data['geometry']
-
-                Estimates_Stars[i] = seg_class._function(
-                    df_aux, 'simul_group', 'simul_tot', **kwargs)[0]
-
-                pbar.set_description(
-                    'Processed {} iterations out of {}'.format(
-                        i + 1, iterations_under_null))
-                pbar.update(1)
+            p_null = data['group_pop_var'].sum() / data['total_pop_var'].sum()
+    
+            with tqdm(total=iterations_under_null) as pbar:
+                for i in np.array(range(iterations_under_null)):
+                    sim = np.random.binomial(n=np.array([data['total_pop_var'].tolist()]),p=p_null)
+                    data_aux = {
+                        'simul_group': sim[0],
+                        'simul_tot': data['total_pop_var'].tolist()
+                    }
+                    df_aux = pd.DataFrame.from_dict(data_aux)
+    
+                    if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+                        df_aux = gpd.GeoDataFrame(df_aux)
+                        df_aux['geometry'] = data['geometry']
+    
+                    Estimates_Stars[i] = seg_class._function(df_aux, 'simul_group', 'simul_tot', **kwargs)[0]
+    
+                    pbar.set_description('Processed {} iterations out of {}'.format(i + 1, iterations_under_null))
+                    pbar.update(1)
+                    
+        if ('multigroup' in str(type(seg_class))):
+            
+            df = np.array(seg_class.core_data)
+            global_prob_vector = df.sum(axis = 0) / df.sum()
+            t = df.sum(axis = 1)
+            
+            with tqdm(total=iterations_under_null) as pbar:
+                for i in np.array(range(iterations_under_null)):
+            
+                    simul = map(lambda i: list(np.random.multinomial(i, global_prob_vector)), t)
+                    df_simul = pd.DataFrame(list(simul), columns = seg_class._groups)
+                    
+                    Estimates_Stars[i] = seg_class._function(df_simul, seg_class._groups, **kwargs)[0]
+                    pbar.set_description('Processed {} iterations out of {}'.format(i + 1, iterations_under_null))
+                    pbar.update(1)
 
     ###############
     # PERMUTATION #
     ###############
     if (null_approach == "permutation"):
+        
+        if ('multigroup' not in str(type(seg_class))):
 
-        if (str(type(data)) !=
-                '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
-            raise TypeError(
-                'data is not a GeoDataFrame, therefore, this null approach does not apply.'
-            )
-
-        Estimates_Stars = np.empty(iterations_under_null)
-        with tqdm(total=iterations_under_null) as pbar:
-
-            for i in np.array(range(iterations_under_null)):
-                data = data.assign(geometry=data['geometry'][list(
-                    np.random.choice(
-                        data.shape[0], data.shape[0],
-                        replace=False))].reset_index()['geometry'])
-                df_aux = data
-                Estimates_Stars[i] = seg_class._function(
-                    df_aux, 'group_pop_var', 'total_pop_var', **kwargs)[0]
-                pbar.set_description(
-                    'Processed {} iterations out of {}'.format(
-                        i + 1, iterations_under_null))
-                pbar.update(1)
-
+            if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+                raise TypeError('data is not a GeoDataFrame, therefore, this null approach does not apply.')
+    
+            with tqdm(total=iterations_under_null) as pbar:
+    
+                for i in np.array(range(iterations_under_null)):
+                    data = data.assign(geometry=data['geometry'][list(np.random.choice(data.shape[0], data.shape[0],replace=False))].reset_index()['geometry'])
+                    df_aux = data
+                    Estimates_Stars[i] = seg_class._function(df_aux, 'group_pop_var', 'total_pop_var', **kwargs)[0]
+                    pbar.set_description('Processed {} iterations out of {}'.format(i + 1, iterations_under_null))
+                    pbar.update(1)
+                    
+        if ('multigroup' in str(type(seg_class))):
+            raise ValueError('Not implemented for MultiGroup indexes.')
+            
     ##########################
     # SYSTEMATIC PERMUTATION #
     ##########################
     if (null_approach == "systematic_permutation"):
+        
+        if ('multigroup' not in str(type(seg_class))):
 
-        if (str(type(data)) !=
-                '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
-            raise TypeError(
-                'data is not a GeoDataFrame, therefore, this null approach does not apply.'
-            )
-
-        data['other_group_pop'] = data['total_pop_var'] - data['group_pop_var']
-        p_j = data['total_pop_var'] / data['total_pop_var'].sum()
-
-        # Group 0: minority group
-        p0_i = p_j
-        n0 = data['group_pop_var'].sum()
-        sim0 = np.random.multinomial(n0, p0_i, size=iterations_under_null)
-
-        # Group 1: complement group
-        p1_i = p_j
-        n1 = data['other_group_pop'].sum()
-        sim1 = np.random.multinomial(n1, p1_i, size=iterations_under_null)
-
-        Estimates_Stars = np.empty(iterations_under_null)
-
-        with tqdm(total=iterations_under_null) as pbar:
-            for i in np.array(range(iterations_under_null)):
-                data_aux = {
-                    'simul_group': sim0[i].tolist(),
-                    'simul_tot': (sim0[i] + sim1[i]).tolist()
-                }
-                df_aux = pd.DataFrame.from_dict(data_aux)
-                df_aux = gpd.GeoDataFrame(df_aux)
-                df_aux['geometry'] = data['geometry']
-                df_aux = df_aux.assign(geometry=df_aux['geometry'][list(
-                    np.random.choice(
-                        df_aux.shape[0], df_aux.shape[0],
-                        replace=False))].reset_index()['geometry'])
-                Estimates_Stars[i] = seg_class._function(
-                    df_aux, 'simul_group', 'simul_tot', **kwargs)[0]
-
-                pbar.set_description(
-                    'Processed {} iterations out of {}'.format(
-                        i + 1, iterations_under_null))
-                pbar.update(1)
-
+            if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+                raise TypeError('data is not a GeoDataFrame, therefore, this null approach does not apply.')
+    
+            data['other_group_pop'] = data['total_pop_var'] - data['group_pop_var']
+            p_j = data['total_pop_var'] / data['total_pop_var'].sum()
+    
+            # Group 0: minority group
+            p0_i = p_j
+            n0 = data['group_pop_var'].sum()
+            sim0 = np.random.multinomial(n0, p0_i, size=iterations_under_null)
+    
+            # Group 1: complement group
+            p1_i = p_j
+            n1 = data['other_group_pop'].sum()
+            sim1 = np.random.multinomial(n1, p1_i, size=iterations_under_null)
+    
+            with tqdm(total=iterations_under_null) as pbar:
+                for i in np.array(range(iterations_under_null)):
+                    data_aux = {
+                        'simul_group': sim0[i].tolist(),
+                        'simul_tot': (sim0[i] + sim1[i]).tolist()
+                    }
+                    df_aux = pd.DataFrame.from_dict(data_aux)
+                    df_aux = gpd.GeoDataFrame(df_aux)
+                    df_aux['geometry'] = data['geometry']
+                    df_aux = df_aux.assign(geometry=df_aux['geometry'][list(
+                        np.random.choice(
+                            df_aux.shape[0], df_aux.shape[0],
+                            replace=False))].reset_index()['geometry'])
+                    Estimates_Stars[i] = seg_class._function(
+                        df_aux, 'simul_group', 'simul_tot', **kwargs)[0]
+    
+                    pbar.set_description(
+                        'Processed {} iterations out of {}'.format(
+                            i + 1, iterations_under_null))
+                    pbar.update(1)
+                    
+        if ('multigroup' in str(type(seg_class))):
+            raise ValueError('Not implemented for MultiGroup indexes.')
+            
     ########################
     # EVENNESS PERMUTATION #
     ########################
     if (null_approach == "even_permutation"):
+        
+        if ('multigroup' not in str(type(seg_class))):
 
-        if (str(type(data)) !=
-                '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
-            raise TypeError(
-                'data is not a GeoDataFrame, therefore, this null approach does not apply.'
-            )
-
-        p_null = data['group_pop_var'].sum() / data['total_pop_var'].sum()
-
-        Estimates_Stars = np.empty(iterations_under_null)
-
-        with tqdm(total=iterations_under_null) as pbar:
-            for i in np.array(range(iterations_under_null)):
-                sim = np.random.binomial(n=np.array(
-                    [data['total_pop_var'].tolist()]),
-                                         p=p_null)
-                data_aux = {
-                    'simul_group': sim[0],
-                    'simul_tot': data['total_pop_var'].tolist()
-                }
-                df_aux = pd.DataFrame.from_dict(data_aux)
-                df_aux = gpd.GeoDataFrame(df_aux)
-                df_aux['geometry'] = data['geometry']
-                df_aux = df_aux.assign(geometry=df_aux['geometry'][list(
-                    np.random.choice(
-                        df_aux.shape[0], df_aux.shape[0],
-                        replace=False))].reset_index()['geometry'])
-                Estimates_Stars[i] = seg_class._function(
-                    df_aux, 'simul_group', 'simul_tot', **kwargs)[0]
-                pbar.set_description(
-                    'Processed {} iterations out of {}'.format(
-                        i + 1, iterations_under_null))
-                pbar.update(1)
-
+            if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+                raise TypeError('data is not a GeoDataFrame, therefore, this null approach does not apply.')
+    
+            p_null = data['group_pop_var'].sum() / data['total_pop_var'].sum()
+    
+            with tqdm(total=iterations_under_null) as pbar:
+                for i in np.array(range(iterations_under_null)):
+                    sim = np.random.binomial(n=np.array(
+                        [data['total_pop_var'].tolist()]),
+                                             p=p_null)
+                    data_aux = {
+                        'simul_group': sim[0],
+                        'simul_tot': data['total_pop_var'].tolist()
+                    }
+                    df_aux = pd.DataFrame.from_dict(data_aux)
+                    df_aux = gpd.GeoDataFrame(df_aux)
+                    df_aux['geometry'] = data['geometry']
+                    df_aux = df_aux.assign(geometry=df_aux['geometry'][list(
+                        np.random.choice(
+                            df_aux.shape[0], df_aux.shape[0],
+                            replace=False))].reset_index()['geometry'])
+                    Estimates_Stars[i] = seg_class._function(
+                        df_aux, 'simul_group', 'simul_tot', **kwargs)[0]
+                    pbar.set_description(
+                        'Processed {} iterations out of {}'.format(
+                            i + 1, iterations_under_null))
+                    pbar.update(1)
+                    
+        if ('multigroup' in str(type(seg_class))):
+            raise ValueError('Not implemented for MultiGroup indexes.')
+            
     # Check and, if the case, remove iterations_under_null that resulted in nan or infinite values
     if any((np.isinf(Estimates_Stars) | np.isnan(Estimates_Stars))):
         warnings.warn(
@@ -460,85 +473,90 @@ def _compare_segregation(seg_class_1,
         )
 
     if (type(seg_class_1) != type(seg_class_2)):
-        raise TypeError(
-            'seg_class_1 and seg_class_2 must be the same type/class.')
+        raise TypeError('seg_class_1 and seg_class_2 must be the same type/class.')
 
     point_estimation = seg_class_1.statistic - seg_class_2.statistic
 
     aux = str(type(seg_class_1))
-    _class_name = aux[1 + aux.rfind(
-        '.'):-2]  # 'rfind' finds the last occurence of a pattern in a string
+    _class_name = aux[1 + aux.rfind('.'):-2]  # 'rfind' finds the last occurence of a pattern in a string
 
     data_1 = seg_class_1.core_data.copy()
     data_2 = seg_class_2.core_data.copy()
-
-    # This step is just to make sure the each frequecy column is integer for the approaches and from the same type in order to stack them for the random data approach
-    data_1['group_pop_var'] = round(data_1['group_pop_var']).astype(int)
-    data_1['total_pop_var'] = round(data_1['total_pop_var']).astype(int)
-
-    data_2['group_pop_var'] = round(data_2['group_pop_var']).astype(int)
-    data_2['total_pop_var'] = round(data_2['total_pop_var']).astype(int)
-
+    
     est_sim = np.empty(iterations_under_null)
 
     ################
     # RANDOM LABEL #
     ################
     if (null_approach == "random_label"):
-
+        
         data_1['grouping_variable'] = 'Group_1'
         data_2['grouping_variable'] = 'Group_2'
-
-        stacked_data = pd.concat([data_1, data_2], ignore_index=True)
-
-        with tqdm(total=iterations_under_null) as pbar:
-            for i in np.array(range(iterations_under_null)):
-
-                aux_rand = list(
-                    np.random.choice(stacked_data.shape[0],
-                                     stacked_data.shape[0],
-                                     replace=False))
-
-                stacked_data['rand_group_pop'] = stacked_data.group_pop_var[
-                    aux_rand].reset_index()['group_pop_var']
-                stacked_data['rand_total_pop'] = stacked_data.total_pop_var[
-                    aux_rand].reset_index()['total_pop_var']
-
-                # Dropping variable to avoid confusion in the calculate_segregation function
-                # Building auxiliar data to avoid affecting the next iteration
-                stacked_data_aux = stacked_data.drop(
-                    ['group_pop_var', 'total_pop_var'], axis=1)
-
-                stacked_data_1 = stacked_data_aux.loc[
-                    stacked_data_aux['grouping_variable'] == 'Group_1']
-                stacked_data_2 = stacked_data_aux.loc[
-                    stacked_data_aux['grouping_variable'] == 'Group_2']
-
-                simulations_1 = seg_class_1._function(stacked_data_1,
-                                                      'rand_group_pop',
-                                                      'rand_total_pop',
-                                                      **kwargs)[0]
-                simulations_2 = seg_class_2._function(stacked_data_2,
-                                                      'rand_group_pop',
-                                                      'rand_total_pop',
-                                                      **kwargs)[0]
-
-                est_sim[i] = simulations_1 - simulations_2
-                pbar.set_description(
-                    'Processed {} iterations out of {}'.format(
-                        i + 1, iterations_under_null))
-                pbar.update(1)
-
+        
+        if ('multigroup' not in str(type(seg_class_1))):
+            
+            # This step is just to make sure the each frequecy column is integer for the approaches and from the same type in order to be able to stack them
+            data_1['group_pop_var'] = round(data_1['group_pop_var']).astype(int)
+            data_1['total_pop_var'] = round(data_1['total_pop_var']).astype(int)
+        
+            data_2['group_pop_var'] = round(data_2['group_pop_var']).astype(int)
+            data_2['total_pop_var'] = round(data_2['total_pop_var']).astype(int)
+            
+            stacked_data = pd.concat([data_1, data_2], ignore_index=True)
+    
+            with tqdm(total=iterations_under_null) as pbar:
+                for i in np.array(range(iterations_under_null)):
+                    
+                    stacked_data['grouping_variable'] = np.random.permutation(stacked_data['grouping_variable'])
+    
+                    stacked_data_1 = stacked_data.loc[stacked_data['grouping_variable'] == 'Group_1']
+                    stacked_data_2 = stacked_data.loc[stacked_data['grouping_variable'] == 'Group_2']
+    
+                    simulations_1 = seg_class_1._function(stacked_data_1,'group_pop_var','total_pop_var',**kwargs)[0]
+                    simulations_2 = seg_class_2._function(stacked_data_2,'group_pop_var','total_pop_var',**kwargs)[0]
+    
+                    est_sim[i] = simulations_1 - simulations_2
+                    pbar.set_description('Processed {} iterations out of {}'.format(i + 1, iterations_under_null))
+                    pbar.update(1)
+                    
+        if ('multigroup' in str(type(seg_class_1))):
+            
+            groups_list = seg_class_1._groups
+            
+            for i in range(len(groups_list)):
+                data_1[groups_list[i]] = round(data_1[groups_list[i]]).astype(int)
+                data_2[groups_list[i]] = round(data_2[groups_list[i]]).astype(int)
+            
+            if (seg_class_1._groups != seg_class_2._groups):
+                raise ValueError('MultiGroup groups should be the same')
+                
+            stacked_data = pd.concat([data_1, data_2], ignore_index=True)
+            
+            with tqdm(total=iterations_under_null) as pbar:
+                for i in np.array(range(iterations_under_null)):
+                    
+                    stacked_data['grouping_variable'] = np.random.permutation(stacked_data['grouping_variable'])
+    
+                    stacked_data_1 = stacked_data.loc[stacked_data['grouping_variable'] == 'Group_1']
+                    stacked_data_2 = stacked_data.loc[stacked_data['grouping_variable'] == 'Group_2']
+    
+                    simulations_1 = seg_class_1._function(stacked_data_1, groups_list, **kwargs)[0]
+                    simulations_2 = seg_class_2._function(stacked_data_2, groups_list, **kwargs)[0]
+    
+                    est_sim[i] = simulations_1 - simulations_2
+                    pbar.set_description('Processed {} iterations out of {}'.format(i + 1, iterations_under_null))
+                    pbar.update(1)
+    
+    
     ##############################
     # COUNTERFACTUAL COMPOSITION #
     ##############################
-    if (null_approach in [
-            'counterfactual_composition', 'counterfactual_share',
-            'counterfactual_dual_composition'
-    ]):
+    if (null_approach in ['counterfactual_composition', 'counterfactual_share','counterfactual_dual_composition']):
+        
+        if ('multigroup' in str(type(seg_class_1))):
+            raise ValueError('Not implemented for MultiGroup indexes.')
 
-        internal_arg = null_approach[
-            15:]  # Remove 'counterfactual_' from the beginning of the string
+        internal_arg = null_approach[15:]  # Remove 'counterfactual_' from the beginning of the string
 
         counterfac_df1, counterfac_df2 = _generate_counterfactual(
             data_1,
