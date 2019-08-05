@@ -22,6 +22,7 @@ Aspatial Indices
       aspatial.ModifiedGiniSeg
       aspatial.BiasCorrectedDissim
       aspatial.DensityCorrectedDissim
+      aspatial.MinMax
 
 Spatial Indices
 ---------------------
@@ -42,6 +43,7 @@ Spatial Indices
       spatial.RelativeConcentration
       spatial.AbsoluteCentralization
       spatial.RelativeCentralization
+      spatial.SpatialMinMax
 	  
 Multigroup Indices
 ---------------------

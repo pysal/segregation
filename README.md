@@ -130,6 +130,7 @@ table:
 | Modified Gini (Gct)                               | ModifiedGiniSeg                 |      No      |       iterations               |
 | Bias-Corrected Dissimilarity (Dbc)                | BiasCorrectedDissim             |      No      |           B                    |
 | Density-Corrected Dissimilarity (Ddc)             | DensityCorrectedDissim          |      No      |          xtol                  |
+| Minimun-Maximum Index (MM)                        | MinMax                          |      No      |                                |
 | Spatial Proximity Profile (SPP)                   | SpatialProxProf                 |     Yes      |           m                    |
 | Spatial Dissimilarity (SD)                        | SpatialDissim                   |     Yes      |     w, standardize             |
 | Boundary Spatial Dissimilarity (BSD)              | BoundarySpatialDissim           |     Yes      |      standardize               |
@@ -144,6 +145,8 @@ table:
 | Relative Concentration (RCO)                      | RelativeConcentration           |     Yes      |           -                    |
 | Absolute Centralization (ACE)                     | AbsoluteCentralization          |     Yes      |           -                    |
 | Relative Centralization (RCE)                     | RelativeCentralization          |     Yes      |           -                    |
+| Relative Centralization (RCE)                     | RelativeCentralization          |     Yes      |           -                    |
+| Spatial Minimun-Maximum (SMM)                     | SpatialMinMax                   |     Yes      | network, w, decay, distance, precompute |
 
 ### Multigroup measures
 

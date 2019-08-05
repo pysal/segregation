@@ -53,6 +53,7 @@ def _compute_all_aspatial_segregation(data, group_pop_var, total_pop_var):
     V = CorrelationR(data, group_pop_var, total_pop_var)
     Dct = ModifiedDissim(data, group_pop_var, total_pop_var)
     Gct = ModifiedGiniSeg(data, group_pop_var, total_pop_var)
+    MM = MinMax(data, group_pop_var, total_pop_var)
 
     dictionary = {
         'Dissimilarity': D.statistic,
@@ -66,7 +67,8 @@ def _compute_all_aspatial_segregation(data, group_pop_var, total_pop_var):
         'Density Corrected Dissimilarity': Ddc.statistic,
         'Correlation Ratio': V.statistic,
         'Modified Dissimilarity': Dct.statistic,
-        'Modified Gini': Gct.statistic
+        'Modified Gini': Gct.statistic,
+        'Minimun-Maximum': MM.statistic
     }
     
     d = {'Measure': list(dictionary.keys()), 'Value': list(dictionary.values())}
@@ -171,6 +173,7 @@ def _compute_all_spatial_segregation(data, group_pop_var, total_pop_var):
     DDxPx = DistanceDecayIsolation(data, group_pop_var, total_pop_var)
     SPP = SpatialProxProf(data, group_pop_var, total_pop_var)
     SP = SpatialProximity(data, group_pop_var, total_pop_var)
+    SMM = SpatialMinMax(data, group_pop_var, total_pop_var)
 
     dictionary = {
         'Spatial Dissimilarity': SD.statistic,
@@ -186,7 +189,8 @@ def _compute_all_spatial_segregation(data, group_pop_var, total_pop_var):
         'Spatial Proximity Profile': SPP.statistic,
         'Spatial Proximity': SP.statistic,
         'Boundary Spatial Dissimilarity': BSD.statistic,
-        'Perimeter Area Ratio Spatial Dissimilarity': PARD.statistic
+        'Perimeter Area Ratio Spatial Dissimilarity': PARD.statistic,
+        'Spatial Minimun-Maximum': SMM.statistic
     }
 
     d = {'Measure': list(dictionary.keys()), 'Value': list(dictionary.values())}
