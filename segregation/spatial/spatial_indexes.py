@@ -24,7 +24,7 @@ from segregation.aspatial.multigroup_aspatial_indexes import MultiInformationThe
 from segregation.network import calc_access
 from libpysal.weights.util import attach_islands
 
-from segregation.util.util import _dep_message, DeprecationHelper
+from segregation.util.util import _dep_message, DeprecationHelper, _nan_handle
 
 # Including old and new api in __all__ so users can use both
 
@@ -174,7 +174,7 @@ def _return_length_weighted_w(data):
     return length_weighted_w
 
 
-def _spatial_prox_profile(data, group_pop_var, total_pop_var, m=1000):
+def _spatial_prox_profile(data, group_pop_var, total_pop_var, m=1000, fillna = False):
     """
     Calculation of Spatial Proximity Profile
 
@@ -192,6 +192,9 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, m=1000):
     m             : int
                     a numeric value indicating the number of thresholds to be used. Default value is 1000. 
                     A large value of m creates a smoother-looking graph and a more precise spatial proximity profile value but slows down the calculation speed.
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Returns
     ----------
@@ -295,6 +298,9 @@ class SpatialProxProf:
     m             : int
                     a numeric value indicating the number of thresholds to be used. Default value is 1000. 
                     A large value of m creates a smoother-looking graph and a more precise spatial proximity profile value but slows down the calculation speed.
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -357,9 +363,9 @@ class SpatialProxProf:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, m=1000):
+    def __init__(self, data, group_pop_var, total_pop_var, m=1000, fillna = False):
 
-        aux = _spatial_prox_profile(data, group_pop_var, total_pop_var, m)
+        aux = _spatial_prox_profile(data, group_pop_var, total_pop_var, m, fillna)
 
         self.statistic = aux[0]
         self.grid = aux[1]
@@ -383,7 +389,8 @@ def _spatial_dissim(data,
                     group_pop_var,
                     total_pop_var,
                     w=None,
-                    standardize=False):
+                    standardize=False,
+                    fillna = False):
     """
     Calculation of Spatial Dissimilarity index
 
@@ -405,6 +412,9 @@ def _spatial_dissim(data,
                     A condition for row standardisation of the weights matrices. If True, the values of cij in the formulas gets row standardized.
                     For the sake of comparison, the seg R package of Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
                     works by default with row standardization.
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
         
     Returns
     ----------
@@ -422,6 +432,9 @@ def _spatial_dissim(data,
     Reference: :cite:`morrill1991measure`.
 
     """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
             'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
@@ -499,6 +512,9 @@ class SpatialDissim:
                     A condition for row standardisation of the weights matrices. If True, the values of cij in the formulas gets row standardized.
                     For the sake of comparison, the seg R package of Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
                     works by default with row standardization.
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -582,10 +598,10 @@ class SpatialDissim:
                  group_pop_var,
                  total_pop_var,
                  w=None,
-                 standardize=False):
+                 standardize=False, fillna = False):
 
         aux = _spatial_dissim(data, group_pop_var, total_pop_var, w,
-                              standardize)
+                              standardize, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -595,7 +611,7 @@ class SpatialDissim:
 def _boundary_spatial_dissim(data,
                              group_pop_var,
                              total_pop_var,
-                             standardize=False):
+                             standardize=False, fillna = False):
     """
     Calculation of Boundary Spatial Dissimilarity index
 
@@ -614,6 +630,9 @@ def _boundary_spatial_dissim(data,
                     A condition for row standardisation of the weights matrices. If True, the values of cij in the formulas gets row standardized.
                     For the sake of comparison, the seg R package of Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
                     works by default without row standardization. That is, directly with border length.
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
         
     Returns
     ----------
@@ -633,6 +652,8 @@ def _boundary_spatial_dissim(data,
     References: :cite:`hong2014implementing` and :cite:`wong1993spatial`.
 
     """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
 
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
@@ -695,6 +716,9 @@ class BoundarySpatialDissim:
                     A condition for row standardisation of the weights matrices. If True, the values of cij in the formulas gets row standardized.
                     For the sake of comparison, the seg R package of Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
                     works by default without row standardization. That is, directly with border length.
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
         
 
     Attributes
@@ -758,10 +782,10 @@ class BoundarySpatialDissim:
     
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, standardize=False):
+    def __init__(self, data, group_pop_var, total_pop_var, standardize=False, fillna = False):
 
         aux = _boundary_spatial_dissim(data, group_pop_var, total_pop_var,
-                                       standardize)
+                                       standardize, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -771,7 +795,7 @@ class BoundarySpatialDissim:
 def _perimeter_area_ratio_spatial_dissim(data,
                                          group_pop_var,
                                          total_pop_var,
-                                         standardize=True):
+                                         standardize=True, fillna = False):
     """
     Calculation of Perimeter/Area Ratio Spatial Dissimilarity index
 
@@ -789,6 +813,9 @@ def _perimeter_area_ratio_spatial_dissim(data,
     standardize   : boolean
                     A condition for standardisation of the weights matrices. 
                     If True, the values of cij in the formulas gets standardized and the overall sum is 1.
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Returns
     ----------
@@ -810,6 +837,8 @@ def _perimeter_area_ratio_spatial_dissim(data,
     References: :cite:`wong1993spatial` and :cite:`tivadar2019oasisr`.
         
     """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
 
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
@@ -881,6 +910,9 @@ class PerimeterAreaRatioSpatialDissim:
     standardize   : boolean
                     A condition for standardisation of the weights matrices. 
                     If True, the values of cij in the formulas gets standardized and the overall sum is 1.
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
         
     Attributes
     ----------
@@ -945,10 +977,10 @@ class PerimeterAreaRatioSpatialDissim:
     
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, standardize=True):
+    def __init__(self, data, group_pop_var, total_pop_var, standardize=True, fillna = False):
 
         aux = _perimeter_area_ratio_spatial_dissim(data, group_pop_var,
-                                                   total_pop_var, standardize)
+                                                   total_pop_var, standardize, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -1057,7 +1089,7 @@ def _distance_decay_isolation(data,
                               total_pop_var,
                               alpha=0.6,
                               beta=0.5,
-                              metric='euclidean'):
+                              metric='euclidean', fillna = False):
     """
     Calculation of Distance Decay Isolation index
 
@@ -1081,6 +1113,9 @@ def _distance_decay_isolation(data,
     metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
                     The metric used for the distance between spatial units. 
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Returns
     ----------
@@ -1102,6 +1137,8 @@ def _distance_decay_isolation(data,
     Reference: :cite:`morgan1983distance`.
 
     """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
     
     if not metric in ['euclidean', 'haversine']:
         raise ValueError('metric must one of \'euclidean\', \'haversine\'')
@@ -1203,6 +1240,9 @@ class DistanceDecayIsolation:
     metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
                     The metric used for the distance between spatial units. 
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -1273,10 +1313,10 @@ class DistanceDecayIsolation:
                  total_pop_var,
                  alpha=0.6,
                  beta=0.5,
-                 metric='euclidean'):
+                 metric='euclidean', fillna = False):
 
         aux = _distance_decay_isolation(data, group_pop_var, total_pop_var,
-                                        alpha, beta, metric)
+                                        alpha, beta, metric, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -1288,7 +1328,7 @@ def _distance_decay_exposure(data,
                              total_pop_var,
                              alpha=0.6,
                              beta=0.5,
-                             metric='euclidean'):
+                             metric='euclidean', fillna = False):
     """
     Calculation of Distance Decay Exposure index
 
@@ -1312,6 +1352,9 @@ def _distance_decay_exposure(data,
     metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
                     The metric used for the distance between spatial units. 
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Returns
     ----------
@@ -1333,6 +1376,8 @@ def _distance_decay_exposure(data,
     Reference: :cite:`morgan1983distance`.
 
     """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
     
     if not metric in ['euclidean', 'haversine']:
         raise ValueError('metric must one of \'euclidean\', \'haversine\'')
@@ -1434,6 +1479,9 @@ class DistanceDecayExposure:
     metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
                     The metric used for the distance between spatial units. 
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -1504,10 +1552,10 @@ class DistanceDecayExposure:
                  total_pop_var,
                  alpha=0.6,
                  beta=0.5,
-                 metric='euclidean'):
+                 metric='euclidean', fillna = False):
 
         aux = _distance_decay_exposure(data, group_pop_var, total_pop_var,
-                                       alpha, beta, metric)
+                                       alpha, beta, metric, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -1519,7 +1567,7 @@ def _spatial_proximity(data,
                        total_pop_var,
                        alpha=0.6,
                        beta=0.5,
-                       metric='euclidean'):
+                       metric='euclidean', fillna = False):
     """
     Calculation of Spatial Proximity index
     
@@ -1543,6 +1591,9 @@ def _spatial_proximity(data,
                     The metric used for the distance between spatial units. 
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
                     
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
+                    
     Returns
     ----------
     statistic : float
@@ -1559,6 +1610,8 @@ def _spatial_proximity(data,
     Reference: :cite:`massey1988dimensions`.
     
     """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
     
     if not metric in ['euclidean', 'haversine']:
         raise ValueError('metric must one of \'euclidean\', \'haversine\'')
@@ -1664,6 +1717,9 @@ class SpatialProximity:
                     The metric used for the distance between spatial units. 
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
                     
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
+                    
     Attributes
     ----------
     statistic : float
@@ -1730,10 +1786,10 @@ class SpatialProximity:
                  total_pop_var,
                  alpha=0.6,
                  beta=0.5,
-                 metric='euclidean'):
+                 metric='euclidean', fillna = False):
 
         aux = _spatial_proximity(data, group_pop_var, total_pop_var, alpha,
-                                 beta, metric)
+                                 beta, metric, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -1745,7 +1801,7 @@ def _absolute_clustering(data,
                          total_pop_var,
                          alpha=0.6,
                          beta=0.5,
-                         metric='euclidean'):
+                         metric='euclidean', fillna = False):
     """
     Calculation of Absolute Clustering index
     
@@ -1769,6 +1825,9 @@ def _absolute_clustering(data,
                     The metric used for the distance between spatial units. 
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
                     
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
+                    
     Returns
     ----------
     statistic : float
@@ -1785,6 +1844,8 @@ def _absolute_clustering(data,
     Reference: :cite:`massey1988dimensions`.
     
     """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
     
     if not metric in ['euclidean', 'haversine']:
         raise ValueError('metric must one of \'euclidean\', \'haversine\'')
@@ -1888,6 +1949,9 @@ class AbsoluteClustering:
                     The metric used for the distance between spatial units. 
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
                     
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
+                    
     Attributes
     ----------
     statistic : float
@@ -1947,10 +2011,10 @@ class AbsoluteClustering:
                  total_pop_var,
                  alpha=0.6,
                  beta=0.5,
-                 metric='euclidean'):
+                 metric='euclidean', fillna = False):
 
         aux = _absolute_clustering(data, group_pop_var, total_pop_var, alpha,
-                                   beta, metric)
+                                   beta, metric, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -1962,7 +2026,7 @@ def _relative_clustering(data,
                          total_pop_var,
                          alpha=0.6,
                          beta=0.5,
-                         metric='euclidean'):
+                         metric='euclidean', fillna = False):
     """
     Calculation of Relative Clustering index
     
@@ -1986,6 +2050,9 @@ def _relative_clustering(data,
                     The metric used for the distance between spatial units. 
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
                     
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
+                    
     Returns
     ----------
     statistic : float
@@ -2002,6 +2069,8 @@ def _relative_clustering(data,
     Reference: :cite:`massey1988dimensions`.
     
     """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
     
     if not metric in ['euclidean', 'haversine']:
         raise ValueError('metric must one of \'euclidean\', \'haversine\'')
@@ -2106,6 +2175,9 @@ class RelativeClustering:
                     The metric used for the distance between spatial units. 
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
                     
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
+                    
     Attributes
     ----------
     statistic : float
@@ -2172,17 +2244,17 @@ class RelativeClustering:
                  total_pop_var,
                  alpha=0.6,
                  beta=0.5,
-                 metric='euclidean'):
+                 metric='euclidean', fillna = False):
 
         aux = _relative_clustering(data, group_pop_var, total_pop_var, alpha,
-                                   beta, metric)
+                                   beta, metric, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _relative_clustering
 
 
-def _delta(data, group_pop_var, total_pop_var):
+def _delta(data, group_pop_var, total_pop_var, fillna = False):
     """
     Calculation of Delta index
 
@@ -2196,6 +2268,9 @@ def _delta(data, group_pop_var, total_pop_var):
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Returns
     ----------
@@ -2213,6 +2288,9 @@ def _delta(data, group_pop_var, total_pop_var):
     Reference: :cite:`massey1988dimensions`.
 
     """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
             'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
@@ -2270,6 +2348,9 @@ class Delta:
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -2330,16 +2411,16 @@ class Delta:
     
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var):
+    def __init__(self, data, group_pop_var, total_pop_var, fillna = False):
 
-        aux = _delta(data, group_pop_var, total_pop_var)
+        aux = _delta(data, group_pop_var, total_pop_var, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _delta
 
 
-def _absolute_concentration(data, group_pop_var, total_pop_var):
+def _absolute_concentration(data, group_pop_var, total_pop_var, fillna = False):
     """
     Calculation of Absolute Concentration index
 
@@ -2353,6 +2434,9 @@ def _absolute_concentration(data, group_pop_var, total_pop_var):
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Returns
     ----------
@@ -2370,6 +2454,9 @@ def _absolute_concentration(data, group_pop_var, total_pop_var):
     Reference: :cite:`massey1988dimensions`.
 
     """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
             'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
@@ -2441,6 +2528,9 @@ class AbsoluteConcentration:
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -2501,16 +2591,16 @@ class AbsoluteConcentration:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var):
+    def __init__(self, data, group_pop_var, total_pop_var, fillna = False):
 
-        aux = _absolute_concentration(data, group_pop_var, total_pop_var)
+        aux = _absolute_concentration(data, group_pop_var, total_pop_var, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _absolute_concentration
 
 
-def _relative_concentration(data, group_pop_var, total_pop_var):
+def _relative_concentration(data, group_pop_var, total_pop_var, fillna = False):
     """
     Calculation of Relative Concentration index
 
@@ -2524,6 +2614,9 @@ def _relative_concentration(data, group_pop_var, total_pop_var):
 
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Returns
     ----------
@@ -2541,6 +2634,9 @@ def _relative_concentration(data, group_pop_var, total_pop_var):
     Reference: :cite:`massey1988dimensions`.
 
     """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
             'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
@@ -2615,6 +2711,9 @@ class RelativeConcentration:
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -2675,9 +2774,9 @@ class RelativeConcentration:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var):
+    def __init__(self, data, group_pop_var, total_pop_var, fillna = False):
 
-        aux = _relative_concentration(data, group_pop_var, total_pop_var)
+        aux = _relative_concentration(data, group_pop_var, total_pop_var, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -2688,7 +2787,7 @@ def _absolute_centralization(data,
                              group_pop_var,
                              total_pop_var,
                              center="mean",
-                             metric='euclidean'):
+                             metric='euclidean', fillna = False):
     """
     Calculation of Absolute Centralization index
 
@@ -2721,6 +2820,9 @@ def _absolute_centralization(data,
     metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
                     The metric used for the distance between spatial units. 
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Returns
     ----------
@@ -2743,6 +2845,8 @@ def _absolute_centralization(data,
     Reference: :cite:`massey1988dimensions`.
 
     """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
     
     if not metric in ['euclidean', 'haversine']:
         raise ValueError('metric must one of \'euclidean\', \'haversine\'')
@@ -2882,7 +2986,14 @@ class AbsoluteCentralization:
                     
                     If integer, the center will be the centroid of the polygon from data corresponding to the integer interpreted as index. 
                     For example, if `center = 0` the centroid of the first row of data is used as center, if `center = 1` the second row will be used, and so on.
-
+    
+    metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
+                    The metric used for the distance between spatial units. 
+                    If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
+                    
     Attributes
     ----------
 
@@ -2952,10 +3063,10 @@ class AbsoluteCentralization:
                  group_pop_var,
                  total_pop_var,
                  center="mean",
-                 metric='euclidean'):
+                 metric='euclidean', fillna = False):
 
         aux = _absolute_centralization(data, group_pop_var, total_pop_var,
-                                       center, metric)
+                                       center, metric, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -2967,7 +3078,7 @@ def _relative_centralization(data,
                              group_pop_var,
                              total_pop_var,
                              center="mean",
-                             metric='euclidean'):
+                             metric='euclidean', fillna = False):
     """
     Calculation of Relative Centralization index
 
@@ -3000,6 +3111,9 @@ def _relative_centralization(data,
     metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
                     The metric used for the distance between spatial units. 
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Returns
     ----------
@@ -3020,6 +3134,8 @@ def _relative_centralization(data,
     A discussion of defining the center in this function can be found in https://github.com/pysal/segregation/issues/18.
 
     """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
     
     if not metric in ['euclidean', 'haversine']:
         raise ValueError('metric must one of \'euclidean\', \'haversine\'')
@@ -3166,6 +3282,9 @@ class RelativeCentralization:
     metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
                     The metric used for the distance between spatial units. 
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -3236,10 +3355,10 @@ class RelativeCentralization:
                  group_pop_var,
                  total_pop_var,
                  center="mean",
-                 metric='euclidean'):
+                 metric='euclidean', fillna = False):
 
         aux = _relative_centralization(data, group_pop_var, total_pop_var,
-                                       center, metric)
+                                       center, metric, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]

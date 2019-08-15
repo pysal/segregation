@@ -8,6 +8,20 @@ __author__ = "Levi Wolf <levi.john.wolf@gmail.com>, Renan X. Cortes <renanc@ucr.
 import numpy as np
 import math
 
+def _nan_handle(df, fillna = False):
+    """Check if dataframe has nan values.
+    Either raise an error or replace nan with 0.0.
+    """
+    values = df.values
+    if np.any(np.isnan(values)) and fillna == False:
+        raise ValueError("either handle NAs on your own or fill them with 0s by passing fillna=True")
+        
+    if np.any(np.isnan(values)) and fillna == True:
+        print("nan values were found and willl be replaced with 0.0")
+        df = df.fillna(0)
+        
+    return df
+
 
 def _generate_counterfactual(data1,
                              data2,

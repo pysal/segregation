@@ -12,7 +12,7 @@ import geopandas as gpd
 from scipy.stats import norm
 from scipy.optimize import minimize
 
-from segregation.util.util import _dep_message, DeprecationHelper
+from segregation.util.util import _dep_message, DeprecationHelper, _nan_handle
 
 # Including old and new api in __all__ so users can use both
 
@@ -50,126 +50,8 @@ __all__ = ['Dissim',
 
 
 
-def _min_max(data, group_pop_var, total_pop_var):
-    """
-    Calculation of the Aspatial version of SpatialMinMax
 
-    Parameters
-    ----------
-
-    data          : a pandas DataFrame
-    
-    group_pop_var : string
-                    The name of variable in data that contains the population size of the group of interest
-                    
-    total_pop_var : string
-                    The name of variable in data that contains the total population of the unit
-
-    Returns
-    ----------
-
-    statistic : float
-                MinMax Index
-                
-    core_data : a pandas DataFrame
-                A pandas DataFrame that contains the columns used to perform the estimate.
-
-    Notes
-    -----
-    Based on O'Sullivan & Wong (2007). A Surface‐Based Approach to Measuring Spatial Segregation.
-    Geographical Analysis 39 (2). https://doi.org/10.1111/j.1538-4632.2007.00699.x
-
-    Reference: :cite:`osullivanwong2007surface`.
-    
-    We'd like to thank @AnttiHaerkoenen for this contribution!
-    
-    """
-    
-    if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
-        raise TypeError('group_pop_var and total_pop_var must be strings')
-    
-    if ((group_pop_var not in data.columns) or (total_pop_var not in data.columns)):    
-        raise ValueError('group_pop_var and total_pop_var must be variables of data')
-        
-    data = data.rename(columns={group_pop_var: 'group_pop_var', 
-                                total_pop_var: 'total_pop_var'})
-    
-    if any(data.total_pop_var < data.group_pop_var):    
-        raise ValueError('Group of interest population must equal or lower than the total population of the units.')
-   
-    data['group_2_pop_var'] = data['total_pop_var'] - data['group_pop_var']
-    
-    data['group_1_pop_var_norm'] = data['group_pop_var'] / data['group_pop_var'].sum()
-    data['group_2_pop_var_norm'] = data['group_2_pop_var'] / data['group_2_pop_var'].sum()
-    
-    density_1 = data['group_1_pop_var_norm'].values
-    density_2 = data['group_2_pop_var_norm'].values
-    densities = np.vstack([
-        density_1,
-        density_2
-    ])
-    v_union = densities.max(axis=0).sum()
-    v_intersect = densities.min(axis=0).sum()
-    
-    MM = 1 - v_intersect / v_union
-    
-    if not isinstance(data, gpd.GeoDataFrame):
-        core_data = data[['group_pop_var', 'total_pop_var']]
-    
-    else:    
-        core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
-    
-    return MM, core_data
-
-
-class MinMax:
-    """
-    Calculation of the Aspatial version of SpatialMinMax
-
-    Parameters
-    ----------
-
-    data          : a pandas DataFrame
-    
-    group_pop_var : string
-                    The name of variable in data that contains the population size of the group of interest
-                    
-    total_pop_var : string
-                    The name of variable in data that contains the total population of the unit
-
-    Attributes
-    ----------
-
-    statistic : float
-                MinMax Index
-                
-    core_data : a pandas DataFrame
-                A pandas DataFrame that contains the columns used to perform the estimate.
-
-    Notes
-    -----
-    Based on O'Sullivan & Wong (2007). A Surface‐Based Approach to Measuring Spatial Segregation.
-    Geographical Analysis 39 (2). https://doi.org/10.1111/j.1538-4632.2007.00699.x
-
-    Reference: :cite:`osullivanwong2007surface`.
-    
-    We'd like to thank @AnttiHaerkoenen for this contribution!
-    
-    """
-
-    def __init__(self, data, group_pop_var, total_pop_var):
-        
-        aux = _min_max(data, group_pop_var, total_pop_var)
-
-        self.statistic = aux[0]
-        self.core_data = aux[1]
-        self._function = _min_max
-
-
-
-
-
-def _dissim(data, group_pop_var, total_pop_var):
+def _dissim(data, group_pop_var, total_pop_var, fillna = False):
     """
     Calculation of Dissimilarity index
 
@@ -183,6 +65,9 @@ def _dissim(data, group_pop_var, total_pop_var):
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Returns
     ----------
@@ -200,6 +85,9 @@ def _dissim(data, group_pop_var, total_pop_var):
     Reference: :cite:`massey1988dimensions`.
     
     """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
     
@@ -246,6 +134,9 @@ class Dissim:
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -296,9 +187,9 @@ class Dissim:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var):
+    def __init__(self, data, group_pop_var, total_pop_var, fillna = False):
         
-        aux = _dissim(data, group_pop_var, total_pop_var)
+        aux = _dissim(data, group_pop_var, total_pop_var, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -306,7 +197,7 @@ class Dissim:
         
         
         
-def _gini_seg(data, group_pop_var, total_pop_var):
+def _gini_seg(data, group_pop_var, total_pop_var, fillna = False):
     """
     Calculation of Gini Segregation index
     
@@ -319,6 +210,9 @@ def _gini_seg(data, group_pop_var, total_pop_var):
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
                     
     Returns
     ----------
@@ -335,6 +229,9 @@ def _gini_seg(data, group_pop_var, total_pop_var):
     Reference: :cite:`massey1988dimensions`.
     
     """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
     
@@ -380,6 +277,10 @@ class GiniSeg:
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
+                    
     Attributes
     ----------
     statistic : float
@@ -426,9 +327,9 @@ class GiniSeg:
     
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var):
+    def __init__(self, data, group_pop_var, total_pop_var, fillna = False):
         
-        aux = _gini_seg(data, group_pop_var, total_pop_var)
+        aux = _gini_seg(data, group_pop_var, total_pop_var, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -436,7 +337,7 @@ class GiniSeg:
         
         
         
-def _entropy(data, group_pop_var, total_pop_var):
+def _entropy(data, group_pop_var, total_pop_var, fillna = False):
     """
     Calculation of Entropy index
 
@@ -450,6 +351,9 @@ def _entropy(data, group_pop_var, total_pop_var):
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Returns
     ----------
@@ -467,6 +371,9 @@ def _entropy(data, group_pop_var, total_pop_var):
     Reference: :cite:`massey1988dimensions`.
 
     """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
     
@@ -515,6 +422,9 @@ class Entropy:
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -563,9 +473,9 @@ class Entropy:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var):
+    def __init__(self, data, group_pop_var, total_pop_var, fillna = False):
         
-        aux = _entropy(data, group_pop_var, total_pop_var)
+        aux = _entropy(data, group_pop_var, total_pop_var, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -574,7 +484,7 @@ class Entropy:
         
         
         
-def _isolation(data, group_pop_var, total_pop_var):
+def _isolation(data, group_pop_var, total_pop_var, fillna = False):
     """
     Calculation of Isolation index
 
@@ -588,6 +498,9 @@ def _isolation(data, group_pop_var, total_pop_var):
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Returns
     ----------
@@ -607,6 +520,9 @@ def _isolation(data, group_pop_var, total_pop_var):
     Reference: :cite:`massey1988dimensions`.
 
     """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
     
@@ -648,6 +564,9 @@ class Isolation:
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -700,9 +619,9 @@ class Isolation:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var):
+    def __init__(self, data, group_pop_var, total_pop_var, fillna = False):
         
-        aux = _isolation(data, group_pop_var, total_pop_var)
+        aux = _isolation(data, group_pop_var, total_pop_var, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -710,7 +629,7 @@ class Isolation:
         
         
         
-def _exposure(data, group_pop_var, total_pop_var):
+def _exposure(data, group_pop_var, total_pop_var, fillna = False):
     """
     Calculation of Exposure index
 
@@ -724,6 +643,9 @@ def _exposure(data, group_pop_var, total_pop_var):
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Returns
     ----------
@@ -743,6 +665,10 @@ def _exposure(data, group_pop_var, total_pop_var):
     Reference: :cite:`massey1988dimensions`.
 
     """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    
+    
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
     
@@ -786,6 +712,9 @@ class Exposure:
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -838,9 +767,9 @@ class Exposure:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var):
+    def __init__(self, data, group_pop_var, total_pop_var, fillna = False):
         
-        aux = _exposure(data, group_pop_var, total_pop_var)
+        aux = _exposure(data, group_pop_var, total_pop_var, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -849,7 +778,7 @@ class Exposure:
 
 
 
-def _atkinson(data, group_pop_var, total_pop_var, b = 0.5):
+def _atkinson(data, group_pop_var, total_pop_var, b = 0.5, fillna = False):
     """
     Calculation of Atkinson index
 
@@ -866,6 +795,9 @@ def _atkinson(data, group_pop_var, total_pop_var, b = 0.5):
                     
     b             : float
                     The shape parameter, between 0 and 1, that determines how to weight the increments to segregation contributed by different portions of the Lorenz curve.
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Returns
     ----------
@@ -883,6 +815,9 @@ def _atkinson(data, group_pop_var, total_pop_var, b = 0.5):
     Reference: :cite:`massey1988dimensions`.
 
     """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    
     if (not isinstance(b, float)):
         raise ValueError('The parameter b must be a float.')
         
@@ -938,6 +873,9 @@ class Atkinson:
 
     b             : float
                     The shape parameter, between 0 and 1, that determines how to weight the increments to segregation contributed by different portions of the Lorenz curve.
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -986,9 +924,9 @@ class Atkinson:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, b = 0.5):
+    def __init__(self, data, group_pop_var, total_pop_var, b = 0.5, fillna = False):
         
-        aux = _atkinson(data, group_pop_var, total_pop_var, b)
+        aux = _atkinson(data, group_pop_var, total_pop_var, b, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -996,7 +934,7 @@ class Atkinson:
         
         
         
-def _correlationr(data, group_pop_var, total_pop_var):
+def _correlationr(data, group_pop_var, total_pop_var, fillna = False):
     """
     Calculation of Correlation Ratio index
 
@@ -1010,6 +948,9 @@ def _correlationr(data, group_pop_var, total_pop_var):
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Returns
     ----------
@@ -1028,6 +969,9 @@ def _correlationr(data, group_pop_var, total_pop_var):
     Reference: :cite:`massey1988dimensions`.
 
     """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
     
@@ -1074,6 +1018,9 @@ class CorrelationR:
                     
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -1123,16 +1070,16 @@ class CorrelationR:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var):
+    def __init__(self, data, group_pop_var, total_pop_var, fillna = False):
         
-        aux = _correlationr(data, group_pop_var, total_pop_var)
+        aux = _correlationr(data, group_pop_var, total_pop_var, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _correlationr
         
         
-def _conprof(data, group_pop_var, total_pop_var, m = 1000):
+def _conprof(data, group_pop_var, total_pop_var, m = 1000, fillna = False):
     """
     Calculation of Concentration Profile
 
@@ -1150,6 +1097,9 @@ def _conprof(data, group_pop_var, total_pop_var, m = 1000):
     m             : int
                     a numeric value indicating the number of thresholds to be used. Default value is 1000. 
                     A large value of m creates a smoother-looking graph and a more precise concentration profile value but slows down the calculation speed.
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Returns
     ----------
@@ -1167,6 +1117,9 @@ def _conprof(data, group_pop_var, total_pop_var, m = 1000):
     Reference: :cite:`hong2014measuring`.
 
     """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    
     if(type(m) is not int):
         raise TypeError('m must be a string.')
         
@@ -1226,6 +1179,9 @@ class ConProf:
     m             : int
                     a numeric value indicating the number of thresholds to be used. 
                     A large value of m creates a smoother-looking graph and a more precise concentration profile value but slows down the calculation speed.
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -1278,9 +1234,9 @@ class ConProf:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, m = 1000):
+    def __init__(self, data, group_pop_var, total_pop_var, m = 1000, fillna = False):
         
-        aux = _conprof(data, group_pop_var, total_pop_var, m)
+        aux = _conprof(data, group_pop_var, total_pop_var, m, fillna)
 
         self.statistic = aux[0]
         self.grid      = aux[1]
@@ -1302,7 +1258,7 @@ class ConProf:
     
     
     
-def _modified_dissim(data, group_pop_var, total_pop_var, iterations = 500):
+def _modified_dissim(data, group_pop_var, total_pop_var, iterations = 500, fillna = False):
     """
     Calculation of Modified Dissimilarity index
 
@@ -1319,6 +1275,9 @@ def _modified_dissim(data, group_pop_var, total_pop_var, iterations = 500):
                     
     iterations    : int
                     The number of iterations the evaluate average classic dissimilarity under eveness. Default value is 500.
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Returns
     ----------
@@ -1336,6 +1295,9 @@ def _modified_dissim(data, group_pop_var, total_pop_var, iterations = 500):
     Reference: :cite:`carrington1997measuring`.
 
     """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    
     if(type(iterations) is not int):
         raise TypeError('iterations must be an integer')
         
@@ -1397,6 +1359,9 @@ class ModifiedDissim:
                     
     iterations    : int
                     The number of iterations the evaluate average classic dissimilarity under eveness. Default value is 500.
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -1446,16 +1411,16 @@ class ModifiedDissim:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, iterations = 500):
+    def __init__(self, data, group_pop_var, total_pop_var, iterations = 500, fillna = False):
         
-        aux = _modified_dissim(data, group_pop_var, total_pop_var, iterations)
+        aux = _modified_dissim(data, group_pop_var, total_pop_var, iterations, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _modified_dissim
         
         
-def _modified_gini_seg(data, group_pop_var, total_pop_var, iterations = 500):
+def _modified_gini_seg(data, group_pop_var, total_pop_var, iterations = 500, fillna = False):
     """
     Calculation of Modified Gini Segregation index
 
@@ -1472,6 +1437,9 @@ def _modified_gini_seg(data, group_pop_var, total_pop_var, iterations = 500):
                     
     iterations    : int
                     The number of iterations the evaluate average classic gini segregation under eveness. Default value is 500.
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Returns
     ----------
@@ -1489,6 +1457,9 @@ def _modified_gini_seg(data, group_pop_var, total_pop_var, iterations = 500):
     Reference: :cite:`carrington1997measuring`.
 
     """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    
     if(type(iterations) is not int):
         raise TypeError('iterations must be an integer')
         
@@ -1550,6 +1521,9 @@ class ModifiedGiniSeg:
                     
     iterations    : int
                     The number of iterations the evaluate average classic gini segregation under eveness. Default value is 500.
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -1599,9 +1573,9 @@ class ModifiedGiniSeg:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, iterations = 500):
+    def __init__(self, data, group_pop_var, total_pop_var, iterations = 500, fillna = False):
         
-        aux = _modified_gini_seg(data, group_pop_var, total_pop_var, iterations)
+        aux = _modified_gini_seg(data, group_pop_var, total_pop_var, iterations, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -1610,7 +1584,7 @@ class ModifiedGiniSeg:
         
         
         
-def _bias_corrected_dissim(data, group_pop_var, total_pop_var, B = 500):
+def _bias_corrected_dissim(data, group_pop_var, total_pop_var, B = 500, fillna = False):
     """
     Calculation of Bias Corrected Dissimilarity index
 
@@ -1627,6 +1601,9 @@ def _bias_corrected_dissim(data, group_pop_var, total_pop_var, B = 500):
                     
     B             : int
                     The number of iterations to calculate Dissimilarity simulating randomness with multinomial distributions. Default value is 500.
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Returns
     ----------
@@ -1644,6 +1621,9 @@ def _bias_corrected_dissim(data, group_pop_var, total_pop_var, B = 500):
     Reference: :cite:`allen2015more`.
 
     """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    
     if(type(B) is not int):
         raise TypeError('B must be an integer')
         
@@ -1708,6 +1688,9 @@ class BiasCorrectedDissim:
                     
     B             : int
                     The number of iterations to calculate Dissimilarity simulating randomness with multinomial distributions. Default value is 500.
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -1757,16 +1740,16 @@ class BiasCorrectedDissim:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, B = 500):
+    def __init__(self, data, group_pop_var, total_pop_var, B = 500, fillna = False):
         
-        aux = _bias_corrected_dissim(data, group_pop_var, total_pop_var, B)
+        aux = _bias_corrected_dissim(data, group_pop_var, total_pop_var, B, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _bias_corrected_dissim
         
         
-def _density_corrected_dissim(data, group_pop_var, total_pop_var, xtol = 1e-5):
+def _density_corrected_dissim(data, group_pop_var, total_pop_var, xtol = 1e-5, fillna = False):
     """
     Calculation of Density Corrected Dissimilarity index
 
@@ -1783,6 +1766,9 @@ def _density_corrected_dissim(data, group_pop_var, total_pop_var, xtol = 1e-5):
     
     xtol          : float
                     The degree of tolerance in the optimization process of returning optimal theta_j
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
 
     Returns
     ----------
@@ -1800,6 +1786,9 @@ def _density_corrected_dissim(data, group_pop_var, total_pop_var, xtol = 1e-5):
     Reference: :cite:`allen2015more`.
 
     """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
     
@@ -1872,6 +1861,9 @@ class DensityCorrectedDissim:
                     
     xtol          : float
                     The degree of tolerance in the optimization process of returning optimal theta_j
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero.
                                   
     Attributes
     ----------
@@ -1932,7 +1924,128 @@ class DensityCorrectedDissim:
 
 
 
+def _min_max(data, group_pop_var, total_pop_var, fillna = False):
+    """
+    Calculation of the Aspatial version of SpatialMinMax
 
+    Parameters
+    ----------
+
+    data          : a pandas DataFrame
+    
+    group_pop_var : string
+                    The name of variable in data that contains the population size of the group of interest
+                    
+    total_pop_var : string
+                    The name of variable in data that contains the total population of the unit
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero. 
+
+    Returns
+    ----------
+
+    statistic : float
+                MinMax Index
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate.
+
+    Notes
+    -----
+    Based on O'Sullivan & Wong (2007). A Surface‐Based Approach to Measuring Spatial Segregation.
+    Geographical Analysis 39 (2). https://doi.org/10.1111/j.1538-4632.2007.00699.x
+
+    Reference: :cite:`osullivanwong2007surface`.
+    
+    We'd like to thank @AnttiHaerkoenen for this contribution!
+    
+    """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    
+    if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
+        raise TypeError('group_pop_var and total_pop_var must be strings')
+    
+    if ((group_pop_var not in data.columns) or (total_pop_var not in data.columns)):    
+        raise ValueError('group_pop_var and total_pop_var must be variables of data')
+        
+    data = data.rename(columns={group_pop_var: 'group_pop_var', 
+                                total_pop_var: 'total_pop_var'})
+    
+    if any(data.total_pop_var < data.group_pop_var):    
+        raise ValueError('Group of interest population must equal or lower than the total population of the units.')
+   
+    data['group_2_pop_var'] = data['total_pop_var'] - data['group_pop_var']
+    
+    data['group_1_pop_var_norm'] = data['group_pop_var'] / data['group_pop_var'].sum()
+    data['group_2_pop_var_norm'] = data['group_2_pop_var'] / data['group_2_pop_var'].sum()
+    
+    density_1 = data['group_1_pop_var_norm'].values
+    density_2 = data['group_2_pop_var_norm'].values
+    densities = np.vstack([
+        density_1,
+        density_2
+    ])
+    v_union = densities.max(axis=0).sum()
+    v_intersect = densities.min(axis=0).sum()
+    
+    MM = 1 - v_intersect / v_union
+    
+    if not isinstance(data, gpd.GeoDataFrame):
+        core_data = data[['group_pop_var', 'total_pop_var']]
+    
+    else:    
+        core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
+    
+    return MM, core_data
+
+
+class MinMax:
+    """
+    Calculation of the Aspatial version of SpatialMinMax
+
+    Parameters
+    ----------
+
+    data          : a pandas DataFrame
+    
+    group_pop_var : string
+                    The name of variable in data that contains the population size of the group of interest
+                    
+    total_pop_var : string
+                    The name of variable in data that contains the total population of the unit
+                    
+    fillna        : boolean. 
+                    If `True`, will replace the NA's values to zero. 
+
+    Attributes
+    ----------
+
+    statistic : float
+                MinMax Index
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate.
+
+    Notes
+    -----
+    Based on O'Sullivan & Wong (2007). A Surface‐Based Approach to Measuring Spatial Segregation.
+    Geographical Analysis 39 (2). https://doi.org/10.1111/j.1538-4632.2007.00699.x
+
+    Reference: :cite:`osullivanwong2007surface`.
+    
+    We'd like to thank @AnttiHaerkoenen for this contribution!
+    
+    """
+
+    def __init__(self, data, group_pop_var, total_pop_var, fillna = False):
+        
+        aux = _min_max(data, group_pop_var, total_pop_var, fillna)
+
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._function = _min_max
 
 
 

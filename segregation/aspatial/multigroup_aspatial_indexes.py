@@ -7,7 +7,7 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.ed
 import numpy as np
 from sklearn.metrics.pairwise import manhattan_distances
 
-from segregation.util.util import _dep_message, DeprecationHelper
+from segregation.util.util import _dep_message, DeprecationHelper, _nan_handle
 
 # Including old and new api in __all__ so users can use both
 
@@ -50,7 +50,7 @@ __all__ = [
 np.seterr(divide='ignore', invalid='ignore')
 
 
-def _multi_dissim(data, groups):
+def _multi_dissim(data, groups, fillna = False):
     """
     Calculation of Multigroup Dissimilarity index
 
@@ -61,6 +61,9 @@ def _multi_dissim(data, groups):
     
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
+                    
+    fillna : boolean. 
+             If `True`, will replace the NA's values to zero.
 
     Returns
     -------
@@ -80,6 +83,7 @@ def _multi_dissim(data, groups):
     """
 
     core_data = data[groups]
+    data = _nan_handle(core_data, fillna)
 
     df = np.array(core_data)
 
@@ -112,6 +116,9 @@ class MultiDissim:
     
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
+                    
+    fillna : boolean. 
+             If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -151,9 +158,9 @@ class MultiDissim:
 
     """
 
-    def __init__(self, data, groups):
+    def __init__(self, data, groups, fillna = False):
 
-        aux = _multi_dissim(data, groups)
+        aux = _multi_dissim(data, groups, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -161,7 +168,7 @@ class MultiDissim:
         self._function = _multi_dissim
 
 
-def _multi_gini_seg(data, groups):
+def _multi_gini_seg(data, groups, fillna = False):
     """
     Calculation of Multigroup Gini Segregation index
 
@@ -172,6 +179,9 @@ def _multi_gini_seg(data, groups):
     
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
+                    
+    fillna : boolean. 
+             If `True`, will replace the NA's values to zero.
 
     Returns
     -------
@@ -191,6 +201,7 @@ def _multi_gini_seg(data, groups):
     """
 
     core_data = data[groups]
+    data = _nan_handle(core_data, fillna)
 
     df = np.array(core_data)
 
@@ -225,6 +236,9 @@ class MultiGiniSeg:
     
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
+                    
+    fillna : boolean. 
+             If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -264,9 +278,9 @@ class MultiGiniSeg:
 
     """
 
-    def __init__(self, data, groups):
+    def __init__(self, data, groups, fillna = False):
 
-        aux = _multi_gini_seg(data, groups)
+        aux = _multi_gini_seg(data, groups, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -274,7 +288,7 @@ class MultiGiniSeg:
         self._function = _multi_gini_seg
 
 
-def _multi_normalized_exposure(data, groups):
+def _multi_normalized_exposure(data, groups, fillna = False):
     """
     Calculation of Multigroup Normalized Exposure index
 
@@ -285,6 +299,9 @@ def _multi_normalized_exposure(data, groups):
     
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
+                    
+    fillna : boolean. 
+             If `True`, will replace the NA's values to zero.
 
     Returns
     -------
@@ -304,6 +321,7 @@ def _multi_normalized_exposure(data, groups):
     """
 
     core_data = data[groups]
+    data = _nan_handle(core_data, fillna)
 
     df = np.array(core_data)
 
@@ -329,6 +347,9 @@ class MultiNormalizedExposure:
     
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
+                    
+    fillna : boolean. 
+             If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -368,9 +389,9 @@ class MultiNormalizedExposure:
 
     """
 
-    def __init__(self, data, groups):
+    def __init__(self, data, groups, fillna = False):
 
-        aux = _multi_normalized_exposure(data, groups)
+        aux = _multi_normalized_exposure(data, groups, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -378,7 +399,7 @@ class MultiNormalizedExposure:
         self._function = _multi_normalized_exposure
 
 
-def _multi_information_theory(data, groups):
+def _multi_information_theory(data, groups, fillna = False):
     """
     Calculation of Multigroup Information Theory index
 
@@ -389,6 +410,9 @@ def _multi_information_theory(data, groups):
     
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
+                    
+    fillna : boolean. 
+             If `True`, will replace the NA's values to zero.
 
     Returns
     -------
@@ -408,6 +432,7 @@ def _multi_information_theory(data, groups):
     """
 
     core_data = data[groups]
+    data = _nan_handle(core_data, fillna)
 
     df = np.array(core_data)
 
@@ -437,6 +462,9 @@ class MultiInformationTheory:
     
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
+                    
+    fillna : boolean. 
+             If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -476,9 +504,9 @@ class MultiInformationTheory:
 
     """
 
-    def __init__(self, data, groups):
+    def __init__(self, data, groups, fillna = False):
 
-        aux = _multi_information_theory(data, groups)
+        aux = _multi_information_theory(data, groups, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -486,7 +514,7 @@ class MultiInformationTheory:
         self._function = _multi_information_theory
 
 
-def _multi_relative_diversity(data, groups):
+def _multi_relative_diversity(data, groups, fillna = False):
     """
     Calculation of Multigroup Relative Diversity index
 
@@ -497,6 +525,9 @@ def _multi_relative_diversity(data, groups):
     
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
+                    
+    fillna : boolean. 
+             If `True`, will replace the NA's values to zero.
 
     Returns
     -------
@@ -518,6 +549,7 @@ def _multi_relative_diversity(data, groups):
     """
 
     core_data = data[groups]
+    data = _nan_handle(core_data, fillna)
 
     df = np.array(core_data)
 
@@ -544,6 +576,9 @@ class MultiRelativeDiversity:
     
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
+                    
+    fillna : boolean. 
+             If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -585,9 +620,9 @@ class MultiRelativeDiversity:
 
     """
 
-    def __init__(self, data, groups):
+    def __init__(self, data, groups, fillna = False):
 
-        aux = _multi_relative_diversity(data, groups)
+        aux = _multi_relative_diversity(data, groups, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -595,7 +630,7 @@ class MultiRelativeDiversity:
         self._function = _multi_relative_diversity
 
 
-def _multi_squared_coefficient_of_variation(data, groups):
+def _multi_squared_coefficient_of_variation(data, groups, fillna = False):
     """
     Calculation of Multigroup Squared Coefficient of Variation index
 
@@ -606,6 +641,9 @@ def _multi_squared_coefficient_of_variation(data, groups):
     
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
+                    
+    fillna : boolean. 
+             If `True`, will replace the NA's values to zero.
 
     Returns
     -------
@@ -625,6 +663,7 @@ def _multi_squared_coefficient_of_variation(data, groups):
     """
 
     core_data = data[groups]
+    data = _nan_handle(core_data, fillna)
 
     df = np.array(core_data)
 
@@ -652,6 +691,9 @@ class MultiSquaredCoefficientVariation:
     
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
+                    
+    fillna : boolean. 
+             If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -691,9 +733,9 @@ class MultiSquaredCoefficientVariation:
 
     """
 
-    def __init__(self, data, groups):
+    def __init__(self, data, groups, fillna = False):
 
-        aux = _multi_squared_coefficient_of_variation(data, groups)
+        aux = _multi_squared_coefficient_of_variation(data, groups, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -701,7 +743,7 @@ class MultiSquaredCoefficientVariation:
         self._function = _multi_squared_coefficient_of_variation
 
 
-def _multi_diversity(data, groups, normalized=False):
+def _multi_diversity(data, groups, normalized = False, fillna = False):
     """
     Calculation of Multigroup Diversity index
 
@@ -712,6 +754,9 @@ def _multi_diversity(data, groups, normalized=False):
     
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
+                    
+    fillna : boolean. 
+             If `True`, will replace the NA's values to zero.
 
     Returns
     -------
@@ -738,6 +783,7 @@ def _multi_diversity(data, groups, normalized=False):
     """
 
     core_data = data[groups]
+    data = _nan_handle(core_data, fillna)
 
     df = np.array(core_data)
 
@@ -763,6 +809,9 @@ class MultiDiversity:
     
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
+                    
+    fillna : boolean. 
+             If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -812,9 +861,9 @@ class MultiDiversity:
 
     """
 
-    def __init__(self, data, groups, normalized=False):
+    def __init__(self, data, groups, normalized=False, fillna = False):
 
-        aux = _multi_diversity(data, groups, normalized)
+        aux = _multi_diversity(data, groups, normalized, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -822,7 +871,7 @@ class MultiDiversity:
         self._function = _multi_diversity
 
 
-def _simpsons_concentration(data, groups):
+def _simpsons_concentration(data, groups, fillna = False):
     """
     Calculation of Simpson's Concentration index
 
@@ -833,6 +882,9 @@ def _simpsons_concentration(data, groups):
     
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
+                    
+    fillna : boolean. 
+             If `True`, will replace the NA's values to zero.
 
     Returns
     -------
@@ -858,6 +910,7 @@ def _simpsons_concentration(data, groups):
     """
 
     core_data = data[groups]
+    data = _nan_handle(core_data, fillna)
 
     df = np.array(core_data)
 
@@ -879,6 +932,9 @@ class SimpsonsConcentration:
     
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
+                    
+    fillna : boolean. 
+             If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -924,9 +980,9 @@ class SimpsonsConcentration:
 
     """
 
-    def __init__(self, data, groups):
+    def __init__(self, data, groups, fillna = False):
 
-        aux = _simpsons_concentration(data, groups)
+        aux = _simpsons_concentration(data, groups, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -934,7 +990,7 @@ class SimpsonsConcentration:
         self._function = _simpsons_concentration
 
 
-def _simpsons_interaction(data, groups):
+def _simpsons_interaction(data, groups, fillna = False):
     """
     Calculation of Simpson's Interaction index
 
@@ -945,6 +1001,9 @@ def _simpsons_interaction(data, groups):
     
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
+                    
+    fillna : boolean. 
+             If `True`, will replace the NA's values to zero.
 
     Returns
     -------
@@ -970,6 +1029,7 @@ def _simpsons_interaction(data, groups):
     """
 
     core_data = data[groups]
+    data = _nan_handle(core_data, fillna)
 
     df = np.array(core_data)
 
@@ -991,6 +1051,9 @@ class SimpsonsInteraction:
     
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
+                    
+    fillna : boolean. 
+             If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -1036,9 +1099,9 @@ class SimpsonsInteraction:
 
     """
 
-    def __init__(self, data, groups):
+    def __init__(self, data, groups, fillna = False):
 
-        aux = _simpsons_interaction(data, groups)
+        aux = _simpsons_interaction(data, groups, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
@@ -1046,7 +1109,7 @@ class SimpsonsInteraction:
         self._function = _simpsons_interaction
 
 
-def _multi_divergence(data, groups):
+def _multi_divergence(data, groups, fillna = False):
     """
     Calculation of Multigroup Divergence index
 
@@ -1057,6 +1120,9 @@ def _multi_divergence(data, groups):
     
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
+                    
+    fillna : boolean. 
+             If `True`, will replace the NA's values to zero.
 
     Returns
     -------
@@ -1076,6 +1142,7 @@ def _multi_divergence(data, groups):
     """
 
     core_data = data[groups]
+    data = _nan_handle(core_data, fillna)
 
     df = np.array(core_data)
 
@@ -1103,6 +1170,9 @@ class MultiDivergence:
     
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
+                    
+    fillna : boolean. 
+             If `True`, will replace the NA's values to zero.
 
     Attributes
     ----------
@@ -1142,9 +1212,9 @@ class MultiDivergence:
 
     """
 
-    def __init__(self, data, groups):
+    def __init__(self, data, groups, fillna = False):
 
-        aux = _multi_divergence(data, groups)
+        aux = _multi_divergence(data, groups, fillna)
 
         self.statistic = aux[0]
         self.core_data = aux[1]
