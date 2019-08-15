@@ -12,7 +12,11 @@ def _nan_handle(df, fillna = False):
     """Check if dataframe has nan values.
     Either raise an error or replace nan with 0.0.
     """
-    values = df.values
+    if (str(type(df)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        values = df.loc[:, df.columns != df._geometry_column_name].values
+    else:
+        values = df.values
+        
     if np.any(np.isnan(values)) and fillna == False:
         raise ValueError("either handle NAs on your own or fill them with 0s by passing fillna=True")
         

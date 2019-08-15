@@ -212,6 +212,8 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, m=1000, fillna = F
     Reference: :cite:`hong2014measuring`.
 
     """
+    
+    data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
 
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
@@ -433,7 +435,7 @@ def _spatial_dissim(data,
 
     """
     
-    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
     
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
@@ -653,7 +655,7 @@ def _boundary_spatial_dissim(data,
 
     """
     
-    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
 
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
@@ -838,7 +840,7 @@ def _perimeter_area_ratio_spatial_dissim(data,
         
     """
     
-    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
 
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
@@ -1138,7 +1140,7 @@ def _distance_decay_isolation(data,
 
     """
     
-    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
     
     if not metric in ['euclidean', 'haversine']:
         raise ValueError('metric must one of \'euclidean\', \'haversine\'')
@@ -1377,7 +1379,7 @@ def _distance_decay_exposure(data,
 
     """
     
-    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
     
     if not metric in ['euclidean', 'haversine']:
         raise ValueError('metric must one of \'euclidean\', \'haversine\'')
@@ -1611,7 +1613,7 @@ def _spatial_proximity(data,
     
     """
     
-    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
     
     if not metric in ['euclidean', 'haversine']:
         raise ValueError('metric must one of \'euclidean\', \'haversine\'')
@@ -1845,7 +1847,7 @@ def _absolute_clustering(data,
     
     """
     
-    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
     
     if not metric in ['euclidean', 'haversine']:
         raise ValueError('metric must one of \'euclidean\', \'haversine\'')
@@ -2070,7 +2072,7 @@ def _relative_clustering(data,
     
     """
     
-    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
     
     if not metric in ['euclidean', 'haversine']:
         raise ValueError('metric must one of \'euclidean\', \'haversine\'')
@@ -2289,7 +2291,7 @@ def _delta(data, group_pop_var, total_pop_var, fillna = False):
 
     """
     
-    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
     
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
@@ -2455,7 +2457,7 @@ def _absolute_concentration(data, group_pop_var, total_pop_var, fillna = False):
 
     """
     
-    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
     
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
@@ -2635,7 +2637,7 @@ def _relative_concentration(data, group_pop_var, total_pop_var, fillna = False):
 
     """
     
-    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
     
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
@@ -2846,7 +2848,7 @@ def _absolute_centralization(data,
 
     """
     
-    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
     
     if not metric in ['euclidean', 'haversine']:
         raise ValueError('metric must one of \'euclidean\', \'haversine\'')
@@ -3135,7 +3137,7 @@ def _relative_centralization(data,
 
     """
     
-    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
     
     if not metric in ['euclidean', 'haversine']:
         raise ValueError('metric must one of \'euclidean\', \'haversine\'')
