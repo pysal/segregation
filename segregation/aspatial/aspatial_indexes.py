@@ -86,7 +86,10 @@ def _dissim(data, group_pop_var, total_pop_var, fillna = False):
     
     """
     
-    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
+    else:
+        data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
     
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
@@ -230,7 +233,10 @@ def _gini_seg(data, group_pop_var, total_pop_var, fillna = False):
     
     """
     
-    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
+    else:
+        data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
     
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
@@ -372,7 +378,10 @@ def _entropy(data, group_pop_var, total_pop_var, fillna = False):
 
     """
     
-    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
+    else:
+        data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
     
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
@@ -521,7 +530,10 @@ def _isolation(data, group_pop_var, total_pop_var, fillna = False):
 
     """
     
-    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
+    else:
+        data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
     
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
@@ -666,7 +678,10 @@ def _exposure(data, group_pop_var, total_pop_var, fillna = False):
 
     """
     
-    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
+    else:
+        data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
     
     
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
@@ -816,7 +831,10 @@ def _atkinson(data, group_pop_var, total_pop_var, b = 0.5, fillna = False):
 
     """
     
-    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
+    else:
+        data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
     
     if (not isinstance(b, float)):
         raise ValueError('The parameter b must be a float.')
@@ -970,7 +988,10 @@ def _correlationr(data, group_pop_var, total_pop_var, fillna = False):
 
     """
     
-    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
+    else:
+        data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
     
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
@@ -1118,7 +1139,10 @@ def _conprof(data, group_pop_var, total_pop_var, m = 1000, fillna = False):
 
     """
     
-    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
+    else:
+        data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
     
     if(type(m) is not int):
         raise TypeError('m must be a string.')
@@ -1296,7 +1320,10 @@ def _modified_dissim(data, group_pop_var, total_pop_var, iterations = 500, filln
 
     """
     
-    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
+    else:
+        data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
     
     if(type(iterations) is not int):
         raise TypeError('iterations must be an integer')
@@ -1458,7 +1485,10 @@ def _modified_gini_seg(data, group_pop_var, total_pop_var, iterations = 500, fil
 
     """
     
-    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
+    else:
+        data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
     
     if(type(iterations) is not int):
         raise TypeError('iterations must be an integer')
@@ -1622,7 +1652,10 @@ def _bias_corrected_dissim(data, group_pop_var, total_pop_var, B = 500, fillna =
 
     """
     
-    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
+    else:
+        data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
     
     if(type(B) is not int):
         raise TypeError('B must be an integer')
@@ -1787,7 +1820,10 @@ def _density_corrected_dissim(data, group_pop_var, total_pop_var, xtol = 1e-5, f
 
     """
     
-    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
+    else:
+        data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
     
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
@@ -1962,7 +1998,10 @@ def _min_max(data, group_pop_var, total_pop_var, fillna = False):
     
     """
     
-    data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
+    if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]], fillna)
+    else:
+        data = _nan_handle(data[[group_pop_var, total_pop_var]], fillna)
     
     if((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
         raise TypeError('group_pop_var and total_pop_var must be strings')
