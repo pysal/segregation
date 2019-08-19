@@ -24,7 +24,7 @@ from segregation.aspatial.multigroup_aspatial_indexes import MultiInformationThe
 from segregation.network import calc_access
 from libpysal.weights.util import attach_islands
 
-from segregation.util.util import _dep_message, DeprecationHelper
+from segregation.util.util import _dep_message, DeprecationHelper, _nan_handle
 
 # Including old and new api in __all__ so users can use both
 
@@ -358,6 +358,8 @@ class SpatialProxProf:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var, m=1000):
+        
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _spatial_prox_profile(data, group_pop_var, total_pop_var, m)
 
@@ -583,6 +585,8 @@ class SpatialDissim:
                  total_pop_var,
                  w=None,
                  standardize=False):
+        
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _spatial_dissim(data, group_pop_var, total_pop_var, w,
                               standardize)
@@ -759,6 +763,8 @@ class BoundarySpatialDissim:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var, standardize=False):
+        
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _boundary_spatial_dissim(data, group_pop_var, total_pop_var,
                                        standardize)
@@ -946,6 +952,8 @@ class PerimeterAreaRatioSpatialDissim:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var, standardize=True):
+        
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _perimeter_area_ratio_spatial_dissim(data, group_pop_var,
                                                    total_pop_var, standardize)
@@ -1274,6 +1282,8 @@ class DistanceDecayIsolation:
                  alpha=0.6,
                  beta=0.5,
                  metric='euclidean'):
+        
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _distance_decay_isolation(data, group_pop_var, total_pop_var,
                                         alpha, beta, metric)
@@ -1505,6 +1515,8 @@ class DistanceDecayExposure:
                  alpha=0.6,
                  beta=0.5,
                  metric='euclidean'):
+        
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _distance_decay_exposure(data, group_pop_var, total_pop_var,
                                        alpha, beta, metric)
@@ -1731,6 +1743,8 @@ class SpatialProximity:
                  alpha=0.6,
                  beta=0.5,
                  metric='euclidean'):
+        
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _spatial_proximity(data, group_pop_var, total_pop_var, alpha,
                                  beta, metric)
@@ -1948,6 +1962,8 @@ class AbsoluteClustering:
                  alpha=0.6,
                  beta=0.5,
                  metric='euclidean'):
+        
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _absolute_clustering(data, group_pop_var, total_pop_var, alpha,
                                    beta, metric)
@@ -2173,6 +2189,8 @@ class RelativeClustering:
                  alpha=0.6,
                  beta=0.5,
                  metric='euclidean'):
+        
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _relative_clustering(data, group_pop_var, total_pop_var, alpha,
                                    beta, metric)
@@ -2331,6 +2349,8 @@ class Delta:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var):
+        
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _delta(data, group_pop_var, total_pop_var)
 
@@ -2502,6 +2522,8 @@ class AbsoluteConcentration:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var):
+        
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _absolute_concentration(data, group_pop_var, total_pop_var)
 
@@ -2676,6 +2698,8 @@ class RelativeConcentration:
     """
 
     def __init__(self, data, group_pop_var, total_pop_var):
+        
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _relative_concentration(data, group_pop_var, total_pop_var)
 
@@ -2953,6 +2977,8 @@ class AbsoluteCentralization:
                  total_pop_var,
                  center="mean",
                  metric='euclidean'):
+        
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _absolute_centralization(data, group_pop_var, total_pop_var,
                                        center, metric)
@@ -3237,6 +3263,8 @@ class RelativeCentralization:
                  total_pop_var,
                  center="mean",
                  metric='euclidean'):
+        
+        data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _relative_centralization(data, group_pop_var, total_pop_var,
                                        center, metric)

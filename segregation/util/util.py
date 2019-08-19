@@ -8,6 +8,19 @@ __author__ = "Levi Wolf <levi.john.wolf@gmail.com>, Renan X. Cortes <renanc@ucr.
 import numpy as np
 import math
 
+def _nan_handle(df):
+    """Check if dataframe has nan values.
+    Raise an informative error.
+    """
+    if (str(type(df)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+        values = df.loc[:, df.columns != df._geometry_column_name].values
+    else:
+        values = df.values
+        
+    if np.any(np.isnan(values)):
+        raise ValueError("There are NAs present in the input data. NAs should be handled (e.g. dropping or replacing them with values) before using this function.")
+        
+    return df
 
 def _generate_counterfactual(data1,
                              data2,

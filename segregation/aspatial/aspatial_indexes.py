@@ -12,7 +12,7 @@ import geopandas as gpd
 from scipy.stats import norm
 from scipy.optimize import minimize
 
-from segregation.util.util import _dep_message, DeprecationHelper
+from segregation.util.util import _dep_message, DeprecationHelper, _nan_handle
 
 # Including old and new api in __all__ so users can use both
 
@@ -159,6 +159,11 @@ class MinMax:
 
     def __init__(self, data, group_pop_var, total_pop_var):
         
+        if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+            data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
+        else:
+            data = _nan_handle(data[[group_pop_var, total_pop_var]])
+        
         aux = _min_max(data, group_pop_var, total_pop_var)
 
         self.statistic = aux[0]
@@ -296,7 +301,12 @@ class Dissim:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var):
+    def __init__(self, data, group_pop_var, total_pop_var):        
+        
+        if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+            data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
+        else:
+            data = _nan_handle(data[[group_pop_var, total_pop_var]])
         
         aux = _dissim(data, group_pop_var, total_pop_var)
 
@@ -426,7 +436,12 @@ class GiniSeg:
     
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var):
+    def __init__(self, data, group_pop_var, total_pop_var):        
+        
+        if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+            data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
+        else:
+            data = _nan_handle(data[[group_pop_var, total_pop_var]])
         
         aux = _gini_seg(data, group_pop_var, total_pop_var)
 
@@ -563,7 +578,12 @@ class Entropy:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var):
+    def __init__(self, data, group_pop_var, total_pop_var):        
+        
+        if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+            data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
+        else:
+            data = _nan_handle(data[[group_pop_var, total_pop_var]])
         
         aux = _entropy(data, group_pop_var, total_pop_var)
 
@@ -700,7 +720,12 @@ class Isolation:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var):
+    def __init__(self, data, group_pop_var, total_pop_var):        
+        
+        if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+            data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
+        else:
+            data = _nan_handle(data[[group_pop_var, total_pop_var]])
         
         aux = _isolation(data, group_pop_var, total_pop_var)
 
@@ -838,7 +863,12 @@ class Exposure:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var):
+    def __init__(self, data, group_pop_var, total_pop_var):        
+        
+        if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+            data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
+        else:
+            data = _nan_handle(data[[group_pop_var, total_pop_var]])
         
         aux = _exposure(data, group_pop_var, total_pop_var)
 
@@ -986,7 +1016,12 @@ class Atkinson:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, b = 0.5):
+    def __init__(self, data, group_pop_var, total_pop_var, b = 0.5):        
+        
+        if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+            data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
+        else:
+            data = _nan_handle(data[[group_pop_var, total_pop_var]])
         
         aux = _atkinson(data, group_pop_var, total_pop_var, b)
 
@@ -1123,7 +1158,12 @@ class CorrelationR:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var):
+    def __init__(self, data, group_pop_var, total_pop_var):        
+        
+        if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+            data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
+        else:
+            data = _nan_handle(data[[group_pop_var, total_pop_var]])
         
         aux = _correlationr(data, group_pop_var, total_pop_var)
 
@@ -1278,7 +1318,12 @@ class ConProf:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, m = 1000):
+    def __init__(self, data, group_pop_var, total_pop_var, m = 1000):        
+        
+        if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+            data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
+        else:
+            data = _nan_handle(data[[group_pop_var, total_pop_var]])
         
         aux = _conprof(data, group_pop_var, total_pop_var, m)
 
@@ -1446,7 +1491,12 @@ class ModifiedDissim:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, iterations = 500):
+    def __init__(self, data, group_pop_var, total_pop_var, iterations = 500):        
+        
+        if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+            data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
+        else:
+            data = _nan_handle(data[[group_pop_var, total_pop_var]])
         
         aux = _modified_dissim(data, group_pop_var, total_pop_var, iterations)
 
@@ -1599,7 +1649,12 @@ class ModifiedGiniSeg:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, iterations = 500):
+    def __init__(self, data, group_pop_var, total_pop_var, iterations = 500):        
+        
+        if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+            data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
+        else:
+            data = _nan_handle(data[[group_pop_var, total_pop_var]])
         
         aux = _modified_gini_seg(data, group_pop_var, total_pop_var, iterations)
 
@@ -1757,7 +1812,12 @@ class BiasCorrectedDissim:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, B = 500):
+    def __init__(self, data, group_pop_var, total_pop_var, B = 500):        
+        
+        if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+            data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
+        else:
+            data = _nan_handle(data[[group_pop_var, total_pop_var]])
         
         aux = _bias_corrected_dissim(data, group_pop_var, total_pop_var, B)
 
@@ -1920,7 +1980,12 @@ class DensityCorrectedDissim:
 
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, xtol = 1e-5):
+    def __init__(self, data, group_pop_var, total_pop_var, xtol = 1e-5):        
+        
+        if (str(type(data)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+            data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
+        else:
+            data = _nan_handle(data[[group_pop_var, total_pop_var]])
         
         aux = _density_corrected_dissim(data, group_pop_var, total_pop_var, xtol)
 

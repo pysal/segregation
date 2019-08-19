@@ -7,7 +7,7 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.ed
 import numpy as np
 from sklearn.metrics.pairwise import manhattan_distances
 
-from segregation.util.util import _dep_message, DeprecationHelper
+from segregation.util.util import _dep_message, DeprecationHelper, _nan_handle
 
 # Including old and new api in __all__ so users can use both
 
@@ -80,6 +80,7 @@ def _multi_dissim(data, groups):
     """
 
     core_data = data[groups]
+    data = _nan_handle(core_data)
 
     df = np.array(core_data)
 
@@ -191,6 +192,7 @@ def _multi_gini_seg(data, groups):
     """
 
     core_data = data[groups]
+    data = _nan_handle(core_data)
 
     df = np.array(core_data)
 
@@ -304,6 +306,7 @@ def _multi_normalized_exposure(data, groups):
     """
 
     core_data = data[groups]
+    data = _nan_handle(core_data)
 
     df = np.array(core_data)
 
@@ -408,6 +411,7 @@ def _multi_information_theory(data, groups):
     """
 
     core_data = data[groups]
+    data = _nan_handle(core_data)
 
     df = np.array(core_data)
 
@@ -518,6 +522,7 @@ def _multi_relative_diversity(data, groups):
     """
 
     core_data = data[groups]
+    data = _nan_handle(core_data)
 
     df = np.array(core_data)
 
@@ -625,6 +630,7 @@ def _multi_squared_coefficient_of_variation(data, groups):
     """
 
     core_data = data[groups]
+    data = _nan_handle(core_data)
 
     df = np.array(core_data)
 
@@ -738,6 +744,7 @@ def _multi_diversity(data, groups, normalized=False):
     """
 
     core_data = data[groups]
+    data = _nan_handle(core_data)
 
     df = np.array(core_data)
 
@@ -858,6 +865,7 @@ def _simpsons_concentration(data, groups):
     """
 
     core_data = data[groups]
+    data = _nan_handle(core_data)
 
     df = np.array(core_data)
 
@@ -970,6 +978,7 @@ def _simpsons_interaction(data, groups):
     """
 
     core_data = data[groups]
+    data = _nan_handle(core_data)
 
     df = np.array(core_data)
 
@@ -1076,6 +1085,7 @@ def _multi_divergence(data, groups):
     """
 
     core_data = data[groups]
+    data = _nan_handle(core_data)
 
     df = np.array(core_data)
 
