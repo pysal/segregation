@@ -7,6 +7,7 @@ __author__ = "Levi Wolf <levi.john.wolf@gmail.com>, Renan X. Cortes <renanc@ucr.
 
 import numpy as np
 import math
+import warnings
 
 def _nan_handle(df):
     """Check if dataframe has nan values.
@@ -18,7 +19,7 @@ def _nan_handle(df):
         values = df.values
         
     if np.any(np.isnan(values)):
-        raise ValueError("There are NAs present in the input data. NAs should be handled (e.g. dropping or replacing them with values) before using this function.")
+        warnings.warn('There are NAs present in the input data. NAs should be handled (e.g. dropping or replacing them with values) before using this function.')
         
     return df
 
