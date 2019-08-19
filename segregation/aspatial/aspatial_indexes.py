@@ -276,7 +276,7 @@ class Dissim:
     Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
-    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
@@ -413,7 +413,7 @@ class GiniSeg:
     Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
-    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
@@ -555,7 +555,7 @@ class Entropy:
     Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
-    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
@@ -693,7 +693,7 @@ class Isolation:
     Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
-    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
@@ -836,7 +836,7 @@ class Exposure:
     Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
-    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
@@ -993,7 +993,7 @@ class Atkinson:
     Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
-    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
@@ -1134,7 +1134,7 @@ class CorrelationR:
     Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
-    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
@@ -1291,7 +1291,7 @@ class ConProf:
     Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
-    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
@@ -1467,7 +1467,7 @@ class ModifiedDissim:
     Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
-    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
@@ -1625,7 +1625,7 @@ class ModifiedGiniSeg:
     Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
-    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
@@ -1788,7 +1788,7 @@ class BiasCorrectedDissim:
     Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
-    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
@@ -1957,7 +1957,7 @@ class DensityCorrectedDissim:
     Secondly, we need to read the data:
     
     >>> # This example uses all census data that the user must provide your own copy of the external database.
-    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/tree/master/geosnap/data.
+    >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
