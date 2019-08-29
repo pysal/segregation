@@ -36,7 +36,7 @@ def _infer_segregation(seg_class,
     
     iterations_under_null        : number of iterations under null hyphothesis
     
-    null_approach : argument that specifies which type of null hypothesis the inference will iterate.
+    null_approach : argument that specifies which type of null hypothesis the inference will iterate. Please take a look at Notes (1).
     
         "systematic"             : assumes that every group has the same probability with restricted conditional probabilities p_0_j = p_1_j = p_j = n_j/n (multinomial distribution).
         "bootstrap"              : generates bootstrap replications of the units with replacement of the same size of the original data.
@@ -47,7 +47,7 @@ def _infer_segregation(seg_class,
         "systematic_permutation" : assumes absence of systematic segregation and randomly allocates the units over space.
         "even_permutation"       : assumes the same global probability of drawning elements from the minority group in each spatial unit and randomly allocates the units over space.
     
-    two_tailed    : boolean
+    two_tailed    : boolean. Please take a look at Notes (2).
                     If True, p_value is two-tailed. Otherwise, it is right one-tailed.
     
     **kwargs      : customizable parameters to pass to the segregation measures. Usually they need to be the same input that the seg_class was built.
@@ -66,7 +66,12 @@ def _infer_segregation(seg_class,
                 
     Notes
     -----
-    The one-tailed p_value attribute might not be appropriate for some measures, as the two-tailed. Therefore, it is better to rely on the est_sim attribute.
+    
+    1) The different approaches for the null hypothesis affect directly the results of the inference depending on the combination of the index type of seg_class and the null_approach chosen.
+    Therefore, the user needs to be aware of how these approaches are affecting the data generation process of the simulations in order to draw meaningful conclusions. 
+    For example, the Modified Dissimilarity (ModifiedDissim) and  Modified Gini (ModifiedGiniSeg) indexes, rely exactly on the distance between evenness through sampling which, therefore, the "evenness" value for null approach would not be the most appropriate for these indexes.
+    
+    2) The one-tailed p_value attribute might not be appropriate for some measures, as the two-tailed. Therefore, it is better to rely on the est_sim attribute.
     
     '''
     if not null_approach in [
@@ -337,7 +342,7 @@ class SingleValueTest:
     
     iterations_under_null        : number of iterations under null hyphothesis
     
-    null_approach : argument that specifies which type of null hypothesis the inference will iterate.
+    null_approach : argument that specifies which type of null hypothesis the inference will iterate. Please take a look at Notes (1).
     
         "systematic"             : assumes that every group has the same probability with restricted conditional probabilities p_0_j = p_1_j = p_j = n_j/n (multinomial distribution).
         "bootstrap"              : generates bootstrap replications of the units with replacement of the same size of the original data.
@@ -348,7 +353,7 @@ class SingleValueTest:
         "systematic_permutation" : assumes absence of systematic segregation and randomly allocates the units over space.
         "even_permutation"       : assumes the same global probability of drawning elements from the minority group in each spatial unit and randomly allocates the units over space.
     
-    two_tailed    : boolean
+    two_tailed    : boolean. Please take a look at Notes (2).
                     If True, p_value is two-tailed. Otherwise, it is right one-tailed.
     
     **kwargs      : customizable parameters to pass to the segregation measures. Usually they need to be the same input that the seg_class was built.
@@ -367,7 +372,12 @@ class SingleValueTest:
                 
     Notes
     -----
-    The one-tailed p_value attribute might not be appropriate for some measures, as the two-tailed. Therefore, it is better to rely on the est_sim attribute.
+    
+    1) The different approaches for the null hypothesis affect directly the results of the inference depending on the combination of the index type of seg_class and the null_approach chosen.
+    Therefore, the user needs to be aware of how these approaches are affecting the data generation process of the simulations in order to draw meaningful conclusions. 
+    For example, the Modified Dissimilarity (ModifiedDissim) and  Modified Gini (ModifiedGiniSeg) indexes, rely exactly on the distance between evenness through sampling which, therefore, the "evenness" value for null approach would not be the most appropriate for these indexes.
+    
+    2) The one-tailed p_value attribute might not be appropriate for some measures, as the two-tailed. Therefore, it is better to rely on the est_sim attribute.
     
     Examples
     --------
