@@ -94,7 +94,7 @@ d_index = Dissim(df, "hi_income", "total_population")
 ```
 
 To see the estimated D in the first generic example above, the user would have just to run
-`index.statistic` to see the fitted value.
+`d_index.statistic` to see the fitted value.
 
 If a user would want to fit a *spatial* dissimilarity index (SD), the call would be nearly
 identical, save for the fact that the `DataFrame` now needs to be a `GeoDataFrame` with an appropriate `geometry` column
