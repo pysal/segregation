@@ -79,8 +79,6 @@ Every class in **segregation** has a `statistic` and a `core_data` attributes.
 The first is a direct access to the point estimation of the specific segregation measure
 and the second attribute gives access to the main data that the module uses internally to
 perform the estimates.
-To see the estimated D in the first generic example above, the user would have just to run
-`index.statistic` to see the fitted value.
 
 ### Single group measures
 
@@ -88,14 +86,15 @@ If, for example, a user was studying income segregation and wanted to know wheth
 high-income residents tend to be more segregated from others.
 This user may want would want to fit a dissimilarity index (D) to a DataFrame called `df` to
 a specific group with columns like `"hi_income"`, `"med_income"` and `"low_income"` that store counts of people in each income
-bracket, and a total column called `"total_population"`
-
-a typical call would be something like this:
+bracket, and a total column called `"total_population"`. A typical call would be something like this:
 
 ```python
 from segregation.aspatial import Dissim
 d_index = Dissim(df, "hi_income", "total_population")
 ```
+
+To see the estimated D in the first generic example above, the user would have just to run
+`d_index.statistic` to see the fitted value.
 
 If a user would want to fit a *spatial* dissimilarity index (SD), the call would be nearly
 identical, save for the fact that the `DataFrame` now needs to be a `GeoDataFrame` with an appropriate `geometry` column
