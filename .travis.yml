@@ -41,7 +41,8 @@ install:
       echo 'testing pypi libpysal';
     else
       echo 'testing git libpysal';
-      pip install https://github.com/pysal/libpysal/archive/master.zip;
+      git clone https://github.com/pysal/libpysal.git;
+      cd libpysal; pip install .; cd ../;
     fi;
 
 
