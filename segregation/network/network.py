@@ -8,14 +8,6 @@ from warnings import warn
 from segregation.util import project_gdf
 import os
 import sys
-try:
-    import pandana as pdna
-    from urbanaccess.osm.load import ua_network_from_bbox
-except ImportError:
-    warn(
-        "You need pandana and urbanaccess to work with segregation's network module\n"
-        "You can install them with  `pip install urbanaccess pandana` "
-        "or `conda install -c udst pandana urbanaccess`")
 
 
 # This class allows us to hide the diagnostic messages from urbanaccess if the `quiet` flag is set
@@ -54,6 +46,15 @@ def get_osm_network(geodataframe, maxdist=5000, quiet=True, **kwargs):
         spatial segregation measures that include a distance decay
 
     """
+    try:
+        import pandana as pdna
+        from urbanaccess.osm.load import ua_network_from_bbox
+    except ImportError:
+        raise ImportError(
+            "You need pandana and urbanaccess to work with segregation's network module\n"
+            "You can install them with  `pip install urbanaccess pandana` "
+            "or `conda install -c udst pandana urbanaccess`")
+
     gdf = geodataframe.copy()
     gdf = project_gdf(gdf)
     gdf = gdf.buffer(maxdist)
