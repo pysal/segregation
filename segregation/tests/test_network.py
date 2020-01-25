@@ -1,5 +1,5 @@
 import unittest
-import libpysal
+from libpysal.examples import load_example
 import geopandas as gpd
 from segregation.network import get_osm_network, calc_access
 
@@ -7,7 +7,7 @@ from segregation.network import get_osm_network, calc_access
 class Network_Tester(unittest.TestCase):
     def test_calc_access(self):
         variables = ['WHITE_', 'BLACK_', 'ASIAN_', 'HISP_']
-        s_map = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
+        s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
         df = s_map[['FIPS', 'geometry'] + variables]
         df = df[df.FIPS.str.startswith('06061')]
         df = df[(df.centroid.x < -121) & (df.centroid.y < 38.85)]

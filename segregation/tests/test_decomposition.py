@@ -1,5 +1,5 @@
 import unittest
-import libpysal
+from libpysal.examples import load_example
 import geopandas as gpd
 import numpy as np
 from segregation.aspatial import Dissim
@@ -8,7 +8,7 @@ from segregation.decomposition import DecomposeSegregation
 
 class Decomposition_Tester(unittest.TestCase):
     def test_Decomposition(self):
-        s_map = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
+        s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
         index1 = Dissim(s_map, 'HISP_', 'TOT_POP')
         index2 = Dissim(s_map, 'BLACK_', 'TOT_POP')
         res = DecomposeSegregation(index1, index2, counterfactual_approach = "composition")
