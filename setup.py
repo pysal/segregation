@@ -47,7 +47,7 @@ def setup_package():
         version = __version__,
         description = "Analytics for spatial and non-spatial segregation in Python.",
         long_description = long_description,
-		long_description_content_type = "text/markdown",
+        long_description_content_type = "text/markdown",
         maintainer = "Renan Xavier Cortes",
         maintainer_email = 'renanc@ucr.edu',
         url='https://segregation.readthedocs.io/en/latest/',
@@ -55,11 +55,8 @@ def setup_package():
         license = 'BSD',
         py_modules = ['segregation'],
         packages = find_packages(),
-        # setup_requires = ["pytest-runner"],
-        # tests_require = ["pytest"],
         keywords = ['spatial statistics', 'demography'],
         classifiers = [
-            #'Development Status :: 1 - Alpha',
             'Intended Audience :: Science/Research',
             'Intended Audience :: Developers',
             'Intended Audience :: Education',
@@ -68,10 +65,11 @@ def setup_package():
             'License :: OSI Approved :: BSD License',
             'Programming Language :: Python',
             'Programming Language :: Python :: 3.5',
-            'Programming Language :: Python :: 3.6'
+            'Programming Language :: Python :: 3.6',
+            'Programming Language :: Python :: 3.7',
+            'Programming Language :: Python :: 3.8'
         ],
         install_requires = install_reqs,
-        cmdclass = {'build_py': build_py},
         python_requires = '>3.4')
 
 
