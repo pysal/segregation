@@ -1,7 +1,12 @@
 # Segregation Analysis, Inference, and Decomposition with PySAL
 
 [![Build Status](https://travis-ci.com/pysal/segregation.svg?branch=master)](https://travis-ci.org/pysal/segregation)
-[![Coverage Status](https://coveralls.io/repos/github/pysal/segregation/badge.svg?branch=master)](https://coveralls.io/github/pysal/segregation?branch=master&service=github&kill_cache=1) [![DOI](https://zenodo.org/badge/162503796.svg)](https://zenodo.org/badge/latestdoi/162503796)
+[![Coverage Status](https://coveralls.io/repos/github/pysal/segregation/badge.svg?branch=master)](https://coveralls.io/github/pysal/segregation?branch=master&service=github&kill_cache=1) 
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/segregation)
+![PyPI](https://img.shields.io/pypi/v/segregation)
+![Conda (channel only)](https://img.shields.io/conda/vn/conda-forge/segregation)
+![GitHub commits since latest release (branch)](https://img.shields.io/github/commits-since/pysal/segregation/latest)
+[![DOI](https://zenodo.org/badge/162503796.svg)](https://zenodo.org/badge/latestdoi/162503796)
 
 
 ![](doc/_static/images/heatmaps.png)
