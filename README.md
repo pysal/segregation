@@ -267,3 +267,26 @@ The project is licensed under the
 
 <img src="figs/capes_logo.jpg" width="50"> Renan Xavier Cortes is grateful for the support of Coordenação de Aperfeiçoamento de
 Pessoal de Nível Superior - Brazil (CAPES) - Process number 88881.170553/2018-01
+
+## Citation
+To cite `segregation`, we recommend the following
+
+```latex
+@software{renan_xavier_cortes_2020,
+  author       = {Renan Xavier Cortes and
+                  eli knaap and
+                  Sergio Rey and
+                  Wei Kang and
+                  Philip Stephens and
+                  James Gaboardi and
+                  Levi John Wolf and
+                  Antti Härkönen and
+                  Dani Arribas-Bel},
+  title        = {PySAL/segregation: Segregation Analysis, Inference, & Decomposition},
+  month        = feb,
+  year         = 2020,
+  publisher    = {Zenodo},
+  doi          = {10.5281/zenodo.3265359},
+  url          = {https://doi.org/10.5281/zenodo.3265359}
+}
+```
