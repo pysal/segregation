@@ -227,10 +227,10 @@ def _generate_counterfactual(
         )
 
     df1["group_composition"] = np.where(
-        df1["total_pop_var"] == 0, 0, df1["group_pop_var"] / df1["total_pop_var"]
+        df1[total_pop_var] == 0, 0, df1[group_pop_var] / df1[total_pop_var]
     )
     df2["group_composition"] = np.where(
-        df2["total_pop_var"] == 0, 0, df2["group_pop_var"] / df2["total_pop_var"]
+        df2[total_pop_var] == 0, 0, df2[group_pop_var] / df2[total_pop_var]
     )
 
     df1["counterfactual_composition"] = np.where(
@@ -244,8 +244,8 @@ def _generate_counterfactual(
         df2["counterfactual_group_pop"] / df2["counterfactual_total_pop"],
     )
 
-    df1 = df1.drop(columns=["group_pop_var", "total_pop_var"], axis=1)
-    df2 = df2.drop(columns=["group_pop_var", "total_pop_var"], axis=1)
+    df1 = df1.drop(columns=[group_pop_var, total_pop_var], axis=1)
+    df2 = df2.drop(columns=[group_pop_var, total_pop_var], axis=1)
 
     return df1, df2
 
