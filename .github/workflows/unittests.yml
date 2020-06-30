@@ -1,4 +1,4 @@
- name: Unit Tests 
+ name: Unit Tests
  on:
    push:
      branches:
@@ -12,7 +12,7 @@
      name: CI (${{ matrix.os }}-${{ matrix.environment-file }})
      runs-on: ${{ matrix.os }}
      continue-on-error: ${{ matrix.experimental }}
-     timeout-minutes: 90 
+     timeout-minutes: 90
      strategy:
        matrix:
          os: ['ubuntu-latest', 'macos-latest']
@@ -26,7 +26,7 @@
              environment-file: .ci/38.yaml
              experimental: true
            - os: 'windows-latest'
-             environment-file: .i/36.yaml
+             environment-file: .ci/36.yaml
              experimental: true
            - os: 'windows-latest'
              environment-file: .ci/37.yaml
