@@ -13,4 +13,9 @@ dependencies:
   - scipy
   - pip
   - libpysal
+  - coveralls
+  - pytest
+  - pytest-mpl
+  - pytest-cov
+  - twine
   - tqdm
