@@ -1,4 +1,4 @@
-name: segregation
+name: test
 channels:
   - defaults
   - conda-forge
