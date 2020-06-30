@@ -1,0 +1,16 @@
+name: segregation
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.6
+  - pandas
+  - geopandas
+  - matplotlib
+  - scikit-learn
+  - seaborn
+  - numpy
+  - scipy
+  - pip
+  - libpysal
+  - tqdm
