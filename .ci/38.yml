@@ -12,6 +12,7 @@ dependencies:
   - scipy
   - pip
   - libpysal
+  - descartes
   - coveralls
   - pytest
   - pytest-mpl
