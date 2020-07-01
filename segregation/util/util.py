@@ -8,26 +8,29 @@ __author__ = "Levi Wolf <levi.john.wolf@gmail.com>, Renan X. Cortes <renanc@ucr.
 import numpy as np
 import math
 import warnings
+from pyproj import CRS
+
 
 def _nan_handle(df):
     """Check if dataframe has nan values.
     Raise an informative error.
     """
-    if (str(type(df)) == '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
+    if str(type(df)) == "<class 'geopandas.geodataframe.GeoDataFrame'>":
         values = df.loc[:, df.columns != df._geometry_column_name].values
     else:
         values = df.values
-        
+
     if np.any(np.isnan(values)):
-        warnings.warn('There are NAs present in the input data. NAs should be handled (e.g. dropping or replacing them with values) before using this function.')
-        
+        warnings.warn(
+            "There are NAs present in the input data. NAs should be handled (e.g. dropping or replacing them with values) before using this function."
+        )
+
     return df
 
-def _generate_counterfactual(data1,
-                             data2,
-                             group_pop_var,
-                             total_pop_var,
-                             counterfactual_approach='composition'):
+
+def _generate_counterfactual(
+    data1, data2, group_pop_var, total_pop_var, counterfactual_approach="composition"
+):
     """Generate a counterfactual variables.
 
     Given two contexts, generate counterfactual distributions for a variable of
@@ -58,159 +61,220 @@ def _generate_counterfactual(data1,
         df1 and df2  with appended columns 'counterfactual_group_pop', 'counterfactual_total_pop', 'group_composition' and 'counterfactual_composition'
 
     """
-    if ((type(group_pop_var) is not str) or (type(total_pop_var) is not str)):
-        raise TypeError('group_pop_var and total_pop_var must be strings')
+    if (type(group_pop_var) is not str) or (type(total_pop_var) is not str):
+        raise TypeError("group_pop_var and total_pop_var must be strings")
 
-    if ((group_pop_var not in data1.columns)
-            or (total_pop_var not in data1.columns)):
-        raise ValueError(
-            'group_pop_var and total_pop_var must be variables of data1')
+    if (group_pop_var not in data1.columns) or (total_pop_var not in data1.columns):
+        raise ValueError("group_pop_var and total_pop_var must be variables of data1")
 
-    if ((group_pop_var not in data2.columns)
-            or (total_pop_var not in data2.columns)):
-        raise ValueError(
-            'group_pop_var and total_pop_var must be variables of data2')
+    if (group_pop_var not in data2.columns) or (total_pop_var not in data2.columns):
+        raise ValueError("group_pop_var and total_pop_var must be variables of data2")
 
     if any(data1[total_pop_var] < data1[group_pop_var]):
         raise ValueError(
-            'Group of interest population must equal or lower than the total population of the units in data1.'
+            "Group of interest population must equal or lower than the total population of the units in data1."
         )
 
     if any(data2[total_pop_var] < data2[group_pop_var]):
         raise ValueError(
-            'Group of interest population must equal or lower than the total population of the units in data2.'
+            "Group of interest population must equal or lower than the total population of the units in data2."
         )
 
     df1 = data1.copy()
     df2 = data2.copy()
 
-    if (counterfactual_approach == 'composition'):
+    if counterfactual_approach == "composition":
 
-        df1['group_composition'] = np.where(
-            df1[total_pop_var] == 0, 0,
-            df1[group_pop_var] / df1[total_pop_var])
-        df2['group_composition'] = np.where(
-            df2[total_pop_var] == 0, 0,
-            df2[group_pop_var] / df2[total_pop_var])
+        df1["group_composition"] = np.where(
+            df1[total_pop_var] == 0, 0, df1[group_pop_var] / df1[total_pop_var]
+        )
+        df2["group_composition"] = np.where(
+            df2[total_pop_var] == 0, 0, df2[group_pop_var] / df2[total_pop_var]
+        )
 
-        df1['counterfactual_group_pop'] = df1['group_composition'].rank(
-            pct=True).apply(
-                df2['group_composition'].quantile) * df1[total_pop_var]
-        df2['counterfactual_group_pop'] = df2['group_composition'].rank(
-            pct=True).apply(
-                df1['group_composition'].quantile) * df2[total_pop_var]
+        df1["counterfactual_group_pop"] = (
+            df1["group_composition"]
+            .rank(pct=True)
+            .apply(df2["group_composition"].quantile)
+            * df1[total_pop_var]
+        )
+        df2["counterfactual_group_pop"] = (
+            df2["group_composition"]
+            .rank(pct=True)
+            .apply(df1["group_composition"].quantile)
+            * df2[total_pop_var]
+        )
 
-        df1['counterfactual_total_pop'] = df1[total_pop_var]
-        df2['counterfactual_total_pop'] = df2[total_pop_var]
+        df1["counterfactual_total_pop"] = df1[total_pop_var]
+        df2["counterfactual_total_pop"] = df2[total_pop_var]
 
-    if (counterfactual_approach == 'share'):
+    if counterfactual_approach == "share":
 
-        df1['compl_pop_var'] = df1[total_pop_var] - df1[group_pop_var]
-        df2['compl_pop_var'] = df2[total_pop_var] - df2[group_pop_var]
+        df1["compl_pop_var"] = df1[total_pop_var] - df1[group_pop_var]
+        df2["compl_pop_var"] = df2[total_pop_var] - df2[group_pop_var]
 
-        df1['share'] = np.where(df1[total_pop_var] == 0, 0,
-                                df1[group_pop_var] / df1[group_pop_var].sum())
-        df2['share'] = np.where(df2[total_pop_var] == 0, 0,
-                                df2[group_pop_var] / df2[group_pop_var].sum())
+        df1["share"] = np.where(
+            df1[total_pop_var] == 0, 0, df1[group_pop_var] / df1[group_pop_var].sum()
+        )
+        df2["share"] = np.where(
+            df2[total_pop_var] == 0, 0, df2[group_pop_var] / df2[group_pop_var].sum()
+        )
 
-        df1['compl_share'] = np.where(
-            df1['compl_pop_var'] == 0, 0,
-            df1['compl_pop_var'] / df1['compl_pop_var'].sum())
-        df2['compl_share'] = np.where(
-            df2['compl_pop_var'] == 0, 0,
-            df2['compl_pop_var'] / df2['compl_pop_var'].sum())
+        df1["compl_share"] = np.where(
+            df1["compl_pop_var"] == 0,
+            0,
+            df1["compl_pop_var"] / df1["compl_pop_var"].sum(),
+        )
+        df2["compl_share"] = np.where(
+            df2["compl_pop_var"] == 0,
+            0,
+            df2["compl_pop_var"] / df2["compl_pop_var"].sum(),
+        )
 
         # Rescale due to possibility of the summation of the counterfactual share values being grater or lower than 1
         # CT stands for Correction Term
-        CT1_2_group = df1['share'].rank(pct=True).apply(
-            df2['share'].quantile).sum()
-        CT2_1_group = df2['share'].rank(pct=True).apply(
-            df1['share'].quantile).sum()
+        CT1_2_group = df1["share"].rank(pct=True).apply(df2["share"].quantile).sum()
+        CT2_1_group = df2["share"].rank(pct=True).apply(df1["share"].quantile).sum()
 
-        df1['counterfactual_group_pop'] = df1['share'].rank(pct=True).apply(
-            df2['share'].quantile) / CT1_2_group * df1[group_pop_var].sum()
-        df2['counterfactual_group_pop'] = df2['share'].rank(pct=True).apply(
-            df1['share'].quantile) / CT2_1_group * df2[group_pop_var].sum()
+        df1["counterfactual_group_pop"] = (
+            df1["share"].rank(pct=True).apply(df2["share"].quantile)
+            / CT1_2_group
+            * df1[group_pop_var].sum()
+        )
+        df2["counterfactual_group_pop"] = (
+            df2["share"].rank(pct=True).apply(df1["share"].quantile)
+            / CT2_1_group
+            * df2[group_pop_var].sum()
+        )
 
         # Rescale due to possibility of the summation of the counterfactual share values being grater or lower than 1
         # CT stands for Correction Term
-        CT1_2_compl = df1['compl_share'].rank(pct=True).apply(
-            df2['compl_share'].quantile).sum()
-        CT2_1_compl = df2['compl_share'].rank(pct=True).apply(
-            df1['compl_share'].quantile).sum()
+        CT1_2_compl = (
+            df1["compl_share"].rank(pct=True).apply(df2["compl_share"].quantile).sum()
+        )
+        CT2_1_compl = (
+            df2["compl_share"].rank(pct=True).apply(df1["compl_share"].quantile).sum()
+        )
 
-        df1['counterfactual_compl_pop'] = df1['compl_share'].rank(
-            pct=True).apply(df2['compl_share'].quantile
-                            ) / CT1_2_compl * df1['compl_pop_var'].sum()
-        df2['counterfactual_compl_pop'] = df2['compl_share'].rank(
-            pct=True).apply(df1['compl_share'].quantile
-                            ) / CT2_1_compl * df2['compl_pop_var'].sum()
+        df1["counterfactual_compl_pop"] = (
+            df1["compl_share"].rank(pct=True).apply(df2["compl_share"].quantile)
+            / CT1_2_compl
+            * df1["compl_pop_var"].sum()
+        )
+        df2["counterfactual_compl_pop"] = (
+            df2["compl_share"].rank(pct=True).apply(df1["compl_share"].quantile)
+            / CT2_1_compl
+            * df2["compl_pop_var"].sum()
+        )
 
-        df1['counterfactual_total_pop'] = df1[
-            'counterfactual_group_pop'] + df1['counterfactual_compl_pop']
-        df2['counterfactual_total_pop'] = df2[
-            'counterfactual_group_pop'] + df2['counterfactual_compl_pop']
+        df1["counterfactual_total_pop"] = (
+            df1["counterfactual_group_pop"] + df1["counterfactual_compl_pop"]
+        )
+        df2["counterfactual_total_pop"] = (
+            df2["counterfactual_group_pop"] + df2["counterfactual_compl_pop"]
+        )
 
-    if (counterfactual_approach == 'dual_composition'):
+    if counterfactual_approach == "dual_composition":
 
-        df1['group_composition'] = np.where(
-            df1[total_pop_var] == 0, 0,
-            df1[group_pop_var] / df1[total_pop_var])
-        df2['group_composition'] = np.where(
-            df2[total_pop_var] == 0, 0,
-            df2[group_pop_var] / df2[total_pop_var])
+        df1["group_composition"] = np.where(
+            df1[total_pop_var] == 0, 0, df1[group_pop_var] / df1[total_pop_var]
+        )
+        df2["group_composition"] = np.where(
+            df2[total_pop_var] == 0, 0, df2[group_pop_var] / df2[total_pop_var]
+        )
 
-        df1['compl_pop_var'] = df1[total_pop_var] - df1[group_pop_var]
-        df2['compl_pop_var'] = df2[total_pop_var] - df2[group_pop_var]
+        df1["compl_pop_var"] = df1[total_pop_var] - df1[group_pop_var]
+        df2["compl_pop_var"] = df2[total_pop_var] - df2[group_pop_var]
 
-        df1['compl_composition'] = np.where(
-            df1[total_pop_var] == 0, 0,
-            df1['compl_pop_var'] / df1[total_pop_var])
-        df2['compl_composition'] = np.where(
-            df2[total_pop_var] == 0, 0,
-            df2['compl_pop_var'] / df2[total_pop_var])
+        df1["compl_composition"] = np.where(
+            df1[total_pop_var] == 0, 0, df1["compl_pop_var"] / df1[total_pop_var]
+        )
+        df2["compl_composition"] = np.where(
+            df2[total_pop_var] == 0, 0, df2["compl_pop_var"] / df2[total_pop_var]
+        )
 
-        df1['counterfactual_group_pop'] = df1['group_composition'].rank(
-            pct=True).apply(
-                df2['group_composition'].quantile) * df1[total_pop_var]
-        df2['counterfactual_group_pop'] = df2['group_composition'].rank(
-            pct=True).apply(
-                df1['group_composition'].quantile) * df2[total_pop_var]
+        df1["counterfactual_group_pop"] = (
+            df1["group_composition"]
+            .rank(pct=True)
+            .apply(df2["group_composition"].quantile)
+            * df1[total_pop_var]
+        )
+        df2["counterfactual_group_pop"] = (
+            df2["group_composition"]
+            .rank(pct=True)
+            .apply(df1["group_composition"].quantile)
+            * df2[total_pop_var]
+        )
 
-        df1['counterfactual_compl_pop'] = df1['compl_composition'].rank(
-            pct=True).apply(
-                df2['compl_composition'].quantile) * df1[total_pop_var]
-        df2['counterfactual_compl_pop'] = df2['compl_composition'].rank(
-            pct=True).apply(
-                df1['compl_composition'].quantile) * df2[total_pop_var]
+        df1["counterfactual_compl_pop"] = (
+            df1["compl_composition"]
+            .rank(pct=True)
+            .apply(df2["compl_composition"].quantile)
+            * df1[total_pop_var]
+        )
+        df2["counterfactual_compl_pop"] = (
+            df2["compl_composition"]
+            .rank(pct=True)
+            .apply(df1["compl_composition"].quantile)
+            * df2[total_pop_var]
+        )
 
-        df1['counterfactual_total_pop'] = df1[
-            'counterfactual_group_pop'] + df1['counterfactual_compl_pop']
-        df2['counterfactual_total_pop'] = df2[
-            'counterfactual_group_pop'] + df2['counterfactual_compl_pop']
+        df1["counterfactual_total_pop"] = (
+            df1["counterfactual_group_pop"] + df1["counterfactual_compl_pop"]
+        )
+        df2["counterfactual_total_pop"] = (
+            df2["counterfactual_group_pop"] + df2["counterfactual_compl_pop"]
+        )
 
-    df1['group_composition'] = np.where(
-        df1['total_pop_var'] == 0, 0,
-        df1['group_pop_var'] / df1['total_pop_var'])
-    df2['group_composition'] = np.where(
-        df2['total_pop_var'] == 0, 0,
-        df2['group_pop_var'] / df2['total_pop_var'])
+    df1["group_composition"] = np.where(
+        df1[total_pop_var] == 0, 0, df1[group_pop_var] / df1[total_pop_var]
+    )
+    df2["group_composition"] = np.where(
+        df2[total_pop_var] == 0, 0, df2[group_pop_var] / df2[total_pop_var]
+    )
 
-    df1['counterfactual_composition'] = np.where(
-        df1['counterfactual_total_pop'] == 0, 0,
-        df1['counterfactual_group_pop'] / df1['counterfactual_total_pop'])
-    df2['counterfactual_composition'] = np.where(
-        df2['counterfactual_total_pop'] == 0, 0,
-        df2['counterfactual_group_pop'] / df2['counterfactual_total_pop'])
+    df1["counterfactual_composition"] = np.where(
+        df1["counterfactual_total_pop"] == 0,
+        0,
+        df1["counterfactual_group_pop"] / df1["counterfactual_total_pop"],
+    )
+    df2["counterfactual_composition"] = np.where(
+        df2["counterfactual_total_pop"] == 0,
+        0,
+        df2["counterfactual_group_pop"] / df2["counterfactual_total_pop"],
+    )
 
-    df1 = df1.drop(columns=['group_pop_var', 'total_pop_var'], axis=1)
-    df2 = df2.drop(columns=['group_pop_var', 'total_pop_var'], axis=1)
+    df1 = df1.drop(columns=[group_pop_var, total_pop_var], axis=1)
+    df2 = df2.drop(columns=[group_pop_var, total_pop_var], axis=1)
 
     return df1, df2
 
 
+def is_crs_utm(crs):
+    """
+    Determine if a CRS is a UTM CRS
+    Parameters
+    ----------
+    crs : dict or string or pyproj.CRS
+        a coordinate reference system
+    Returns
+    -------
+    bool
+        True if crs is UTM, False otherwise
+    """
+    if not crs:
+        return False
+    crs_obj = CRS.from_user_input(crs)
+    if crs_obj.coordinate_operation and crs_obj.coordinate_operation.name.upper().startswith(
+        "UTM"
+    ):
+        return True
+    return False
+
+
 def project_gdf(gdf, to_crs=None, to_latlong=False):
-    """Reproject gdf into the appropriate UTM zone.
+    """
+    lovingly copied from OSMNX <https://github.com/gboeing/osmnx/blob/master/osmnx/projection.py>
 
     Project a GeoDataFrame to the UTM zone appropriate for its geometries'
     centroid.
@@ -218,14 +282,11 @@ def project_gdf(gdf, to_crs=None, to_latlong=False):
     won't work for some far northern locations like Svalbard and parts of far
     northern Norway.
 
-    This function is lovingly modified from osmnx:
-    https://github.com/gboeing/osmnx/
-
     Parameters
     ----------
     gdf : GeoDataFrame
         the gdf to be projected
-    to_crs : dict
+    to_crs : dict or string or pyproj.CRS
         if not None, just project to this CRS instead of to UTM
     to_latlong : bool
         if True, projects to latlong instead of to UTM
@@ -233,24 +294,24 @@ def project_gdf(gdf, to_crs=None, to_latlong=False):
     Returns
     -------
     GeoDataFrame
-
     """
-    assert len(gdf) > 0, 'You cannot project an empty GeoDataFrame.'
+    assert len(gdf) > 0, "You cannot project an empty GeoDataFrame."
 
     # else, project the gdf to UTM
     # if GeoDataFrame is already in UTM, just return it
-    if (gdf.crs is not None) and ('+proj=utm ' in gdf.crs):
+    if is_crs_utm(gdf.crs):
         return gdf
 
     # calculate the centroid of the union of all the geometries in the
     # GeoDataFrame
-    avg_longitude = gdf['geometry'].unary_union.centroid.x
+    avg_longitude = gdf["geometry"].unary_union.centroid.x
 
     # calculate the UTM zone from this avg longitude and define the UTM
     # CRS to project
-    utm_zone = int(math.floor((avg_longitude + 180) / 6.) + 1)
-    utm_crs = '+proj=utm +zone={} +ellps=WGS84 +datum=WGS84 +units=m +no_defs'.format(
-        utm_zone)
+    utm_zone = int(math.floor((avg_longitude + 180) / 6.0) + 1)
+    utm_crs = "+proj=utm +zone={} +ellps=WGS84 +datum=WGS84 +units=m +no_defs".format(
+        utm_zone
+    )
 
     # project the GeoDataFrame to the UTM CRS
     projected_gdf = gdf.to_crs(utm_crs)
@@ -258,12 +319,12 @@ def project_gdf(gdf, to_crs=None, to_latlong=False):
     return projected_gdf
 
 
-        
 def _dep_message(original, replacement, when="2020-01-31", version="2.1.0"):
     msg = "Deprecated (%s): %s" % (version, original)
     msg += " is being renamed to %s." % replacement
     msg += " %s will be removed on %s." % (original, when)
     return msg
+
 
 class DeprecationHelper(object):
     def __init__(self, new_target, message="Deprecated"):

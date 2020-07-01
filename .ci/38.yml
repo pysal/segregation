@@ -1,0 +1,23 @@
+name: test
+channels:
+  - conda-forge
+dependencies:
+  - python=3.8
+  - pandas
+  - geopandas>=0.7
+  - matplotlib
+  - scikit-learn
+  - seaborn
+  - numpy
+  - scipy
+  - pip
+  - libpysal
+  - descartes
+  - coveralls
+  - pytest
+  - pytest-mpl
+  - pytest-cov
+  - twine
+  - tqdm
+  - pandana
+  - urbanaccess

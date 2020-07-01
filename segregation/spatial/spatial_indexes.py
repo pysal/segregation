@@ -3454,7 +3454,7 @@ def compute_segregation_profile(gdf,
     indices[0] = MultiInformationTheory(gdf, groups).statistic
 
     if network:
-        if not gdf.crs['init'] == 'epsg:4326':
+        if not gdf.crs.name == 'WGS 84':
             gdf = gdf.to_crs(epsg=4326)
         groups2 = ['acc_' + group for group in groups]
         if precompute:

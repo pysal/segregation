@@ -38,11 +38,11 @@ def _decompose_segregation(index1,
     Returns
     -------
     tuple
-        (shapley spatial component, 
-         shapley attribute component, 
-         core data of index1, 
-         core data of index2, 
-         data with counterfactual variables for index1, 
+        (shapley spatial component,
+         shapley attribute component,
+         core data of index1,
+         core data of index2,
+         data with counterfactual variables for index1,
          data with counterfactual variables for index2)
 
     """
@@ -80,7 +80,12 @@ def _decompose_segregation(index1,
     # take the average difference in attributes, holding spatial structure constant
     C_A = 1 / 2 * (G_S1_A1 - G_S1_A2 + G_S2_A1 - G_S2_A2)
 
-    return C_S, C_A, df1, df2, counterfac_df1, counterfac_df2, counterfactual_approach
+    results = {'s1_a1': G_S1_A1,
+            's1_a2': G_S1_A2,
+            's2_a1': G_S2_A1,
+            's2_a2': G_S2_A2 }
+
+    return C_S, C_A, df1, df2, counterfac_df1, counterfac_df2, counterfactual_approach, results
 
 
 class DecomposeSegregation:
@@ -106,7 +111,7 @@ class DecomposeSegregation:
 
     c_s : float
         Shapley's Spatial Component of the decomposition
-                
+
     c_a : float
         Shapley's Attribute Component of the decomposition
 
@@ -115,14 +120,14 @@ class DecomposeSegregation:
 
     plot : Visualize features of the Decomposition performed
         plot_type : str, one of ['cdfs', 'maps']
-        
+
         'cdfs' : visualize the cumulative distribution functions of the compositions/shares
         'maps' : visualize the spatial distributions for original data and counterfactuals generated and Shapley's components (only available for GeoDataFrames)
 
     Examples
     --------
     Several examples can be found at https://github.com/pysal/segregation/blob/master/notebooks/decomposition_wrapper_example.ipynb.
-    
+
     """
 
     def __init__(self, index1, index2, counterfactual_approach='composition'):
@@ -136,6 +141,7 @@ class DecomposeSegregation:
         self._counterfac_df1 = aux[4]
         self._counterfac_df2 = aux[5]
         self._counterfactual_approach = aux[6]
+        self.indices = aux[7]
 
     def plot(self, plot_type='cdfs'):
         """

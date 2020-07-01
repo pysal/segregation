@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>segregation.network.get_osm_network &#8212; segregation v1.3.0 Manual</title>
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="shortcut icon" href="../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="segregation.network.calc_access" href="segregation.network.calc_access.html" />
+    <link rel="prev" title="segregation.decomposition.DecomposeSegregation" href="segregation.decomposition.DecomposeSegregation.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.12.4.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.4.1/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          segregation</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.3.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../installation.html">Installation</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#aspatial-indices">Aspatial Indices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#spatial-indices">Spatial Indices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#multigroup-indices">Multigroup Indices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#local-indices">Local Indices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#batch-compute-wrappers">Batch Compute Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#inference-wrappers">Inference Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#decomposition">Decomposition</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#network">Network</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">segregation.network.get_osm_network</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <div class="section" id="segregation-network-get-osm-network">
+<h1>segregation.network.get_osm_network<a class="headerlink" href="#segregation-network-get-osm-network" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="segregation.network.get_osm_network">
+<code class="sig-prename descclassname">segregation.network.</code><code class="sig-name descname">get_osm_network</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">geodataframe</span></em>, <em class="sig-param"><span class="n">maxdist</span><span class="o">=</span><span class="default_value">5000</span></em>, <em class="sig-param"><span class="n">quiet</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/segregation/network/network.html#get_osm_network"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#segregation.network.get_osm_network" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download a street network from OSM.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>geodataframe</strong><span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>geopandas.GeoDataFrame of the study area.
+Coordinate system should be in WGS84</p>
+</dd>
+<dt><strong>maxdist</strong><span class="classifier">int</span></dt><dd><p>Total distance (in meters) of the network queries you may need.
+This is used to buffer the network to ensure theres enough to satisfy
+your largest query, otherwise there may be edge effects.</p>
+</dd>
+<dt><strong>quiet: bool</strong></dt><dd><p>If True, diagnostic messages from urbanaccess will be suppressed</p>
+</dd>
+<dt><strong>**kwargs</strong><span class="classifier">dict</span></dt><dd><p>additional kwargs passed through to
+urbanaccess.ua_network_from_bbox</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt>pandana.Network</dt><dd><p>A pandana Network instance for use in accessibility calculations or
+spatial segregation measures that include a distance decay</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="../_sources/generated/segregation.network.get_osm_network.rst.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.1.1.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
