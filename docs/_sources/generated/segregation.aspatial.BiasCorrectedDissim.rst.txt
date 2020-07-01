@@ -1,0 +1,22 @@
+segregation.aspatial.BiasCorrectedDissim
+========================================
+
+.. currentmodule:: segregation.aspatial
+
+.. autoclass:: BiasCorrectedDissim
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~BiasCorrectedDissim.__init__
+   
+   
+
+   
+   
+   

@@ -1,0 +1,22 @@
+segregation.aspatial.Exposure
+=============================
+
+.. currentmodule:: segregation.aspatial
+
+.. autoclass:: Exposure
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Exposure.__init__
+   
+   
+
+   
+   
+   

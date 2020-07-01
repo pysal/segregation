@@ -1,0 +1,22 @@
+segregation.aspatial.MinMax
+===========================
+
+.. currentmodule:: segregation.aspatial
+
+.. autoclass:: MinMax
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MinMax.__init__
+   
+   
+
+   
+   
+   

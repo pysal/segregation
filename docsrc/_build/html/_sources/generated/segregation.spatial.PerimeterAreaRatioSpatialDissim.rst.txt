@@ -1,0 +1,22 @@
+segregation.spatial.PerimeterAreaRatioSpatialDissim
+===================================================
+
+.. currentmodule:: segregation.spatial
+
+.. autoclass:: PerimeterAreaRatioSpatialDissim
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PerimeterAreaRatioSpatialDissim.__init__
+   
+   
+
+   
+   
+   
