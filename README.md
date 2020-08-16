@@ -7,6 +7,7 @@
 ![Conda (channel only)](https://img.shields.io/conda/vn/conda-forge/segregation)
 ![GitHub commits since latest release (branch)](https://img.shields.io/github/commits-since/pysal/segregation/latest)
 [![DOI](https://zenodo.org/badge/162503796.svg)](https://zenodo.org/badge/latestdoi/162503796)
+[![Documentation](https://img.shields.io/static/v1.svg?label=docs&message=current&color=9cf)](http://pysal.org/segregation/)
 
 
 ![](doc/_static/images/heatmaps.png)
@@ -65,7 +66,7 @@ python setup.py develop
 ## Getting started
 
 For a complete guide to the `segregation` API, see the online
-[documentation](http://segregation.readthedocs.io). 
+[documentation](https://pysal.org/segregation/). 
 
 For code walkthroughs and sample analyses, see the
 [example notebooks](https://github.com/pysal/segregation/tree/master/notebooks)
