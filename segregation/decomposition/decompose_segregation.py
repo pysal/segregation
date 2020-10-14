@@ -6,12 +6,14 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Elijah Knaap <elijah.knaap@ucr.e
 
 
 import warnings
-from segregation.util.util import _generate_counterfactual, _dep_message, DeprecationHelper
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+from segregation.util.util import _generate_counterfactual
 
 # Including old and new api in __all__ so users can use both
 
-__all__ = ['Decompose_Segregation',
-           'DecomposeSegregation']
+__all__ = ['DecomposeSegregation']
 
 # The Deprecation calls of the classes are located in the end of this script #
 
@@ -143,169 +145,84 @@ class DecomposeSegregation:
         self._counterfactual_approach = aux[6]
         self.indices = aux[7]
 
-    def plot(self, plot_type='cdfs'):
+    def plot(self, plot_type='cdfs', figsize=(10, 10), city_a=None, city_b=None, cmap='OrRd', scheme='equalinterval', k=10, suptitle_size=20):
         """
         Plot the Segregation Decomposition Profile
         """
-        try:
-            import matplotlib.pyplot as plt
-        except ImportError:
-            warnings.warn('This method relies on importing `matplotlib`')
+
+        if not city_a:
+            city_a = 'City A'
+        if not city_b:
+            city_b = 'City B'
 
         if (plot_type == 'cdfs'):
+
+            fig, ax = plt.subplots(figsize=figsize)
+            plt.suptitle(f"Decomposing differences between\n{city_a} and {city_b}", size=suptitle_size)
+            plt.title(f"Spatial Component = {round(self.c_s, 3)}, Attribute Component: {round(self.c_a, 3)}")
+
+            temp_a = self._counterfac_df1.copy()
+            temp_a['Location'] = city_a
+            temp_b = self._counterfac_df2.copy()
+            temp_b['Location'] = city_b
+            df = pd.concat([temp_a, temp_b])
+
             if (self._counterfactual_approach == 'composition'):
-                plt.suptitle(
-                    'Spatial Component = {}, Attribute Component: {}'.format(
-                        round(self.c_s, 3), round(self.c_a, 3)),
-                    size=20)
-                plt.step(
-                    self._counterfac_df1['group_composition'].sort_values(),
-                    self._counterfac_df1['group_composition'].rank(
-                        pct=True).sort_values(),
-                    label='First Context Group Composition')
+                sns.ecdfplot(data=df, x='group_composition', hue='Location', ax=ax)
+                return ax
 
-                plt.step(
-                    self._counterfac_df2['group_composition'].sort_values(),
-                    self._counterfac_df2['group_composition'].rank(
-                        pct=True).sort_values(),
-                    label='Second Context Group Composition')
-                plt.legend()
+            elif (self._counterfactual_approach == 'share'):
+                f = sns.ecdfplot(data=df, x='share', hue='Location', ax=ax)
+                return f
 
-            if (self._counterfactual_approach == 'share'):
-                plt.suptitle(
-                    'Spatial Component = {}, Attribute Component: {}'.format(
-                        round(self.c_s, 3), round(self.c_a, 3)),
-                    size=20)
-                plt.step((self._df1['group_pop_var'] /
-                          self._df1['group_pop_var'].sum()).sort_values(),
-                         (self._df1['group_pop_var'] /
-                          self._df1['group_pop_var'].sum()).rank(
-                              pct=True).sort_values(),
-                         label='First Context Group Share')
-
-                plt.step((self._df2['group_pop_var'] /
-                          self._df2['group_pop_var'].sum()).sort_values(),
-                         (self._df2['group_pop_var'] /
-                          self._df2['group_pop_var'].sum()).rank(
-                              pct=True).sort_values(),
-                         label='Second Context Group Share')
-
-                plt.step(
-                    ((self._df1['total_pop_var'] - self._df1['group_pop_var'])
-                     / (self._df1['total_pop_var'] -
-                        self._df1['group_pop_var']).sum()).sort_values(),
-                    ((self._df1['total_pop_var'] - self._df1['group_pop_var'])
-                     / (self._df1['total_pop_var'] -
-                        self._df1['group_pop_var']).sum()).rank(
-                            pct=True).sort_values(),
-                    label='First Context Complementary Group Share')
-
-                plt.step(
-                    ((self._df2['total_pop_var'] - self._df2['group_pop_var'])
-                     / (self._df2['total_pop_var'] -
-                        self._df2['group_pop_var']).sum()).sort_values(),
-                    ((self._df2['total_pop_var'] - self._df2['group_pop_var'])
-                     / (self._df2['total_pop_var'] -
-                        self._df2['group_pop_var']).sum()).rank(
-                            pct=True).sort_values(),
-                    label='Second Context Complementary Group Share')
-                plt.legend()
-
-            if (self._counterfactual_approach == 'dual_composition'):
-                plt.suptitle(
-                    'Spatial Component = {}, Attribute Component: {}'.format(
-                        round(self.c_s, 3), round(self.c_a, 3)),
-                    size=20)
-                plt.step(
-                    self._counterfac_df1['group_composition'].sort_values(),
-                    self._counterfac_df1['group_composition'].rank(
-                        pct=True).sort_values(),
-                    label='First Context Group Composition')
-
-                plt.step(
-                    self._counterfac_df2['group_composition'].sort_values(),
-                    self._counterfac_df2['group_composition'].rank(
-                        pct=True).sort_values(),
-                    label='Second Context Group Composition')
-
-                plt.step(
-                    (1 -
-                     self._counterfac_df1['group_composition']).sort_values(),
-                    (1 - self._counterfac_df1['group_composition']).rank(
-                        pct=True).sort_values(),
-                    label='First Context Complementary Group Composition')
-
-                plt.step(
-                    (1 -
-                     self._counterfac_df2['group_composition']).sort_values(),
-                    (1 - self._counterfac_df2['group_composition']).rank(
-                        pct=True).sort_values(),
-                    label='Second Context Complementary Group Composition')
-
-                plt.legend()
+            elif (self._counterfactual_approach == 'dual_composition'):
+                df['compl'] = 1-df.group_composition
+                f = sns.ecdfplot(data=df, x='group_composition', hue='Location', ax=ax)
+                f2 = sns.ecdfplot(data=df, x='compl', hue='Location', ax=ax)
 
         if (plot_type == 'maps'):
-            if (str(type(self._df1)) !=
-                    '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
-                raise TypeError(
-                    'data is not a GeoDataFrame and, therefore, maps cannot be draw.'
-                )
-
-            # Subplots
-            fig, axs = plt.subplots(2, 2, figsize=(10, 10))
-
-            fig.suptitle(
-                'Spatial Component = {}, Attribute Component: {}'.format(
-                    round(self.c_s, 3), round(self.c_a, 3)),
-                size=20)
-            fig.subplots_adjust(hspace=1.25, wspace=0.2,
-                                top=0.95)  # hspace space between lines
-            fig.tight_layout(rect=[
-                0, 0, 1, 0.925
-            ])  # rect is to position the suptitle above the subplots
+            fig, axs = plt.subplots(2, 2, figsize=figsize)
+            plt.suptitle(f"Decomposing differences between\n{city_a} and {city_b}", size=suptitle_size)
+            plt.title(f"Spatial Component = {round(self.c_s, 3)}, Attribute Component: {round(self.c_a, 3)}")
 
             # Original First Context (Upper Left)
             self._counterfac_df1.plot(column='group_composition',
-                                      cmap='OrRd',
+                                      cmap=cmap,
                                       legend=True,
+                                      scheme=scheme,
+                                      k=k,
                                       ax=axs[0, 0])
-            axs[0, 0].title.set_text('Original First Context Composition')
+            axs[0, 0].title.set_text(f'{city_a} Original Composition')
             axs[0, 0].axis('off')
 
             # Counterfactual First Context (Bottom Left)
             self._counterfac_df1.plot(column='counterfactual_composition',
-                                      cmap='OrRd',
+                                      cmap=cmap,
+                                      scheme=scheme,
+                                      k=k,
                                       legend=True,
                                       ax=axs[1, 0])
             axs[1, 0].title.set_text(
-                'Counterfactual First Context Composition')
+                f'{city_a} Counterfactual Composition')
             axs[1, 0].axis('off')
 
             # Counterfactual Second Context (Upper Right)
             self._counterfac_df2.plot(column='counterfactual_composition',
-                                      cmap='OrRd',
+                                      cmap=cmap,
+                                      scheme=scheme,
+                                      k=k,
                                       legend=True,
                                       ax=axs[0, 1])
             axs[0, 1].title.set_text(
-                'Counterfactual Second Context Composition')
+                f'{city_b}  Counterfactual Composition')
             axs[0, 1].axis('off')
 
             # Original Second Context (Bottom Right)
             self._counterfac_df2.plot(column='group_composition',
-                                      cmap='OrRd',
+                                      cmap=cmap,
+                                      scheme=scheme,
+                                      k=k,
                                       legend=True,
                                       ax=axs[1, 1])
-            axs[1, 1].title.set_text('Original Second Context Composition')
+            axs[1, 1].title.set_text(f'{city_b} Original Composition')
             axs[1, 1].axis('off')
-
-
-
-
-
-
-
-
-# Deprecation Calls
-
-msg = _dep_message("Decompose_Segregation", "DecomposeSegregation")
-Decompose_Segregation = DeprecationHelper(DecomposeSegregation, message=msg)
