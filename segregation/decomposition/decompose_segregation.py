@@ -158,7 +158,7 @@ class DecomposeSegregation:
     def plot(
         self,
         plot_type="cdfs",
-        figsize=(10, 10),
+        figsize=None,
         city_a=None,
         city_b=None,
         cmap="OrRd",
@@ -176,7 +176,8 @@ class DecomposeSegregation:
             city_b = "City B"
 
         if plot_type == "cdfs":
-
+            if not figsize:
+                figsize = (10, 10)
             fig, ax = plt.subplots(figsize=figsize)
             plt.suptitle(
                 f"Decomposing differences between\n{city_a} and {city_b}",
@@ -206,6 +207,8 @@ class DecomposeSegregation:
                 f2 = sns.ecdfplot(data=df, x="compl", hue="Location", ax=ax)
 
         if plot_type == "maps":
+            if not figsize:
+                figsize = (20, 20)
             fig, axs = plt.subplots(2, 2, figsize=figsize)
             plt.suptitle(
                 f"Decomposing differences between\n{city_a} and {city_b}",
