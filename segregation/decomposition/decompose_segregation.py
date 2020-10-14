@@ -164,7 +164,10 @@ class DecomposeSegregation:
         cmap="OrRd",
         scheme="equalinterval",
         k=10,
-        suptitle_size=20,
+        suptitle_size=16,
+        title_size=12,
+        savefig=None,
+        dpi=300
     ):
         """
         Plot the Segregation Decomposition Profile
@@ -184,7 +187,8 @@ class DecomposeSegregation:
                 size=suptitle_size,
             )
             plt.title(
-                f"Spatial Component = {round(self.c_s, 3)}, Attribute Component: {round(self.c_a, 3)}"
+                f"Spatial Component = {round(self.c_s, 3)}, Attribute Component: {round(self.c_a, 3)}",
+                size=title_size
             )
 
             temp_a = self._counterfac_df1.copy()
@@ -205,6 +209,8 @@ class DecomposeSegregation:
                 df["compl"] = 1 - df.group_composition
                 f = sns.ecdfplot(data=df, x="group_composition", hue="Location", ax=ax)
                 f2 = sns.ecdfplot(data=df, x="compl", hue="Location", ax=ax)
+            if savefig:
+                plt.savefig(savefig, dpi=dpi)
 
         if plot_type == "maps":
             if not figsize:
@@ -227,7 +233,7 @@ class DecomposeSegregation:
                 k=k,
                 ax=axs[0, 0],
             )
-            axs[0, 0].title.set_text(f"{city_a} Original Composition")
+            axs[0, 0].set_title(f"{city_a}\nOriginal Composition", fontdict={'fontsize': title_size})
             axs[0, 0].axis("off")
 
             # Counterfactual First Context (Bottom Left)
@@ -239,7 +245,7 @@ class DecomposeSegregation:
                 legend=True,
                 ax=axs[1, 0],
             )
-            axs[1, 0].title.set_text(f"{city_a} Counterfactual Composition")
+            axs[1, 0].set_title(f"{city_a}\nCounterfactual Composition", fontdict={'fontsize': title_size})
             axs[1, 0].axis("off")
 
             # Counterfactual Second Context (Upper Right)
@@ -251,7 +257,8 @@ class DecomposeSegregation:
                 legend=True,
                 ax=axs[0, 1],
             )
-            axs[0, 1].title.set_text(f"{city_b}  Counterfactual Composition")
+            axs[0, 1].set_title(f"{city_b}\nCounterfactual Composition", fontdict={'fontsize': title_size}
+)
             axs[0, 1].axis("off")
 
             # Original Second Context (Bottom Right)
@@ -263,6 +270,9 @@ class DecomposeSegregation:
                 legend=True,
                 ax=axs[1, 1],
             )
-            axs[1, 1].title.set_text(f"{city_b} Original Composition")
+            axs[1, 1].set_title(f"{city_b}\nOriginal Composition", fontdict={'fontsize': title_size}
+)
             axs[1, 1].axis("off")
-
+            if savefig:
+                plt.savefig(savefig, dpi=dpi)
+            return axs
