@@ -1,4 +1,4 @@
-segregation.inference.SingleValueTest
+﻿segregation.inference.SingleValueTest
 =====================================
 
 .. currentmodule:: segregation.inference

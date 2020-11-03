@@ -1,4 +1,4 @@
-segregation.aspatial.BiasCorrectedDissim
+﻿segregation.aspatial.BiasCorrectedDissim
 ========================================
 
 .. currentmodule:: segregation.aspatial

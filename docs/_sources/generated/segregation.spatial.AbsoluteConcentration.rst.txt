@@ -1,4 +1,4 @@
-segregation.spatial.AbsoluteConcentration
+﻿segregation.spatial.AbsoluteConcentration
 =========================================
 
 .. currentmodule:: segregation.spatial

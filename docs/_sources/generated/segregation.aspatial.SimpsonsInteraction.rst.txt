@@ -1,4 +1,4 @@
-segregation.aspatial.SimpsonsInteraction
+﻿segregation.aspatial.SimpsonsInteraction
 ========================================
 
 .. currentmodule:: segregation.aspatial

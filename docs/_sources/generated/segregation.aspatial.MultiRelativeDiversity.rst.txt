@@ -1,4 +1,4 @@
-segregation.aspatial.MultiRelativeDiversity
+﻿segregation.aspatial.MultiRelativeDiversity
 ===========================================
 
 .. currentmodule:: segregation.aspatial

@@ -1,4 +1,4 @@
-segregation.aspatial.Atkinson
+﻿segregation.aspatial.Atkinson
 =============================
 
 .. currentmodule:: segregation.aspatial

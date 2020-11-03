@@ -1,4 +1,4 @@
-segregation.network.get\_osm\_network
+﻿segregation.network.get\_osm\_network
 =====================================
 
 .. currentmodule:: segregation.network

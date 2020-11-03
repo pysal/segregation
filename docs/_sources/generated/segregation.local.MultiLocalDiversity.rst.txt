@@ -1,4 +1,4 @@
-segregation.local.MultiLocalDiversity
+﻿segregation.local.MultiLocalDiversity
 =====================================
 
 .. currentmodule:: segregation.local

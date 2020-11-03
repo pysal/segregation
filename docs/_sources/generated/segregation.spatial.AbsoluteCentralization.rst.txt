@@ -1,4 +1,4 @@
-segregation.spatial.AbsoluteCentralization
+﻿segregation.spatial.AbsoluteCentralization
 ==========================================
 
 .. currentmodule:: segregation.spatial

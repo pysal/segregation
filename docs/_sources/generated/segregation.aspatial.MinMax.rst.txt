@@ -1,4 +1,4 @@
-segregation.aspatial.MinMax
+﻿segregation.aspatial.MinMax
 ===========================
 
 .. currentmodule:: segregation.aspatial

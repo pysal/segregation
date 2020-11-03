@@ -1,4 +1,4 @@
-segregation.network.calc\_access
+﻿segregation.network.calc\_access
 ================================
 
 .. currentmodule:: segregation.network

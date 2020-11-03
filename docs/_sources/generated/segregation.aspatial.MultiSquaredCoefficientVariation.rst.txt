@@ -1,4 +1,4 @@
-segregation.aspatial.MultiSquaredCoefficientVariation
+﻿segregation.aspatial.MultiSquaredCoefficientVariation
 =====================================================
 
 .. currentmodule:: segregation.aspatial

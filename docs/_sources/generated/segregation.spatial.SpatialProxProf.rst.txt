@@ -1,4 +1,4 @@
-segregation.spatial.SpatialProxProf
+﻿segregation.spatial.SpatialProxProf
 ===================================
 
 .. currentmodule:: segregation.spatial

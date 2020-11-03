@@ -1,4 +1,4 @@
-segregation.spatial.AbsoluteClustering
+﻿segregation.spatial.AbsoluteClustering
 ======================================
 
 .. currentmodule:: segregation.spatial

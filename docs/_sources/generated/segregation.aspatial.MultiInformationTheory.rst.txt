@@ -1,4 +1,4 @@
-segregation.aspatial.MultiInformationTheory
+﻿segregation.aspatial.MultiInformationTheory
 ===========================================
 
 .. currentmodule:: segregation.aspatial

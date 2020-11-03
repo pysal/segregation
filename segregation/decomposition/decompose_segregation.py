@@ -107,43 +107,35 @@ class DecomposeSegregation:
     to measure whether the differences between index measures arise from
     differences in spatial structure or population structure
 
-    Parameters
-    ----------
-    index1 : segregation.SegIndex class
-        First SegIndex class to compare.
-    index2 : segregation.SegIndex class
-        Second SegIndex class to compare.
-    counterfactual_approach : str, one of
-                              ["composition", "share", "dual_composition"]
-        The technique used to generate the counterfactual population
-        distributions.
-
-    Attributes
-    ----------
-
-    c_s : float
-        Shapley's Spatial Component of the decomposition
-
-    c_a : float
-        Shapley's Attribute Component of the decomposition
-
-    Methods
-    ----------
-
-    plot : Visualize features of the Decomposition performed
-        plot_type : str, one of ['cdfs', 'maps']
-
-        'cdfs' : visualize the cumulative distribution functions of the compositions/shares
-        'maps' : visualize the spatial distributions for original data and counterfactuals generated and Shapley's components (only available for GeoDataFrames)
-
     Examples
     --------
     Several examples can be found at https://github.com/pysal/segregation/blob/master/notebooks/decomposition_wrapper_example.ipynb.
-
     """
 
     def __init__(self, index1, index2, counterfactual_approach="composition"):
+        """Decompose segregation differences into spatial and attribute components.
 
+        Given two segregation indices of the same type, use Shapley decomposition
+        to measure whether the differences between index measures arise from
+        differences in spatial structure or population structure
+
+        Parameters
+        ----------
+        index1 : segregation.SegIndex class
+            First SegIndex class to compare.
+        index2 : segregation.SegIndex class
+            Second SegIndex class to compare.
+        counterfactual_approach : str, one of {"composition", "share", "dual_composition"}
+            The technique used to generate the counterfactual population
+            distributions.
+
+        Attributes
+        ----------
+        c_s : float
+            Shapley's Spatial Component of the decomposition
+        c_a : float
+            Shapley's Attribute Component of the decomposition
+        """
         aux = _decompose_segregation(index1, index2, counterfactual_approach)
 
         self.c_s = aux[0]
@@ -167,10 +159,9 @@ class DecomposeSegregation:
         suptitle_size=16,
         title_size=12,
         savefig=None,
-        dpi=300
+        dpi=300,
     ):
-        """Plot maps or CDFs of original and counterfactual cities used
-           in calculating the Decomposition class.
+        """Plot maps or CDFs of urban contexts used in calculating the Decomposition class.
 
         Parameters
         ----------
@@ -201,7 +192,7 @@ class DecomposeSegregation:
         -------
         None
             Generates a new matplotlib.Figure instance and optionally saves to disk
-        """        
+        """
         if not city_a:
             city_a = "City A"
         if not city_b:
@@ -217,7 +208,7 @@ class DecomposeSegregation:
             )
             plt.title(
                 f"Spatial Component = {round(self.c_s, 3)}, Attribute Component: {round(self.c_a, 3)}",
-                size=title_size
+                size=title_size,
             )
 
             temp_a = self._counterfac_df1.copy()
@@ -262,7 +253,9 @@ class DecomposeSegregation:
                 k=k,
                 ax=axs[0, 0],
             )
-            axs[0, 0].set_title(f"{city_a}\nOriginal Composition", fontdict={'fontsize': title_size})
+            axs[0, 0].set_title(
+                f"{city_a}\nOriginal Composition", fontdict={"fontsize": title_size}
+            )
             axs[0, 0].axis("off")
 
             # Counterfactual First Context (Bottom Left)
@@ -274,7 +267,10 @@ class DecomposeSegregation:
                 legend=True,
                 ax=axs[1, 0],
             )
-            axs[1, 0].set_title(f"{city_a}\nCounterfactual Composition", fontdict={'fontsize': title_size})
+            axs[1, 0].set_title(
+                f"{city_a}\nCounterfactual Composition",
+                fontdict={"fontsize": title_size},
+            )
             axs[1, 0].axis("off")
 
             # Counterfactual Second Context (Upper Right)
@@ -286,8 +282,10 @@ class DecomposeSegregation:
                 legend=True,
                 ax=axs[0, 1],
             )
-            axs[0, 1].set_title(f"{city_b}\nCounterfactual Composition", fontdict={'fontsize': title_size}
-)
+            axs[0, 1].set_title(
+                f"{city_b}\nCounterfactual Composition",
+                fontdict={"fontsize": title_size},
+            )
             axs[0, 1].axis("off")
 
             # Original Second Context (Bottom Right)
@@ -299,8 +297,9 @@ class DecomposeSegregation:
                 legend=True,
                 ax=axs[1, 1],
             )
-            axs[1, 1].set_title(f"{city_b}\nOriginal Composition", fontdict={'fontsize': title_size}
-)
+            axs[1, 1].set_title(
+                f"{city_b}\nOriginal Composition", fontdict={"fontsize": title_size}
+            )
             axs[1, 1].axis("off")
             if savefig:
                 plt.savefig(savefig, dpi=dpi)

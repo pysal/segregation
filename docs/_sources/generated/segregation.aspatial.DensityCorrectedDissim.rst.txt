@@ -1,4 +1,4 @@
-segregation.aspatial.DensityCorrectedDissim
+﻿segregation.aspatial.DensityCorrectedDissim
 ===========================================
 
 .. currentmodule:: segregation.aspatial

@@ -1,4 +1,4 @@
-segregation.spatial.BoundarySpatialDissim
+﻿segregation.spatial.BoundarySpatialDissim
 =========================================
 
 .. currentmodule:: segregation.spatial

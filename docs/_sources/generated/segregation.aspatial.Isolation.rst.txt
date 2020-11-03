@@ -1,4 +1,4 @@
-segregation.aspatial.Isolation
+﻿segregation.aspatial.Isolation
 ==============================
 
 .. currentmodule:: segregation.aspatial

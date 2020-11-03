@@ -1,4 +1,4 @@
-segregation.local.LocalRelativeCentralization
+﻿segregation.local.LocalRelativeCentralization
 =============================================
 
 .. currentmodule:: segregation.local

@@ -1,4 +1,4 @@
-segregation.spatial.RelativeClustering
+﻿segregation.spatial.RelativeClustering
 ======================================
 
 .. currentmodule:: segregation.spatial

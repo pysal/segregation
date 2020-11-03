@@ -1,4 +1,4 @@
-segregation.decomposition.DecomposeSegregation
+﻿segregation.decomposition.DecomposeSegregation
 ==============================================
 
 .. currentmodule:: segregation.decomposition
