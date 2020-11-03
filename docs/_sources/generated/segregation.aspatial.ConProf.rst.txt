@@ -1,4 +1,4 @@
-segregation.aspatial.ConProf
+﻿segregation.aspatial.ConProf
 ============================
 
 .. currentmodule:: segregation.aspatial

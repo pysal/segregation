@@ -1,4 +1,4 @@
-segregation.local.MultiLocalSimpsonConcentration
+﻿segregation.local.MultiLocalSimpsonConcentration
 ================================================
 
 .. currentmodule:: segregation.local

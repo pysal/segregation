@@ -1,4 +1,4 @@
-segregation.spatial.RelativeConcentration
+﻿segregation.spatial.RelativeConcentration
 =========================================
 
 .. currentmodule:: segregation.spatial

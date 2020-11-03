@@ -1,4 +1,4 @@
-segregation.aspatial.MultiGiniSeg
+﻿segregation.aspatial.MultiGiniSeg
 =================================
 
 .. currentmodule:: segregation.aspatial

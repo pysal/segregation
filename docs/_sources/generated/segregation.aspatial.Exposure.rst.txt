@@ -1,4 +1,4 @@
-segregation.aspatial.Exposure
+﻿segregation.aspatial.Exposure
 =============================
 
 .. currentmodule:: segregation.aspatial

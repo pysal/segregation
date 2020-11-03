@@ -1,4 +1,4 @@
-segregation.spatial.DistanceDecayExposure
+﻿segregation.spatial.DistanceDecayExposure
 =========================================
 
 .. currentmodule:: segregation.spatial

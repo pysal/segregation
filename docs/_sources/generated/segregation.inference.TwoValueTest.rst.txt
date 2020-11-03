@@ -1,4 +1,4 @@
-segregation.inference.TwoValueTest
+﻿segregation.inference.TwoValueTest
 ==================================
 
 .. currentmodule:: segregation.inference

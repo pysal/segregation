@@ -1,4 +1,4 @@
-segregation.local.MultiLocalEntropy
+﻿segregation.local.MultiLocalEntropy
 ===================================
 
 .. currentmodule:: segregation.local

@@ -1,4 +1,4 @@
-segregation.spatial.PerimeterAreaRatioSpatialDissim
+﻿segregation.spatial.PerimeterAreaRatioSpatialDissim
 ===================================================
 
 .. currentmodule:: segregation.spatial

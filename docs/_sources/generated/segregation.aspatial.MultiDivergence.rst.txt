@@ -1,4 +1,4 @@
-segregation.aspatial.MultiDivergence
+﻿segregation.aspatial.MultiDivergence
 ====================================
 
 .. currentmodule:: segregation.aspatial

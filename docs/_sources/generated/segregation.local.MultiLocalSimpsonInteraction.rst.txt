@@ -1,4 +1,4 @@
-segregation.local.MultiLocalSimpsonInteraction
+﻿segregation.local.MultiLocalSimpsonInteraction
 ==============================================
 
 .. currentmodule:: segregation.local

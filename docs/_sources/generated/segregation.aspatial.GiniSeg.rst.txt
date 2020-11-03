@@ -1,4 +1,4 @@
-segregation.aspatial.GiniSeg
+﻿segregation.aspatial.GiniSeg
 ============================
 
 .. currentmodule:: segregation.aspatial

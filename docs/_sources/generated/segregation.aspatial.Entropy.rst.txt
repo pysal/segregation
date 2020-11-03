@@ -1,4 +1,4 @@
-segregation.aspatial.Entropy
+﻿segregation.aspatial.Entropy
 ============================
 
 .. currentmodule:: segregation.aspatial

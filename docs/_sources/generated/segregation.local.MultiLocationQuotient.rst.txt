@@ -1,4 +1,4 @@
-segregation.local.MultiLocationQuotient
+﻿segregation.local.MultiLocationQuotient
 =======================================
 
 .. currentmodule:: segregation.local

@@ -1,4 +1,4 @@
-segregation.aspatial.MultiDissim
+﻿segregation.aspatial.MultiDissim
 ================================
 
 .. currentmodule:: segregation.aspatial

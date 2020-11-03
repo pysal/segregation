@@ -1,4 +1,4 @@
-segregation.compute\_all.ComputeAllSegregation
+﻿segregation.compute\_all.ComputeAllSegregation
 ==============================================
 
 .. currentmodule:: segregation.compute_all

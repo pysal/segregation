@@ -1,4 +1,4 @@
-segregation.aspatial.SimpsonsConcentration
+﻿segregation.aspatial.SimpsonsConcentration
 ==========================================
 
 .. currentmodule:: segregation.aspatial

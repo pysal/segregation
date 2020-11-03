@@ -1,4 +1,4 @@
-segregation.aspatial.CorrelationR
+﻿segregation.aspatial.CorrelationR
 =================================
 
 .. currentmodule:: segregation.aspatial

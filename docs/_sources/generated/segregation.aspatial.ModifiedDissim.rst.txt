@@ -1,4 +1,4 @@
-segregation.aspatial.ModifiedDissim
+﻿segregation.aspatial.ModifiedDissim
 ===================================
 
 .. currentmodule:: segregation.aspatial
