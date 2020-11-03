@@ -169,10 +169,39 @@ class DecomposeSegregation:
         savefig=None,
         dpi=300
     ):
-        """
-        Plot the Segregation Decomposition Profile
-        """
+        """Plot maps or CDFs of original and counterfactual cities used
+           in calculating the Decomposition class.
 
+        Parameters
+        ----------
+        plot_type : str, {'cdfs, 'maps'}
+            which type of plot to generate. Options include `cdfs` and `maps` by default "cdfs"
+        figsize : tuple, optional
+            figsize parameter passed to matplotlib.pyplot
+        city_a : pysal.segregation spatial or aspatial index class, required
+            Fitted segregation class for first urban context
+        city_b : pysal.segregation spatial or aspatial index class, required
+            Fitted segregation class for second urban context, required
+        cmap : str, optional
+            matplotlib colormap used to shade the map, by default "OrRd"
+        scheme : str, optional
+            pysal.mapclassify classification scheme used to shade the map, by default "equalinterval"
+        k : int, optional
+            number of classes in pysal.mapclassify classification scheme, by default 10
+        suptitle_size : int, optional
+            size parameter passed to `matplotlib.Figure.suptitle`, by default 16
+        title_size : int, optional
+            size parameter passed to `matplotlib.Axes.set_title`, by default 12
+        savefig : str, optional
+            Location to save the figure if desired. If None, fig will not be saved
+        dpi : int, optional
+            dpi parameter passed to matplotlib.pyplot, by default 300
+
+        Returns
+        -------
+        None
+            Generates a new matplotlib.Figure instance and optionally saves to disk
+        """        
         if not city_a:
             city_a = "City A"
         if not city_b:
