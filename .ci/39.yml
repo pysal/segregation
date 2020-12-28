@@ -2,7 +2,7 @@ name: test
 channels:
   - conda-forge
 dependencies:
-  - python=3.6
+  - python=3.9
   - pandas
   - geopandas>=0.7
   - matplotlib
@@ -21,3 +21,9 @@ dependencies:
   - tqdm
   - pandana
   - urbanaccess
+  - sphinx>=1.4.3
+  - sphinxcontrib-napoleon
+  - sphinx_gallery
+  - sphinxcontrib-bibtex
+  - sphinx_bootstrap_theme
+  - numpydoc
