@@ -21,3 +21,4 @@ dependencies:
   - tqdm
   - pandana
   - urbanaccess
+  - mapclassify

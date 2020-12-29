@@ -26,4 +26,5 @@ dependencies:
   - sphinx-gallery
   - sphinxcontrib-bibtex
   - sphinx_bootstrap_theme
-  - numpydoc
+  - numpydoc  
+  - mapclassify
