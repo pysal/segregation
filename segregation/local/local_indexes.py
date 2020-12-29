@@ -127,7 +127,7 @@ class MultiLocationQuotient:
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
     >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
-    >>> groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+    >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
     
     The value is estimated below.
     
@@ -137,7 +137,7 @@ class MultiLocationQuotient:
            [1.18002164, 0.        , 0.14836683],
            [0.68072696, 0.03534425, 0.        ]])
 
-    Important to note that column k has the Location Quotient (LQ) of position k in groups. Therefore, the LQ of the first unit of 'WHITE_' is 1.36543221.
+    Important to note that column k has the Location Quotient (LQ) of position k in groups. Therefore, the LQ of the first unit of 'WHITE' is 1.36543221.
     
     Notes
     -----
@@ -233,7 +233,7 @@ class MultiLocalDiversity:
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
     >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
-    >>> groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+    >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
     
     The value is estimated below.
     
@@ -336,7 +336,7 @@ class MultiLocalEntropy:
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
     >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
-    >>> groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+    >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
     
     The value is estimated below.
     
@@ -444,7 +444,7 @@ class MultiLocalSimpsonInteraction:
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
     >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
-    >>> groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+    >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
     
     The value is estimated below.
     
@@ -557,7 +557,7 @@ class MultiLocalSimpsonConcentration:
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
     >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
-    >>> groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+    >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
     
     The value is estimated below.
     
@@ -694,7 +694,7 @@ class LocalRelativeCentralization:
     
     The value is estimated below.
     
-    >>> index = LocalRelativeCentralization(input_df, 'BLACK_', 'TOT_POP')
+    >>> index = LocalRelativeCentralization(input_df, 'BLACK', 'TOT_POP')
     >>> index.statistics[0:10] # Values of first 10 units
     array([ 0.03443055, -0.29063264, -0.19110976,  0.24978919,  0.01252249,
             0.61152941,  0.78917647,  0.53129412,  0.04436346, -0.20216325])

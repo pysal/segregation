@@ -169,10 +169,10 @@ class DecomposeSegregation:
             which type of plot to generate. Options include `cdfs` and `maps` by default "cdfs"
         figsize : tuple, optional
             figsize parameter passed to matplotlib.pyplot
-        city_a : pysal.segregation spatial or aspatial index class, required
-            Fitted segregation class for first urban context
-        city_b : pysal.segregation spatial or aspatial index class, required
-            Fitted segregation class for second urban context, required
+        city_a : str, optional
+            Name of the first "city" to be used in plotting. If None, defaults to 'City A'
+        city_b : str, optional
+            Name of the second "city" to be used in plotting. If None, defaults to 'City B'
         cmap : str, optional
             matplotlib colormap used to shade the map, by default "OrRd"
         scheme : str, optional

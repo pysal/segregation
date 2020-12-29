@@ -9,8 +9,8 @@ from segregation.decomposition import DecomposeSegregation
 class Decomposition_Tester(unittest.TestCase):
     def test_Decomposition(self):
         s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
-        index1 = Dissim(s_map, 'HISP_', 'TOT_POP')
-        index2 = Dissim(s_map, 'BLACK_', 'TOT_POP')
+        index1 = Dissim(s_map, 'HISP', 'TOT_POP')
+        index2 = Dissim(s_map, 'BLACK', 'TOT_POP')
         res = DecomposeSegregation(index1, index2, counterfactual_approach = "composition")
         np.testing.assert_almost_equal(res.c_a, -0.16138819842911295)
         np.testing.assert_almost_equal(res.c_s, -0.005104643275796905)
