@@ -6,7 +6,7 @@ from segregation.network import get_osm_network, calc_access
 
 class Network_Tester(unittest.TestCase):
     def test_calc_access(self):
-        variables = ['WHITE_', 'BLACK_', 'ASIAN_', 'HISP_']
+        variables = ['WHITE', 'BLACK', 'ASIAN', 'HISP']
         s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
         df = s_map[['FIPS', 'geometry'] + variables]
         df = df[df.FIPS.str.startswith('06061')]

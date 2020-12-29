@@ -117,13 +117,13 @@ class ComputeAllAspatialSegregation:
     
     >>> s_map = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
     
-    The data have several demographic variables. We are going to assess the segregation of the Hispanic Population (variable 'HISP_'). For this, we only extract some columns of the geopandas dataframe.
+    The data have several demographic variables. We are going to assess the segregation of the Hispanic Population (variable 'HISP'). For this, we only extract some columns of the geopandas dataframe.
     
-    >>> gdf = s_map[['geometry', 'HISP_', 'TOT_POP']]
+    >>> gdf = s_map[['geometry', 'HISP', 'TOT_POP']]
     
     Now the measures are fitted.
     
-    >>> aspatial_fit = ComputeAllAspatialSegregation(gdf, 'HISP_', 'TOT_POP')
+    >>> aspatial_fit = ComputeAllAspatialSegregation(gdf, 'HISP', 'TOT_POP')
     >>> aspatial_fit.computed
     
     '''
@@ -239,13 +239,13 @@ class ComputeAllSpatialSegregation:
     
     >>> s_map = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
     
-    The data have several demographic variables. We are going to assess the segregation of the Hispanic Population (variable 'HISP_'). For this, we only extract some columns of the geopandas dataframe.
+    The data have several demographic variables. We are going to assess the segregation of the Hispanic Population (variable 'HISP'). For this, we only extract some columns of the geopandas dataframe.
     
-    >>> gdf = s_map[['geometry', 'HISP_', 'TOT_POP']]
+    >>> gdf = s_map[['geometry', 'HISP', 'TOT_POP']]
     
     Now the measures are fitted.
     
-    >>> spatial_fit = ComputeAllSpatialSegregation(gdf, 'HISP_', 'TOT_POP')
+    >>> spatial_fit = ComputeAllSpatialSegregation(gdf, 'HISP', 'TOT_POP')
     >>> spatial_fit.computed
     
     '''
@@ -327,13 +327,13 @@ class ComputeAllSegregation:
     
     >>> s_map = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
     
-    The data have several demographic variables. We are going to assess the segregation of the Hispanic Population (variable 'HISP_'). For this, we only extract some columns of the geopandas dataframe.
+    The data have several demographic variables. We are going to assess the segregation of the Hispanic Population (variable 'HISP'). For this, we only extract some columns of the geopandas dataframe.
     
-    >>> gdf = s_map[['geometry', 'HISP_', 'TOT_POP']]
+    >>> gdf = s_map[['geometry', 'HISP', 'TOT_POP']]
     
     Now the measures are fitted.
     
-    >>> segregation_fit = ComputeAllSegregation(gdf, 'HISP_', 'TOT_POP')
+    >>> segregation_fit = ComputeAllSegregation(gdf, 'HISP', 'TOT_POP')
     >>> segregation_fit.computed
     
     '''

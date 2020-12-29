@@ -9,10 +9,10 @@ from segregation.inference import SingleValueTest, TwoValueTest
 class Inference_Tester(unittest.TestCase):
     def test_Inference(self):
         s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
-        index1 = Dissim(s_map, 'HISP_', 'TOT_POP')
-        index2 = Dissim(s_map, 'BLACK_', 'TOT_POP')
+        index1 = Dissim(s_map, 'HISP', 'TOT_POP')
+        index2 = Dissim(s_map, 'BLACK', 'TOT_POP')
         
-        groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+        groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
         m_index = MultiDissim(s_map, groups_list)
 		
         m_index_1 = MultiDissim(s_map[0:200], groups_list)

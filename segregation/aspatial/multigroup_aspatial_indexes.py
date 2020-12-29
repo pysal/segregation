@@ -136,7 +136,7 @@ class MultiDissim:
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
     >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
-    >>> groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+    >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
     
     The value is estimated below.
     
@@ -250,7 +250,7 @@ class MultiGiniSeg:
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
     >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
-    >>> groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+    >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
     
     The value is estimated below.
     
@@ -355,7 +355,7 @@ class MultiNormalizedExposure:
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
     >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
-    >>> groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+    >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
     
     The value is estimated below.
     
@@ -464,7 +464,7 @@ class MultiInformationTheory:
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
     >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
-    >>> groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+    >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
     
     The value is estimated below.
     
@@ -572,7 +572,7 @@ class MultiRelativeDiversity:
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
     >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
-    >>> groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+    >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
     
     The value is estimated below.
     
@@ -681,7 +681,7 @@ class MultiSquaredCoefficientVariation:
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
     >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
-    >>> groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+    >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
     
     The value is estimated below.
     
@@ -793,7 +793,7 @@ class MultiDiversity:
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
     >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
-    >>> groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+    >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
     
     The value is estimated below.
     
@@ -910,7 +910,7 @@ class SimpsonsConcentration:
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
     >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
-    >>> groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+    >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
     
     The value is estimated below.
     
@@ -1023,7 +1023,7 @@ class SimpsonsInteraction:
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
     >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
-    >>> groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+    >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
     
     The value is estimated below.
     
@@ -1136,7 +1136,7 @@ class MultiDivergence:
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
     
     >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
-    >>> groups_list = ['WHITE_', 'BLACK_', 'ASIAN_','HISP_']
+    >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
     
     The value is estimated below.
     
