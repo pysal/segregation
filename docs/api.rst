@@ -7,6 +7,9 @@ API reference
 
 Aspatial Indices
 ---------------------
+
+.. currentmodule:: segregation
+
 .. autosummary::
    :toctree: generated/
    
@@ -26,6 +29,9 @@ Aspatial Indices
 
 Spatial Indices
 ---------------------
+
+.. currentmodule:: segregation
+
 .. autosummary::
    :toctree: generated/
    
@@ -44,9 +50,22 @@ Spatial Indices
       spatial.AbsoluteCentralization
       spatial.RelativeCentralization
       spatial.SpatialMinMax
-	  
+
+Multi-Scalar Spatial Measures
+----------------------------------
+
+.. currentmodule:: segregation
+
+.. autosummary::
+ :toctree: generated/
+
+ 	   spatial.compute_segregation_profile
+
 Multigroup Indices
 ---------------------
+
+.. currentmodule:: segregation
+
 .. autosummary::
    :toctree: generated/
    
@@ -63,6 +82,9 @@ Multigroup Indices
 	  
 Local Indices
 ---------------------
+
+.. currentmodule:: segregation
+
 .. autosummary::
    :toctree: generated/
    
@@ -75,6 +97,9 @@ Local Indices
 	  
 Batch Compute Wrappers
 ---------------------
+
+.. currentmodule:: segregation
+
 .. autosummary::
    :toctree: generated/
    
@@ -84,6 +109,9 @@ Batch Compute Wrappers
 	  
 Inference Wrappers
 ---------------------
+
+.. currentmodule:: segregation
+
 .. autosummary::
    :toctree: generated/
    
@@ -92,6 +120,9 @@ Inference Wrappers
 	  
 Decomposition
 ---------------------
+
+.. currentmodule:: segregation
+
 .. autosummary::
    :toctree: generated/
   
@@ -99,8 +130,21 @@ Decomposition
 
 Network
 ---------------------
+
+.. currentmodule:: segregation
+
 .. autosummary::
  :toctree: generated/
 
       network.get_osm_network
       network.calc_access
+
+Util
+----------------
+
+.. currentmodule:: segregation
+
+.. autosummary::
+ :toctree: generated/
+
+      util.project_gdf

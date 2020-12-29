@@ -53,7 +53,6 @@ extensions = [#'sphinx_gallery.gen_gallery',
               'matplotlib.sphinxext.plot_directive']
 
 
-
 # sphinx_gallery_conf = {
 #      # path to your examples scripts
 #      'examples_dirs': '../examples',
@@ -146,7 +145,7 @@ html_theme_options = {
 
     # Global TOC depth for "site" navbar tab. (Default: 1)
     # Switching to -1 shows all levels.
-    'globaltoc_depth': 2,
+    'globaltoc_depth': 1,
 
     # Include hidden TOCs in Site navbar?
     #
@@ -268,10 +267,11 @@ texinfo_documents = [
 
 # Generate the API documentation when building
 autosummary_generate = True
-numpydoc_show_class_members = True
+numpydoc_show_class_members = False
 class_members_toctree = True
-numpydoc_show_inherited_class_members = True
+numpydoc_show_inherited_class_members = False
 numpydoc_use_plots = True
+numpydoc_xref_param_type = True
 
 # display the source code for Plot directive
 plot_include_source = True
@@ -280,4 +280,15 @@ def setup(app):
     app.add_stylesheet("pysal-styles.css")
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'https://docs.python.org/3.6/': None}
+intersphinx_mapping = {
+    "esda": ("https://pysal.org/esda/", None),
+    "geopandas": ("https://geopandas.readthedocs.io/en/latest/", None),
+    "libpysal": ("https://pysal.org/libpysal/", None),
+    "matplotlib": ("https://matplotlib.org/", None),
+    "numpy": ("https://numpy.org/doc/stable/", None),
+    "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
+    "python": ("https://docs.python.org/3.9/", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy/reference/", None),
+}
+
+autodoc_default_options = {"members": True, "undoc-members": True}
