@@ -107,35 +107,30 @@ class DecomposeSegregation:
     to measure whether the differences between index measures arise from
     differences in spatial structure or population structure
 
-    Examples
-    --------
-    Several examples can be found at https://github.com/pysal/segregation/blob/master/notebooks/decomposition_wrapper_example.ipynb.
+    Parameters
+    ----------
+    index1 : segregation.SegIndex class
+        First SegIndex class to compare.
+    index2 : segregation.SegIndex class
+        Second SegIndex class to compare.
+    counterfactual_approach : str, one of {"composition", "share", "dual_composition"}
+        The technique used to generate the counterfactual population
+        distributions.
+
+    Attributes
+    ----------
+    c_s : float
+        Shapley's Spatial Component of the decomposition
+    c_a : float
+        Shapley's Attribute Component of the decomposition
+    indices : dict
+        Dictionary of index values for all four combinations of spatial/attribute data
+
+
     """
 
     def __init__(self, index1, index2, counterfactual_approach="composition"):
-        """Decompose segregation differences into spatial and attribute components.
-
-        Given two segregation indices of the same type, use Shapley decomposition
-        to measure whether the differences between index measures arise from
-        differences in spatial structure or population structure
-
-        Parameters
-        ----------
-        index1 : segregation.SegIndex class
-            First SegIndex class to compare.
-        index2 : segregation.SegIndex class
-            Second SegIndex class to compare.
-        counterfactual_approach : str, one of {"composition", "share", "dual_composition"}
-            The technique used to generate the counterfactual population
-            distributions.
-
-        Attributes
-        ----------
-        c_s : float
-            Shapley's Spatial Component of the decomposition
-        c_a : float
-            Shapley's Attribute Component of the decomposition
-        """
+        """Initialize class."""
         aux = _decompose_segregation(index1, index2, counterfactual_approach)
 
         self.c_s = aux[0]
