@@ -86,28 +86,7 @@ __all__ = [
 np.seterr(divide='ignore', invalid='ignore')
 
 
-def _build_local_environment(data, groups, w):
-    """Convert observations into spatially-weighted sums.
 
-    Parameters
-    ----------
-    data : DataFrame
-        dataframe with local observations
-    w : libpysal.weights object
-        weights matrix defining the local environment
-
-    Returns
-    -------
-    DataFrame
-        Spatialized data
-
-    """
-    new_data = []
-    w = fill_diagonal(w)
-    for y in data[groups]:
-        new_data.append(lag_spatial(w, data[y]))
-    new_data = pd.DataFrame(dict(zip(groups, new_data)))
-    return new_data
 
 
 def _return_length_weighted_w(data):
