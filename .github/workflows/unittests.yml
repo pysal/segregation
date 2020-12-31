@@ -6,6 +6,8 @@
    pull_request:
      branches:
      - '*'
+   schedule:
+     - cron: '59 23 * * *'
 
  jobs:
    unittests:
@@ -46,9 +48,7 @@
        - run: conda config --show
        - run: pip install -e . --no-deps --force-reinstall
        - name: Pytest
-         shell: bash -l {0}
-         run: |
-           pytest -v segregation --cov=segregation --cov-report=xml
+         run: pytest -v segregation --cov=segregation --cov-report=xml
        - name: codecov (${{ matrix.os }}, ${{ matrix.environment-file }})
          uses: codecov/codecov-action@v1
          with:
