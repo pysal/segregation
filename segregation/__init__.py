@@ -4,5 +4,5 @@ __version__ = "1.5.0"
 =================================================
 
 """
-from .singlegroup import MinMax
+from .singlegroup import *
 from .util import *

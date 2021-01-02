@@ -1,5 +1,5 @@
 """
-MinMax Segregation Index
+Gini Segregation Index
 """
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
@@ -9,14 +9,12 @@ import pandas as pd
 import geopandas as gpd
 from .._base import (
     SingleGroupIndex,
-    MultiGroupIndex,
-    SpatialExplicitIndex,
     SpatialImplicitIndex,
 )
 
 
-def _min_max(data, group_pop_var, total_pop_var):
-    """Calculate MinMax index.
+def _gini_seg(data, group_pop_var, total_pop_var):
+    """Calculate Gini segregation index.
 
     Parameters
     ----------
@@ -36,26 +34,27 @@ def _min_max(data, group_pop_var, total_pop_var):
 
     Notes
     -----
-    Based on O'Sullivan & Wong (2007). A Surface‐Based Approach to Measuring Spatial Segregation.
-    Geographical Analysis 39 (2). https://doi.org/10.1111/j.1538-4632.2007.00699.x
+    Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
 
-    Reference: :cite:`osullivanwong2007surface`.
-
-    We'd like to thank @AnttiHaerkoenen for this contribution!
-
+    Reference: :cite:`massey1988dimensions`.
     """
-    data["group_1_pop_var_norm"] = data[group_pop_var] / data[group_pop_var].sum()
-    data["group_2_pop_var_norm"] = (
-        data["group_2_pop_var"] / data["group_2_pop_var"].sum()
+    T = data[total_pop_var].sum()
+    P = data[group_pop_var].sum() / T
+
+    # If a unit has zero population, the group of interest frequency is zero
+    data = data.assign(
+        ti=data[total_pop_var],
+        pi=np.where(
+            data[total_pop_var] == 0, 0, data[group_pop_var] / data[total_pop_var]
+        ),
     )
 
-    density_1 = data["group_1_pop_var_norm"].values
-    density_2 = data["group_2_pop_var_norm"].values
-    densities = np.vstack([density_1, density_2])
-    v_union = densities.max(axis=0).sum()
-    v_intersect = densities.min(axis=0).sum()
-
-    MM = 1 - v_intersect / v_union
+    num = (
+        np.matmul(np.array(data.ti)[np.newaxis].T, np.array(data.ti)[np.newaxis])
+        * abs(np.array(data.pi)[np.newaxis].T - np.array(data.pi)[np.newaxis])
+    ).sum()
+    den = 2 * T ** 2 * P * (1 - P)
+    G = num / den
 
     if not isinstance(data, gpd.GeoDataFrame):
         data = data[[group_pop_var, total_pop_var]]
@@ -63,11 +62,11 @@ def _min_max(data, group_pop_var, total_pop_var):
     else:
         data = data[[group_pop_var, total_pop_var, data.geometry.name]]
 
-    return MM, data
+    return G, data
 
 
-class MinMax(SingleGroupIndex, SpatialImplicitIndex):
-    """Calculate SpatialMinMax.
+class Gini(SingleGroupIndex, SpatialImplicitIndex):
+    """Gini Index.
 
     Parameters
     ----------
@@ -97,13 +96,9 @@ class MinMax(SingleGroupIndex, SpatialImplicitIndex):
 
     Notes
     -----
-    Based on O'Sullivan & Wong (2007). A Surface‐Based Approach to Measuring Spatial Segregation.
-    Geographical Analysis 39 (2). https://doi.org/10.1111/j.1538-4632.2007.00699.x
+    Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
 
-    Reference: :cite:`osullivanwong2007surface`.
-
-    We'd like to thank @AnttiHaerkoenen for this contribution!
-
+    Reference: :cite:`massey1988dimensions`.
     """
 
     def __init__(
@@ -118,11 +113,12 @@ class MinMax(SingleGroupIndex, SpatialImplicitIndex):
         precompute=None,
     ):
         """Init."""
+
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
         if any([w, network, distance]):
             SpatialImplicitIndex.__init__(self, w, network, distance, decay, precompute)
-        aux = _min_max(self.data, self.group_pop_var, self.total_pop_var)
+        aux = _gini_seg(self.data, self.group_pop_var, self.total_pop_var)
 
         self.statistic = aux[0]
         self.data = aux[1]
-        self._function = _min_max
+        self._function = _gini_seg

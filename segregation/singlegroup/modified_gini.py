@@ -1,22 +1,19 @@
-"""
-MinMax Segregation Index
-"""
+"""Modified Gini Segregation Index."""
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
 import numpy as np
 import pandas as pd
 import geopandas as gpd
+from .gini import _gini_seg
 from .._base import (
     SingleGroupIndex,
-    MultiGroupIndex,
-    SpatialExplicitIndex,
     SpatialImplicitIndex,
 )
 
 
-def _min_max(data, group_pop_var, total_pop_var):
-    """Calculate MinMax index.
+def _modified_gini(data, group_pop_var, total_pop_var, iterations=500):
+    """Calculation of Modified Gini index.
 
     Parameters
     ----------
@@ -26,48 +23,63 @@ def _min_max(data, group_pop_var, total_pop_var):
         Variable containing the population count of the group of interest
     total_pop_var : string
         Variable in data that contains the total population count of the unit
+    iterations : int
+        The number of iterations the evaluate average classic dissimilarity under eveness.
+        Default value is 500.
 
     Returns
     ----------
     statistic : float
-        MinMax index statistic value
-    core_data : pandas.DataFrame
-        A pandas DataFrame that contains the columns used to perform the estimate.
+                Modified Gini Index (Gini from Carrington and Troske (1997))
+    data : pandas.DataFrame
+        pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on O'Sullivan & Wong (2007). A Surface‐Based Approach to Measuring Spatial Segregation.
-    Geographical Analysis 39 (2). https://doi.org/10.1111/j.1538-4632.2007.00699.x
+    Based on Carrington, William J., and Kenneth R. Troske. "On measuring segregation in samples with small units." Journal of Business & Economic Statistics 15.4 (1997): 402-409.
 
-    Reference: :cite:`osullivanwong2007surface`.
-
-    We'd like to thank @AnttiHaerkoenen for this contribution!
-
+    Reference: :cite:`carrington1997measuring`.
     """
-    data["group_1_pop_var_norm"] = data[group_pop_var] / data[group_pop_var].sum()
-    data["group_2_pop_var_norm"] = (
-        data["group_2_pop_var"] / data["group_2_pop_var"].sum()
-    )
 
-    density_1 = data["group_1_pop_var_norm"].values
-    density_2 = data["group_2_pop_var_norm"].values
-    densities = np.vstack([density_1, density_2])
-    v_union = densities.max(axis=0).sum()
-    v_intersect = densities.min(axis=0).sum()
+    D = _gini_seg(data, group_pop_var, total_pop_var)[0]
 
-    MM = 1 - v_intersect / v_union
+    x = np.array(data[group_pop_var].astype(int))
+    t = np.array(data[total_pop_var].astype(int))
+
+    p_null = x.sum() / t.sum()
+
+    Ds = np.empty(iterations)
+
+    for i in np.array(range(iterations)):
+
+        freq_sim = np.random.binomial(
+            n=np.array([t.tolist()]),
+            p=np.array([[p_null] * data.shape[0]]),
+            size=(1, data.shape[0]),
+        ).tolist()[0]
+        data[group_pop_var] = freq_sim
+        # data = data.assign(group_pop_var=freq_sim)
+        aux = _gini_seg(data, group_pop_var, total_pop_var)[0]
+        Ds[i] = aux
+
+    D_star = Ds.mean()
+
+    if D >= D_star:
+        Dct = (D - D_star) / (1 - D_star)
+    else:
+        Dct = (D - D_star) / D_star
 
     if not isinstance(data, gpd.GeoDataFrame):
-        data = data[[group_pop_var, total_pop_var]]
+        core_data = data[[group_pop_var, total_pop_var]]
 
     else:
-        data = data[[group_pop_var, total_pop_var, data.geometry.name]]
+        core_data = data[[group_pop_var, total_pop_var, data.geometry.name]]
 
-    return MM, data
+    return Dct, core_data
 
 
-class MinMax(SingleGroupIndex, SpatialImplicitIndex):
-    """Calculate SpatialMinMax.
+class ModifiedGini(SingleGroupIndex, SpatialImplicitIndex):
+    """Modified Gini Index.
 
     Parameters
     ----------
@@ -97,13 +109,9 @@ class MinMax(SingleGroupIndex, SpatialImplicitIndex):
 
     Notes
     -----
-    Based on O'Sullivan & Wong (2007). A Surface‐Based Approach to Measuring Spatial Segregation.
-    Geographical Analysis 39 (2). https://doi.org/10.1111/j.1538-4632.2007.00699.x
+    Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
 
-    Reference: :cite:`osullivanwong2007surface`.
-
-    We'd like to thank @AnttiHaerkoenen for this contribution!
-
+    Reference: :cite:`massey1988dimensions`.
     """
 
     def __init__(
@@ -111,6 +119,7 @@ class MinMax(SingleGroupIndex, SpatialImplicitIndex):
         data,
         group_pop_var,
         total_pop_var,
+        iterations=500,
         w=None,
         network=None,
         distance=None,
@@ -118,11 +127,14 @@ class MinMax(SingleGroupIndex, SpatialImplicitIndex):
         precompute=None,
     ):
         """Init."""
+
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
         if any([w, network, distance]):
             SpatialImplicitIndex.__init__(self, w, network, distance, decay, precompute)
-        aux = _min_max(self.data, self.group_pop_var, self.total_pop_var)
+        aux = _modified_gini(
+            self.data, self.group_pop_var, self.total_pop_var, iterations
+        )
 
         self.statistic = aux[0]
         self.data = aux[1]
-        self._function = _min_max
+        self._function = _modified_gini
