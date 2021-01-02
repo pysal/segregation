@@ -7,6 +7,7 @@ from libpysal.weights.distance import Kernel
 from libpysal.weights.util import fill_diagonal
 
 from .util.util import _nan_handle
+from .util import calc_access
 
 
 class SingleGroupIndex:
@@ -89,6 +90,10 @@ class SpatialExplicitIndex:
 
     def __init__(self):
         """Initialize spatially explicit index."""
+        if not isinstance(self.data, gpd.GeoDataFrame):
+            raise TypeError(
+                "`data` must be a geopanads.GeoDataFrame with a vaild geometry column"
+            )
         self.spatial_type = "explicit"
 
 
@@ -124,7 +129,7 @@ class SpatialImplicitIndex:
                  but not both"
             )
         if network:
-            df = calc_access(
+            self.data = calc_access(
                 self.data,
                 variables=self.groups,
                 network=network,
@@ -132,7 +137,7 @@ class SpatialImplicitIndex:
                 decay=decay,
                 precompute=precompute,
             )
-            self._groups = ["acc_" + group for group in self.__groups]
+            # self._groups = ["acc_" + group for group in self.__groups]
             self.network = network
         elif w:
             self.data = _build_local_environment(self.data, self._groups, w)

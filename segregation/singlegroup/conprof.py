@@ -1,5 +1,5 @@
 """
-MinMax Segregation Index
+ConProf Segregation Index
 """
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
@@ -9,14 +9,12 @@ import pandas as pd
 import geopandas as gpd
 from .._base import (
     SingleGroupIndex,
-    MultiGroupIndex,
-    SpatialExplicitIndex,
     SpatialImplicitIndex,
 )
 
 
-def _min_max(data, group_pop_var, total_pop_var):
-    """Calculate MinMax index.
+def _conprof(data, group_pop_var, total_pop_var, m=1000):
+    """Calculation of Concentration Profile.
 
     Parameters
     ----------
@@ -36,38 +34,44 @@ def _min_max(data, group_pop_var, total_pop_var):
 
     Notes
     -----
-    Based on O'Sullivan & Wong (2007). A Surface‐Based Approach to Measuring Spatial Segregation.
-    Geographical Analysis 39 (2). https://doi.org/10.1111/j.1538-4632.2007.00699.x
+    Based on Hong, Seong-Yun, and Yukio Sadahiro. "Measuring geographic segregation: a graph-based approach." Journal of Geographical Systems 16.2 (2014): 211-231.
 
-    Reference: :cite:`osullivanwong2007surface`.
-
-    We'd like to thank @AnttiHaerkoenen for this contribution!
+    Reference: :cite:`hong2014measuring`.
 
     """
-    data["group_1_pop_var_norm"] = data[group_pop_var] / data[group_pop_var].sum()
-    data["group_2_pop_var_norm"] = (
-        data["group_2_pop_var"] / data["group_2_pop_var"].sum()
-    )
+    if type(m) is not int:
+        raise TypeError("m must be a string.")
 
-    density_1 = data["group_1_pop_var_norm"].values
-    density_2 = data["group_2_pop_var_norm"].values
-    densities = np.vstack([density_1, density_2])
-    v_union = densities.max(axis=0).sum()
-    v_intersect = densities.min(axis=0).sum()
+    if m < 2:
+        raise ValueError("m must be greater than 1.")
 
-    MM = 1 - v_intersect / v_union
+    x = np.array(data[group_pop_var])
+    t = np.array(data[total_pop_var])
 
-    if not isinstance(data, gpd.GeoDataFrame):
-        data = data[[group_pop_var, total_pop_var]]
+    if any(t < x):
+        raise ValueError(
+            "Group of interest population must equal or lower than the total population of the units."
+        )
 
-    else:
-        data = data[[group_pop_var, total_pop_var, data.geometry.name]]
+    def calculate_vt(th):
+        g_t_i = np.where(x / t >= th, 1, 0)
+        v_t = (g_t_i * x).sum() / x.sum()
+        return v_t
 
-    return MM, data
+    grid = np.linspace(0, 1, m)
+    curve = np.array(list(map(calculate_vt, grid)))
+
+    threshold = x.sum() / t.sum()
+    R = (
+        threshold
+        - ((curve[grid < threshold]).sum() / m - (curve[grid >= threshold]).sum() / m)
+    ) / (1 - threshold)
+
+    return R, grid, curve, data
 
 
-class MinMax(SingleGroupIndex, SpatialImplicitIndex):
-    """Calculate SpatialMinMax.
+class ConProf(SingleGroupIndex, SpatialImplicitIndex):
+    """ConProf Index.
 
     Parameters
     ----------
@@ -97,13 +101,9 @@ class MinMax(SingleGroupIndex, SpatialImplicitIndex):
 
     Notes
     -----
-    Based on O'Sullivan & Wong (2007). A Surface‐Based Approach to Measuring Spatial Segregation.
-    Geographical Analysis 39 (2). https://doi.org/10.1111/j.1538-4632.2007.00699.x
+    Based on Hong, Seong-Yun, and Yukio Sadahiro. "Measuring geographic segregation: a graph-based approach." Journal of Geographical Systems 16.2 (2014): 211-231.
 
-    Reference: :cite:`osullivanwong2007surface`.
-
-    We'd like to thank @AnttiHaerkoenen for this contribution!
-
+    Reference: :cite:`hong2014measuring`.
     """
 
     def __init__(
@@ -118,11 +118,23 @@ class MinMax(SingleGroupIndex, SpatialImplicitIndex):
         precompute=None,
     ):
         """Init."""
+
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
         if any([w, network, distance]):
             SpatialImplicitIndex.__init__(self, w, network, distance, decay, precompute)
-        aux = _min_max(self.data, self.group_pop_var, self.total_pop_var)
+        aux = _conprof(self.data, self.group_pop_var, self.total_pop_var)
 
         self.statistic = aux[0]
-        self.data = aux[1]
-        self._function = _min_max
+        self.grid = aux[1]
+        self.curve = aux[2]
+        self.core_data = aux[3]
+        self._function = _conprof
+
+    def plot(self):
+        """Plot the Concentration Profile."""
+        try:
+            import matplotlib.pyplot as plt
+        except ImportError:
+            raise ImportError("plotting requires `matplotlib`")
+        graph = plt.scatter(self.grid, self.curve, s=0.1)
+        return graph
