@@ -1,4 +1,4 @@
-"""Multigroup dissimilarity index"""
+"""Multigroup Divergence index"""
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
@@ -9,35 +9,37 @@ from .._base import MultiGroupIndex, SpatialImplicitIndex
 np.seterr(divide="ignore", invalid="ignore")
 
 
-def _multi_dissim(data, groups):
-    """Calculation of Multigroup Dissimilarity index.
+def _multi_divergence(data, groups):
+    """
+    Calculation of Multigroup Divergence index
 
     Parameters
     ----------
-    data : pandas.DataFrame
-        DataFrame holding counts of population groups
+
+    data   : a pandas DataFrame
+    
     groups : list of strings.
-        The variables names in data of the groups of interest of the analysis.
+             The variables names in data of the groups of interest of the analysis.
 
     Returns
     -------
+
     statistic : float
-        Multigroup Dissimilarity Index
-    core_data : pandas.DataFrame
-        DataFrame that contains the columns used to perform the estimate.
+                Multigroup Divergence Index
+                
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on Sakoda, James M. "A generalized index of dissimilarity." Demography 18.2 (1981): 245-250.
-
-    Reference: :cite:`sakoda1981generalized`.
+    Based on Roberto, Elizabeth. "The Divergence Index: A Decomposable Measure of Segregation and Inequality." arXiv preprint arXiv:1508.01167 (2015).
+    
+    Reference: :cite:`roberto2015divergence`.
 
     """
+
     core_data = data[groups]
     df = np.array(core_data)
-
-    n = df.shape[0]
-    K = df.shape[1]
 
     T = df.sum()
 
@@ -45,19 +47,15 @@ def _multi_dissim(data, groups):
     pik = df / ti[:, None]
     Pk = df.sum(axis=0) / df.sum()
 
-    Is = (Pk * (1 - Pk)).sum()
+    Di = np.nansum(pik * np.log(pik / Pk), axis=1)
 
-    multi_D = (
-        1
-        / (2 * T * Is)
-        * np.multiply(abs(pik - Pk), np.repeat(ti, K, axis=0).reshape(n, K)).sum()
-    )
+    Divergence_Index = ((ti / T) * Di).sum()
 
-    return multi_D, core_data, groups
+    return Divergence_Index, core_data, groups
 
 
-class MultiDissim(MultiGroupIndex, SpatialImplicitIndex):
-    """Dissimilarity Index.
+class MultiDivergence(MultiGroupIndex, SpatialImplicitIndex):
+    """Multi Divergence Index.
 
     Parameters
     ----------
@@ -99,9 +97,9 @@ class MultiDissim(MultiGroupIndex, SpatialImplicitIndex):
         MultiGroupIndex.__init__(self, data, groups)
         if any([w, network, distance]):
             SpatialImplicitIndex.__init__(self, w, network, distance, decay, precompute)
-        aux = _multi_dissim(self.data, self.groups)
+        aux = _multi_divergence(self.data, self.groups)
 
         self.statistic = aux[0]
         self.data = aux[1]
         self.groups = aux[2]
-        self._function = _multi_dissim
+        self._function = _multi_divergence

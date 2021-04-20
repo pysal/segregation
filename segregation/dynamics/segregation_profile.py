@@ -3,7 +3,6 @@
 import numpy as np
 import pandas as pd
 from libpysal.weights import Kernel
-from .._base import SingleGroupIndex, MultiGroupIndex
 
 
 def compute_multiscalar_profile(
@@ -17,6 +16,7 @@ def compute_multiscalar_profile(
     decay="linear",
     function="triangular",
     precompute=True,
+    index_type=None,
 ):
     """Compute multiscalar segregation profile.
 
@@ -56,6 +56,9 @@ def compute_multiscalar_profile(
         segregation profiles using the same network, then you can set this
         parameter to `False` to avoid precomputing repeatedly inside the
         function
+    index_type : str options: {single_group, multi_group}
+        Whether the index is a single-group or -multigroup index
+
 
     Returns
     -------
@@ -74,13 +77,17 @@ def compute_multiscalar_profile(
     gdf = gdf.copy()
     indices = {}
 
-    if isinstance(segregation_index, MultiGroupIndex):
+    if index_type == "multi_group":
         gdf[groups] = gdf[groups].astype(float)
         indices[0] = segregation_index(gdf, groups=groups).statistic
-    else:
+    elif index_type == "single_group":
         indices[0] = segregation_index(
             gdf, group_pop_var=group_pop_var, total_pop_var=total_pop_var,
         ).statistic
+    else:
+        raise AttributeError(
+            "The `index_type` parameter must be either `single_group` or `multi_group`"
+        )
     if network:
         if not gdf.crs.name == "WGS 84":
             gdf = gdf.to_crs(epsg=4326)
@@ -89,7 +96,7 @@ def compute_multiscalar_profile(
             network.precompute(maxdist)
         for distance in distances:
             distance = np.float(distance)
-            if isinstance(segregation_index, SingleGroupIndex):
+            if index_type == "single_group":
                 idx = segregation_index(
                     gdf,
                     group_pop_var=group_pop_var,
@@ -100,7 +107,7 @@ def compute_multiscalar_profile(
                     distance=distance,
                     precompute=False,
                 )
-            else:
+            elif index_type == "milti_group":
                 idx = segregation_index(
                     gdf,
                     groups=groups,
@@ -110,15 +117,21 @@ def compute_multiscalar_profile(
                     distance=distance,
                     precompute=False,
                 )
+            else:
+                raise UserError(
+                    "The `index_type` parameter must be set to either `single_group` or `multi_group"
+                )
             indices[distance] = idx.statistic
     else:
         for distance in distances:
             w = Kernel.from_dataframe(gdf, bandwidth=distance, function=function)
-            if isinstance(segregation_index, MultiGroupIndex):
-                idx = segregation_index(gdf, groups, w=w)
-            else:
+            if index_type == "single_group":
                 idx = segregation_index(
                     gdf, group_pop_var=group_pop_var, total_pop_var=total_pop_var, w=w
                 )
+            else:
+                idx = segregation_index(gdf, groups, w=w)
             indices[distance] = idx.statistic
-    return pd.Series(indices)
+        series = pd.Series(indices, name=str(type(idx)).split(".")[-1][:-2])
+        series.index.name = "distance"
+    return series
