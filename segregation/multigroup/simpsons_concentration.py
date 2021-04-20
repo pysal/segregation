@@ -98,11 +98,12 @@ class SimpsonsConcentration(MultiGroupIndex, SpatialImplicitIndex):
         distance=None,
         decay=None,
         precompute=None,
+        function='triangular'
     ):
         """Init."""
         MultiGroupIndex.__init__(self, data, groups)
         if any([w, network, distance]):
-            SpatialImplicitIndex.__init__(self, w, network, distance, decay, precompute)
+            SpatialImplicitIndex.__init__(self, w, network, distance, decay, function, precompute)
         aux = _simpsons_concentration(self.data, self.groups)
 
         self.statistic = aux[0]

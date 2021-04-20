@@ -115,6 +115,7 @@ class Entropy(SingleGroupIndex, SpatialImplicitIndex):
         distance=None,
         decay=None,
         precompute=None,
+        function='triangular'
     ):
         """Init."""
 

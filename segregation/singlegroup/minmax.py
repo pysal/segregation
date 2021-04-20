@@ -113,12 +113,13 @@ class MinMax(SingleGroupIndex, SpatialImplicitIndex):
         network=None,
         distance=None,
         decay=None,
+        function='triangular',
         precompute=None,
     ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
         if any([w, network, distance]):
-            SpatialImplicitIndex.__init__(self, w, network, distance, decay, precompute)
+            SpatialImplicitIndex.__init__(self, w, network, distance, decay, function, precompute)
         aux = _min_max(self.data, self.group_pop_var, self.total_pop_var)
 
         self.statistic = aux[0]

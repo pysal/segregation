@@ -15,7 +15,7 @@ def compute_multiscalar_profile(
     network=None,
     decay="linear",
     function="triangular",
-    precompute=True,
+    precompute=False,
     index_type=None,
 ):
     """Compute multiscalar segregation profile.
@@ -103,22 +103,20 @@ def compute_multiscalar_profile(
                     total_pop_var=total_pop_var,
                     network=network,
                     decay=decay,
-                    variables=groups,
                     distance=distance,
                     precompute=False,
                 )
-            elif index_type == "milti_group":
+            elif index_type == "multi_group":
                 idx = segregation_index(
                     gdf,
                     groups=groups,
                     network=network,
                     decay=decay,
-                    variables=groups,
                     distance=distance,
                     precompute=False,
                 )
             else:
-                raise UserError(
+                raise AttributeError(
                     "The `index_type` parameter must be set to either `single_group` or `multi_group"
                 )
             indices[distance] = idx.statistic
@@ -132,6 +130,6 @@ def compute_multiscalar_profile(
             else:
                 idx = segregation_index(gdf, groups, w=w)
             indices[distance] = idx.statistic
-        series = pd.Series(indices, name=str(type(idx)).split(".")[-1][:-2])
-        series.index.name = "distance"
+    series = pd.Series(indices, name=str(type(idx)).split(".")[-1][:-2])
+    series.index.name = "distance"
     return series
