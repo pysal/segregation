@@ -9,8 +9,6 @@ import pandas as pd
 import geopandas as gpd
 from .._base import (
     SingleGroupIndex,
-    MultiGroupIndex,
-    SpatialExplicitIndex,
     SpatialImplicitIndex,
 )
 

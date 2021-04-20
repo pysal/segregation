@@ -2,7 +2,7 @@ import unittest
 from libpysal.examples import load_example
 import geopandas as gpd
 import numpy as np
-from segregation.aspatial import Atkinson
+from segregation.singlegroup import Atkinson
 
 
 class Atkinson_Tester(unittest.TestCase):

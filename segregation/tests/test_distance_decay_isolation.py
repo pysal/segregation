@@ -2,7 +2,7 @@ import unittest
 from libpysal.examples import load_example
 import geopandas as gpd
 import numpy as np
-from segregation.spatial import DistanceDecayIsolation
+from segregation.singlegroup import DistanceDecayIsolation
 
 
 class Distance_Decay_Isolation_Tester(unittest.TestCase):

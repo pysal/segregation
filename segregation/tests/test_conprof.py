@@ -2,7 +2,7 @@ import unittest
 from libpysal.examples import load_example
 import geopandas as gpd
 import numpy as np
-from segregation.aspatial import ConProf
+from segregation.singlegroup import ConProf
 
 
 class Con_Prof_Tester(unittest.TestCase):

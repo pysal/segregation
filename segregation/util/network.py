@@ -5,7 +5,7 @@ __author__ = "Elijah Knaap <elijah.knaap@ucr.edu> Renan X. Cortes <renanc@ucr.ed
 import numpy as np
 import pandas as pd
 from warnings import warn
-from segregation.util import project_gdf
+from segregation.util.util import project_gdf
 import os
 import sys
 

@@ -2,7 +2,7 @@ import unittest
 from libpysal.examples import load_example
 import geopandas as gpd
 import numpy as np
-from segregation.spatial import SpatialProxProf
+from segregation.singlegroup import SpatialProxProf
 
 
 class Spatial_Prox_Prof_Tester(unittest.TestCase):
