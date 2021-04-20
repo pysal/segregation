@@ -2,7 +2,7 @@ import unittest
 from libpysal.examples import load_example
 import geopandas as gpd
 import numpy as np
-from segregation.spatial import AbsoluteCentralization
+from segregation.singlegroup import AbsoluteCentralization
 
 
 class Absolute_Centralization_Tester(unittest.TestCase):

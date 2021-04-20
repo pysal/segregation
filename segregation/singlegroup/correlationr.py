@@ -42,10 +42,6 @@ def _correlationr(data, group_pop_var, total_pop_var):
     x = np.array(data[group_pop_var])
     t = np.array(data[total_pop_var])
 
-    assert all(
-        t > x
-    ), "Group of interest population must equal or lower than the total population of the units."
-
     X = x.sum()
     T = t.sum()
     P = X / T

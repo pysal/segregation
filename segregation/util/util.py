@@ -29,7 +29,13 @@ def _nan_handle(df):
 
 
 def _generate_counterfactual(
-    data1, data2, group_pop_var, total_pop_var, counterfactual_approach="composition"
+    data1,
+    data2,
+    group_pop_var1,
+    total_pop_var1,
+    group_pop_var2,
+    total_pop_var2,
+    counterfactual_approach="composition",
 ):
     """Generate a counterfactual variables.
 
@@ -61,21 +67,18 @@ def _generate_counterfactual(
         df1 and df2  with appended columns 'counterfactual_group_pop', 'counterfactual_total_pop', 'group_composition' and 'counterfactual_composition'
 
     """
-    if (type(group_pop_var) is not str) or (type(total_pop_var) is not str):
-        raise TypeError("group_pop_var and total_pop_var must be strings")
-
-    if (group_pop_var not in data1.columns) or (total_pop_var not in data1.columns):
+    if (group_pop_var1 not in data1.columns) or (total_pop_var1 not in data1.columns):
         raise ValueError("group_pop_var and total_pop_var must be variables of data1")
 
-    if (group_pop_var not in data2.columns) or (total_pop_var not in data2.columns):
+    if (group_pop_var2 not in data2.columns) or (total_pop_var2 not in data2.columns):
         raise ValueError("group_pop_var and total_pop_var must be variables of data2")
 
-    if any(data1[total_pop_var] < data1[group_pop_var]):
+    if any(data1[total_pop_var1] < data1[group_pop_var1]):
         raise ValueError(
             "Group of interest population must equal or lower than the total population of the units in data1."
         )
 
-    if any(data2[total_pop_var] < data2[group_pop_var]):
+    if any(data2[total_pop_var2] < data2[group_pop_var2]):
         raise ValueError(
             "Group of interest population must equal or lower than the total population of the units in data2."
         )
@@ -86,38 +89,38 @@ def _generate_counterfactual(
     if counterfactual_approach == "composition":
 
         df1["group_composition"] = np.where(
-            df1[total_pop_var] == 0, 0, df1[group_pop_var] / df1[total_pop_var]
+            df1[total_pop_var1] == 0, 0, df1[group_pop_var1] / df1[total_pop_var1]
         )
         df2["group_composition"] = np.where(
-            df2[total_pop_var] == 0, 0, df2[group_pop_var] / df2[total_pop_var]
+            df2[total_pop_var2] == 0, 0, df2[group_pop_var2] / df2[total_pop_var2]
         )
 
         df1["counterfactual_group_pop"] = (
             df1["group_composition"]
             .rank(pct=True)
             .apply(df2["group_composition"].quantile)
-            * df1[total_pop_var]
+            * df1[total_pop_var1]
         )
         df2["counterfactual_group_pop"] = (
             df2["group_composition"]
             .rank(pct=True)
             .apply(df1["group_composition"].quantile)
-            * df2[total_pop_var]
+            * df2[total_pop_var2]
         )
 
-        df1["counterfactual_total_pop"] = df1[total_pop_var]
-        df2["counterfactual_total_pop"] = df2[total_pop_var]
+        df1["counterfactual_total_pop"] = df1[total_pop_var1]
+        df2["counterfactual_total_pop"] = df2[total_pop_var2]
 
     if counterfactual_approach == "share":
 
-        df1["compl_pop_var"] = df1[total_pop_var] - df1[group_pop_var]
-        df2["compl_pop_var"] = df2[total_pop_var] - df2[group_pop_var]
+        df1["compl_pop_var"] = df1[total_pop_var1] - df1[group_pop_var1]
+        df2["compl_pop_var"] = df2[total_pop_var2] - df2[group_pop_var2]
 
         df1["share"] = np.where(
-            df1[total_pop_var] == 0, 0, df1[group_pop_var] / df1[group_pop_var].sum()
+            df1[total_pop_var1] == 0, 0, df1[group_pop_var1] / df1[group_pop_var1].sum()
         )
         df2["share"] = np.where(
-            df2[total_pop_var] == 0, 0, df2[group_pop_var] / df2[group_pop_var].sum()
+            df2[total_pop_var2] == 0, 0, df2[group_pop_var2] / df2[group_pop_var2].sum()
         )
 
         df1["compl_share"] = np.where(
@@ -139,12 +142,12 @@ def _generate_counterfactual(
         df1["counterfactual_group_pop"] = (
             df1["share"].rank(pct=True).apply(df2["share"].quantile)
             / CT1_2_group
-            * df1[group_pop_var].sum()
+            * df1[group_pop_var1].sum()
         )
         df2["counterfactual_group_pop"] = (
             df2["share"].rank(pct=True).apply(df1["share"].quantile)
             / CT2_1_group
-            * df2[group_pop_var].sum()
+            * df2[group_pop_var2].sum()
         )
 
         # Rescale due to possibility of the summation of the counterfactual share values being grater or lower than 1
@@ -177,46 +180,46 @@ def _generate_counterfactual(
     if counterfactual_approach == "dual_composition":
 
         df1["group_composition"] = np.where(
-            df1[total_pop_var] == 0, 0, df1[group_pop_var] / df1[total_pop_var]
+            df1[total_pop_var1] == 0, 0, df1[group_pop_var1] / df1[total_pop_var1]
         )
         df2["group_composition"] = np.where(
-            df2[total_pop_var] == 0, 0, df2[group_pop_var] / df2[total_pop_var]
+            df2[total_pop_var2] == 0, 0, df2[group_pop_var2] / df2[total_pop_var2]
         )
 
-        df1["compl_pop_var"] = df1[total_pop_var] - df1[group_pop_var]
-        df2["compl_pop_var"] = df2[total_pop_var] - df2[group_pop_var]
+        df1["compl_pop_var"] = df1[total_pop_var1] - df1[group_pop_var1]
+        df2["compl_pop_var"] = df2[total_pop_var2] - df2[group_pop_var2]
 
         df1["compl_composition"] = np.where(
-            df1[total_pop_var] == 0, 0, df1["compl_pop_var"] / df1[total_pop_var]
+            df1[total_pop_var1] == 0, 0, df1["compl_pop_var"] / df1[total_pop_var1]
         )
         df2["compl_composition"] = np.where(
-            df2[total_pop_var] == 0, 0, df2["compl_pop_var"] / df2[total_pop_var]
+            df2[total_pop_var2] == 0, 0, df2["compl_pop_var"] / df2[total_pop_var2]
         )
 
         df1["counterfactual_group_pop"] = (
             df1["group_composition"]
             .rank(pct=True)
             .apply(df2["group_composition"].quantile)
-            * df1[total_pop_var]
+            * df1[total_pop_var1]
         )
         df2["counterfactual_group_pop"] = (
             df2["group_composition"]
             .rank(pct=True)
             .apply(df1["group_composition"].quantile)
-            * df2[total_pop_var]
+            * df2[total_pop_var2]
         )
 
         df1["counterfactual_compl_pop"] = (
             df1["compl_composition"]
             .rank(pct=True)
             .apply(df2["compl_composition"].quantile)
-            * df1[total_pop_var]
+            * df1[total_pop_var1]
         )
         df2["counterfactual_compl_pop"] = (
             df2["compl_composition"]
             .rank(pct=True)
             .apply(df1["compl_composition"].quantile)
-            * df2[total_pop_var]
+            * df2[total_pop_var2]
         )
 
         df1["counterfactual_total_pop"] = (
@@ -227,10 +230,10 @@ def _generate_counterfactual(
         )
 
     df1["group_composition"] = np.where(
-        df1[total_pop_var] == 0, 0, df1[group_pop_var] / df1[total_pop_var]
+        df1[total_pop_var1] == 0, 0, df1[group_pop_var1] / df1[total_pop_var1]
     )
     df2["group_composition"] = np.where(
-        df2[total_pop_var] == 0, 0, df2[group_pop_var] / df2[total_pop_var]
+        df2[total_pop_var2] == 0, 0, df2[group_pop_var2] / df2[total_pop_var2]
     )
 
     df1["counterfactual_composition"] = np.where(
@@ -244,8 +247,8 @@ def _generate_counterfactual(
         df2["counterfactual_group_pop"] / df2["counterfactual_total_pop"],
     )
 
-    df1 = df1.drop(columns=[group_pop_var, total_pop_var], axis=1)
-    df2 = df2.drop(columns=[group_pop_var, total_pop_var], axis=1)
+    df1 = df1.drop(columns=[group_pop_var1, total_pop_var1], axis=1)
+    df2 = df2.drop(columns=[group_pop_var2, total_pop_var2], axis=1)
 
     return df1, df2
 

@@ -45,7 +45,7 @@ def _bias_corrected_dissim(data, group_pop_var, total_pop_var, B=500):
     """
     assert type(B) is int, "B must be an integer"
 
-    assert B < 2, "B must be greater than 1."
+    assert B > 1, "B must be greater than 1."
 
     D = _dissim(data, group_pop_var, total_pop_var)[0]
 
@@ -98,6 +98,8 @@ class BiasCorrectedDissim(SingleGroupIndex, SpatialImplicitIndex):
         name of column on dataframe holding population totals for focal group
     total_pop_var : str, required
         name of column on dataframe holding total overall population
+    B : int
+       The number of iterations to calculate Dissimilarity simulating randomness with multinomial distributions. Default value is 500.
     w : libpysal.weights.KernelW, optional
         lipysal spatial kernel weights object used to define an egohood
     network : pandana.Network
@@ -128,6 +130,7 @@ class BiasCorrectedDissim(SingleGroupIndex, SpatialImplicitIndex):
         data,
         group_pop_var,
         total_pop_var,
+        B=500,
         w=None,
         network=None,
         distance=None,
@@ -139,7 +142,8 @@ class BiasCorrectedDissim(SingleGroupIndex, SpatialImplicitIndex):
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
         if any([w, network, distance]):
             SpatialImplicitIndex.__init__(self, w, network, distance, decay, precompute)
-        aux = _bias_corrected_dissim(self.data, self.group_pop_var, self.total_pop_var)
+        self.B=B
+        aux = _bias_corrected_dissim(self.data, self.group_pop_var, self.total_pop_var, self.B)
 
         self.statistic = aux[0]
         self.data = aux[1]

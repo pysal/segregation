@@ -3,19 +3,14 @@
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
 import numpy as np
-import pandas as pd
-import geopandas as gpd
-from .gini import _gini_seg
-from .._base import (
-    SingleGroupIndex,
-    SpatialExplicitIndex,
-)
 from libpysal.weights import Queen
 from scipy.sparse import csr_matrix
 from scipy.sparse.csgraph import floyd_warshall
 
+from .._base import SingleGroupIndex, SpatialExplicitIndex
 
-def _spatial_prox_profile(data, group_pop_var, total_pop_var, m=1000):
+
+def _spatial_prox_profile(data, group_pop_var, total_pop_var, w, m):
     """Calculation of Spatial Proximity Profile.
 
     Parameters
@@ -26,6 +21,8 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, m=1000):
         The name of variable in data that contains the population size of the group of interest
     total_pop_var : string
         The name of variable in data that contains the total population of the unit
+    w: libpysal.weights.W
+        pysal spatial weights object measuring connectivity between geographic units. If nNne, a Queen object will be created
     m : int
         a numeric value indicating the number of thresholds to be used. Default value is 1000.
         A large value of m creates a smoother-looking graph and a more precise spatial proximity profile value but slows down the calculation speed.
@@ -44,26 +41,12 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, m=1000):
     Reference: :cite:`hong2014measuring`.
 
     """
-    if type(m) is not int:
-        raise TypeError("m must be a string.")
 
-    if m < 2:
-        raise ValueError("m must be greater than 1.")
-
-    if (type(group_pop_var) is not str) or (type(total_pop_var) is not str):
-        raise TypeError("group_pop_var and total_pop_var must be strings")
-
-    if (group_pop_var not in data.columns) or (total_pop_var not in data.columns):
-        raise ValueError("group_pop_var and total_pop_var must be variables of data")
-
-    if any(data.total_pop_var < data.group_pop_var):
-        raise ValueError(
-            "Group of interest population must equal or lower than the total population of the units."
-        )
-
-    # Create the shortest distance path between two pair of units using Shimbel matrix. This step was well discussed in https://github.com/pysal/segregation/issues/5.
-    w_libpysal = Queen.from_dataframe(data)
-    graph = csr_matrix(w_libpysal.full()[0])
+    # Create the shortest distance path between two pair of units using Shimbel matrix.
+    # This step was well discussed in https://github.com/pysal/segregation/issues/5.
+    if not w:
+        w = Queen.from_dataframe(data)
+    graph = csr_matrix(w.full()[0])
     delta = floyd_warshall(csgraph=graph, directed=False)
 
     def calculate_etat(t):
@@ -83,7 +66,7 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, m=1000):
     aux[aux == -np.inf] = 0
     curve = np.nan_to_num(aux, 0)
 
-    threshold = data.group_pop_var.sum() / data.total_pop_var.sum()
+    threshold = data[group_pop_var].sum() / data[total_pop_var].sum()
     SPP = (
         threshold
         - ((curve[grid < threshold]).sum() / m - (curve[grid >= threshold]).sum() / m)
@@ -95,7 +78,7 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, m=1000):
 
 
 class SpatialProxProf(SingleGroupIndex, SpatialExplicitIndex):
-    """Modified Gini Index.
+    """Spatial Proximity Profile Index.
 
     Parameters
     ----------
@@ -105,6 +88,8 @@ class SpatialProxProf(SingleGroupIndex, SpatialExplicitIndex):
         name of column on dataframe holding population totals for focal group
     total_pop_var : str, required
         name of column on dataframe holding total overall population
+    w: libpysal.weights.W
+        pysal spatial weights object measuring connectivity between geographic units. If nNne, a Queen object will be created
     m : int
         a numeric value indicating the number of thresholds to be used. Default value is 1000.
         A large value of m creates a smoother-looking graph and a more precise spatial proximity
@@ -129,12 +114,17 @@ class SpatialProxProf(SingleGroupIndex, SpatialExplicitIndex):
         data,
         group_pop_var,
         total_pop_var,
+        w=None,
+        m=1000,
+        **kwargs
     ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
-        SpatialExplicitIndex.__init__(self)
+        SpatialExplicitIndex.__init__(self,)
+        self.m = m
+        self.w = w
         aux = _spatial_prox_profile(
-            self.data, self.group_pop_var, self.total_pop_var, self.m
+            self.data, self.group_pop_var, self.total_pop_var, self.w, self.m
         )
 
         self.statistic = aux[0]
@@ -144,12 +134,10 @@ class SpatialProxProf(SingleGroupIndex, SpatialExplicitIndex):
         self._function = _spatial_prox_profile
 
     def plot(self):
-        """
-        Plot the Spatial Proximity Profile
-        """
+        """Plot the Spatial Proximity Profile."""
         try:
             import matplotlib.pyplot as plt
         except ImportError:
-            warnings.warn("This method relies on importing `matplotlib`")
+            raise ImportError("This method relies on importing `matplotlib`")
         graph = plt.scatter(self.grid, self.curve, s=0.1)
         return graph

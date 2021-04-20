@@ -2,7 +2,7 @@ import unittest
 from libpysal.examples import load_example
 import geopandas as gpd
 import numpy as np
-from segregation.spatial import AbsoluteClustering
+from segregation.singlegroup import AbsoluteClustering
 
 
 class Absolute_Clustering_Tester(unittest.TestCase):

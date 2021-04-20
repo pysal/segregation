@@ -89,7 +89,7 @@ class Dissim(SingleGroupIndex, SpatialImplicitIndex):
     Attributes
     ----------
     statistic : float
-                MinMax Index
+                Dissim Index
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
 
