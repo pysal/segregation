@@ -196,7 +196,7 @@ class SpatialImplicitIndex:
             self._groups = [self.group_pop_var, self.total_pop_var, "group_2_pop_var"]
         self.original_data = self.data.copy()
         
-        assert(decay, "You must provide a decay function. Options include "
+        assert decay, ("You must provide a decay function. Options include "
                "'triangular','uniform','quadratic','quartic','gaussian'")
 
         if w and network:

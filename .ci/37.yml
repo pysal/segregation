@@ -22,3 +22,4 @@ dependencies:
   - pandana
   - urbanaccess
   - mapclassify
+  - pygeos

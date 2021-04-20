@@ -16,3 +16,4 @@ dependencies:
   - libpysal
   - tqdm
   - mapclassify
+  - pygeos
