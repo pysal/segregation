@@ -9,55 +9,55 @@ from .._base import MultiGroupIndex, SpatialImplicitIndex
 np.seterr(divide="ignore", invalid="ignore")
 
 
-def _multi_dissim(data, groups):
-    """Calculation of Multigroup Dissimilarity index.
+def _multi_local_simpson_concentration(data, groups):
+    """
+    Calculation of Local Simpson concentration index for each unit
 
     Parameters
     ----------
-    data : pandas.DataFrame
-        DataFrame holding counts of population groups
+
+    data   : a pandas DataFrame of n rows
+    
     groups : list of strings.
-        The variables names in data of the groups of interest of the analysis.
+             The variables names in data of the groups of interest of the analysis.
 
     Returns
     -------
-    statistic : float
-        Multigroup Dissimilarity Index
-    core_data : pandas.DataFrame
-        DataFrame that contains the columns used to perform the estimate.
+
+    statistics : np.array(n)
+                 Local Simpson concentration values for each unit
+                
+    core_data  : a pandas DataFrame
+                 A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on Sakoda, James M. "A generalized index of dissimilarity." Demography 18.2 (1981): 245-250.
+    Based on the local version of Equation 1 of page 37 of Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
+    
+    Simpson's concentration index can be simply interpreted as the probability that two individuals chosen at random and independently from the population will be found to belong to the same group.
 
-    Reference: :cite:`sakoda1981generalized`.
+    Higher values means lesser segregation.
+    
+    Simpson's Concentration + Simpson's Interaction = 1
+    
+    Reference: :cite:`reardon2002measures`.
 
     """
+
     core_data = data[groups]
+
     df = np.array(core_data)
-
-    n = df.shape[0]
-    K = df.shape[1]
-
-    T = df.sum()
 
     ti = df.sum(axis=1)
     pik = df / ti[:, None]
-    Pk = df.sum(axis=0) / df.sum()
 
-    Is = (Pk * (1 - Pk)).sum()
+    local_SC = np.nansum(pik * pik, axis=1)
 
-    multi_D = (
-        1
-        / (2 * T * Is)
-        * np.multiply(abs(pik - Pk), np.repeat(ti, K, axis=0).reshape(n, K)).sum()
-    )
-
-    return multi_D, core_data, groups
+    return local_SC, core_data, groups
 
 
-class MultiDissim(MultiGroupIndex, SpatialImplicitIndex):
-    """Dissimilarity Index.
+class MultiLocalSimpsonConcentration(MultiGroupIndex, SpatialImplicitIndex):
+    """Multigroup Local Simpson's Concentration Index.
 
     Parameters
     ----------
@@ -82,6 +82,12 @@ class MultiDissim(MultiGroupIndex, SpatialImplicitIndex):
         Multigroup Dissimilarity Index value
     core_data : a pandas DataFrame
         DataFrame that contains the columns used to perform the estimate.
+
+    Notes
+    -----
+    Based on Eq. 6 of pg. 139 (individual unit case) of Reardon, Sean F., and David O’Sullivan. "Measures of spatial segregation." Sociological methodology 34.1 (2004): 121-162.
+    
+    Reference: :cite:`reardon2004measures`.
     """
 
     def __init__(
@@ -99,9 +105,9 @@ class MultiDissim(MultiGroupIndex, SpatialImplicitIndex):
         MultiGroupIndex.__init__(self, data, groups)
         if any([w, network, distance]):
             SpatialImplicitIndex.__init__(self, w, network, distance, decay, precompute)
-        aux = _multi_dissim(self.data, self.groups)
+        aux = _multi_local_simpson_concentration(self.data, self.groups)
 
-        self.statistic = aux[0]
+        self.statistics = aux[0]
         self.data = aux[1]
         self.groups = aux[2]
-        self._function = _multi_dissim
+        self._function = _multi_local_simpson_concentration

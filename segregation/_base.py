@@ -173,7 +173,7 @@ class SpatialExplicitIndex:
 class SpatialImplicitIndex:
     """Class for estimating segregation indices that can be spatial or aspatial."""
 
-    def __init__(self, w, network, distance, decay, precompute):
+    def __init__(self, w, network, distance=1000, decay='triangular', precompute=True):
         """Initialize spatially implicit index.
 
         Parameters
@@ -195,6 +195,9 @@ class SpatialImplicitIndex:
         elif self.index_type == "singlegroup":
             self._groups = [self.group_pop_var, self.total_pop_var, "group_2_pop_var"]
         self.original_data = self.data.copy()
+        
+        assert(decay, "You must provide a decay function. Options include "
+               "'triangular','uniform','quadratic','quartic','gaussian'")
 
         if w and network:
             raise UserException(
@@ -213,7 +216,7 @@ class SpatialImplicitIndex:
             # self._groups = ["acc_" + group for group in self.__groups]
             self.network = network
         elif w:
-            self.data = _build_local_environment(self.data, self._groups, w)
+            self.data = _build_local_environment(self.data, self._groups, w, decay=decay)
             self.w = w
         elif distance:
             self.data = _build_local_environment(
@@ -221,7 +224,7 @@ class SpatialImplicitIndex:
             )
 
 
-def _build_local_environment(data, groups, w=None, bandwidth=None, decay="triangular"):
+def _build_local_environment(data, groups, w=None, bandwidth=1000, decay="triangular"):
     """Convert observations into spatially-weighted sums.
 
     Parameters

@@ -4,16 +4,15 @@ Inference Wrappers for Segregation measures
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu> Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
+import warnings
+
+import geopandas as gpd
 import numpy as np
 import pandas as pd
-import geopandas as gpd
-import warnings
+from segregation.util.util import (DeprecationHelper, _dep_message,
+                                   _generate_counterfactual)
 from tqdm.auto import tqdm
-from segregation.util.util import (
-    _generate_counterfactual,
-    _dep_message,
-    DeprecationHelper,
-)
+
 from .._base import MultiGroupIndex, SingleGroupIndex
 
 # Including old and new api in __all__ so users can use both
@@ -40,42 +39,33 @@ def _infer_segregation(
 
     Parameters
     ----------
-
-    seg_class                    : a PySAL segregation object
-    
-    iterations_under_null        : number of iterations under null hyphothesis
-    
+    seg_class : a PySAL segregation object
+        fitted segregation class
+    iterations_under_null : int
+        number of iterations under null hyphothesis
     null_approach : argument that specifies which type of null hypothesis the inference will iterate. Please take a look at Notes (1).
-    
-        "systematic"             : assumes that every group has the same probability with restricted conditional probabilities p_0_j = p_1_j = p_j = n_j/n (multinomial distribution).
-        "bootstrap"              : generates bootstrap replications of the units with replacement of the same size of the original data.
-        "evenness"               : assumes that each spatial unit has the same global probability of drawing elements from the minority group of the fixed total unit population (binomial distribution).
-        
-        "permutation"            : randomly allocates the units over space keeping the original values.
-        
+        "systematic" : assumes that every group has the same probability with restricted conditional probabilities p_0_j = p_1_j = p_j = n_j/n (multinomial distribution).
+        "bootstrap" : generates bootstrap replications of the units with replacement of the same size of the original data.
+        "evenness" : assumes that each spatial unit has the same global probability of drawing elements from the minority group of the fixed total unit population (binomial distribution).
+        "permutation" : randomly allocates the units over space keeping the original values.
         "systematic_permutation" : assumes absence of systematic segregation and randomly allocates the units over space.
-        "even_permutation"       : assumes the same global probability of drawning elements from the minority group in each spatial unit and randomly allocates the units over space.
-    
-    two_tailed    : boolean. Please take a look at Notes (2).
-                    If True, p_value is two-tailed. Otherwise, it is right one-tailed.
-    
-    **kwargs      : customizable parameters to pass to the segregation measures. Usually they need to be the same input that the seg_class was built.
-    
+        "even_permutation" : assumes the same global probability of drawning elements from the minority group in each spatial unit and randomly allocates the units over space.
+    two_tailed : boolean. Please take a look at Notes (2).
+        If True, p_value is two-tailed. Otherwise, it is right one-tailed.
+    **kwargs : customizable parameters to pass to the segregation measures. Usually they need to be the same input that the seg_class was built.
+
+
     Attributes
     ----------
-
     p_value     : float
                   Pseudo One or Two-Tailed p-value estimated from the simulations
-    
     est_sim     : numpy array
                   Estimates of the segregation measure under the null hypothesis
-                  
     statistic   : float
                   The point estimation of the segregation measure that is under test
-                
+ 
     Notes
     -----
-    
     1) The different approaches for the null hypothesis affect directly the results of the inference depending on the combination of the index type of seg_class and the null_approach chosen.
     Therefore, the user needs to be aware of how these approaches are affecting the data generation process of the simulations in order to draw meaningful conclusions. 
     For example, the Modified Dissimilarity (ModifiedDissim) and  Modified Gini (ModifiedGiniSeg) indexes, rely exactly on the distance between evenness through sampling which, therefore, the "evenness" value for null approach would not be the most appropriate for these indexes.
@@ -107,6 +97,8 @@ def _infer_segregation(
     ]  # 'rfind' finds the last occurence of a pattern in a string
 
     Estimates_Stars = np.empty(iterations_under_null)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
 
     ##############
     # SYSTEMATIC #
@@ -630,18 +622,30 @@ def _compare_segregation(
                 .round(0)
                 .astype(int)
             )
-            
+
             # random permutation needs the columns to have the same names
-            data_1 = data_1[[seg_class_1.group_pop_var, seg_class_1.total_pop_var, 'grouping_variable']]
-            data_1.columns = ['group', 'total', 'grouping_variable']
+            data_1 = data_1[
+                [
+                    seg_class_1.group_pop_var,
+                    seg_class_1.total_pop_var,
+                    "grouping_variable",
+                ]
+            ]
+            data_1.columns = ["group", "total", "grouping_variable"]
 
             data_2.loc[:, (seg_class_2.group_pop_var, seg_class_2.total_pop_var)] = (
                 data_2.loc[:, (seg_class_2.group_pop_var, seg_class_2.total_pop_var)]
                 .round(0)
                 .astype(int)
             )
-            data_2 = data_2[[seg_class_2.group_pop_var, seg_class_2.total_pop_var, 'grouping_variable']]
-            data_2.columns = ['group', 'total', 'grouping_variable']
+            data_2 = data_2[
+                [
+                    seg_class_2.group_pop_var,
+                    seg_class_2.total_pop_var,
+                    "grouping_variable",
+                ]
+            ]
+            data_2.columns = ["group", "total", "grouping_variable"]
 
             stacked_data = pd.concat([data_1, data_2], axis=0)
 
@@ -660,16 +664,10 @@ def _compare_segregation(
                     ]
 
                     simulations_1 = seg_class_1._function(
-                        stacked_data_1,
-                        "group",
-                        "total",
-                        **kwargs
+                        stacked_data_1, "group", "total", **kwargs
                     )[0]
                     simulations_2 = seg_class_2._function(
-                        stacked_data_2,
-                        "group",
-                        "total",
-                        **kwargs
+                        stacked_data_2, "group", "total", **kwargs
                     )[0]
 
                     est_sim[i] = simulations_1 - simulations_2
