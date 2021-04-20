@@ -8,3 +8,4 @@ scipy
 libpysal
 tqdm
 mapclassify
+pygeos
