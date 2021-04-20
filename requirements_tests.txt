@@ -9,3 +9,4 @@ ipywidgets
 pandana
 urbanaccess
 descartes
+quilt3
