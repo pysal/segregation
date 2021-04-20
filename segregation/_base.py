@@ -173,7 +173,7 @@ class SpatialExplicitIndex:
 class SpatialImplicitIndex:
     """Class for estimating segregation indices that can be spatial or aspatial."""
 
-    def __init__(self, w, network, distance=1000, decay='triangular', precompute=True):
+    def __init__(self, w, network, distance=1000, decay='linear', function='triangular', precompute=False):
         """Initialize spatially implicit index.
 
         Parameters
@@ -185,7 +185,11 @@ class SpatialImplicitIndex:
         distance : int
             Maximum distance (in units of geodataframe CRS) to consider the extent of the egohood
         decay : str
-            type of decay function to apply. Options include
+            type of decay function to apply (passed to `pandana`). Options include
+            {'linear', 'exponential', or 'flat'}
+        function : str
+            decay function to use in spatial weights object (passed to libpysal.weights.Kernel)
+            options = {'triangular','uniform','quadratic','quartic','gaussian'}
         precompute : bool
             Whether to precompute the pandana Network object
         """
@@ -195,36 +199,34 @@ class SpatialImplicitIndex:
         elif self.index_type == "singlegroup":
             self._groups = [self.group_pop_var, self.total_pop_var, "group_2_pop_var"]
         self.original_data = self.data.copy()
-        
-        assert decay, ("You must provide a decay function. Options include "
-               "'triangular','uniform','quadratic','quartic','gaussian'")
-
+                
         if w and network:
-            raise UserException(
+            raise AttributeError(
                 "must pass either a pandana network or a pysal weights object\
                  but not both"
             )
         if network:
-            self.data = calc_access(
+            access = calc_access(
                 self.data,
-                variables=self.groups,
+                variables=self._groups,
                 network=network,
                 distance=distance,
                 decay=decay,
                 precompute=precompute,
             )
             # self._groups = ["acc_" + group for group in self.__groups]
-            self.network = network
+            self.data = access
+            #self.network = network
         elif w:
-            self.data = _build_local_environment(self.data, self._groups, w, decay=decay)
+            self.data = _build_local_environment(self.data, self._groups, w, function=function)
             self.w = w
-        elif distance:
+        elif distance and not network:
             self.data = _build_local_environment(
-                self.data, self._groups, bandwidth=distance, decay=decay
+                self.data, self._groups, bandwidth=distance, function=function
             )
 
 
-def _build_local_environment(data, groups, w=None, bandwidth=1000, decay="triangular"):
+def _build_local_environment(data, groups, w=None, bandwidth=1000, function="triangular"):
     """Convert observations into spatially-weighted sums.
 
     Parameters
@@ -241,7 +243,7 @@ def _build_local_environment(data, groups, w=None, bandwidth=1000, decay="triang
 
     """
     if not w:
-        w = Kernel.from_dataframe(data, bandwidth=bandwidth, function=decay)
+        w = Kernel.from_dataframe(data, bandwidth=bandwidth, function=function)
     new_data = []
     w = fill_diagonal(w)
     for y in data[groups]:

@@ -2,12 +2,12 @@
 
 __author__ = "Elijah Knaap <elijah.knaap@ucr.edu> Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr.edu>"
 
-import numpy as np
-import pandas as pd
-from warnings import warn
-from segregation.util.util import project_gdf
 import os
 import sys
+from warnings import warn
+
+import pandas as pd
+from segregation.util.util import project_gdf
 
 
 # This class allows us to hide the diagnostic messages from urbanaccess if the `quiet` flag is set
@@ -56,12 +56,12 @@ def get_osm_network(geodataframe, maxdist=5000, quiet=True, **kwargs):
             "or `conda install -c udst pandana urbanaccess`")
 
     gdf = geodataframe.copy()
-    gdf = project_gdf(gdf)
+    gdf = gdf.to_crs(gdf.estimate_utm_crs())
     gdf = gdf.buffer(maxdist)
     bounds = gdf.to_crs(epsg=4326).total_bounds
 
     if quiet:
-        print('Downloading data from OSM. This may take awhile.')
+        warn('Downloading data from OSM. This may take awhile.')
         with _HiddenPrints():
             net = ua_network_from_bbox(bounds[1], bounds[0], bounds[3],
                                        bounds[2], **kwargs)
@@ -80,7 +80,8 @@ def calc_access(geodataframe,
                 distance=2000,
                 decay="linear",
                 variables=None,
-                precompute=True):
+                precompute=True,
+                return_node_data=False):
     """Calculate access to population groups.
 
     Parameters
@@ -101,6 +102,9 @@ def calc_access(geodataframe,
         whether pandana should precompute the distance matrix. It can only be
         precomputed once, so If you plan to pass the same network to this
         function several times, you should set precompute=False for later runs
+    return_node_data : bool, default is False
+        Whether to return nodel-level accessibility data or to trim output to
+        the same geometries as the input. Default is the latter.
 
     Returns
     -------
@@ -113,6 +117,9 @@ def calc_access(geodataframe,
     """
     if precompute:
         network.precompute(distance)
+    if not geodataframe.crs.is_geographic:
+        warn('The CRS of input data foes not appear to be WGS84; '
+             'OSM expects data in geographic coordinates so node identification may be incorrect')
 
     geodataframe["node_ids"] = network.get_node_ids(geodataframe.centroid.x,
                                                     geodataframe.centroid.y)
@@ -129,7 +136,10 @@ def calc_access(geodataframe,
                                        name=variable)
 
         access.append(access_pop)
-    names = ["acc_" + variable for variable in variables]
-    access = pd.DataFrame(dict(zip(names, access)))
+    #names = ["acc_" + variable for variable in variables]
+    access = pd.DataFrame(dict(zip(variables, access)))
+    if return_node_data:
+        return access
+    access = access.merge(geodataframe[['node_ids']], left_index=True, right_on='node_ids', how='right')
 
-    return access
+    return access.dropna()

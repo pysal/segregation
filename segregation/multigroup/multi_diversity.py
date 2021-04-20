@@ -104,12 +104,13 @@ class MultiDiversity(MultiGroupIndex, SpatialImplicitIndex):
         distance=None,
         decay=None,
         precompute=None,
+        function='triangular'
     ):
         """Init."""
         MultiGroupIndex.__init__(self, data, groups)
         self.normalized = normalized
         if any([w, network, distance]):
-            SpatialImplicitIndex.__init__(self, w, network, distance, decay, precompute)
+            SpatialImplicitIndex.__init__(self, w, network, distance, decay, function, precompute)
         aux = _multi_diversity(self.data, self.groups, normalized=self.normalized)
 
         self.statistic = aux[0]

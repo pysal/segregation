@@ -87,12 +87,13 @@ class MultiLocalDiversity(MultiGroupIndex, SpatialImplicitIndex):
         distance=None,
         decay=None,
         precompute=None,
+        function='triangular'
     ):
         """Init."""
 
         MultiGroupIndex.__init__(self, data, groups)
         if any([w, network, distance]):
-            SpatialImplicitIndex.__init__(self, w, network, distance, decay, precompute)
+            SpatialImplicitIndex.__init__(self, w, network, distance, decay, function, precompute)
         aux = _multi_local_diversity(self.data, self.groups)
 
         self.statistics = aux[0]

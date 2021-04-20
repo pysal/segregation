@@ -93,13 +93,14 @@ class MultiGini(MultiGroupIndex, SpatialImplicitIndex):
         w=None,
         network=None,
         distance=None,
-        decay=None,
-        precompute=None,
+        decay='linear',
+        function='triangular',
+        precompute=False,
     ):
         """Init."""
         MultiGroupIndex.__init__(self, data, groups)
         if any([w, network, distance]):
-            SpatialImplicitIndex.__init__(self, w, network, distance, decay, precompute)
+            SpatialImplicitIndex.__init__(self, w, network, distance, decay, function, precompute)
         aux = _multi_gini_seg(self.data, self.groups)
 
         self.statistic = aux[0]
