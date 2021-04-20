@@ -30,4 +30,4 @@ dependencies:
   - mapclassify
   - pygeos
   - quilt3
-  - rtree=0.9.3
+  - rtree==0.9.3
