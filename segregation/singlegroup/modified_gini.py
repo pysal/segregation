@@ -123,14 +123,16 @@ class ModifiedGini(SingleGroupIndex, SpatialImplicitIndex):
         w=None,
         network=None,
         distance=None,
-        decay=None,
+        decay='linear',
+        function='triangular',
         precompute=None,
+        **kwargs
     ):
         """Init."""
 
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
         if any([w, network, distance]):
-            SpatialImplicitIndex.__init__(self, w, network, distance, decay, precompute)
+            SpatialImplicitIndex.__init__(self, w, network, distance, decay, function, precompute)
         aux = _modified_gini(
             self.data, self.group_pop_var, self.total_pop_var, iterations
         )

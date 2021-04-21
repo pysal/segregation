@@ -161,7 +161,7 @@ class MultiGroupIndex:
 class SpatialExplicitIndex:
     """Class for estimating segregation indices that are explicitly spatial (have no aspatial version)."""
 
-    def __init__(self):
+    def __init__(self, *kwargs):
         """Initialize spatially explicit index."""
         if not isinstance(self.data, gpd.GeoDataFrame):
             raise TypeError(
@@ -173,7 +173,7 @@ class SpatialExplicitIndex:
 class SpatialImplicitIndex:
     """Class for estimating segregation indices that can be spatial or aspatial."""
 
-    def __init__(self, w, network, distance=1000, decay='linear', function='triangular', precompute=False):
+    def __init__(self, w, network, distance=1000, decay='linear', function='triangular', precompute=False, *kwargs):
         """Initialize spatially implicit index.
 
         Parameters
@@ -214,9 +214,8 @@ class SpatialImplicitIndex:
                 decay=decay,
                 precompute=precompute,
             )
-            # self._groups = ["acc_" + group for group in self.__groups]
             self.data = access
-            #self.network = network
+            self.network = network
         elif w:
             self.data = _build_local_environment(self.data, self._groups, w, function=function)
             self.w = w

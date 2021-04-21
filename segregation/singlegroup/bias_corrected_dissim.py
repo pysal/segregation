@@ -79,10 +79,10 @@ def _bias_corrected_dissim(data, group_pop_var, total_pop_var, B=500):
     Dbc  # It expected to be lower than D, because D is upwarded biased
 
     if isinstance(data, gpd.GeoDataFrame):
-        core_data = data[[group_pop_var, total_pop_var]]
+        core_data = data[[group_pop_var, total_pop_var, data.geometry.name]]
 
     else:
-        core_data = data[[group_pop_var, total_pop_var, data.geometry.name]]
+        core_data = data[[group_pop_var, total_pop_var]]
 
     return Dbc, core_data
 
@@ -136,7 +136,8 @@ class BiasCorrectedDissim(SingleGroupIndex, SpatialImplicitIndex):
         distance=None,
         decay=None,
         precompute=None,
-        function='triangular'
+        function='triangular',
+        **kwargs
     ):
         """Init."""
 

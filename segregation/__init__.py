@@ -1,8 +1,7 @@
-__version__ = "1.5.0"
+__version__ = "2.0.0"
 """
 :mod:`segregation` --- Spatial/Aspatial Segregation Analysis
 =================================================
 
 """
-from .singlegroup import *
-from .util import *
+from . import batch, decomposition, dynamics, inference, local, multigroup, singlegroup, util
