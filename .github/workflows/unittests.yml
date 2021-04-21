@@ -32,7 +32,6 @@
        - uses: conda-incubator/setup-miniconda@v2
          with:
             miniconda-version: 'latest'
-            mamba-version: '*'
             channels: conda-forge
             channel-priority: true
             auto-update-conda: false
