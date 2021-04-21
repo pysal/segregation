@@ -161,7 +161,7 @@ class MultiGroupIndex:
 class SpatialExplicitIndex:
     """Class for estimating segregation indices that are explicitly spatial (have no aspatial version)."""
 
-    def __init__(self, *kwargs):
+    def __init__(self, **kwargs):
         """Initialize spatially explicit index."""
         if not isinstance(self.data, gpd.GeoDataFrame):
             raise TypeError(
@@ -173,7 +173,7 @@ class SpatialExplicitIndex:
 class SpatialImplicitIndex:
     """Class for estimating segregation indices that can be spatial or aspatial."""
 
-    def __init__(self, w, network, distance=1000, decay='linear', function='triangular', precompute=False, *kwargs):
+    def __init__(self, w, network, distance=1000, decay='linear', function='triangular', precompute=False, **kwargs):
         """Initialize spatially implicit index.
 
         Parameters
