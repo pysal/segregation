@@ -9,22 +9,15 @@ import warnings
 import geopandas as gpd
 import numpy as np
 import pandas as pd
-from segregation.util.util import (DeprecationHelper, _dep_message,
-                                   _generate_counterfactual)
+from segregation.util.util import _generate_counterfactual
 from tqdm.auto import tqdm
 
 from .._base import MultiGroupIndex, SingleGroupIndex
 
-# Including old and new api in __all__ so users can use both
-
 __all__ = [
-    "Infer_Segregation",
     "SingleValueTest",
-    "Compare_Segregation",
     "TwoValueTest",
 ]
-
-# The Deprecation calls of the classes are located in the end of this script #
 
 
 def _infer_segregation(
@@ -915,12 +908,3 @@ class TwoValueTest:
             )
         )
         return f
-
-
-# Deprecation Calls
-
-msg = _dep_message("Infer_Segregation", "SingleValueTest")
-Infer_Segregation = DeprecationHelper(SingleValueTest, message=msg)
-
-msg = _dep_message("Compare_Segregation", "TwoValueTest")
-Compare_Segregation = DeprecationHelper(TwoValueTest, message=msg)

@@ -76,8 +76,8 @@ def _density_corrected_dissim(data, group_pop_var, total_pop_var, xtol=1e-5):
 
     Ddc = np.multiply(sigma_hat_j, optimal_thetas).sum() / 2
 
-    if str(type(data)) != "<class 'geopandas.geodataframe.GeoDataFrame'>":
-        core_data = data[["group_pop_var", "total_pop_var"]]
+    if not isinstance(data, gpd.GeoDataFrame):
+        core_data = data[[group_pop_var, total_pop_var]]
 
     else:
         core_data = data[[group_pop_var, total_pop_var, data.geometry.name]]
@@ -130,8 +130,9 @@ class DensityCorrectedDissim(SingleGroupIndex, SpatialImplicitIndex):
         network=None,
         distance=None,
         decay=None,
+        function='triangular',
         precompute=None,
-        function='triangular'
+        **kwargs
     ):
         """Init."""
 

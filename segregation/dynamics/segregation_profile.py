@@ -1,5 +1,7 @@
 """Compute multiscalar segregation profiles."""
 
+import warnings
+
 import numpy as np
 import pandas as pd
 from libpysal.weights import Kernel
@@ -62,8 +64,8 @@ def compute_multiscalar_profile(
 
     Returns
     -------
-    pandas DataFrame
-        DataFrame with distances as keys and index statistics as values
+    pandas.Series
+        Series with distances as index and index statistics as values
 
     Notes
     -----
@@ -88,48 +90,53 @@ def compute_multiscalar_profile(
         raise AttributeError(
             "The `index_type` parameter must be either `single_group` or `multi_group`"
         )
-    if network:
-        if not gdf.crs.name == "WGS 84":
-            gdf = gdf.to_crs(epsg=4326)
-        if precompute:
-            maxdist = max(distances)
-            network.precompute(maxdist)
-        for distance in distances:
-            distance = np.float(distance)
-            if index_type == "single_group":
-                idx = segregation_index(
-                    gdf,
-                    group_pop_var=group_pop_var,
-                    total_pop_var=total_pop_var,
-                    network=network,
-                    decay=decay,
-                    distance=distance,
-                    precompute=False,
-                )
-            elif index_type == "multi_group":
-                idx = segregation_index(
-                    gdf,
-                    groups=groups,
-                    network=network,
-                    decay=decay,
-                    distance=distance,
-                    precompute=False,
-                )
-            else:
-                raise AttributeError(
-                    "The `index_type` parameter must be set to either `single_group` or `multi_group"
-                )
-            indices[distance] = idx.statistic
-    else:
-        for distance in distances:
-            w = Kernel.from_dataframe(gdf, bandwidth=distance, function=function)
-            if index_type == "single_group":
-                idx = segregation_index(
-                    gdf, group_pop_var=group_pop_var, total_pop_var=total_pop_var, w=w
-                )
-            else:
-                idx = segregation_index(gdf, groups, w=w)
-            indices[distance] = idx.statistic
-    series = pd.Series(indices, name=str(type(idx)).split(".")[-1][:-2])
-    series.index.name = "distance"
-    return series
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        if network:
+            if not gdf.crs.name == "WGS 84":
+                gdf = gdf.to_crs(epsg=4326)
+            if precompute:
+                maxdist = max(distances)
+                network.precompute(maxdist)
+            for distance in distances:
+                distance = np.float(distance)
+                if index_type == "single_group":
+                    idx = segregation_index(
+                        gdf,
+                        group_pop_var=group_pop_var,
+                        total_pop_var=total_pop_var,
+                        network=network,
+                        decay=decay,
+                        distance=distance,
+                        precompute=False,
+                    )
+                elif index_type == "multi_group":
+                    idx = segregation_index(
+                        gdf,
+                        groups=groups,
+                        network=network,
+                        decay=decay,
+                        distance=distance,
+                        precompute=False,
+                    )
+                else:
+                    raise AttributeError(
+                        "The `index_type` parameter must be set to either `single_group` or `multi_group"
+                    )
+                indices[distance] = idx.statistic
+        else:
+            for distance in distances:
+                w = Kernel.from_dataframe(gdf, bandwidth=distance, function=function)
+                if index_type == "single_group":
+                    idx = segregation_index(
+                        gdf,
+                        group_pop_var=group_pop_var,
+                        total_pop_var=total_pop_var,
+                        w=w,
+                    )
+                else:
+                    idx = segregation_index(gdf, groups, w=w)
+                indices[distance] = idx.statistic
+        series = pd.Series(indices, name=str(type(idx)).split(".")[-1][:-2])
+        series.index.name = "distance"
+        return series

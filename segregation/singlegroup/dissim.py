@@ -109,8 +109,9 @@ class Dissim(SingleGroupIndex, SpatialImplicitIndex):
         network=None,
         distance=None,
         decay=None,
+        function='triangular',
         precompute=None,
-        function='triangular'
+        **kwargs
     ):
         """Init."""
 

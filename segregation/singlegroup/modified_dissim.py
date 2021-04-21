@@ -129,9 +129,10 @@ class ModifiedDissim(SingleGroupIndex, SpatialImplicitIndex):
         w=None,
         network=None,
         distance=None,
-        decay=None,
+        decay='linear',
+        function='triangular',
         precompute=None,
-        function="triangular",
+        **kwargs
     ):
         """Init."""
 
