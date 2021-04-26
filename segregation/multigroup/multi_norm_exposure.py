@@ -53,7 +53,7 @@ def _multi_normalized_exposure(data, groups):
     return MNE, core_data, groups
 
 
-class MultiNormalizedExposure(MultiGroupIndex, SpatialImplicitIndex):
+class MultiNormExposure(MultiGroupIndex, SpatialImplicitIndex):
     """Multigroup INormalized Exposure Index.
 
     Parameters

@@ -7,7 +7,7 @@ import libpysal
 import pandas as pd
 from libpysal.weights import lag_spatial
 from libpysal.weights.distance import Kernel
-from libpysal.weights.util import fill_diagonal, attach_islands
+from libpysal.weights.util import attach_islands, fill_diagonal
 
 from .util import calc_access
 from .util.util import _nan_handle
@@ -198,8 +198,7 @@ class SpatialImplicitIndex:
             self._groups = self.groups
         elif self.index_type == "singlegroup":
             self._groups = [self.group_pop_var, self.total_pop_var, "group_2_pop_var"]
-        self.original_data = self.data.copy()
-                
+
         if w and network:
             raise AttributeError(
                 "must pass either a pandana network or a pysal weights object\
@@ -230,7 +229,7 @@ def _build_local_environment(data, groups, w=None, bandwidth=1000, function="tri
 
     Parameters
     ----------
-    data : DataFrame
+    data : GeoDataFrame
         dataframe with local observations
     w : libpysal.weights object
         weights matrix defining the local environment
@@ -241,11 +240,17 @@ def _build_local_environment(data, groups, w=None, bandwidth=1000, function="tri
         Spatialized data
 
     """
-    if not w:
-        w = Kernel.from_dataframe(data, bandwidth=bandwidth, function=function)
-    new_data = []
-    w = fill_diagonal(w)
-    for y in data[groups]:
-        new_data.append(lag_spatial(w, data[y]))
-    new_data = pd.DataFrame(dict(zip(groups, new_data)))
-    return new_data
+    if data.crs.is_geographic:
+        warnings.warn('GeoDataFrame appears to have a geographic coordinate system and likely needs to be reprojected')
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore") 
+        if not w:
+            w = Kernel.from_dataframe(data, bandwidth=bandwidth, function=function)
+        new_data = []
+        w = fill_diagonal(w)
+        for y in data[groups]:
+            new_data.append(lag_spatial(w, data[y]))
+        new_data = pd.DataFrame(dict(zip(groups, new_data)))
+        new_data['geometry'] = data.geometry
+        new_data = gpd.GeoDataFrame(new_data)
+        return new_data

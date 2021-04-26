@@ -120,7 +120,6 @@ def batch_multiscalar_singlegroup(
                 distances=distances,
                 group_pop_var=group_pop_var,
                 total_pop_var=total_pop_var,
-                index_type="single_group",
                 **kwargs
             )
             profs.append(prof)
@@ -156,7 +155,6 @@ def batch_multiscalar_multigroup(gdf, distances, groups, **kwargs):
                 segregation_index=implicit_multi_indices[idx],
                 distances=distances,
                 groups=groups,
-                index_type="multi_group",
                 **kwargs
             )
             profs.append(prof)

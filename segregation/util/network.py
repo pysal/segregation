@@ -7,7 +7,7 @@ import sys
 from warnings import warn
 
 import pandas as pd
-
+import geopandas as gpd
 
 # This class allows us to hide the diagnostic messages from urbanaccess if the `quiet` flag is set
 class _HiddenPrints:  # from https://stackoverflow.com/questions/8391411/suppress-calls-to-print-python
@@ -118,18 +118,20 @@ def calc_access(
         on node_ids
 
     """
+    if not decay:
+        raise Exception('You must pass a decay function such as `linear`')
     if precompute:
         network.precompute(distance)
     if not geodataframe.crs.is_geographic:
-        warn(
-            "The CRS of input data foes not appear to be WGS84; "
-            "OSM expects data in geographic coordinates so node identification may be incorrect"
+        wgsdf = geodataframe.centroid
+        wgsdf = wgsdf.to_crs(4326)
+        geodataframe["node_ids"] = network.get_node_ids(
+            wgsdf.geometry.x, wgsdf.geometry.y
         )
-
-    geodataframe["node_ids"] = network.get_node_ids(
-        geodataframe.centroid.x, geodataframe.centroid.y
-    )
-
+    else:
+        geodataframe["node_ids"] = network.get_node_ids(
+            geodataframe.centroid.x, geodataframe.centroid.y
+        )
     access = []
     for variable in variables:
         network.set(
@@ -143,8 +145,7 @@ def calc_access(
     access = pd.DataFrame(dict(zip(variables, access)))
     if return_node_data:
         return access
-    access = access.merge(
-        geodataframe[["node_ids"]], left_index=True, right_on="node_ids", how="right"
+    access = geodataframe[["node_ids", geodataframe.geometry.name]].merge(access, right_index=True, left_on="node_ids", how="left"
     )
 
     return access.dropna()

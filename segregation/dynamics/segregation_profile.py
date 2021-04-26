@@ -17,8 +17,7 @@ def compute_multiscalar_profile(
     network=None,
     decay="linear",
     function="triangular",
-    precompute=False,
-    index_type=None,
+    precompute=True,
 ):
     """Compute multiscalar segregation profile.
 
@@ -47,17 +46,14 @@ def compute_multiscalar_profile(
         A pandana.Network likely created with
         `segregation.network.get_osm_network`.
     decay : str (optional)
-        decay type to be used in pandana accessibility calculation (the
-        default is 'linear').
+        decay type to be used in pandana accessibility calculation 
+        options are {'linear', 'exp', 'flat'}. The default is 'linear'.
     function: 'str' (optional)
         which weighting function should be passed to libpysal.weights.Kernel
         must be one of: 'triangular','uniform','quadratic','quartic','gaussian'
     precompute: bool
         Whether the pandana.Network instance should precompute the range
-        queries.This is true by default, but if you plan to calculate several
-        segregation profiles using the same network, then you can set this
-        parameter to `False` to avoid precomputing repeatedly inside the
-        function
+        queries. This is True by default
     index_type : str options: {single_group, multi_group}
         Whether the index is a single-group or -multigroup index
 
@@ -79,17 +75,14 @@ def compute_multiscalar_profile(
     gdf = gdf.copy()
     indices = {}
 
-    if index_type == "multi_group":
+    if groups:
         gdf[groups] = gdf[groups].astype(float)
         indices[0] = segregation_index(gdf, groups=groups).statistic
-    elif index_type == "single_group":
+    elif group_pop_var:
         indices[0] = segregation_index(
             gdf, group_pop_var=group_pop_var, total_pop_var=total_pop_var,
         ).statistic
-    else:
-        raise AttributeError(
-            "The `index_type` parameter must be either `single_group` or `multi_group`"
-        )
+
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         if network:
@@ -100,7 +93,7 @@ def compute_multiscalar_profile(
                 network.precompute(maxdist)
             for distance in distances:
                 distance = np.float(distance)
-                if index_type == "single_group":
+                if group_pop_var:
                     idx = segregation_index(
                         gdf,
                         group_pop_var=group_pop_var,
@@ -110,7 +103,7 @@ def compute_multiscalar_profile(
                         distance=distance,
                         precompute=False,
                     )
-                elif index_type == "multi_group":
+                elif groups:
                     idx = segregation_index(
                         gdf,
                         groups=groups,
@@ -119,15 +112,12 @@ def compute_multiscalar_profile(
                         distance=distance,
                         precompute=False,
                     )
-                else:
-                    raise AttributeError(
-                        "The `index_type` parameter must be set to either `single_group` or `multi_group"
-                    )
+
                 indices[distance] = idx.statistic
         else:
             for distance in distances:
                 w = Kernel.from_dataframe(gdf, bandwidth=distance, function=function)
-                if index_type == "single_group":
+                if group_pop_var:
                     idx = segregation_index(
                         gdf,
                         group_pop_var=group_pop_var,
