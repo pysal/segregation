@@ -55,7 +55,7 @@ def _multi_information_theory(data, groups):
     return MIT, core_data, groups
 
 
-class MultiInformationTheory(MultiGroupIndex, SpatialImplicitIndex):
+class MultiInfoTheory(MultiGroupIndex, SpatialImplicitIndex):
     """Multigroup Information Theory Index.
 
     Parameters

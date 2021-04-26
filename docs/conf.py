@@ -50,7 +50,8 @@ extensions = [#'sphinx_gallery.gen_gallery',
               'numpydoc',
               # 'recommonmark',
               #'sphinx.ext.napoleon',
-              'matplotlib.sphinxext.plot_directive']
+              'matplotlib.sphinxext.plot_directive',
+              'nbsphinx']
 
 
 # sphinx_gallery_conf = {
@@ -183,6 +184,7 @@ html_theme_options = {
                      #("Gallery", "auto_examples/index"),
                      ("Installation", "installation"),
                      ("API", "api"),
+                     ("Tutorial", 'tutorial'),
                      ("References", "references"),
                      ],
 
@@ -272,6 +274,7 @@ class_members_toctree = True
 numpydoc_show_inherited_class_members = False
 numpydoc_use_plots = True
 numpydoc_xref_param_type = True
+autodoc_member_order ='alphabetical'
 
 # display the source code for Plot directive
 plot_include_source = True
@@ -289,6 +292,12 @@ intersphinx_mapping = {
     "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
     "python": ("https://docs.python.org/3.9/", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/reference/", None),
+    "pandana": ("http://udst.github.io/pandana/", None)
 }
 
 autodoc_default_options = {"members": True, "undoc-members": True}
+
+
+# Bib Variables
+bibtex_default_style = 'plain'
+bibtex_reference_style ="author_year"

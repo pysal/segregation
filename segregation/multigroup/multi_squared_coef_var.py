@@ -55,7 +55,7 @@ def _multi_squared_coefficient_of_variation(data, groups):
     return C, core_data, groups
 
 
-class MultiSquaredCoefficientVariation(MultiGroupIndex, SpatialImplicitIndex):
+class MultiSquaredCoefVar(MultiGroupIndex, SpatialImplicitIndex):
     """Multigroup Squared Coefficient of Variation Index.
 
     Parameters

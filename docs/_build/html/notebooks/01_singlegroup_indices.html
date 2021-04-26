@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Single-group Segregation Indices &#8212; segregation v2.0.0 Manual</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    <link rel="shortcut icon" href="../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.12.4.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.4.1/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          segregation</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.0.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../installation.html">Installation</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="../tutorial.html">Tutorial</a></li>
+                <li><a href="../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Single-group Segregation Indices</a><ul>
+<li><a class="reference internal" href="#Data-Prep">Data Prep</a><ul>
+<li><a class="reference internal" href="#Aspatial-Segregation-Indices">Aspatial Segregation Indices</a></li>
+<li><a class="reference internal" href="#Spatial-Segregation-Indices">Spatial Segregation Indices</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#Euclidian-distance-based-measures">Euclidian distance based measures</a></li>
+<li><a class="reference internal" href="#Network-distance-based-measures">Network distance based measures</a><ul>
+<li><a class="reference internal" href="#Batch-Computing-Single-Group-Measures">Batch-Computing Single-Group Measures</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<div class="section" id="Single-group-Segregation-Indices">
+<h1>Single-group Segregation Indices<a class="headerlink" href="#Single-group-Segregation-Indices" title="Permalink to this headline">¶</a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%</span><span class="k">load_ext</span> watermark
+<span class="o">%</span><span class="k">watermark</span> -a &#39;eli knaap&#39; -v -d -u -p segregation,geopandas,libpysal,pandana
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Author: eli knaap
+
+Last updated: 2021-04-25
+
+Python implementation: CPython
+Python version       : 3.8.8
+IPython version      : 7.18.1
+
+segregation: 1.3.0
+geopandas  : 0.9.0
+libpysal   : 4.3.0
+pandana    : 0.6.1
+
+</pre></div></div>
+</div>
+<p>Single-group indices are calculated using the <code class="docutils literal notranslate"><span class="pre">singlegroup</span></code> module</p>
+<div class="section" id="Data-Prep">
+<h2>Data Prep<a class="headerlink" href="#Data-Prep" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">libpysal.examples</span> <span class="kn">import</span> <span class="n">load_example</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># read in sacramento data from libpysal and reproject into an appropriate CRS</span>
+<span class="n">sacramento</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">load_example</span><span class="p">(</span><span class="s2">&quot;Sacramento1&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s2">&quot;sacramentot2.shp&quot;</span><span class="p">))</span>
+<span class="n">sacramento</span> <span class="o">=</span> <span class="n">sacramento</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">sacramento</span><span class="o">.</span><span class="n">estimate_utm_crs</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">sacramento</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>FIPS</th>
+      <th>MSA</th>
+      <th>TOT_POP</th>
+      <th>POP_16</th>
+      <th>POP_65</th>
+      <th>WHITE</th>
+      <th>BLACK</th>
+      <th>ASIAN</th>
+      <th>HISP</th>
+      <th>MULTI_RA</th>
+      <th>...</th>
+      <th>EMP_FEM</th>
+      <th>OCC_MAN</th>
+      <th>OCC_OFF1</th>
+      <th>OCC_INFO</th>
+      <th>HH_INC</th>
+      <th>POV_POP</th>
+      <th>POV_TOT</th>
+      <th>HSG_VAL</th>
+      <th>POLYID</th>
+      <th>geometry</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>06061022001</td>
+      <td>Sacramento</td>
+      <td>5501</td>
+      <td>1077</td>
+      <td>518</td>
+      <td>4961</td>
+      <td>29</td>
+      <td>82</td>
+      <td>336</td>
+      <td>31</td>
+      <td>...</td>
+      <td>1187</td>
+      <td>117</td>
+      <td>663.0</td>
+      <td>42</td>
+      <td>52941</td>
+      <td>5461</td>
+      <td>470</td>
+      <td>225900</td>
+      <td>1</td>
+      <td>POLYGON ((740409.853 4338451.728, 740199.864 4...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>06061020106</td>
+      <td>Sacramento</td>
+      <td>2072</td>
+      <td>396</td>
+      <td>109</td>
+      <td>1603</td>
+      <td>0</td>
+      <td>28</td>
+      <td>391</td>
+      <td>41</td>
+      <td>...</td>
+      <td>522</td>
+      <td>38</td>
+      <td>229.0</td>
+      <td>19</td>
+      <td>51958</td>
+      <td>2052</td>
+      <td>160</td>
+      <td>249300</td>
+      <td>2</td>
+      <td>POLYGON ((753400.378 4347151.080, 753395.816 4...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>06061020107</td>
+      <td>Sacramento</td>
+      <td>3633</td>
+      <td>911</td>
+      <td>126</td>
+      <td>1624</td>
+      <td>9</td>
+      <td>0</td>
+      <td>1918</td>
+      <td>41</td>
+      <td>...</td>
+      <td>698</td>
+      <td>86</td>
+      <td>197.0</td>
+      <td>0</td>
+      <td>32992</td>
+      <td>3604</td>
+      <td>668</td>
+      <td>175900</td>
+      <td>3</td>
+      <td>POLYGON ((758318.262 4352123.456, 758319.774 4...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>06061020105</td>
+      <td>Sacramento</td>
+      <td>1683</td>
+      <td>281</td>
+      <td>154</td>
+      <td>1564</td>
+      <td>0</td>
+      <td>55</td>
+      <td>60</td>
+      <td>4</td>
+      <td>...</td>
+      <td>519</td>
+      <td>5</td>
+      <td>256.0</td>
+      <td>6</td>
+      <td>54556</td>
+      <td>1683</td>
+      <td>116</td>
+      <td>302300</td>
+      <td>4</td>
+      <td>POLYGON ((750839.595 4342678.807, 750805.840 4...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>06061020200</td>
+      <td>Sacramento</td>
+      <td>5794</td>
+      <td>1278</td>
+      <td>830</td>
+      <td>5185</td>
+      <td>17</td>
+      <td>13</td>
+      <td>251</td>
+      <td>229</td>
+      <td>...</td>
+      <td>1260</td>
+      <td>155</td>
+      <td>506.0</td>
+      <td>59</td>
+      <td>50815</td>
+      <td>5771</td>
+      <td>342</td>
+      <td>167300</td>
+      <td>5</td>
+      <td>POLYGON ((670062.020 4311030.409, 670133.819 4...</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 31 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">sacramento</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">&#39;BLACK&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;AxesSubplot:&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_01_singlegroup_indices_7_1.png" class="no-scaled-link" src="../_images/notebooks_01_singlegroup_indices_7_1.png" style="width: 368px; height: 258px;" />
+</div>
+</div>
+<div class="section" id="Aspatial-Segregation-Indices">
+<h3>Aspatial Segregation Indices<a class="headerlink" href="#Aspatial-Segregation-Indices" title="Permalink to this headline">¶</a></h3>
+<p>To compute an aspatial segregation index, pass a dataframe, a group population variable, and total population variable to the index’s class</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">segregation.singlegroup</span> <span class="kn">import</span> <span class="n">Dissim</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">dissim</span> <span class="o">=</span> <span class="n">Dissim</span><span class="p">(</span><span class="n">sacramento</span><span class="p">,</span> <span class="n">group_pop_var</span><span class="o">=</span><span class="s1">&#39;BLACK&#39;</span><span class="p">,</span>
+                <span class="n">total_pop_var</span><span class="o">=</span><span class="s1">&#39;TOT_POP&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">statistic</span></code> attribute holds the value of the segregation index, and the <code class="docutils literal notranslate"><span class="pre">data</span></code> attribute holds the data used to calculate the index</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">dissim</span><span class="o">.</span><span class="n">statistic</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0.4883394024705785
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">dissim</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>BLACK</th>
+      <th>TOT_POP</th>
+      <th>geometry</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>29</td>
+      <td>5501</td>
+      <td>POLYGON ((740409.853 4338451.728, 740199.864 4...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>2072</td>
+      <td>POLYGON ((753400.378 4347151.080, 753395.816 4...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>9</td>
+      <td>3633</td>
+      <td>POLYGON ((758318.262 4352123.456, 758319.774 4...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0</td>
+      <td>1683</td>
+      <td>POLYGON ((750839.595 4342678.807, 750805.840 4...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>17</td>
+      <td>5794</td>
+      <td>POLYGON ((670062.020 4311030.409, 670133.819 4...</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</div>
+<div class="section" id="Spatial-Segregation-Indices">
+<h3>Spatial Segregation Indices<a class="headerlink" href="#Spatial-Segregation-Indices" title="Permalink to this headline">¶</a></h3>
+<p>For calculating spatial segregation indices, the package implements two classes of indices: spatially-explicit and spatially-implicit.</p>
+<p>Spatially-explicit indices are those for which space was a formal consideration in the index’s original formulation, whereas spatially-implicit indices are developed using the logic of <a class="reference external" href="http://doi.wiley.com/10.1111/j.0081-1750.2004.00150.x">Reardon and O’Sulivan</a>.</p>
+<p>For the latter,(otherwise called <em>generalized</em> spatial segregation indices) the package can incorporate spatial relationships represented by either a <code class="docutils literal notranslate"><span class="pre">`libpysal.W</span></code> &lt;<a class="reference external" href="https://pysal.org/libpysal/api.html">https://pysal.org/libpysal/api.html</a>&gt;`__ weights object or a <code class="docutils literal notranslate"><span class="pre">`pandana.Network</span></code> &lt;<a class="reference external" href="http://udst.github.io/pandana/network.html">http://udst.github.io/pandana/network.html</a>&gt;`__ network object, which means generalized spatial segregation indices can be computed according to many different spatial relationships which could include contiguity, distance, or network connectivity.
+This flexibility is particularly useful for specifying appropriate “neighborhood” definitions for different types of input data (which could be, e.g. housing units, census tracts, or counties)</p>
+<p>For spatially-explicit indices, they can be called like any other, though some may have additional arguments:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">segregation.singlegroup</span> <span class="kn">import</span> <span class="n">AbsoluteCentralization</span><span class="p">,</span> <span class="n">Gini</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">cent</span> <span class="o">=</span> <span class="n">AbsoluteCentralization</span><span class="p">(</span><span class="n">sacramento</span><span class="p">,</span> <span class="n">group_pop_var</span><span class="o">=</span><span class="s1">&#39;BLACK&#39;</span><span class="p">,</span>
+                              <span class="n">total_pop_var</span><span class="o">=</span><span class="s1">&#39;TOT_POP&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">cent</span><span class="o">.</span><span class="n">statistic</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0.8491771822066525
+</pre></div></div>
+</div>
+</div>
+</div>
+<div class="section" id="Euclidian-distance-based-measures">
+<h2>Euclidian distance based measures<a class="headerlink" href="#Euclidian-distance-based-measures" title="Permalink to this headline">¶</a></h2>
+<p>For generalized spatial indices, a <code class="docutils literal notranslate"><span class="pre">distance</span></code> parameter can be passed to the index of choice. Under the hood, the input data will be passed through a kernel function with the distance parameter as the kernel bandwidth.</p>
+<p>(note in this case because the CRS of the sacramento dataframe is UTM, the units are in meters)</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># aspatial gini index</span>
+<span class="n">aspatial_gini</span> <span class="o">=</span> <span class="n">Gini</span><span class="p">(</span><span class="n">sacramento</span><span class="p">,</span> <span class="n">group_pop_var</span><span class="o">=</span><span class="s1">&#39;BLACK&#39;</span><span class="p">,</span>
+                     <span class="n">total_pop_var</span><span class="o">=</span><span class="s1">&#39;TOT_POP&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># generalized spatial gini index</span>
+<span class="n">gen_spatialgini</span> <span class="o">=</span> <span class="n">Gini</span><span class="p">(</span><span class="n">sacramento</span><span class="p">,</span> <span class="n">group_pop_var</span><span class="o">=</span><span class="s1">&#39;BLACK&#39;</span><span class="p">,</span>
+                       <span class="n">total_pop_var</span><span class="o">=</span><span class="s1">&#39;TOT_POP&#39;</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">gen_spatialgini</span><span class="o">.</span><span class="n">statistic</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0.5368102768280784
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">aspatial_gini</span><span class="o">.</span><span class="n">statistic</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0.6361755332635235
+</pre></div></div>
+</div>
+<p>Examining the <code class="docutils literal notranslate"><span class="pre">data</span></code> attribute of the fitted index shows how the input data are transformed</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># kernelized data</span>
+<span class="n">gen_spatialgini</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">&#39;BLACK&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;AxesSubplot:&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_01_singlegroup_indices_28_1.png" class="no-scaled-link" src="../_images/notebooks_01_singlegroup_indices_28_1.png" style="width: 368px; height: 258px;" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># original data</span>
+<span class="n">sacramento</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">&#39;BLACK&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;AxesSubplot:&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_01_singlegroup_indices_29_1.png" class="no-scaled-link" src="../_images/notebooks_01_singlegroup_indices_29_1.png" style="width: 368px; height: 258px;" />
+</div>
+</div>
+</div>
+<div class="section" id="Network-distance-based-measures">
+<h2>Network distance based measures<a class="headerlink" href="#Network-distance-based-measures" title="Permalink to this headline">¶</a></h2>
+<p>Instead of a euclidian distance-based kernel, each generalized spatial segregation index can be calculated using accssibility analysis on a transportation network instead. Since people can’t fly, using a travel network to measure spatial distances is more conceptually pure to the spirit of segregation indices</p>
+<p>A network can be created using the <a class="reference external" href="https://github.com/UDST/urbanaccess">urbanaccess</a> package, or the built-in <code class="docutils literal notranslate"><span class="pre">get_osm_network</span></code> function from the <code class="docutils literal notranslate"><span class="pre">segregation.util</span></code> module. Alternatively, metropolitan-scale networks from OpenStreetMap are also available in the <a class="reference external" href="https://open.quiltdata.com/b/spatial-ucr/tree/osm/">CGS quilt bucket</a> (named by CBSA FIPS code)</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandana</span> <span class="k">as</span> <span class="nn">pdna</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">net</span> <span class="o">=</span> <span class="n">pdna</span><span class="o">.</span><span class="n">Network</span><span class="o">.</span><span class="n">from_hdf5</span><span class="p">(</span><span class="s1">&#39;../40900.h5&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">network_spatialgini</span> <span class="o">=</span> <span class="n">Gini</span><span class="p">(</span><span class="n">sacramento</span><span class="p">,</span> <span class="n">group_pop_var</span><span class="o">=</span><span class="s1">&#39;BLACK&#39;</span><span class="p">,</span>
+                           <span class="n">total_pop_var</span><span class="o">=</span><span class="s1">&#39;TOT_POP&#39;</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
+                           <span class="n">network</span><span class="o">=</span><span class="n">net</span><span class="p">,</span> <span class="n">decay</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Comparing spatial gini indices based on straight-line distance versus network distance:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">network_spatialgini</span><span class="o">.</span><span class="n">statistic</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0.5848616778202473
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">gen_spatialgini</span><span class="o">.</span><span class="n">statistic</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0.5368102768280784
+</pre></div></div>
+</div>
+<p>The segregation statistic using network distance to construct neighborhoods is higher than using the one using unrestricted euclidian distance</p>
+<div class="section" id="Batch-Computing-Single-Group-Measures">
+<h3>Batch-Computing Single-Group Measures<a class="headerlink" href="#Batch-Computing-Single-Group-Measures" title="Permalink to this headline">¶</a></h3>
+<p>To compute all single group indices in one go, the package provides a wrapper function in the <code class="docutils literal notranslate"><span class="pre">batch</span></code> module</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">segregation.batch</span> <span class="kn">import</span> <span class="n">batch_compute_singlegroup</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">all_singlegroup</span> <span class="o">=</span> <span class="n">batch_compute_singlegroup</span><span class="p">(</span><span class="n">sacramento</span><span class="p">,</span> <span class="n">group_pop_var</span><span class="o">=</span><span class="s1">&#39;BLACK&#39;</span><span class="p">,</span> <span class="n">total_pop_var</span><span class="o">=</span><span class="s1">&#39;TOT_POP&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">all_singlegroup</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Statistic</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>AbsoluteCentralization</th>
+      <td>0.849177</td>
+    </tr>
+    <tr>
+      <th>AbsoluteClustering</th>
+      <td>-1.069798</td>
+    </tr>
+    <tr>
+      <th>AbsoluteConcentration</th>
+      <td>0.981443</td>
+    </tr>
+    <tr>
+      <th>Atkinson</th>
+      <td>0.365947</td>
+    </tr>
+    <tr>
+      <th>BiasCorrectedDissim</th>
+      <td>0.487794</td>
+    </tr>
+    <tr>
+      <th>BoundarySpatialDissim</th>
+      <td>0.450074</td>
+    </tr>
+    <tr>
+      <th>ConProf</th>
+      <td>0.112752</td>
+    </tr>
+    <tr>
+      <th>CorrelationR</th>
+      <td>0.101027</td>
+    </tr>
+    <tr>
+      <th>Delta</th>
+      <td>0.907277</td>
+    </tr>
+    <tr>
+      <th>DensityCorrectedDissim</th>
+      <td>0.335178</td>
+    </tr>
+    <tr>
+      <th>Dissim</th>
+      <td>0.488339</td>
+    </tr>
+    <tr>
+      <th>DistanceDecayExposure</th>
+      <td>0.079376</td>
+    </tr>
+    <tr>
+      <th>DistanceDecayIsolation</th>
+      <td>0.013780</td>
+    </tr>
+    <tr>
+      <th>Entropy</th>
+      <td>0.112068</td>
+    </tr>
+    <tr>
+      <th>Exposure</th>
+      <td>0.837925</td>
+    </tr>
+    <tr>
+      <th>Gini</th>
+      <td>0.636176</td>
+    </tr>
+    <tr>
+      <th>Isolation</th>
+      <td>0.162075</td>
+    </tr>
+    <tr>
+      <th>MinMax</th>
+      <td>0.656220</td>
+    </tr>
+    <tr>
+      <th>ModifiedDissim</th>
+      <td>0.476233</td>
+    </tr>
+    <tr>
+      <th>ModifiedGini</th>
+      <td>0.623753</td>
+    </tr>
+    <tr>
+      <th>PARDissim</th>
+      <td>0.481833</td>
+    </tr>
+    <tr>
+      <th>RelativeCentralization</th>
+      <td>0.076906</td>
+    </tr>
+    <tr>
+      <th>RelativeClustering</th>
+      <td>-1.000000</td>
+    </tr>
+    <tr>
+      <th>RelativeConcentration</th>
+      <td>0.778755</td>
+    </tr>
+    <tr>
+      <th>SpatialDissim</th>
+      <td>0.446272</td>
+    </tr>
+    <tr>
+      <th>SpatialProxProf</th>
+      <td>0.115984</td>
+    </tr>
+    <tr>
+      <th>SpatialProximity</th>
+      <td>1.031936</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>
+</pre></div>
+</div>
+</div>
+<script type="application/vnd.jupyter.widget-state+json">
+{"state": {}, "version_major": 2, "version_minor": 0}
+</script></div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="../_sources/notebooks/01_singlegroup_indices.ipynb.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.3.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
