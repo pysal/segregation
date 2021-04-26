@@ -1,7 +1,6 @@
 # Segregation Analysis, Inference, and Decomposition with PySAL
 
-[![Build Status](https://travis-ci.com/pysal/segregation.svg?branch=master)](https://travis-ci.org/pysal/segregation)
-[![Coverage Status](https://coveralls.io/repos/github/pysal/segregation/badge.svg?branch=master)](https://coveralls.io/github/pysal/segregation?branch=master&service=github&kill_cache=1) 
+[![codecov](https://codecov.io/gh/pysal/segregation/branch/master/graph/badge.svg?token=1ujvZCI9Ce)](https://codecov.io/gh/pysal/segregation)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/segregation)
 ![PyPI](https://img.shields.io/pypi/v/segregation)
 ![Conda (channel only)](https://img.shields.io/conda/vn/conda-forge/segregation)
