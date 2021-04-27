@@ -30,7 +30,7 @@
            environment-file: ${{ matrix.environment-file }}
            micromamba-version: 'latest'
         
-      - name: reinstall segregation - bash
+       - name: reinstall segregation - bash
          shell: bash -l {0}
          run: pip install -e . --no-deps --force-reinstall
          if: matrix.os != 'windows-latest'
