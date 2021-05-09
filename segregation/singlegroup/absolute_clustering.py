@@ -5,7 +5,7 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.ed
 import numpy as np
 import pandas as pd
 from sklearn.metrics.pairwise import euclidean_distances, haversine_distances
-
+from libpysal.weights import DistanceBand
 from .._base import SingleGroupIndex, SpatialExplicitIndex
 
 
@@ -60,35 +60,27 @@ def _absolute_clustering(
     if beta < 0:
         raise ValueError("beta must be greater than zero.")
 
-    data = data.assign(
-        xi=data[group_pop_var], yi=data[total_pop_var] - data[group_pop_var]
-    )
+    X = data[group_pop_var].values.sum()
 
-    X = data.xi.sum()
-
-    x = np.array(data.xi)
-    t = np.array(data[total_pop_var])
+    x = data[group_pop_var].values
+    t = data[total_pop_var].values
     n = len(data)
 
-    c_lons = np.array(data.centroid.x)
-    c_lats = np.array(data.centroid.y)
-
     if metric == "euclidean":
-        dist = euclidean_distances(pd.DataFrame({"c_lats": c_lats, "c_lons": c_lons}))
+        maxd = np.max(
+            euclidean_distances([data.centroid.x.values, data.centroid.y.values])
+        )
+        dist = DistanceBand.from_dataframe(
+            data, alpha=-2.0, binary=False, threshold=maxd,
+        ).full()[0]
 
     if metric == "haversine":
-        dist = haversine_distances(
-            pd.DataFrame({"c_lats": c_lats, "c_lons": c_lons})
+        dist = haversine_distances([data.centroid.x.values, data.centroid.y.values]
         )  # This needs to be latitude first!
 
-    c = np.exp(-dist)
+    np.fill_diagonal(dist, val=((alpha * data.area.values) ** (beta)))
 
-    if c.sum() < 10 ** (-15):
-        raise ValueError(
-            "It not possible to determine accurately the exponential of the negative distances. This is probably due to the large magnitude of the centroids numbers. It is recommended to reproject the geopandas DataFrame. Also, if this is a not lat-long CRS, it is recommended to set metric to 'haversine'"
-        )
-
-    np.fill_diagonal(c, val=np.exp(-((alpha * data.area) ** (beta))))
+    c = dist.copy()
 
     ACL = ((((x / X) * (c * x).sum(axis=1)).sum()) - ((X / n ** 2) * c.sum())) / (
         (((x / X) * (c * t).sum(axis=1)).sum()) - ((X / n ** 2) * c.sum())
