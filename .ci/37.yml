@@ -4,7 +4,7 @@ channels:
 dependencies:
   - python=3.7
   - pandas
-  - geopandas>=0.7
+  - geopandas>=0.9
   - matplotlib
   - scikit-learn
   - seaborn
