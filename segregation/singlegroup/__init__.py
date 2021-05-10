@@ -9,11 +9,11 @@ from .correlationr import CorrelationR
 from .delta import Delta
 from .density_corrected_dissim import DensityCorrectedDissim
 from .dissim import Dissim
-from .dx_exposure import DistanceDecayExposure
+from .dx_interaction import DistanceDecayInteraction
 from .dx_isolation import DistanceDecayIsolation
 from .entropy import Entropy
-from .exposure import Exposure
 from .gini import Gini
+from .interaction import Interaction
 from .isolation import Isolation
 from .minmax import MinMax
 from .modified_dissim import ModifiedDissim

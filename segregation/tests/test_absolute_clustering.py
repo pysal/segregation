@@ -10,7 +10,7 @@ class Absolute_Clustering_Tester(unittest.TestCase):
         s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
         df = s_map[['geometry', 'HISP', 'TOT_POP']]
         index = AbsoluteClustering(df, 'HISP', 'TOT_POP')
-        np.testing.assert_almost_equal(index.statistic, 0.005189287311955573)
+        np.testing.assert_almost_equal(index.statistic, 0.06964208383541652)
 
 
 if __name__ == '__main__':

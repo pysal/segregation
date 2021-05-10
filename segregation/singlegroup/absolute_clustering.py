@@ -16,31 +16,32 @@ def _absolute_clustering(
 
     Parameters
     ----------
-    data          : a geopandas DataFrame with a geometry column.
-
+    data : geopandas.GeoDataFrame
+        a GeoDataFrame with a geometry column
     group_pop_var : string
-                    The name of variable in data that contains the population size of the group of interest
-
+        The name of variable in data that contains the population size of the
+        group of interest
     total_pop_var : string
-                    The name of variable in data that contains the total population of the unit
-
-    alpha         : float
-                    A parameter that estimates the extent of the proximity within the same unit. Default value is 0.6
-
-    beta          : float
-                    A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
-
-    metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
-                    The metric used for the distance between spatial units.
-                    If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
+        The name of variable in data that contains the total population of the
+        unit
+    alpha : float
+        A parameter that estimates the extent of the proximity within the same
+        unit. Default value is 0.6
+    beta : float
+        A parameter that estimates the extent of the proximity within the same
+        unit. Default value is 0.5
+    metric : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
+        The metric used for the distance between spatial units.
+        If the projection of the CRS of the geopandas DataFrame field is in
+        degrees, this should be set to 'haversine'.
 
     Returns
     ----------
     statistic : float
-                Absolute Clustering Index
-
+        Absolute Clustering Index
     core_data : a geopandas DataFrame
-                A geopandas DataFrame that contains the columns used to perform the estimate.
+        A geopandas DataFrame that contains the columns used to perform the estimate.
+
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
@@ -75,7 +76,7 @@ def _absolute_clustering(
         ).full()[0]
 
     if metric == "haversine":
-        dist = haversine_distances([data.centroid.x.values, data.centroid.y.values]
+        dist = haversine_distances(pd.DataFrame({'y':data.centroid.y.values, 'x':data.centroid.x.values})
         )  # This needs to be latitude first!
 
     np.fill_diagonal(dist, val=((alpha * data.area.values) ** (beta)))
@@ -97,19 +98,22 @@ class AbsoluteClustering(SingleGroupIndex, SpatialExplicitIndex):
     Parameters
     ----------
     data : pandas.DataFrame or geopandas.GeoDataFrame, required
-        dataframe or geodataframe if spatial index holding data for location of interest
+        dataframe or geodataframe if spatial index holding data for location of
+        interest
     group_pop_var : str, required
         name of column on dataframe holding population totals for focal group
     total_pop_var : str, required
         name of column on dataframe holding total overall population
-    alpha  : float
-        A parameter that estimates the extent of the proximity within the same unit. Default value is 0.6
+    alpha : float
+        A parameter that estimates the extent of the proximity within the same unit.
+        Default value is 0.6
     beta : float
-        A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
+        A parameter that estimates the extent of the proximity within the same unit.
+        Default value is 0.5
     metric : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
         The metric used for the distance between spatial units.
-        If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
-
+        If the projection of the CRS of the geopandas DataFrame field is in degrees, this
+        should be set to 'haversine'.
 
     Attributes
     ----------

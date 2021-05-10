@@ -1,5 +1,5 @@
 """
-Exposure Segregation Index
+Interaction Segregation Index
 """
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
@@ -13,7 +13,7 @@ from .._base import (
 )
 
 
-def _exposure(data, group_pop_var, total_pop_var):
+def _interaction(data, group_pop_var, total_pop_var):
     """Calculation of Exposure index.
 
     Parameters
@@ -62,8 +62,8 @@ def _exposure(data, group_pop_var, total_pop_var):
     return xPy, core_data
 
 
-class Exposure(SingleGroupIndex, SpatialImplicitIndex):
-    """Exposure Index.
+class Interaction(SingleGroupIndex, SpatialImplicitIndex):
+    """Interaction Index.
 
     Parameters
     ----------
@@ -87,7 +87,7 @@ class Exposure(SingleGroupIndex, SpatialImplicitIndex):
     Attributes
     ----------
     statistic : float
-                MinMax Index
+                Interaction Index
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
 
@@ -116,8 +116,8 @@ class Exposure(SingleGroupIndex, SpatialImplicitIndex):
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
         if any([w, network, distance]):
             SpatialImplicitIndex.__init__(self, w, network, distance, decay, function, precompute)
-        aux = _exposure(self.data, self.group_pop_var, self.total_pop_var)
+        aux = _interaction(self.data, self.group_pop_var, self.total_pop_var)
 
         self.statistic = aux[0]
         self.data = aux[1]
-        self._function = _exposure
+        self._function = _interaction

@@ -4,12 +4,13 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.ed
 
 import numpy as np
 import pandas as pd
+from libpysal.weights import DistanceBand
 from sklearn.metrics.pairwise import euclidean_distances, haversine_distances
 
 from .._base import SingleGroupIndex, SpatialExplicitIndex
 
 
-def _distance_decay_exposure(
+def _distance_decay_interaction(
     data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5, metric="euclidean"
 ):
     """
@@ -19,19 +20,14 @@ def _distance_decay_exposure(
     ----------
 
     data          : a geopandas DataFrame with a geometry column.
-
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-
     alpha         : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.6
-
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
-
     metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
                     The metric used for the distance between spatial units.
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
@@ -76,25 +72,21 @@ def _distance_decay_exposure(
     y = t - x
     X = x.sum()
 
-    c_lons = np.array(data.centroid.x)
-    c_lats = np.array(data.centroid.y)
-
     if metric == "euclidean":
-        dist = euclidean_distances(pd.DataFrame({"c_lats": c_lats, "c_lons": c_lons}))
+        maxd = np.max(
+            euclidean_distances([data.centroid.x.values, data.centroid.y.values])
+        )
+        dist = DistanceBand.from_dataframe(
+            data, alpha=-2.0, binary=False, threshold=maxd,
+        ).full()[0]
 
     if metric == "haversine":
-        dist = haversine_distances(
-            pd.DataFrame({"c_lats": c_lats, "c_lons": c_lons})
+        dist = haversine_distances(pd.DataFrame({'y':data.centroid.y.values, 'x':data.centroid.x.values})
         )  # This needs to be latitude first!
 
-    c = np.exp(-dist)
+    np.fill_diagonal(dist, val=((alpha * data.area.values) ** (beta)))
 
-    if c.sum() < 10 ** (-15):
-        raise ValueError(
-            "It not possible to determine accurately the exponential of the negative distances. This is probably due to the large magnitude of the centroids numbers. It is recommended to reproject the geopandas DataFrame. Also, if this is a not lat-long CRS, it is recommended to set metric to 'haversine'"
-        )
-
-    np.fill_diagonal(c, val=np.exp(-((alpha * data.area) ** (beta))))
+    c = dist.copy()
 
     Pij = np.multiply(c, t) / np.sum(np.multiply(c, t), axis=1)
 
@@ -105,8 +97,8 @@ def _distance_decay_exposure(
     return DDxPy, core_data
 
 
-class DistanceDecayExposure(SingleGroupIndex, SpatialExplicitIndex):
-    """Distance-Decay Exposure Index.
+class DistanceDecayInteraction(SingleGroupIndex, SpatialExplicitIndex):
+    """Distance-Decay Interaction Index.
 
     Parameters
     ----------
@@ -159,7 +151,7 @@ class DistanceDecayExposure(SingleGroupIndex, SpatialExplicitIndex):
         self.alpha = alpha
         self.beta = beta
         self.metric = metric
-        aux = _distance_decay_exposure(
+        aux = _distance_decay_interaction(
             self.data,
             self.group_pop_var,
             self.total_pop_var,
@@ -170,4 +162,4 @@ class DistanceDecayExposure(SingleGroupIndex, SpatialExplicitIndex):
 
         self.statistic = aux[0]
         self.core_data = aux[1]
-        self._function = _distance_decay_exposure
+        self._function = _distance_decay_interaction

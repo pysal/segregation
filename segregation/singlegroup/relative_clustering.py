@@ -78,7 +78,7 @@ def _relative_clustering(
         ).full()[0]
 
     if metric == "haversine":
-        dist = haversine_distances([data.centroid.x.values, data.centroid.y.values]
+        dist = haversine_distances(pd.DataFrame({'y':data.centroid.y.values, 'x':data.centroid.x.values})
         )  # This needs to be latitude first!
 
     np.fill_diagonal(dist, val=((alpha * data.area.values) ** (beta)))
