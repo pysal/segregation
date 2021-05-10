@@ -58,6 +58,7 @@ def batch_compute_singlegroup(gdf, group_pop_var, total_pop_var, **kwargs):
             ).statistic
         fitted = pd.DataFrame.from_dict(fitted, orient="index")
         fitted.columns = ["Statistic"]
+        fitted.index.name='Name'
         return fitted
 
 
@@ -83,7 +84,8 @@ def batch_compute_multigroup(gdf, groups, **kwargs):
             fitted[each] = multigroup_classes[each](gdf, groups, **kwargs).statistic
         fitted = pd.DataFrame.from_dict(fitted, orient="index")
         fitted.columns = ["Statistic"]
-        return fitted
+        fitted.index.name='Name'
+    return fitted
 
 
 def batch_multiscalar_singlegroup(
