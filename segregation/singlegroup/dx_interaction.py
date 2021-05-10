@@ -4,9 +4,8 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.ed
 
 import numpy as np
 import pandas as pd
-from libpysal.weights import DistanceBand
 from sklearn.metrics.pairwise import euclidean_distances, haversine_distances
-
+from libpysal.weights import DistanceBand
 from .._base import SingleGroupIndex, SpatialExplicitIndex
 
 
@@ -73,20 +72,15 @@ def _distance_decay_interaction(
     X = x.sum()
 
     if metric == "euclidean":
-        maxd = np.max(
-            euclidean_distances([data.centroid.x.values, data.centroid.y.values])
-        )
-        dist = DistanceBand.from_dataframe(
-            data, alpha=-2.0, binary=False, threshold=maxd,
-        ).full()[0]
-
+        maxdist = np.max(euclidean_distances(pd.DataFrame({'x':data.centroid.x.values, 'y':data.centroid.y.values})))
+        dist = np.exp(-DistanceBand.from_dataframe(data, binary=False, threshold=maxdist).full()[0])
     if metric == "haversine":
-        dist = haversine_distances(pd.DataFrame({'y':data.centroid.y.values, 'x':data.centroid.x.values})
-        )  # This needs to be latitude first!
+        dist = np.exp(-haversine_distances(pd.DataFrame({'y':data.centroid.y.values, 'x':data.centroid.x.values})
+        ))  # This needs to be latitude first!
 
-    np.fill_diagonal(dist, val=((alpha * data.area.values) ** (beta)))
+    np.fill_diagonal(dist, val=np.exp(-((alpha * data.area.values) ** (beta))))
 
-    c = dist.copy()
+    c = 1-dist.copy()
 
     Pij = np.multiply(c, t) / np.sum(np.multiply(c, t), axis=1)
 
