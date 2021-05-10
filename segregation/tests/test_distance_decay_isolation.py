@@ -10,7 +10,7 @@ class Distance_Decay_Isolation_Tester(unittest.TestCase):
         s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
         df = s_map[['geometry', 'HISP', 'TOT_POP']]
         index = DistanceDecayIsolation(df, 'HISP', 'TOT_POP')
-        np.testing.assert_almost_equal(index.statistic, 0.19362385990000566)
+        np.testing.assert_almost_equal(index.statistic, 0.15468010320797765)
 
 
 if __name__ == '__main__':
