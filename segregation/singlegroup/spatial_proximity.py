@@ -4,14 +4,13 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.ed
 
 import numpy as np
 import pandas as pd
+from libpysal.weights import DistanceBand
 from sklearn.metrics.pairwise import euclidean_distances, haversine_distances
 
 from .._base import SingleGroupIndex, SpatialExplicitIndex
 
 
-def _spatial_proximity(
-    data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5, metric="euclidean"
-):
+def _spatial_proximity(data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5):
     """
     Calculation of Spatial Proximity index
 
@@ -51,9 +50,6 @@ def _spatial_proximity(
     Reference: :cite:`massey1988dimensions`.
 
     """
-    if metric not in ["euclidean", "haversine"]:
-        raise ValueError("metric must one of 'euclidean', 'haversine'")
-
     if alpha < 0:
         raise ValueError("alpha must be greater than zero.")
 
@@ -71,25 +67,17 @@ def _spatial_proximity(
     X = data.xi.sum()
     Y = data.yi.sum()
 
-    c_lons = np.array(data.centroid.x)
-    c_lats = np.array(data.centroid.y)
-
-    if metric == "euclidean":
-        dist = euclidean_distances(pd.DataFrame({"c_lats": c_lats, "c_lons": c_lons}))
-
-    if metric == "haversine":
-        dist = haversine_distances(
-            pd.DataFrame({"c_lats": c_lats, "c_lons": c_lons})
-        )  # This needs to be latitude first!
-
-    c = np.exp(-dist)
-
-    if c.sum() < 10 ** (-15):
-        raise ValueError(
-            "It not possible to determine accurately the exponential of the negative distances. This is probably due to the large magnitude of the centroids numbers. It is recommended to reproject the geopandas DataFrame. Also, if this is a not lat-long CRS, it is recommended to set metric to 'haversine'"
+    maxdist = np.max(
+        euclidean_distances(
+            pd.DataFrame({"x": data.centroid.x.values, "y": data.centroid.y.values})
         )
+    )
+    dist = np.exp(
+        -DistanceBand.from_dataframe(data, binary=False, threshold=maxdist).full()[0]
+    )
+    np.fill_diagonal(dist, val=np.exp(-((alpha * data.area.values) ** (beta))))
 
-    np.fill_diagonal(c, val=np.exp(-((alpha * data.area) ** (beta))))
+    c = 1 - dist.copy()  # proximity matrix
 
     Pxx = ((np.array(data.xi) * c).T * np.array(data.xi)).sum() / X ** 2
     Pyy = ((np.array(data.yi) * c).T * np.array(data.yi)).sum() / Y ** 2
@@ -144,7 +132,6 @@ class SpatialProximity(SingleGroupIndex, SpatialExplicitIndex):
         total_pop_var,
         alpha=0.6,
         beta=0.5,
-        metric="euclidean",
         **kwargs,
     ):
         """Init."""
@@ -152,14 +139,12 @@ class SpatialProximity(SingleGroupIndex, SpatialExplicitIndex):
         SpatialExplicitIndex.__init__(self,)
         self.alpha = alpha
         self.beta = beta
-        self.metric = metric
         aux = _spatial_proximity(
             self.data,
             self.group_pop_var,
             self.total_pop_var,
             self.alpha,
             self.beta,
-            self.metric,
         )
 
         self.statistic = aux[0]

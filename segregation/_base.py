@@ -1,5 +1,6 @@
 """Base classes for segregation indices."""
 
+from logging import warn
 import warnings
 
 import geopandas as gpd
@@ -167,6 +168,9 @@ class SpatialExplicitIndex:
             raise TypeError(
                 "`data` must be a geopanads.GeoDataFrame with a vaild geometry column"
             )
+        if self.data.crs.is_geographic:
+            warn('Geometry is in a geographic CRS. Distance and area calculations in this index are likely incorrect. '
+                 'Re-project the input data to a projected CRS using `GeoDataFrame.to_crs()` before calculating this index.')
         self.spatial_type = "explicit"
 
 

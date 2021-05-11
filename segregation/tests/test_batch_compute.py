@@ -18,7 +18,6 @@ def test_batch_single():
         total_pop_var="TOT_POP",
         distance=2000,
         center="mean",
-        metric="euclidean",
         function="triangular",
     )
     np.testing.assert_array_almost_equal(
@@ -50,7 +49,7 @@ def test_batch_single():
             0.12637769,
             0.26119743,
             0.22847334,
-            1.20565876,
+            1.08922873,
         ],
         decimal=3,
     )

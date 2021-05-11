@@ -4,13 +4,13 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.ed
 
 import numpy as np
 import pandas as pd
-from sklearn.metrics.pairwise import euclidean_distances, haversine_distances
+from sklearn.metrics.pairwise import euclidean_distances
 from libpysal.weights import DistanceBand
 from .._base import SingleGroupIndex, SpatialExplicitIndex
 
 
 def _distance_decay_interaction(
-    data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5, metric="euclidean"
+    data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5
 ):
     """
     Calculation of Distance Decay Exposure index
@@ -27,9 +27,6 @@ def _distance_decay_interaction(
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.6
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
-    metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
-                    The metric used for the distance between spatial units.
-                    If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
 
     Returns
     ----------
@@ -51,9 +48,6 @@ def _distance_decay_interaction(
     Reference: :cite:`morgan1983distance`.
 
     """
-    if metric not in ["euclidean", "haversine"]:
-        raise ValueError("metric must one of 'euclidean', 'haversine'")
-
     if alpha < 0:
         raise ValueError("alpha must be greater than zero.")
 
@@ -71,16 +65,17 @@ def _distance_decay_interaction(
     y = t - x
     X = x.sum()
 
-    if metric == "euclidean":
-        maxdist = np.max(euclidean_distances(pd.DataFrame({'x':data.centroid.x.values, 'y':data.centroid.y.values})))
-        dist = np.exp(-DistanceBand.from_dataframe(data, binary=False, threshold=maxdist).full()[0])
-    if metric == "haversine":
-        dist = np.exp(-haversine_distances(pd.DataFrame({'y':data.centroid.y.values, 'x':data.centroid.x.values})
-        ))  # This needs to be latitude first!
-
+    maxdist = np.max(
+        euclidean_distances(
+            pd.DataFrame({"x": data.centroid.x.values, "y": data.centroid.y.values})
+        )
+    )
+    dist = np.exp(
+        -DistanceBand.from_dataframe(data, binary=False, threshold=maxdist).full()[0]
+    )
     np.fill_diagonal(dist, val=np.exp(-((alpha * data.area.values) ** (beta))))
 
-    c = 1-dist.copy()
+    c = 1 - dist.copy()  # proximity matrix
 
     Pij = np.multiply(c, t) / np.sum(np.multiply(c, t), axis=1)
 
@@ -106,10 +101,6 @@ class DistanceDecayInteraction(SingleGroupIndex, SpatialExplicitIndex):
         A parameter that estimates the extent of the proximity within the same unit. Default value is 0.6
     beta : float
         A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
-    metric : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
-        The metric used for the distance between spatial units.
-        If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
-
 
     Attributes
     ----------
@@ -136,7 +127,6 @@ class DistanceDecayInteraction(SingleGroupIndex, SpatialExplicitIndex):
         total_pop_var,
         alpha=0.6,
         beta=0.5,
-        metric="euclidean",
         **kwargs,
     ):
         """Init."""
@@ -144,14 +134,12 @@ class DistanceDecayInteraction(SingleGroupIndex, SpatialExplicitIndex):
         SpatialExplicitIndex.__init__(self,)
         self.alpha = alpha
         self.beta = beta
-        self.metric = metric
         aux = _distance_decay_interaction(
             self.data,
             self.group_pop_var,
             self.total_pop_var,
             self.alpha,
             self.beta,
-            self.metric,
         )
 
         self.statistic = aux[0]
