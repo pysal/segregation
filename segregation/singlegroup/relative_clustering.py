@@ -80,7 +80,7 @@ def _relative_clustering(
     c = 1-dist.copy()
 
     Pxx = (data.xi.values * data.xi.values * c).sum() / (X ** 2)
-    Pyy = (data.xi.values * data.yi.values * c).sum() / (X*Y)
+    Pyy = (data.yi.values * data.yi.values * c).sum() / (Y**2)
     RCL = (Pxx / Pyy) - 1
 
     if np.isnan(RCL):
