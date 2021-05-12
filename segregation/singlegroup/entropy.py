@@ -1,20 +1,16 @@
-"""
-Entropy Segregation Index
-"""
+"""Entropy Segregation Index."""
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
+import geopandas as gpd
 import numpy as np
 import pandas as pd
-import geopandas as gpd
-from .._base import (
-    SingleGroupIndex,
-    SpatialImplicitIndex,
-)
+
+from .._base import SingleGroupIndex, SpatialImplicitIndex
 
 
 def _entropy(data, group_pop_var, total_pop_var):
-    """Calculation of Entropy index.
+    """Calculate Entropy index.
 
     Parameters
     ----------
@@ -28,7 +24,7 @@ def _entropy(data, group_pop_var, total_pop_var):
     Returns
     ----------
     statistic : float
-        MinMax index statistic value
+        Entropy index statistic value
     core_data : pandas.DataFrame
         A pandas DataFrame that contains the columns used to perform the estimate.
 
@@ -37,7 +33,6 @@ def _entropy(data, group_pop_var, total_pop_var):
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
 
     Reference: :cite:`massey1988dimensions`.
-
 
     """
     x = np.array(data[group_pop_var])
@@ -94,7 +89,7 @@ class Entropy(SingleGroupIndex, SpatialImplicitIndex):
     Attributes
     ----------
     statistic : float
-                MinMax Index
+                Entropy Index
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
 
@@ -114,7 +109,7 @@ class Entropy(SingleGroupIndex, SpatialImplicitIndex):
         network=None,
         distance=None,
         decay=None,
-        function='triangular',
+        function="triangular",
         precompute=None,
         **kwargs
     ):
@@ -122,7 +117,9 @@ class Entropy(SingleGroupIndex, SpatialImplicitIndex):
 
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
         if any([w, network, distance]):
-            SpatialImplicitIndex.__init__(self, w, network, distance, decay, function, precompute)
+            SpatialImplicitIndex.__init__(
+                self, w, network, distance, decay, function, precompute
+            )
         aux = _entropy(self.data, self.group_pop_var, self.total_pop_var)
 
         self.statistic = aux[0]

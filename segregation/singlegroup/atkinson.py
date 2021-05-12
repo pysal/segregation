@@ -4,13 +4,11 @@ Atkinson Segregation Index
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
+import geopandas as gpd
 import numpy as np
 import pandas as pd
-import geopandas as gpd
-from .._base import (
-    SingleGroupIndex,
-    SpatialImplicitIndex,
-)
+
+from .._base import SingleGroupIndex, SpatialImplicitIndex
 
 
 def _atkinson(data, group_pop_var, total_pop_var, b=0.5):
@@ -90,7 +88,7 @@ class Atkinson(SingleGroupIndex, SpatialImplicitIndex):
     Attributes
     ----------
     statistic : float
-                MinMax Index
+                Atkinson Index
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
 
@@ -111,13 +109,15 @@ class Atkinson(SingleGroupIndex, SpatialImplicitIndex):
         distance=None,
         decay=None,
         precompute=None,
-        function='triangular',
+        function="triangular",
         **kwargs
     ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
         if any([w, network, distance]):
-            SpatialImplicitIndex.__init__(self, w, network, distance, decay, function, precompute)
+            SpatialImplicitIndex.__init__(
+                self, w, network, distance, decay, function, precompute
+            )
         aux = _atkinson(self.data, self.group_pop_var, self.total_pop_var)
 
         self.statistic = aux[0]

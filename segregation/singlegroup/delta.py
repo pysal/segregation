@@ -1,4 +1,4 @@
-"""Spatial Dissimilarity Index."""
+"""Delta Index."""
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
@@ -8,26 +8,20 @@ from .._base import SingleGroupIndex, SpatialExplicitIndex
 
 
 def _delta(data, group_pop_var, total_pop_var):
-    """
-    Calculation of Delta index
+    """Calculate Delta index.
 
     Parameters
     ----------
-
     data          : a geopandas DataFrame with a geometry column.
-
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
 
     Returns
     ----------
-
     statistic : float
                 Delta Index
-
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
 
@@ -59,7 +53,7 @@ def _delta(data, group_pop_var, total_pop_var):
 
 
 class Delta(SingleGroupIndex, SpatialExplicitIndex):
-    """Distance-Decay Isolation Index.
+    """Delta Index.
 
     Parameters
     ----------
@@ -73,7 +67,7 @@ class Delta(SingleGroupIndex, SpatialExplicitIndex):
     Attributes
     ----------
     statistic : float
-        SpatialDissim Index
+        Delta Index
     core_data : a pandas DataFrame
         A pandas DataFrame that contains the columns used to perform the estimate.
 

@@ -1,4 +1,4 @@
-"""Spatial Dissimilarity Index."""
+"""Distance Decay Isolation Index."""
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
@@ -11,32 +11,24 @@ from .._base import SingleGroupIndex, SpatialExplicitIndex
 
 
 def _distance_decay_isolation(data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5):
-    """
-    Calculation of Distance Decay Isolation index
+    """Calculate of Distance Decay Isolation index.
 
     Parameters
     ----------
-
     data          : a geopandas DataFrame with a geometry column.
-
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-
     alpha         : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.6
-
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
 
     Returns
     ----------
-
     statistic : float
                 Distance Decay Isolation Index
-
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
 
@@ -109,7 +101,7 @@ class DistanceDecayIsolation(SingleGroupIndex, SpatialExplicitIndex):
     Attributes
     ----------
     statistic : float
-        SpatialDissim Index
+        Distance Decay Isolation Index
     core_data : a pandas DataFrame
         A pandas DataFrame that contains the columns used to perform the estimate.
 
@@ -125,13 +117,7 @@ class DistanceDecayIsolation(SingleGroupIndex, SpatialExplicitIndex):
     """
 
     def __init__(
-        self,
-        data,
-        group_pop_var,
-        total_pop_var,
-        alpha=0.6,
-        beta=0.5,
-        **kwargs,
+        self, data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5, **kwargs,
     ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
@@ -139,11 +125,7 @@ class DistanceDecayIsolation(SingleGroupIndex, SpatialExplicitIndex):
         self.alpha = alpha
         self.beta = beta
         aux = _distance_decay_isolation(
-            self.data,
-            self.group_pop_var,
-            self.total_pop_var,
-            self.alpha,
-            self.beta,
+            self.data, self.group_pop_var, self.total_pop_var, self.alpha, self.beta,
         )
 
         self.statistic = aux[0]

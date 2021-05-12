@@ -3,34 +3,28 @@
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
 import numpy as np
-import pandas as pd
 
 from .._base import SingleGroupIndex, SpatialExplicitIndex
 
 
 def _relative_concentration(data, group_pop_var, total_pop_var):
-    """
-    Calculation of Relative Concentration index
+    """Calculate Relative Concentration index.
 
     Parameters
     ----------
-
     data          : a geopandas DataFrame with a geometry column.
-
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
 
     Returns
     ----------
-
     statistic : float
                 Relative Concentration Index
-
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
+
 
     Notes
     -----
@@ -102,7 +96,7 @@ class RelativeConcentration(SingleGroupIndex, SpatialExplicitIndex):
     Attributes
     ----------
     statistic : float
-        SpatialDissim Index
+        Relative Conrentration Index
     core_data : a pandas DataFrame
         A pandas DataFrame that contains the columns used to perform the estimate.
 

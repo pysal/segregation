@@ -1,4 +1,4 @@
-"""Spatial Dissimilarity Index."""
+"""Perimeter-Area Ratio Dissimilarity Index."""
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
@@ -103,7 +103,7 @@ class PARDissim(SingleGroupIndex, SpatialExplicitIndex):
     Attributes
     ----------
     statistic : float
-        SpatialDissim Index
+        PARDissim Index
     core_data : a pandas DataFrame
         A pandas DataFrame that contains the columns used to perform the estimate.
 

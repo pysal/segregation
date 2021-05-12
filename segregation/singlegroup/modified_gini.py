@@ -2,18 +2,15 @@
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
-import numpy as np
-import pandas as pd
 import geopandas as gpd
+import numpy as np
+
+from .._base import SingleGroupIndex, SpatialImplicitIndex
 from .gini import _gini_seg
-from .._base import (
-    SingleGroupIndex,
-    SpatialImplicitIndex,
-)
 
 
 def _modified_gini(data, group_pop_var, total_pop_var, iterations=500):
-    """Calculation of Modified Gini index.
+    """Calculate Modified Gini index.
 
     Parameters
     ----------
@@ -30,7 +27,7 @@ def _modified_gini(data, group_pop_var, total_pop_var, iterations=500):
     Returns
     ----------
     statistic : float
-                Modified Gini Index (Gini from Carrington and Troske (1997))
+        Modified Gini Index (Gini from Carrington and Troske (1997))
     data : pandas.DataFrame
         pandas DataFrame that contains the columns used to perform the estimate.
 
@@ -103,9 +100,9 @@ class ModifiedGini(SingleGroupIndex, SpatialImplicitIndex):
     Attributes
     ----------
     statistic : float
-                MinMax Index
+        Modified Gini Index
     core_data : a pandas DataFrame
-                A pandas DataFrame that contains the columns used to perform the estimate.
+        A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
@@ -123,8 +120,8 @@ class ModifiedGini(SingleGroupIndex, SpatialImplicitIndex):
         w=None,
         network=None,
         distance=None,
-        decay='linear',
-        function='triangular',
+        decay="linear",
+        function="triangular",
         precompute=None,
         **kwargs
     ):
@@ -132,7 +129,9 @@ class ModifiedGini(SingleGroupIndex, SpatialImplicitIndex):
 
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
         if any([w, network, distance]):
-            SpatialImplicitIndex.__init__(self, w, network, distance, decay, function, precompute)
+            SpatialImplicitIndex.__init__(
+                self, w, network, distance, decay, function, precompute
+            )
         aux = _modified_gini(
             self.data, self.group_pop_var, self.total_pop_var, iterations
         )

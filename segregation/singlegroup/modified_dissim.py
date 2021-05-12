@@ -2,18 +2,15 @@
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
-import numpy as np
-import pandas as pd
 import geopandas as gpd
+import numpy as np
+
+from .._base import SingleGroupIndex, SpatialImplicitIndex
 from .dissim import _dissim
-from .._base import (
-    SingleGroupIndex,
-    SpatialImplicitIndex,
-)
 
 
 def _modified_dissim(data, group_pop_var, total_pop_var, iterations=500):
-    """Calculation of Modified Dissimilarity index.
+    """Calculate Modified Dissimilarity index.
 
     Parameters
     ----------
@@ -30,7 +27,7 @@ def _modified_dissim(data, group_pop_var, total_pop_var, iterations=500):
     Returns
     ----------
     statistic : float
-                Modified Dissimilarity Index (Dissimilarity from Carrington and Troske (1997))
+        Modified Dissimilarity Index (Dissimilarity from Carrington and Troske (1997))
     data : pandas.DataFrame
         pandas DataFrame that contains the columns used to perform the estimate.
 
@@ -109,7 +106,7 @@ class ModifiedDissim(SingleGroupIndex, SpatialImplicitIndex):
     Attributes
     ----------
     statistic : float
-                MinMax Index
+                Modified Dissim Index
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
 
@@ -129,8 +126,8 @@ class ModifiedDissim(SingleGroupIndex, SpatialImplicitIndex):
         w=None,
         network=None,
         distance=None,
-        decay='linear',
-        function='triangular',
+        decay="linear",
+        function="triangular",
         precompute=None,
         **kwargs
     ):

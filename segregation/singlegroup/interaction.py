@@ -1,20 +1,15 @@
-"""
-Interaction Segregation Index
-"""
+"""Interaction Segregation Index."""
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
-import numpy as np
-import pandas as pd
 import geopandas as gpd
-from .._base import (
-    SingleGroupIndex,
-    SpatialImplicitIndex,
-)
+import numpy as np
+
+from .._base import SingleGroupIndex, SpatialImplicitIndex
 
 
 def _interaction(data, group_pop_var, total_pop_var):
-    """Calculation of Exposure index.
+    """Calculate Interaction index.
 
     Parameters
     ----------
@@ -108,14 +103,16 @@ class Interaction(SingleGroupIndex, SpatialImplicitIndex):
         distance=None,
         decay=None,
         precompute=None,
-        function='triangular',
+        function="triangular",
         **kwargs
     ):
         """Init."""
 
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
         if any([w, network, distance]):
-            SpatialImplicitIndex.__init__(self, w, network, distance, decay, function, precompute)
+            SpatialImplicitIndex.__init__(
+                self, w, network, distance, decay, function, precompute
+            )
         aux = _interaction(self.data, self.group_pop_var, self.total_pop_var)
 
         self.statistic = aux[0]

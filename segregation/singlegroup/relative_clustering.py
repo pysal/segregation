@@ -11,22 +11,17 @@ from .._base import SingleGroupIndex, SpatialExplicitIndex
 
 
 def _relative_clustering(data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5):
-    """
-    Calculation of Relative Clustering index
+    """Calculate Relative Clustering index.
 
     Parameters
     ----------
     data          : a geopandas DataFrame with a geometry column.
-
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-
     alpha         : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.6
-
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
 
@@ -34,9 +29,9 @@ def _relative_clustering(data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5
     ----------
     statistic : float
                 Relative Clustering Index
-
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
+
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
@@ -86,7 +81,7 @@ def _relative_clustering(data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5
 
 
 class RelativeClustering(SingleGroupIndex, SpatialExplicitIndex):
-    """Distance-Decay Isolation Index.
+    """Relative Clustering Index.
 
     Parameters
     ----------
@@ -104,7 +99,7 @@ class RelativeClustering(SingleGroupIndex, SpatialExplicitIndex):
     Attributes
     ----------
     statistic : float
-        SpatialDissim Index
+        Relative Clustering Index
     core_data : a pandas DataFrame
         A pandas DataFrame that contains the columns used to perform the estimate.
 

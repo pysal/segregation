@@ -1,20 +1,15 @@
-"""
-MinMax Segregation Index
-"""
+"""MinMax Segregation Index."""
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
-import numpy as np
-import pandas as pd
 import geopandas as gpd
-from .._base import (
-    SingleGroupIndex,
-    SpatialImplicitIndex,
-)
+import numpy as np
+
+from .._base import SingleGroupIndex, SpatialImplicitIndex
 
 
 def _min_max(data, group_pop_var, total_pop_var):
-    """Calculate MinMax index.
+    """MinMax Segregation index.
 
     Parameters
     ----------
@@ -65,7 +60,7 @@ def _min_max(data, group_pop_var, total_pop_var):
 
 
 class MinMax(SingleGroupIndex, SpatialImplicitIndex):
-    """Calculate SpatialMinMax.
+    """Min-Max Index.
 
     Parameters
     ----------
@@ -101,7 +96,6 @@ class MinMax(SingleGroupIndex, SpatialImplicitIndex):
     Reference: :cite:`osullivanwong2007surface`.
 
     We'd like to thank @AnttiHaerkoenen for this contribution!
-
     """
 
     def __init__(
@@ -113,14 +107,16 @@ class MinMax(SingleGroupIndex, SpatialImplicitIndex):
         network=None,
         distance=None,
         decay=None,
-        function='triangular',
+        function="triangular",
         precompute=None,
         **kwargs
     ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
         if any([w, network, distance]):
-            SpatialImplicitIndex.__init__(self, w, network, distance, decay, function, precompute)
+            SpatialImplicitIndex.__init__(
+                self, w, network, distance, decay, function, precompute
+            )
         aux = _min_max(self.data, self.group_pop_var, self.total_pop_var)
 
         self.statistic = aux[0]

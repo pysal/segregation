@@ -1,16 +1,12 @@
-"""
-CorrelationR Segregation Index
-"""
+"""Bias Corrected Dissimilarity index."""
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
+import geopandas as gpd
 import numpy as np
 import pandas as pd
-import geopandas as gpd
-from .._base import (
-    SingleGroupIndex,
-    SpatialImplicitIndex,
-)
+
+from .._base import SingleGroupIndex, SpatialImplicitIndex
 from .dissim import _dissim
 
 
@@ -114,7 +110,7 @@ class BiasCorrectedDissim(SingleGroupIndex, SpatialImplicitIndex):
     Attributes
     ----------
     statistic : float
-                MinMax Index
+                BiasCorrectedDissim Index
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
 
@@ -136,16 +132,20 @@ class BiasCorrectedDissim(SingleGroupIndex, SpatialImplicitIndex):
         distance=None,
         decay=None,
         precompute=None,
-        function='triangular',
+        function="triangular",
         **kwargs
     ):
         """Init."""
 
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
         if any([w, network, distance]):
-            SpatialImplicitIndex.__init__(self, w, network, distance, decay, function, precompute)
-        self.B=B
-        aux = _bias_corrected_dissim(self.data, self.group_pop_var, self.total_pop_var, self.B)
+            SpatialImplicitIndex.__init__(
+                self, w, network, distance, decay, function, precompute
+            )
+        self.B = B
+        aux = _bias_corrected_dissim(
+            self.data, self.group_pop_var, self.total_pop_var, self.B
+        )
 
         self.statistic = aux[0]
         self.data = aux[1]

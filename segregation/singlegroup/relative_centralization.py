@@ -11,7 +11,7 @@ from .._base import SingleGroupIndex, SpatialExplicitIndex
 def _relative_centralization(
     data, group_pop_var, total_pop_var, center="mean", metric="euclidean"
 ):
-    """Calculation of Relative Centralization index.
+    """Calculate Relative Centralization index.
 
     Parameters
     ----------
@@ -183,7 +183,7 @@ class RelativeCentralization(SingleGroupIndex, SpatialExplicitIndex):
     Attributes
     ----------
     statistic : float
-        SpatialDissim Index
+        RelativeCentralization Index
     core_data : a pandas DataFrame
         A pandas DataFrame that contains the columns used to perform the estimate.
 

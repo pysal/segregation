@@ -1,23 +1,22 @@
-"""Spatial Dissimilarity Index."""
+"""Distance-Decay Interaction Index."""
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
 import numpy as np
 import pandas as pd
-from sklearn.metrics.pairwise import euclidean_distances
 from libpysal.weights import DistanceBand
+from sklearn.metrics.pairwise import euclidean_distances
+
 from .._base import SingleGroupIndex, SpatialExplicitIndex
 
 
 def _distance_decay_interaction(
     data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5
 ):
-    """
-    Calculation of Distance Decay Exposure index
+    """Calculate of Distance Decay Exposure index.
 
     Parameters
     ----------
-
     data          : a geopandas DataFrame with a geometry column.
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
@@ -30,7 +29,6 @@ def _distance_decay_interaction(
 
     Returns
     ----------
-
     statistic : float
                 Distance Decay Exposure Index
 
@@ -105,7 +103,7 @@ class DistanceDecayInteraction(SingleGroupIndex, SpatialExplicitIndex):
     Attributes
     ----------
     statistic : float
-        SpatialDissim Index
+        Distance Decay Interaction Index
     core_data : a pandas DataFrame
         A pandas DataFrame that contains the columns used to perform the estimate.
 
@@ -121,13 +119,7 @@ class DistanceDecayInteraction(SingleGroupIndex, SpatialExplicitIndex):
     """
 
     def __init__(
-        self,
-        data,
-        group_pop_var,
-        total_pop_var,
-        alpha=0.6,
-        beta=0.5,
-        **kwargs,
+        self, data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5, **kwargs,
     ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
@@ -135,11 +127,7 @@ class DistanceDecayInteraction(SingleGroupIndex, SpatialExplicitIndex):
         self.alpha = alpha
         self.beta = beta
         aux = _distance_decay_interaction(
-            self.data,
-            self.group_pop_var,
-            self.total_pop_var,
-            self.alpha,
-            self.beta,
+            self.data, self.group_pop_var, self.total_pop_var, self.alpha, self.beta,
         )
 
         self.statistic = aux[0]

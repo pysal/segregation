@@ -5,31 +5,25 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.ed
 import numpy as np
 import pandas as pd
 from libpysal.weights import DistanceBand
-from sklearn.metrics.pairwise import euclidean_distances, haversine_distances
+from sklearn.metrics.pairwise import euclidean_distances
 
 from .._base import SingleGroupIndex, SpatialExplicitIndex
 
 
 def _spatial_proximity(data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5):
-    """
-    Calculation of Spatial Proximity index
+    """Calculate Spatial Proximity index.
 
     Parameters
     ----------
     data          : a geopandas DataFrame with a geometry column.
-
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-
     alpha         : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.6
-
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
-
     metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
                     The metric used for the distance between spatial units.
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
@@ -38,10 +32,10 @@ def _spatial_proximity(data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5):
     ----------
     statistic : float
                 Spatial Proximity Index
-
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
-    Notes
+
+   Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
 
@@ -90,7 +84,7 @@ def _spatial_proximity(data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5):
 
 
 class SpatialProximity(SingleGroupIndex, SpatialExplicitIndex):
-    """Distance-Decay Isolation Index.
+    """Spatial Proximity Index.
 
     Parameters
     ----------
@@ -112,7 +106,7 @@ class SpatialProximity(SingleGroupIndex, SpatialExplicitIndex):
     Attributes
     ----------
     statistic : float
-        SpatialDissim Index
+        Spatial Proximity Index
     core_data : a pandas DataFrame
         A pandas DataFrame that contains the columns used to perform the estimate.
 
@@ -126,13 +120,7 @@ class SpatialProximity(SingleGroupIndex, SpatialExplicitIndex):
     """
 
     def __init__(
-        self,
-        data,
-        group_pop_var,
-        total_pop_var,
-        alpha=0.6,
-        beta=0.5,
-        **kwargs,
+        self, data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5, **kwargs,
     ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
@@ -140,11 +128,7 @@ class SpatialProximity(SingleGroupIndex, SpatialExplicitIndex):
         self.alpha = alpha
         self.beta = beta
         aux = _spatial_proximity(
-            self.data,
-            self.group_pop_var,
-            self.total_pop_var,
-            self.alpha,
-            self.beta,
+            self.data, self.group_pop_var, self.total_pop_var, self.alpha, self.beta,
         )
 
         self.statistic = aux[0]

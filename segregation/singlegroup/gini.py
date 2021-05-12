@@ -1,16 +1,12 @@
-"""
-Gini Segregation Index
-"""
+"""Gini Segregation Index."""
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
+import geopandas as gpd
 import numpy as np
 import pandas as pd
-import geopandas as gpd
-from .._base import (
-    SingleGroupIndex,
-    SpatialImplicitIndex,
-)
+
+from .._base import SingleGroupIndex, SpatialImplicitIndex
 
 
 def _gini_seg(data, group_pop_var, total_pop_var):
@@ -90,7 +86,7 @@ class Gini(SingleGroupIndex, SpatialImplicitIndex):
     Attributes
     ----------
     statistic : float
-                MinMax Index
+                Gini Index
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
 
@@ -110,7 +106,7 @@ class Gini(SingleGroupIndex, SpatialImplicitIndex):
         network=None,
         distance=None,
         decay=None,
-        function='triangular',
+        function="triangular",
         precompute=None,
         **kwargs
     ):

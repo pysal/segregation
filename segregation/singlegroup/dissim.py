@@ -1,16 +1,12 @@
-"""
-Dissimilarity Segregation Index
-"""
+"""Dissimilarity Segregation Index."""
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
+import geopandas as gpd
 import numpy as np
 import pandas as pd
-import geopandas as gpd
-from .._base import (
-    SingleGroupIndex,
-    SpatialImplicitIndex,
-)
+
+from .._base import SingleGroupIndex, SpatialImplicitIndex
 
 
 def _dissim(data, group_pop_var, total_pop_var):
@@ -109,7 +105,7 @@ class Dissim(SingleGroupIndex, SpatialImplicitIndex):
         network=None,
         distance=None,
         decay=None,
-        function='triangular',
+        function="triangular",
         precompute=None,
         **kwargs
     ):
@@ -117,7 +113,9 @@ class Dissim(SingleGroupIndex, SpatialImplicitIndex):
 
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
         if any([w, network, distance]):
-            SpatialImplicitIndex.__init__(self, w, network, distance, decay, function, precompute)
+            SpatialImplicitIndex.__init__(
+                self, w, network, distance, decay, function, precompute
+            )
         aux = _dissim(self.data, self.group_pop_var, self.total_pop_var)
 
         self.statistic = aux[0]

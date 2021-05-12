@@ -1,20 +1,15 @@
-"""
-Isolation Segregation Index
-"""
+"""Isolation Segregation Index."""
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
-import numpy as np
-import pandas as pd
 import geopandas as gpd
-from .._base import (
-    SingleGroupIndex,
-    SpatialImplicitIndex,
-)
+import numpy as np
+
+from .._base import SingleGroupIndex, SpatialImplicitIndex
 
 
 def _isolation(data, group_pop_var, total_pop_var):
-    """Calculation of Isolation index.
+    """Calculate Isolation index.
 
     Parameters
     ----------
@@ -28,7 +23,7 @@ def _isolation(data, group_pop_var, total_pop_var):
     Returns
     ----------
     statistic : float
-        MinMax index statistic value
+        Isolation index statistic value
     core_data : pandas.DataFrame
         A pandas DataFrame that contains the columns used to perform the estimate.
 
@@ -83,7 +78,7 @@ class Isolation(SingleGroupIndex, SpatialImplicitIndex):
     Attributes
     ----------
     statistic : float
-                MinMax Index
+                Isolation Index
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
 
@@ -103,7 +98,7 @@ class Isolation(SingleGroupIndex, SpatialImplicitIndex):
         network=None,
         distance=None,
         decay=None,
-        function='triangular',
+        function="triangular",
         precompute=None,
         **kwargs
     ):
@@ -111,7 +106,9 @@ class Isolation(SingleGroupIndex, SpatialImplicitIndex):
 
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
         if any([w, network, distance]):
-            SpatialImplicitIndex.__init__(self, w, network, distance, decay, function, precompute)
+            SpatialImplicitIndex.__init__(
+                self, w, network, distance, decay, function, precompute
+            )
         aux = _isolation(self.data, self.group_pop_var, self.total_pop_var)
 
         self.statistic = aux[0]

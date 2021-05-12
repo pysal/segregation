@@ -5,7 +5,8 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.ed
 import numpy as np
 from sklearn.metrics.pairwise import manhattan_distances
 
-from .._base import SingleGroupIndex, SpatialExplicitIndex, _return_length_weighted_w
+from .._base import (SingleGroupIndex, SpatialExplicitIndex,
+                     _return_length_weighted_w)
 from .dissim import _dissim
 
 
@@ -87,7 +88,7 @@ class BoundarySpatialDissim(SingleGroupIndex, SpatialExplicitIndex):
     Attributes
     ----------
     statistic : float
-        SpatialDissim Index
+        Boundary Area Index
     core_data : a pandas DataFrame
         A pandas DataFrame that contains the columns used to perform the estimate.
 

@@ -11,7 +11,7 @@ from .._base import SingleGroupIndex, SpatialExplicitIndex
 
 
 def _spatial_prox_profile(data, group_pop_var, total_pop_var, w, m):
-    """Calculation of Spatial Proximity Profile.
+    """Calculate Spatial Proximity Profile.
 
     Parameters
     ----------
@@ -41,7 +41,6 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, w, m):
     Reference: :cite:`hong2014measuring`.
 
     """
-
     # Create the shortest distance path between two pair of units using Shimbel matrix.
     # This step was well discussed in https://github.com/pysal/segregation/issues/5.
     if not w:
@@ -98,7 +97,7 @@ class SpatialProxProf(SingleGroupIndex, SpatialExplicitIndex):
     Attributes
     ----------
     statistic : float
-        MinMax Index
+        Spatial Prox Profile Index
     core_data : a pandas DataFrame
         A pandas DataFrame that contains the columns used to perform the estimate.
 
@@ -109,15 +108,7 @@ class SpatialProxProf(SingleGroupIndex, SpatialExplicitIndex):
     Reference: :cite:`hong2014measuring`.
     """
 
-    def __init__(
-        self,
-        data,
-        group_pop_var,
-        total_pop_var,
-        w=None,
-        m=1000,
-        **kwargs
-    ):
+    def __init__(self, data, group_pop_var, total_pop_var, w=None, m=1000, **kwargs):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
         SpatialExplicitIndex.__init__(self,)
