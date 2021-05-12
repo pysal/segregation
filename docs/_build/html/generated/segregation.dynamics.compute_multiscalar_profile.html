@@ -3,10 +3,12 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>segregation.dynamics.compute_multiscalar_profile &#8212; segregation v2.0.0 Manual</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -21,7 +23,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="segregation.batch.batch_compute_singlegroup" href="segregation.batch.batch_compute_singlegroup.html" />
-    <link rel="prev" title="segregation.local.LocalRelativeCentralization" href="segregation.local.LocalRelativeCentralization.html" />
+    <link rel="prev" title="segregation.local.MultiLocalSimpsonConcentration" href="segregation.local.MultiLocalSimpsonConcentration.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -64,7 +66,7 @@
      href="../index.html">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
       role="menu"
-      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Contents:</span></p>
+      aria-labelledby="dLabelGlobalToc"><p><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a></li>
@@ -112,7 +114,7 @@
   <div class="row">
     <div class="body col-md-12 content" role="main">
       
-  <div class="section" id="segregation-dynamics-compute-multiscalar-profile">
+  <section id="segregation-dynamics-compute-multiscalar-profile">
 <h1>segregation.dynamics.compute_multiscalar_profile<a class="headerlink" href="#segregation-dynamics-compute-multiscalar-profile" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt id="segregation.dynamics.compute_multiscalar_profile">
@@ -123,7 +125,7 @@ increasing distance parameters.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt><strong>gdf</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.9.0+14.g294ba75.dirty)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></span></dt><dd><p>geodataframe with rows as observations and columns as population
+<dt><strong>gdf</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.9.0+22.g85e066a.dirty)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a></span></dt><dd><p>geodataframe with rows as observations and columns as population
 variables. Note that if using a network distance, the coordinate
 system for this gdf should be 4326. If using euclidian distance,
 this must be projected into planar coordinates like state plane or UTM.</p>
@@ -167,7 +169,7 @@ queries. This is True by default</p>
 <p>Reference: <a class="bibtex reference internal" href="../references.html#reardon2008" id="id1">[15]</a>.</p>
 </dd></dl>
 
-</div>
+</section>
 
 
     </div>

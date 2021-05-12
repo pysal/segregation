@@ -20,13 +20,13 @@
      "text": [
       "Author: eli knaap\n",
       "\n",
-      "Last updated: 2021-04-25\n",
+      "Last updated: 2021-05-09\n",
       "\n",
       "Python implementation: CPython\n",
-      "Python version       : 3.8.8\n",
-      "IPython version      : 7.18.1\n",
+      "Python version       : 3.9.2\n",
+      "IPython version      : 7.23.1\n",
       "\n",
-      "segregation: 1.3.0\n",
+      "segregation: 2.0.0\n",
       "geopandas  : 0.9.0\n",
       "libpysal   : 4.3.0\n",
       "pandana    : 0.6.1\n",
@@ -241,9 +241,143 @@
    ]
   },
   {
+   "cell_type": "markdown",
+   "id": "9835fd10-7fe3-429f-962c-a8329a621454",
+   "metadata": {},
+   "source": [
+    "## Batch-Computing Multi-Group Measures"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5359e559-509e-46b2-8d1d-c727688a8393",
+   "metadata": {},
+   "source": [
+    "To compute all single group indices in one go, the package provides a wrapper function in the `batch` module similar to single-group indices"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "id": "58e47a6b-6f34-473a-9312-bc537713a556",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from segregation.batch import batch_compute_multigroup"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "id": "f41712ce-8923-4df8-8f46-13b21adf99c9",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "all_multigroup = batch_compute_multigroup(sacramento, groups=['WHITE', 'BLACK', 'HISP'],)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "id": "39ad47fa-51b1-4b52-bb9e-ff0b8227f3b7",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Statistic</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>MultiDissim</th>\n",
+       "      <td>0.424700</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>MultiDivergence</th>\n",
+       "      <td>0.131709</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>MultiDiversity</th>\n",
+       "      <td>0.731390</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>MultiGini</th>\n",
+       "      <td>0.556467</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>MultiInfoTheory</th>\n",
+       "      <td>0.180080</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>MultiNormExposure</th>\n",
+       "      <td>0.191362</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>MultiRelativeDiversity</th>\n",
+       "      <td>0.168574</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>MultiSquaredCoefVar</th>\n",
+       "      <td>0.145315</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>SimpsonsConcentration</th>\n",
+       "      <td>0.587698</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>SimpsonsInteraction</th>\n",
+       "      <td>0.412302</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                        Statistic\n",
+       "MultiDissim              0.424700\n",
+       "MultiDivergence          0.131709\n",
+       "MultiDiversity           0.731390\n",
+       "MultiGini                0.556467\n",
+       "MultiInfoTheory          0.180080\n",
+       "MultiNormExposure        0.191362\n",
+       "MultiRelativeDiversity   0.168574\n",
+       "MultiSquaredCoefVar      0.145315\n",
+       "SimpsonsConcentration    0.587698\n",
+       "SimpsonsInteraction      0.412302"
+      ]
+     },
+     "execution_count": 17,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "all_multigroup"
+   ]
+  },
+  {
    "cell_type": "code",
    "execution_count": null,
-   "id": "2f83cef3-2c6f-4343-ad0b-4873a74cb4ff",
+   "id": "0b023ec4-34ea-4646-9572-fa78062ade9c",
    "metadata": {},
    "outputs": [],
    "source": []
@@ -265,7 +399,7 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.8.8"
+   "version": "3.9.2"
   },
   "widgets": {
    "application/vnd.jupyter.widget-state+json": {

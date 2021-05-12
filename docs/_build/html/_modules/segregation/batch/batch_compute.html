@@ -7,6 +7,7 @@
     <title>segregation.batch.batch_compute &#8212; segregation v2.0.0 Manual</title>
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/pysal-styles.css" />
     <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
@@ -62,7 +63,7 @@
      href="../../../index.html">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
       role="menu"
-      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Contents:</span></p>
+      aria-labelledby="dLabelGlobalToc"><p><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a></li>
@@ -168,6 +169,7 @@
             <span class="p">)</span><span class="o">.</span><span class="n">statistic</span>
         <span class="n">fitted</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">fitted</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span>
         <span class="n">fitted</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Statistic&quot;</span><span class="p">]</span>
+        <span class="n">fitted</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Name&#39;</span>
         <span class="k">return</span> <span class="n">fitted</span></div>
 
 
@@ -193,7 +195,8 @@
             <span class="n">fitted</span><span class="p">[</span><span class="n">each</span><span class="p">]</span> <span class="o">=</span> <span class="n">multigroup_classes</span><span class="p">[</span><span class="n">each</span><span class="p">](</span><span class="n">gdf</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">statistic</span>
         <span class="n">fitted</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">fitted</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span>
         <span class="n">fitted</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Statistic&quot;</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">fitted</span></div>
+        <span class="n">fitted</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Name&#39;</span>
+    <span class="k">return</span> <span class="n">fitted</span></div>
 
 
 <div class="viewcode-block" id="batch_multiscalar_singlegroup"><a class="viewcode-back" href="../../../generated/segregation.batch.batch_multiscalar_singlegroup.html#segregation.batch.batch_multiscalar_singlegroup">[docs]</a><span class="k">def</span> <span class="nf">batch_multiscalar_singlegroup</span><span class="p">(</span>

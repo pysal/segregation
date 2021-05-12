@@ -3,10 +3,12 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Segregation Inference &#8212; segregation v2.0.0 Manual</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -62,7 +64,7 @@
      href="../index.html">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
       role="menu"
-      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Contents:</span></p>
+      aria-labelledby="dLabelGlobalToc"><p><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
@@ -373,9 +375,9 @@ div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
-<div class="section" id="Segregation-Inference">
+<section id="Segregation-Inference">
 <h1>Segregation Inference<a class="headerlink" href="#Segregation-Inference" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="Table-of-Contents">
+<section id="Table-of-Contents">
 <h2>Table of Contents<a class="headerlink" href="#Table-of-Contents" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="#Inference-Wrappers-use-cases">Inference Wrappers use cases</a></p>
@@ -512,10 +514,10 @@ Index([&#39;FIPS&#39;, &#39;MSA&#39;, &#39;TOT_POP&#39;, &#39;POP_16&#39;, &#39;
 <img alt="../_images/notebooks_05_inference_example_9_1.png" src="../_images/notebooks_05_inference_example_9_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="Single-Value">
+</section>
+<section id="Single-Value">
 <h2>Single Value<a class="headerlink" href="#Single-Value" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="Dissimilarity">
+<section id="Dissimilarity">
 <h3>Dissimilarity<a class="headerlink" href="#Dissimilarity" title="Permalink to this headline">¶</a></h3>
 <p>The <strong>SingleValueTest</strong> function expect to receive a pre-fitted segregation class and then it uses the underlying data to iterate over the null hypothesis and comparing the results with point estimation of the index. Thus, we need to firstly estimate some measure. We can fit the classic Dissimilarity index:</p>
 <div class="nbinput docutils container">
@@ -682,8 +684,8 @@ Index([&#39;FIPS&#39;, &#39;MSA&#39;, &#39;TOT_POP&#39;, &#39;POP_16&#39;, &#39;
 </div>
 </div>
 <p>The conclusions are analogous as the <em>evenness</em> approach.</p>
-</div>
-<div class="section" id="Relative-Concentration">
+</section>
+<section id="Relative-Concentration">
 <h3>Relative Concentration<a class="headerlink" href="#Relative-Concentration" title="Permalink to this headline">¶</a></h3>
 <p>The <strong>Infer_Segregation</strong> wrapper can handle any class of the PySAL segregation module. It is possible to use it in the Relative Concentration (RCO) segregation index:</p>
 <div class="nbinput nblast docutils container">
@@ -805,8 +807,8 @@ Index([&#39;FIPS&#39;, &#39;MSA&#39;, &#39;TOT_POP&#39;, &#39;POP_16&#39;, &#39;
 <img alt="../_images/notebooks_05_inference_example_35_3.png" src="../_images/notebooks_05_inference_example_35_3.png" />
 </div>
 </div>
-</div>
-<div class="section" id="Relative-Centralization">
+</section>
+<section id="Relative-Centralization">
 <h3>Relative Centralization<a class="headerlink" href="#Relative-Centralization" title="Permalink to this headline">¶</a></h3>
 <p>Using the same <em>permutation</em> approach for the Relative Centralization (RCE) segregation index:</p>
 <div class="nbinput docutils container">
@@ -846,9 +848,9 @@ Processed 1000 iterations out of 1000.
 </div>
 <p>The conclusion is that the hispanic group is negatively significantly (as the point estimation is in the left side of the distribution) in terms of centralization. This behavior can be, somehow, inspected in the map as the composition tends to be more concentraded outside of the center of the overall region.</p>
 <hr class="docutils" />
-</div>
-</div>
-<div class="section" id="Comparative-Inference">
+</section>
+</section>
+<section id="Comparative-Inference">
 <h2>Comparative Inference<a class="headerlink" href="#Comparative-Inference" title="Permalink to this headline">¶</a></h2>
 <p>To compare two different values, the user can rely on the <strong>TwoValueTest</strong> function. Similar to the previous function, the user needs to pass two segregation SM classes to be compared, establish the number of iterations under null hypothesis with <em>iterations_under_null</em>, specify which type of null hypothesis the inference will iterate with <em>null_approach</em> argument and, also, can pass additional parameters for each segregation estimation.</p>
 <p>Obs.: in this case, each measure has to be the same class as it would not make much sense to compare, for example, a Gini index with a Delta index</p>
@@ -1471,7 +1473,7 @@ C:\Users\renan\AppData\Local\Continuum\anaconda3\lib\site-packages\pysal\__init_
 <p>A question that may rise is “Was it more or less segregated than 2000?”. To answer this, we rely on simulations to test the following hypothesis:</p>
 <div class="math notranslate nohighlight">
 \[H_0: Segregation\ Measure_{2000} - Segregation\ Measure_{2010} = 0\]</div>
-<div class="section" id="Comparative-Dissimilarity">
+<section id="Comparative-Dissimilarity">
 <h3>Comparative Dissimilarity<a class="headerlink" href="#Comparative-Dissimilarity" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
@@ -1548,8 +1550,8 @@ Processed 1000 iterations out of 1000.
 </pre></div></div>
 </div>
 <p>The conclusion is that, for the Dissimilarity index and 5% of significance, segregation in Riverside was not different between 2000 and 2010 (since p-value &gt; 5%).</p>
-</div>
-<div class="section" id="Comparative-Gini">
+</section>
+<section id="Comparative-Gini">
 <h3>Comparative Gini<a class="headerlink" href="#Comparative-Gini" title="Permalink to this headline">¶</a></h3>
 <p>Analogously, the same steps can be made for the Gini segregation index.</p>
 <div class="nbinput docutils container">
@@ -1581,8 +1583,8 @@ Processed 1000 iterations out of 1000.
 </div>
 </div>
 <p>The absence of significance is also present as the point estimation of the difference (vertical red line) is located in the middle of the distribution of the null hypothesis simulated.</p>
-</div>
-<div class="section" id="Comparative-Spatial-Dissimilarity">
+</section>
+<section id="Comparative-Spatial-Dissimilarity">
 <h3>Comparative Spatial Dissimilarity<a class="headerlink" href="#Comparative-Spatial-Dissimilarity" title="Permalink to this headline">¶</a></h3>
 <p>As an example of a spatial index, comparative inference can be performed for the Spatial Dissimilarity Index (SD). For this, we use the <em>counterfactual_composition</em> approach as an example.</p>
 <p>In this framework, the population of the group of interest in each unit is randomized with a constraint that depends on both cumulative density functions (cdf) of the group of interest composition to the group of interest frequency of each unit. In each unit of each iteration, there is a probability of 50% of keeping its original value or swapping to its corresponding value according of the other composition distribution cdf that it is been compared against.</p>
@@ -1617,9 +1619,9 @@ Processed 500 iterations out of 500.
 <p>The conclusion is that for the Spatial Dissimilarity index under this null approach, the year of 2000 was more segregated than 2010 for the non-hispanic black people in the region under study.</p>
 <script type="application/vnd.jupyter.widget-state+json">
 {"state": {}, "version_major": 2, "version_minor": 0}
-</script></div>
-</div>
-</div>
+</script></section>
+</section>
+</section>
 
 
     </div>

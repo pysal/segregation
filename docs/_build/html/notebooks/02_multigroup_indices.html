@@ -3,10 +3,12 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Multi-group Segregation Indices &#8212; segregation v2.0.0 Manual</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -62,7 +64,7 @@
      href="../index.html">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
       role="menu"
-      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Contents:</span></p>
+      aria-labelledby="dLabelGlobalToc"><p><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
@@ -83,6 +85,7 @@
 <li><a class="reference internal" href="#">Multi-group Segregation Indices</a><ul>
 <li><a class="reference internal" href="#Aspatial-Segregation-Indices">Aspatial Segregation Indices</a></li>
 <li><a class="reference internal" href="#Spatial-Segregation-Indices">Spatial Segregation Indices</a></li>
+<li><a class="reference internal" href="#Batch-Computing-Multi-Group-Measures">Batch-Computing Multi-Group Measures</a></li>
 </ul>
 </li>
 </ul>
@@ -362,7 +365,7 @@ div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
-<div class="section" id="Multi-group-Segregation-Indices">
+<section id="Multi-group-Segregation-Indices">
 <h1>Multi-group Segregation Indices<a class="headerlink" href="#Multi-group-Segregation-Indices" title="Permalink to this headline">¶</a></h1>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -381,13 +384,13 @@ div.rendered_html tbody tr:hover {
 <div class="highlight"><pre>
 Author: eli knaap
 
-Last updated: 2021-04-25
+Last updated: 2021-05-09
 
 Python implementation: CPython
-Python version       : 3.8.8
-IPython version      : 7.18.1
+Python version       : 3.9.2
+IPython version      : 7.23.1
 
-segregation: 1.3.0
+segregation: 2.0.0
 geopandas  : 0.9.0
 libpysal   : 4.3.0
 pandana    : 0.6.1
@@ -418,7 +421,7 @@ pandana    : 0.6.1
 </pre></div>
 </div>
 </div>
-<div class="section" id="Aspatial-Segregation-Indices">
+<section id="Aspatial-Segregation-Indices">
 <h2>Aspatial Segregation Indices<a class="headerlink" href="#Aspatial-Segregation-Indices" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
@@ -474,8 +477,8 @@ pandana    : 0.6.1
 0.1800803002655424
 </pre></div></div>
 </div>
-</div>
-<div class="section" id="Spatial-Segregation-Indices">
+</section>
+<section id="Spatial-Segregation-Indices">
 <h2>Spatial Segregation Indices<a class="headerlink" href="#Spatial-Segregation-Indices" title="Permalink to this headline">¶</a></h2>
 <p>As with single group measures, generalized spatial versions of multigroup indices can be created by passing a distance parameter or a <code class="docutils literal notranslate"><span class="pre">W</span></code>/<code class="docutils literal notranslate"><span class="pre">Network</span></code> object.</p>
 <div class="nbinput nblast docutils container">
@@ -550,6 +553,108 @@ pandana    : 0.6.1
 0.3997196467720179
 </pre></div></div>
 </div>
+</section>
+<section id="Batch-Computing-Multi-Group-Measures">
+<h2>Batch-Computing Multi-Group Measures<a class="headerlink" href="#Batch-Computing-Multi-Group-Measures" title="Permalink to this headline">¶</a></h2>
+<p>To compute all single group indices in one go, the package provides a wrapper function in the <code class="docutils literal notranslate"><span class="pre">batch</span></code> module similar to single-group indices</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">segregation.batch</span> <span class="kn">import</span> <span class="n">batch_compute_multigroup</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">all_multigroup</span> <span class="o">=</span> <span class="n">batch_compute_multigroup</span><span class="p">(</span><span class="n">sacramento</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;WHITE&#39;</span><span class="p">,</span> <span class="s1">&#39;BLACK&#39;</span><span class="p">,</span> <span class="s1">&#39;HISP&#39;</span><span class="p">],)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">all_multigroup</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Statistic</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>MultiDissim</th>
+      <td>0.424700</td>
+    </tr>
+    <tr>
+      <th>MultiDivergence</th>
+      <td>0.131709</td>
+    </tr>
+    <tr>
+      <th>MultiDiversity</th>
+      <td>0.731390</td>
+    </tr>
+    <tr>
+      <th>MultiGini</th>
+      <td>0.556467</td>
+    </tr>
+    <tr>
+      <th>MultiInfoTheory</th>
+      <td>0.180080</td>
+    </tr>
+    <tr>
+      <th>MultiNormExposure</th>
+      <td>0.191362</td>
+    </tr>
+    <tr>
+      <th>MultiRelativeDiversity</th>
+      <td>0.168574</td>
+    </tr>
+    <tr>
+      <th>MultiSquaredCoefVar</th>
+      <td>0.145315</td>
+    </tr>
+    <tr>
+      <th>SimpsonsConcentration</th>
+      <td>0.587698</td>
+    </tr>
+    <tr>
+      <th>SimpsonsInteraction</th>
+      <td>0.412302</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -561,8 +666,8 @@ pandana    : 0.6.1
 </div>
 <script type="application/vnd.jupyter.widget-state+json">
 {"state": {}, "version_major": 2, "version_minor": 0}
-</script></div>
-</div>
+</script></section>
+</section>
 
 
     </div>

@@ -7,6 +7,7 @@
     <title>segregation.singlegroup.delta &#8212; segregation v2.0.0 Manual</title>
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/pysal-styles.css" />
     <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
@@ -62,7 +63,7 @@
      href="../../../index.html">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
       role="menu"
-      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Contents:</span></p>
+      aria-labelledby="dLabelGlobalToc"><p><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a></li>
@@ -108,7 +109,7 @@
     <div class="body col-md-12 content" role="main">
       
   <h1>Source code for segregation.singlegroup.delta</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Spatial Dissimilarity Index.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Delta Index.&quot;&quot;&quot;</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Renan X. Cortes &lt;renanc@ucr.edu&gt;, Sergio J. Rey &lt;sergio.rey@ucr.edu&gt; and Elijah Knaap &lt;elijah.knaap@ucr.edu&gt;&quot;</span>
 
@@ -118,26 +119,20 @@
 
 
 <span class="k">def</span> <span class="nf">_delta</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">group_pop_var</span><span class="p">,</span> <span class="n">total_pop_var</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculation of Delta index</span>
+    <span class="sd">&quot;&quot;&quot;Calculate Delta index.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-
 <span class="sd">    data          : a geopandas DataFrame with a geometry column.</span>
-
 <span class="sd">    group_pop_var : string</span>
 <span class="sd">                    The name of variable in data that contains the population size of the group of interest</span>
-
 <span class="sd">    total_pop_var : string</span>
 <span class="sd">                    The name of variable in data that contains the total population of the unit</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    ----------</span>
-
 <span class="sd">    statistic : float</span>
 <span class="sd">                Delta Index</span>
-
 <span class="sd">    core_data : a geopandas DataFrame</span>
 <span class="sd">                A geopandas DataFrame that contains the columns used to perform the estimate.</span>
 
@@ -169,7 +164,7 @@
 
 
 <div class="viewcode-block" id="Delta"><a class="viewcode-back" href="../../../generated/segregation.singlegroup.Delta.html#segregation.singlegroup.Delta">[docs]</a><span class="k">class</span> <span class="nc">Delta</span><span class="p">(</span><span class="n">SingleGroupIndex</span><span class="p">,</span> <span class="n">SpatialExplicitIndex</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Distance-Decay Isolation Index.</span>
+    <span class="sd">&quot;&quot;&quot;Delta Index.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -183,7 +178,7 @@
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    statistic : float</span>
-<span class="sd">        SpatialDissim Index</span>
+<span class="sd">        Delta Index</span>
 <span class="sd">    core_data : a pandas DataFrame</span>
 <span class="sd">        A pandas DataFrame that contains the columns used to perform the estimate.</span>
 

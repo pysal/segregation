@@ -7,6 +7,7 @@
     <title>segregation.singlegroup.boundary_spatial_dissim &#8212; segregation v2.0.0 Manual</title>
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/pysal-styles.css" />
     <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
@@ -62,7 +63,7 @@
      href="../../../index.html">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
       role="menu"
-      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Contents:</span></p>
+      aria-labelledby="dLabelGlobalToc"><p><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a></li>
@@ -115,7 +116,8 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">sklearn.metrics.pairwise</span> <span class="kn">import</span> <span class="n">manhattan_distances</span>
 
-<span class="kn">from</span> <span class="nn">.._base</span> <span class="kn">import</span> <span class="n">SingleGroupIndex</span><span class="p">,</span> <span class="n">SpatialExplicitIndex</span><span class="p">,</span> <span class="n">_return_length_weighted_w</span>
+<span class="kn">from</span> <span class="nn">.._base</span> <span class="kn">import</span> <span class="p">(</span><span class="n">SingleGroupIndex</span><span class="p">,</span> <span class="n">SpatialExplicitIndex</span><span class="p">,</span>
+                     <span class="n">_return_length_weighted_w</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.dissim</span> <span class="kn">import</span> <span class="n">_dissim</span>
 
 
@@ -197,7 +199,7 @@
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    statistic : float</span>
-<span class="sd">        SpatialDissim Index</span>
+<span class="sd">        Boundary Area Index</span>
 <span class="sd">    core_data : a pandas DataFrame</span>
 <span class="sd">        A pandas DataFrame that contains the columns used to perform the estimate.</span>
 

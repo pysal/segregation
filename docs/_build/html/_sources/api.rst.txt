@@ -13,35 +13,33 @@ Single Group Indices
 .. autosummary::
    :toctree: generated/
    
-      singlegroup.Dissim 
-      singlegroup.Gini
-      singlegroup.Entropy
-      singlegroup.Isolation
-      singlegroup.Exposure
+      singlegroup.AbsoluteCentralization
+      singlegroup.AbsoluteClustering
+      singlegroup.AbsoluteConcentration
       singlegroup.Atkinson
-      singlegroup.CorrelationR
+      singlegroup.BiasCorrectedDissim
+      singlegroup.BoundarySpatialDissim
       singlegroup.ConProf
+      singlegroup.CorrelationR
+      singlegroup.Delta
+      singlegroup.DensityCorrectedDissim
+      singlegroup.Dissim 
+      singlegroup.DistanceDecayInteraction
+      singlegroup.DistanceDecayIsolation
+      singlegroup.Entropy
+      singlegroup.Gini
+      singlegroup.Interaction
+      singlegroup.Isolation
+      singlegroup.MinMax
       singlegroup.ModifiedDissim
       singlegroup.ModifiedGini
-      singlegroup.BiasCorrectedDissim
-      singlegroup.DensityCorrectedDissim
-      singlegroup.MinMax
-      singlegroup.SpatialProxProf
-      singlegroup.SpatialDissim
-      singlegroup.BoundarySpatialDissim
       singlegroup.PARDissim
-      singlegroup.DistanceDecayIsolation
-      singlegroup.DistanceDecayExposure
-      singlegroup.SpatialProximity
-      singlegroup.AbsoluteClustering
-      singlegroup.RelativeClustering
-      singlegroup.Delta
-      singlegroup.AbsoluteConcentration
-      singlegroup.RelativeConcentration
-      singlegroup.AbsoluteCentralization
       singlegroup.RelativeCentralization
-      singlegroup.MinMax
-
+      singlegroup.RelativeClustering
+      singlegroup.RelativeConcentration
+      singlegroup.SpatialDissim
+      singlegroup.SpatialProximity
+      singlegroup.SpatialProxProf
 
 Multigroup Indices
 ---------------------
@@ -52,15 +50,15 @@ Multigroup Indices
    :toctree: generated/
    
       multigroup.MultiDissim
+      multigroup.MultiDivergence
+      multigroup.MultiDiversity      
       multigroup.MultiGini
-      multigroup.MultiNormExposure
       multigroup.MultiInfoTheory
+      multigroup.MultiNormExposure
       multigroup.MultiRelativeDiversity
       multigroup.MultiSquaredCoefVar
-      multigroup.MultiDiversity
       multigroup.SimpsonsConcentration
       multigroup.SimpsonsInteraction
-      multigroup.MultiDivergence
 	  
 Local Indices
 ---------------------
@@ -70,12 +68,12 @@ Local Indices
 .. autosummary::
    :toctree: generated/
    
-      local.MultiLocationQuotient
+      local.LocalRelativeCentralization
       local.MultiLocalDiversity
       local.MultiLocalEntropy
+      local.MultiLocationQuotient
       local.MultiLocalSimpsonInteraction
       local.MultiLocalSimpsonConcentration
-      local.LocalRelativeCentralization
 	  
 Dynamics
 ---------------------

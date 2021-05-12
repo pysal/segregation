@@ -7,6 +7,7 @@
     <title>segregation.singlegroup.spatial_proximity &#8212; segregation v2.0.0 Manual</title>
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/pysal-styles.css" />
     <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
@@ -62,7 +63,7 @@
      href="../../../index.html">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
       role="menu"
-      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Contents:</span></p>
+      aria-labelledby="dLabelGlobalToc"><p><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a></li>
@@ -114,33 +115,26 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">sklearn.metrics.pairwise</span> <span class="kn">import</span> <span class="n">euclidean_distances</span><span class="p">,</span> <span class="n">haversine_distances</span>
+<span class="kn">from</span> <span class="nn">libpysal.weights</span> <span class="kn">import</span> <span class="n">DistanceBand</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics.pairwise</span> <span class="kn">import</span> <span class="n">euclidean_distances</span>
 
 <span class="kn">from</span> <span class="nn">.._base</span> <span class="kn">import</span> <span class="n">SingleGroupIndex</span><span class="p">,</span> <span class="n">SpatialExplicitIndex</span>
 
 
-<span class="k">def</span> <span class="nf">_spatial_proximity</span><span class="p">(</span>
-    <span class="n">data</span><span class="p">,</span> <span class="n">group_pop_var</span><span class="p">,</span> <span class="n">total_pop_var</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span>
-<span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculation of Spatial Proximity index</span>
+<span class="k">def</span> <span class="nf">_spatial_proximity</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">group_pop_var</span><span class="p">,</span> <span class="n">total_pop_var</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate Spatial Proximity index.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    data          : a geopandas DataFrame with a geometry column.</span>
-
 <span class="sd">    group_pop_var : string</span>
 <span class="sd">                    The name of variable in data that contains the population size of the group of interest</span>
-
 <span class="sd">    total_pop_var : string</span>
 <span class="sd">                    The name of variable in data that contains the total population of the unit</span>
-
 <span class="sd">    alpha         : float</span>
 <span class="sd">                    A parameter that estimates the extent of the proximity within the same unit. Default value is 0.6</span>
-
 <span class="sd">    beta          : float</span>
 <span class="sd">                    A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5</span>
-
 <span class="sd">    metric        : string. Can be &#39;euclidean&#39; or &#39;haversine&#39;. Default is &#39;euclidean&#39;.</span>
 <span class="sd">                    The metric used for the distance between spatial units.</span>
 <span class="sd">                    If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to &#39;haversine&#39;.</span>
@@ -149,10 +143,10 @@
 <span class="sd">    ----------</span>
 <span class="sd">    statistic : float</span>
 <span class="sd">                Spatial Proximity Index</span>
-
 <span class="sd">    core_data : a geopandas DataFrame</span>
 <span class="sd">                A geopandas DataFrame that contains the columns used to perform the estimate.</span>
-<span class="sd">    Notes</span>
+
+<span class="sd">   Notes</span>
 <span class="sd">    -----</span>
 <span class="sd">    Based on Massey, Douglas S., and Nancy A. Denton. &quot;The dimensions of residential segregation.&quot; Social forces 67.2 (1988): 281-315.</span>
 
@@ -161,9 +155,6 @@
 <span class="sd">    Reference: :cite:`massey1988dimensions`.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">metric</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;euclidean&quot;</span><span class="p">,</span> <span class="s2">&quot;haversine&quot;</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;metric must one of &#39;euclidean&#39;, &#39;haversine&#39;&quot;</span><span class="p">)</span>
-
     <span class="k">if</span> <span class="n">alpha</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;alpha must be greater than zero.&quot;</span><span class="p">)</span>
 
@@ -181,25 +172,17 @@
     <span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">xi</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
     <span class="n">Y</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">yi</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 
-    <span class="n">c_lons</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">c_lats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;euclidean&quot;</span><span class="p">:</span>
-        <span class="n">dist</span> <span class="o">=</span> <span class="n">euclidean_distances</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;c_lats&quot;</span><span class="p">:</span> <span class="n">c_lats</span><span class="p">,</span> <span class="s2">&quot;c_lons&quot;</span><span class="p">:</span> <span class="n">c_lons</span><span class="p">}))</span>
-
-    <span class="k">if</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;haversine&quot;</span><span class="p">:</span>
-        <span class="n">dist</span> <span class="o">=</span> <span class="n">haversine_distances</span><span class="p">(</span>
-            <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;c_lats&quot;</span><span class="p">:</span> <span class="n">c_lats</span><span class="p">,</span> <span class="s2">&quot;c_lons&quot;</span><span class="p">:</span> <span class="n">c_lons</span><span class="p">})</span>
-        <span class="p">)</span>  <span class="c1"># This needs to be latitude first!</span>
-
-    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">dist</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mi">15</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;It not possible to determine accurately the exponential of the negative distances. This is probably due to the large magnitude of the centroids numbers. It is recommended to reproject the geopandas DataFrame. Also, if this is a not lat-long CRS, it is recommended to set metric to &#39;haversine&#39;&quot;</span>
+    <span class="n">maxdist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span>
+        <span class="n">euclidean_distances</span><span class="p">(</span>
+            <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">values</span><span class="p">})</span>
         <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+        <span class="o">-</span><span class="n">DistanceBand</span><span class="o">.</span><span class="n">from_dataframe</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">maxdist</span><span class="p">)</span><span class="o">.</span><span class="n">full</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">((</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="n">area</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">beta</span><span class="p">))))</span>
 
-    <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">((</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="n">area</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">beta</span><span class="p">))))</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">dist</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># proximity matrix</span>
 
     <span class="n">Pxx</span> <span class="o">=</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">xi</span><span class="p">)</span> <span class="o">*</span> <span class="n">c</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">xi</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">X</span> <span class="o">**</span> <span class="mi">2</span>
     <span class="n">Pyy</span> <span class="o">=</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">yi</span><span class="p">)</span> <span class="o">*</span> <span class="n">c</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">yi</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">Y</span> <span class="o">**</span> <span class="mi">2</span>
@@ -212,7 +195,7 @@
 
 
 <div class="viewcode-block" id="SpatialProximity"><a class="viewcode-back" href="../../../generated/segregation.singlegroup.SpatialProximity.html#segregation.singlegroup.SpatialProximity">[docs]</a><span class="k">class</span> <span class="nc">SpatialProximity</span><span class="p">(</span><span class="n">SingleGroupIndex</span><span class="p">,</span> <span class="n">SpatialExplicitIndex</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Distance-Decay Isolation Index.</span>
+    <span class="sd">&quot;&quot;&quot;Spatial Proximity Index.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -234,7 +217,7 @@
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    statistic : float</span>
-<span class="sd">        SpatialDissim Index</span>
+<span class="sd">        Spatial Proximity Index</span>
 <span class="sd">    core_data : a pandas DataFrame</span>
 <span class="sd">        A pandas DataFrame that contains the columns used to perform the estimate.</span>
 
@@ -248,28 +231,15 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="SpatialProximity.__init__"><a class="viewcode-back" href="../../../generated/segregation.singlegroup.SpatialProximity.html#segregation.singlegroup.SpatialProximity.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">data</span><span class="p">,</span>
-        <span class="n">group_pop_var</span><span class="p">,</span>
-        <span class="n">total_pop_var</span><span class="p">,</span>
-        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
-        <span class="n">beta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-        <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">group_pop_var</span><span class="p">,</span> <span class="n">total_pop_var</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
         <span class="n">SingleGroupIndex</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">group_pop_var</span><span class="p">,</span> <span class="n">total_pop_var</span><span class="p">)</span>
         <span class="n">SpatialExplicitIndex</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">metric</span> <span class="o">=</span> <span class="n">metric</span>
         <span class="n">aux</span> <span class="o">=</span> <span class="n">_spatial_proximity</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">group_pop_var</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">total_pop_var</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_pop_var</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_pop_var</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">statistic</span> <span class="o">=</span> <span class="n">aux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>

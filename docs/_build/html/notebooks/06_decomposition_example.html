@@ -3,10 +3,12 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Segregation Index Decomposition &#8212; segregation v2.0.0 Manual</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -62,7 +64,7 @@
      href="../index.html">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
       role="menu"
-      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Contents:</span></p>
+      aria-labelledby="dLabelGlobalToc"><p><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
@@ -367,9 +369,9 @@ div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
-<div class="section" id="Segregation-Index-Decomposition">
+<section id="Segregation-Index-Decomposition">
 <h1>Segregation Index Decomposition<a class="headerlink" href="#Segregation-Index-Decomposition" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="Table-of-Contents">
+<section id="Table-of-Contents">
 <h2>Table of Contents<a class="headerlink" href="#Table-of-Contents" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="#Decomposition-framework-of-the-PySAL-*segregation*-module">Decomposition framework of the PySAL segregation module</a></p>
@@ -575,8 +577,8 @@ div.rendered_html tbody tr:hover {
 </div></div>
 </div>
 <p>Now, we chose two different metropolitan areas to compare the degree of segregation.</p>
-</div>
-<div class="section" id="Map-of-the-composition-of-the-Metropolitan-area-of-Los-Angeles">
+</section>
+<section id="Map-of-the-composition-of-the-Metropolitan-area-of-Los-Angeles">
 <h2>Map of the composition of the Metropolitan area of Los Angeles<a class="headerlink" href="#Map-of-the-composition-of-the-Metropolitan-area-of-Los-Angeles" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
@@ -605,8 +607,8 @@ div.rendered_html tbody tr:hover {
 <img alt="../_images/notebooks_06_decomposition_example_18_1.png" src="../_images/notebooks_06_decomposition_example_18_1.png" />
 </div>
 </div>
-</div>
-<div class="section" id="Map-of-the-composition-of-the-Metropolitan-area-of-New-York">
+</section>
+<section id="Map-of-the-composition-of-the-Metropolitan-area-of-New-York">
 <h2>Map of the composition of the Metropolitan area of New York<a class="headerlink" href="#Map-of-the-composition-of-the-Metropolitan-area-of-New-York" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
@@ -735,8 +737,8 @@ class DecomposeSegregation(builtins.object)
 
 </pre></div></div>
 </div>
-</div>
-<div class="section" id="Composition-Approach-(default)">
+</section>
+<section id="Composition-Approach-(default)">
 <h2>Composition Approach (default)<a class="headerlink" href="#Composition-Approach-(default)" title="Permalink to this headline">¶</a></h2>
 <p>The difference of -0.10653 fitted previously, can be decomposed into two components. The Spatial component and the attribute component. Let’s estimate both, respectively.</p>
 <div class="nbinput docutils container">
@@ -813,8 +815,8 @@ class DecomposeSegregation(builtins.object)
 </div>
 </div>
 <p><em>Note that in all plotting methods, the title presents each component of the decomposition performed.</em></p>
-</div>
-<div class="section" id="Share-Approach">
+</section>
+<section id="Share-Approach">
 <h2>Share Approach<a class="headerlink" href="#Share-Approach" title="Permalink to this headline">¶</a></h2>
 <p>The share approach takes into consideration the share of each group in each city. Since this approach takes into consideration the focus group and the complementary group share to build the “counterfactual” total population of each unit, it is of interest to inspect all these four cdf’s.</p>
 <p><em>ps.: The share is the population frequency of each group in each unit over the total population of that respectively group.</em></p>
@@ -853,8 +855,8 @@ class DecomposeSegregation(builtins.object)
 </div>
 </div>
 <p>We can see that the counterfactual maps of the composition (outside of the main diagonal), in this case, are slightly different from the previous approach.</p>
-</div>
-<div class="section" id="Dual-Composition-Approach">
+</section>
+<section id="Dual-Composition-Approach">
 <h2>Dual Composition Approach<a class="headerlink" href="#Dual-Composition-Approach" title="Permalink to this headline">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">dual_composition</span></code> approach is similar to the composition approach. However, it uses also the counterfactual composition of the cdf of the complementary group.</p>
 <div class="nbinput docutils container">
@@ -892,8 +894,8 @@ class DecomposeSegregation(builtins.object)
 </div>
 </div>
 <p>The counterfactual distributions are virtually the same (but not equal) as the one from the <code class="docutils literal notranslate"><span class="pre">composition</span></code> approach.</p>
-</div>
-<div class="section" id="Inspecting-a-different-index:-Relative-Concentration">
+</section>
+<section id="Inspecting-a-different-index:-Relative-Concentration">
 <h2>Inspecting a different index: Relative Concentration<a class="headerlink" href="#Inspecting-a-different-index:-Relative-Concentration" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
@@ -958,8 +960,8 @@ class DecomposeSegregation(builtins.object)
 <p>It is possible to note that, in this case, the spatial component is playing a much more relevant role in the decomposition.</p>
 <script type="application/vnd.jupyter.widget-state+json">
 {"state": {}, "version_major": 2, "version_minor": 0}
-</script></div>
-</div>
+</script></section>
+</section>
 
 
     </div>

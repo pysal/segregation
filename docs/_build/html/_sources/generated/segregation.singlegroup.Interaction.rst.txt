@@ -1,9 +1,9 @@
-﻿segregation.singlegroup.Exposure
-================================
+﻿segregation.singlegroup.Interaction
+===================================
 
 .. currentmodule:: segregation.singlegroup
 
-.. autoclass:: Exposure
+.. autoclass:: Interaction
 
    
    .. automethod:: __init__
@@ -13,7 +13,7 @@
 
    .. autosummary::
    
-      ~Exposure.__init__
+      ~Interaction.__init__
    
    
 

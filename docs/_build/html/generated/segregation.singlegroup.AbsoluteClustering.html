@@ -3,10 +3,12 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>segregation.singlegroup.AbsoluteClustering &#8212; segregation v2.0.0 Manual</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -20,8 +22,8 @@
     <link rel="shortcut icon" href="../_static/pysal_favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="segregation.singlegroup.RelativeClustering" href="segregation.singlegroup.RelativeClustering.html" />
-    <link rel="prev" title="segregation.singlegroup.SpatialProximity" href="segregation.singlegroup.SpatialProximity.html" />
+    <link rel="next" title="segregation.singlegroup.AbsoluteConcentration" href="segregation.singlegroup.AbsoluteConcentration.html" />
+    <link rel="prev" title="segregation.singlegroup.AbsoluteCentralization" href="segregation.singlegroup.AbsoluteCentralization.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -64,7 +66,7 @@
      href="../index.html">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
       role="menu"
-      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Contents:</span></p>
+      aria-labelledby="dLabelGlobalToc"><p><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a></li>
@@ -112,27 +114,27 @@
   <div class="row">
     <div class="body col-md-12 content" role="main">
       
-  <div class="section" id="segregation-singlegroup-absoluteclustering">
+  <section id="segregation-singlegroup-absoluteclustering">
 <h1>segregation.singlegroup.AbsoluteClustering<a class="headerlink" href="#segregation-singlegroup-absoluteclustering" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="segregation.singlegroup.AbsoluteClustering">
-<em class="property">class </em><code class="sig-prename descclassname">segregation.singlegroup.</code><code class="sig-name descname">AbsoluteClustering</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">group_pop_var</span></em>, <em class="sig-param"><span class="n">total_pop_var</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">0.6</span></em>, <em class="sig-param"><span class="n">beta</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">metric</span><span class="o">=</span><span class="default_value">'euclidean'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/segregation/singlegroup/absolute_clustering.html#AbsoluteClustering"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#segregation.singlegroup.AbsoluteClustering" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">segregation.singlegroup.</code><code class="sig-name descname">AbsoluteClustering</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">group_pop_var</span></em>, <em class="sig-param"><span class="n">total_pop_var</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">0.6</span></em>, <em class="sig-param"><span class="n">beta</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/segregation/singlegroup/absolute_clustering.html#AbsoluteClustering"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#segregation.singlegroup.AbsoluteClustering" title="Permalink to this definition">¶</a></dt>
 <dd><p>Absolute Clustering Index.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt><strong>data</strong><span class="classifier"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.2.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> or <a class="reference external" href="https://geopandas.readthedocs.io/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.9.0+14.g294ba75.dirty)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">required</span></code></span></dt><dd><p>dataframe or geodataframe if spatial index holding data for location of interest</p>
+<dt><strong>data</strong><span class="classifier"><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.2.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> or <a class="reference external" href="https://geopandas.readthedocs.io/en/latest/docs/reference/api/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.9.0+22.g85e066a.dirty)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">required</span></code></span></dt><dd><p>dataframe or geodataframe if spatial index holding data for location of
+interest</p>
 </dd>
 <dt><strong>group_pop_var</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">required</span></code></span></dt><dd><p>name of column on dataframe holding population totals for focal group</p>
 </dd>
 <dt><strong>total_pop_var</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">required</span></code></span></dt><dd><p>name of column on dataframe holding total overall population</p>
 </dd>
-<dt><strong>alpha</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>A parameter that estimates the extent of the proximity within the same unit. Default value is 0.6</p>
+<dt><strong>alpha</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>A parameter that estimates the extent of the proximity within the same unit.
+Default value is 0.6</p>
 </dd>
-<dt><strong>beta</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5</p>
-</dd>
-<dt><strong>metric</strong><span class="classifier">string. <code class="xref py py-obj docutils literal notranslate"><span class="pre">Can</span></code> <code class="xref py py-obj docutils literal notranslate"><span class="pre">be</span></code> ‘euclidean’ or ‘haversine’. <code class="xref py py-obj docutils literal notranslate"><span class="pre">Default</span></code> <code class="xref py py-obj docutils literal notranslate"><span class="pre">is</span></code> ‘euclidean’.</span></dt><dd><p>The metric used for the distance between spatial units.
-If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to ‘haversine’.</p>
+<dt><strong>beta</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>A parameter that estimates the extent of the proximity within the same unit.
+Default value is 0.5</p>
 </dd>
 </dl>
 </dd>
@@ -153,7 +155,7 @@ If the projection of the CRS of the geopandas DataFrame field is in degrees, thi
 </dl>
 <dl class="py method">
 <dt id="segregation.singlegroup.AbsoluteClustering.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">group_pop_var</span></em>, <em class="sig-param"><span class="n">total_pop_var</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">0.6</span></em>, <em class="sig-param"><span class="n">beta</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">metric</span><span class="o">=</span><span class="default_value">'euclidean'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/segregation/singlegroup/absolute_clustering.html#AbsoluteClustering.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#segregation.singlegroup.AbsoluteClustering.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">group_pop_var</span></em>, <em class="sig-param"><span class="n">total_pop_var</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">0.6</span></em>, <em class="sig-param"><span class="n">beta</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/segregation/singlegroup/absolute_clustering.html#AbsoluteClustering.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#segregation.singlegroup.AbsoluteClustering.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Init.</p>
 </dd></dl>
 
@@ -171,7 +173,7 @@ If the projection of the CRS of the geopandas DataFrame field is in degrees, thi
 </table>
 </dd></dl>
 
-</div>
+</section>
 
 
     </div>

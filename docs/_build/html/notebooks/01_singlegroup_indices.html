@@ -3,10 +3,12 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Single-group Segregation Indices &#8212; segregation v2.0.0 Manual</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -62,7 +64,7 @@
      href="../index.html">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
       role="menu"
-      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Contents:</span></p>
+      aria-labelledby="dLabelGlobalToc"><p><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
@@ -370,7 +372,7 @@ div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
-<div class="section" id="Single-group-Segregation-Indices">
+<section id="Single-group-Segregation-Indices">
 <h1>Single-group Segregation Indices<a class="headerlink" href="#Single-group-Segregation-Indices" title="Permalink to this headline">¶</a></h1>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -389,13 +391,13 @@ div.rendered_html tbody tr:hover {
 <div class="highlight"><pre>
 Author: eli knaap
 
-Last updated: 2021-04-25
+Last updated: 2021-05-11
 
 Python implementation: CPython
-Python version       : 3.8.8
-IPython version      : 7.18.1
+Python version       : 3.9.2
+IPython version      : 7.23.1
 
-segregation: 1.3.0
+segregation: 2.0.0
 geopandas  : 0.9.0
 libpysal   : 4.3.0
 pandana    : 0.6.1
@@ -403,7 +405,7 @@ pandana    : 0.6.1
 </pre></div></div>
 </div>
 <p>Single-group indices are calculated using the <code class="docutils literal notranslate"><span class="pre">singlegroup</span></code> module</p>
-<div class="section" id="Data-Prep">
+<section id="Data-Prep">
 <h2>Data Prep<a class="headerlink" href="#Data-Prep" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
@@ -633,7 +635,7 @@ pandana    : 0.6.1
 <img alt="../_images/notebooks_01_singlegroup_indices_7_1.png" class="no-scaled-link" src="../_images/notebooks_01_singlegroup_indices_7_1.png" style="width: 368px; height: 258px;" />
 </div>
 </div>
-<div class="section" id="Aspatial-Segregation-Indices">
+<section id="Aspatial-Segregation-Indices">
 <h3>Aspatial Segregation Indices<a class="headerlink" href="#Aspatial-Segregation-Indices" title="Permalink to this headline">¶</a></h3>
 <p>To compute an aspatial segregation index, pass a dataframe, a group population variable, and total population variable to the index’s class</p>
 <div class="nbinput nblast docutils container">
@@ -746,8 +748,8 @@ pandana    : 0.6.1
 </table>
 </div></div>
 </div>
-</div>
-<div class="section" id="Spatial-Segregation-Indices">
+</section>
+<section id="Spatial-Segregation-Indices">
 <h3>Spatial Segregation Indices<a class="headerlink" href="#Spatial-Segregation-Indices" title="Permalink to this headline">¶</a></h3>
 <p>For calculating spatial segregation indices, the package implements two classes of indices: spatially-explicit and spatially-implicit.</p>
 <p>Spatially-explicit indices are those for which space was a formal consideration in the index’s original formulation, whereas spatially-implicit indices are developed using the logic of <a class="reference external" href="http://doi.wiley.com/10.1111/j.0081-1750.2004.00150.x">Reardon and O’Sulivan</a>.</p>
@@ -791,9 +793,9 @@ This flexibility is particularly useful for specifying appropriate “neighborho
 0.8491771822066525
 </pre></div></div>
 </div>
-</div>
-</div>
-<div class="section" id="Euclidian-distance-based-measures">
+</section>
+</section>
+<section id="Euclidian-distance-based-measures">
 <h2>Euclidian distance based measures<a class="headerlink" href="#Euclidian-distance-based-measures" title="Permalink to this headline">¶</a></h2>
 <p>For generalized spatial indices, a <code class="docutils literal notranslate"><span class="pre">distance</span></code> parameter can be passed to the index of choice. Under the hood, the input data will be passed through a kernel function with the distance parameter as the kernel bandwidth.</p>
 <p>(note in this case because the CRS of the sacramento dataframe is UTM, the units are in meters)</p>
@@ -908,17 +910,26 @@ This flexibility is particularly useful for specifying appropriate “neighborho
 <img alt="../_images/notebooks_01_singlegroup_indices_29_1.png" class="no-scaled-link" src="../_images/notebooks_01_singlegroup_indices_29_1.png" style="width: 368px; height: 258px;" />
 </div>
 </div>
-</div>
-<div class="section" id="Network-distance-based-measures">
+</section>
+<section id="Network-distance-based-measures">
 <h2>Network distance based measures<a class="headerlink" href="#Network-distance-based-measures" title="Permalink to this headline">¶</a></h2>
 <p>Instead of a euclidian distance-based kernel, each generalized spatial segregation index can be calculated using accssibility analysis on a transportation network instead. Since people can’t fly, using a travel network to measure spatial distances is more conceptually pure to the spirit of segregation indices</p>
-<p>A network can be created using the <a class="reference external" href="https://github.com/UDST/urbanaccess">urbanaccess</a> package, or the built-in <code class="docutils literal notranslate"><span class="pre">get_osm_network</span></code> function from the <code class="docutils literal notranslate"><span class="pre">segregation.util</span></code> module. Alternatively, metropolitan-scale networks from OpenStreetMap are also available in the <a class="reference external" href="https://open.quiltdata.com/b/spatial-ucr/tree/osm/">CGS quilt bucket</a> (named by CBSA FIPS code)</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">pandana</span> <span class="k">as</span> <span class="nn">pdna</span>
+</pre></div>
+</div>
+</div>
+<p>A network can be created using the <a class="reference external" href="https://github.com/UDST/urbanaccess">urbanaccess</a> package, or the built-in <code class="docutils literal notranslate"><span class="pre">get_osm_network</span></code> function from the <code class="docutils literal notranslate"><span class="pre">segregation.util</span></code> module. Alternatively, metropolitan-scale networks from OpenStreetMap are also available in the <a class="reference external" href="https://open.quiltdata.com/b/spatial-ucr/tree/osm/">CGS quilt bucket</a> (named by CBSA FIPS code)</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>
 </pre></div>
 </div>
 </div>
@@ -980,7 +991,7 @@ This flexibility is particularly useful for specifying appropriate “neighborho
 </pre></div></div>
 </div>
 <p>The segregation statistic using network distance to construct neighborhoods is higher than using the one using unrestricted euclidian distance</p>
-<div class="section" id="Batch-Computing-Single-Group-Measures">
+<section id="Batch-Computing-Single-Group-Measures">
 <h3>Batch-Computing Single-Group Measures<a class="headerlink" href="#Batch-Computing-Single-Group-Measures" title="Permalink to this headline">¶</a></h3>
 <p>To compute all single group indices in one go, the package provides a wrapper function in the <code class="docutils literal notranslate"><span class="pre">batch</span></code> module</p>
 <div class="nbinput nblast docutils container">
@@ -1035,6 +1046,10 @@ This flexibility is particularly useful for specifying appropriate “neighborho
       <th></th>
       <th>Statistic</th>
     </tr>
+    <tr>
+      <th>Name</th>
+      <th></th>
+    </tr>
   </thead>
   <tbody>
     <tr>
@@ -1043,7 +1058,7 @@ This flexibility is particularly useful for specifying appropriate “neighborho
     </tr>
     <tr>
       <th>AbsoluteClustering</th>
-      <td>-1.069798</td>
+      <td>0.117545</td>
     </tr>
     <tr>
       <th>AbsoluteConcentration</th>
@@ -1055,7 +1070,7 @@ This flexibility is particularly useful for specifying appropriate “neighborho
     </tr>
     <tr>
       <th>BiasCorrectedDissim</th>
-      <td>0.487794</td>
+      <td>0.487694</td>
     </tr>
     <tr>
       <th>BoundarySpatialDissim</th>
@@ -1082,24 +1097,24 @@ This flexibility is particularly useful for specifying appropriate “neighborho
       <td>0.488339</td>
     </tr>
     <tr>
-      <th>DistanceDecayExposure</th>
-      <td>0.079376</td>
+      <th>DistanceDecayInteraction</th>
+      <td>0.841137</td>
     </tr>
     <tr>
       <th>DistanceDecayIsolation</th>
-      <td>0.013780</td>
+      <td>0.160247</td>
     </tr>
     <tr>
       <th>Entropy</th>
       <td>0.112068</td>
     </tr>
     <tr>
-      <th>Exposure</th>
-      <td>0.837925</td>
-    </tr>
-    <tr>
       <th>Gini</th>
       <td>0.636176</td>
+    </tr>
+    <tr>
+      <th>Interaction</th>
+      <td>0.837925</td>
     </tr>
     <tr>
       <th>Isolation</th>
@@ -1111,11 +1126,11 @@ This flexibility is particularly useful for specifying appropriate “neighborho
     </tr>
     <tr>
       <th>ModifiedDissim</th>
-      <td>0.476233</td>
+      <td>0.476238</td>
     </tr>
     <tr>
       <th>ModifiedGini</th>
-      <td>0.623753</td>
+      <td>0.623809</td>
     </tr>
     <tr>
       <th>PARDissim</th>
@@ -1127,7 +1142,7 @@ This flexibility is particularly useful for specifying appropriate “neighborho
     </tr>
     <tr>
       <th>RelativeClustering</th>
-      <td>-1.000000</td>
+      <td>1.626559</td>
     </tr>
     <tr>
       <th>RelativeConcentration</th>
@@ -1143,7 +1158,7 @@ This flexibility is particularly useful for specifying appropriate “neighborho
     </tr>
     <tr>
       <th>SpatialProximity</th>
-      <td>1.031936</td>
+      <td>1.106990</td>
     </tr>
   </tbody>
 </table>
@@ -1160,9 +1175,9 @@ This flexibility is particularly useful for specifying appropriate “neighborho
 </div>
 <script type="application/vnd.jupyter.widget-state+json">
 {"state": {}, "version_major": 2, "version_minor": 0}
-</script></div>
-</div>
-</div>
+</script></section>
+</section>
+</section>
 
 
     </div>

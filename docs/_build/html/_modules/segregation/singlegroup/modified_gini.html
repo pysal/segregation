@@ -7,6 +7,7 @@
     <title>segregation.singlegroup.modified_gini &#8212; segregation v2.0.0 Manual</title>
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/pysal-styles.css" />
     <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
@@ -62,7 +63,7 @@
      href="../../../index.html">Site <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
       role="menu"
-      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Contents:</span></p>
+      aria-labelledby="dLabelGlobalToc"><p><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a></li>
@@ -112,18 +113,15 @@
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Renan X. Cortes &lt;renanc@ucr.edu&gt;, Sergio J. Rey &lt;sergio.rey@ucr.edu&gt; and Elijah Knaap &lt;elijah.knaap@ucr.edu&gt;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">.._base</span> <span class="kn">import</span> <span class="n">SingleGroupIndex</span><span class="p">,</span> <span class="n">SpatialImplicitIndex</span>
 <span class="kn">from</span> <span class="nn">.gini</span> <span class="kn">import</span> <span class="n">_gini_seg</span>
-<span class="kn">from</span> <span class="nn">.._base</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">SingleGroupIndex</span><span class="p">,</span>
-    <span class="n">SpatialImplicitIndex</span><span class="p">,</span>
-<span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_modified_gini</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">group_pop_var</span><span class="p">,</span> <span class="n">total_pop_var</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="mi">500</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Calculation of Modified Gini index.</span>
+    <span class="sd">&quot;&quot;&quot;Calculate Modified Gini index.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -140,7 +138,7 @@
 <span class="sd">    Returns</span>
 <span class="sd">    ----------</span>
 <span class="sd">    statistic : float</span>
-<span class="sd">                Modified Gini Index (Gini from Carrington and Troske (1997))</span>
+<span class="sd">        Modified Gini Index (Gini from Carrington and Troske (1997))</span>
 <span class="sd">    data : pandas.DataFrame</span>
 <span class="sd">        pandas DataFrame that contains the columns used to perform the estimate.</span>
 
@@ -213,9 +211,9 @@
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    statistic : float</span>
-<span class="sd">                MinMax Index</span>
+<span class="sd">        Modified Gini Index</span>
 <span class="sd">    core_data : a pandas DataFrame</span>
-<span class="sd">                A pandas DataFrame that contains the columns used to perform the estimate.</span>
+<span class="sd">        A pandas DataFrame that contains the columns used to perform the estimate.</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -233,8 +231,8 @@
         <span class="n">w</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">network</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">distance</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">decay</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span>
-        <span class="n">function</span><span class="o">=</span><span class="s1">&#39;triangular&#39;</span><span class="p">,</span>
+        <span class="n">decay</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span>
+        <span class="n">function</span><span class="o">=</span><span class="s2">&quot;triangular&quot;</span><span class="p">,</span>
         <span class="n">precompute</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">):</span>
@@ -242,7 +240,9 @@
 
         <span class="n">SingleGroupIndex</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">group_pop_var</span><span class="p">,</span> <span class="n">total_pop_var</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">w</span><span class="p">,</span> <span class="n">network</span><span class="p">,</span> <span class="n">distance</span><span class="p">]):</span>
-            <span class="n">SpatialImplicitIndex</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">network</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">decay</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">precompute</span><span class="p">)</span>
+            <span class="n">SpatialImplicitIndex</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">network</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">decay</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">precompute</span>
+            <span class="p">)</span>
         <span class="n">aux</span> <span class="o">=</span> <span class="n">_modified_gini</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_pop_var</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_pop_var</span><span class="p">,</span> <span class="n">iterations</span>
         <span class="p">)</span>
