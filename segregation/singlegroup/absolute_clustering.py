@@ -63,9 +63,9 @@ def _absolute_clustering(data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5
             pd.DataFrame({"x": data.centroid.x.values, "y": data.centroid.y.values})
         )
     )
-    dist = np.exp(
-        -DistanceBand.from_dataframe(data, binary=False, threshold=maxdist).full()[0]
-    )
+    w = DistanceBand.from_dataframe(data, binary=False, alpha=1, threshold=maxdist)
+    w.transform = "r"
+    dist = np.exp(-w.full()[0])
     np.fill_diagonal(dist, val=np.exp(-((alpha * data.area.values) ** (beta))))
 
     c = 1 - dist.copy()  # proximity matrix

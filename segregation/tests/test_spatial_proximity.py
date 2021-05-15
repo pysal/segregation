@@ -10,7 +10,7 @@ class Spatial_Proximity_Tester(unittest.TestCase):
         s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
         df = s_map[['geometry', 'HISP', 'TOT_POP']]
         index = SpatialProximity(df, 'HISP', 'TOT_POP')
-        np.testing.assert_almost_equal(index.statistic, 1.000829321895687)
+        np.testing.assert_almost_equal(index.statistic, 0.9957399448410782)
 
 
 if __name__ == '__main__':

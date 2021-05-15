@@ -41,10 +41,6 @@ def _density_corrected_dissim(data, group_pop_var, total_pop_var, xtol=1e-5):
     g = np.array(data[group_pop_var])
     t = np.array(data[total_pop_var])
 
-    assert all(
-        t > g
-    ), "Group of interest population must equal or lower than the total population of the units."
-
     other_group_pop = t - g
 
     # Group 0: minority group
