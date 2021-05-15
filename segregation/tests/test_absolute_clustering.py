@@ -11,7 +11,7 @@ class Absolute_Clustering_Tester(unittest.TestCase):
         s_map = s_map.to_crs(s_map.estimate_utm_crs())
         df = s_map[['geometry', 'HISP', 'TOT_POP']]
         index = AbsoluteClustering(df, 'HISP', 'TOT_POP')
-        np.testing.assert_almost_equal(index.statistic, 0.060976687541645404)
+        np.testing.assert_almost_equal(index.statistic, 0.060976687541645404,  decimal=4)
 
 
 if __name__ == '__main__':
