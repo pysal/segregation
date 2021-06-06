@@ -9,40 +9,44 @@ from sklearn.metrics.pairwise import manhattan_distances
 
 from segregation.util.util import _dep_message, DeprecationHelper, _nan_handle
 
-from deprecated import deprecated
+from segregation import __version__
+
+import deprecation
 
 # Including old and new api in __all__ so users can use both
 
 __all__ = [
-    'Multi_Dissim', 
+    'Multi_Dissim',
     'MultiDissim',
-    
-    'Multi_Gini_Seg', 
-    'MultiGiniSeg', 
-    
+
+    'Multi_Gini_Seg',
+    'MultiGiniSeg',
+
     'Multi_Normalized_Exposure',
     'MultiNormalizedExposure',
-    
-    'Multi_Information_Theory', 
-    'MultiInformationTheory', 
-    
+
+    'Multi_Information_Theory',
+    'MultiInformationTheory',
+    'MultiInformationTheoryUD',
+
     'Multi_Relative_Diversity',
     'MultiRelativeDiversity',
-    
-    'Multi_Squared_Coefficient_of_Variation', 
+
+    'Multi_Squared_Coefficient_of_Variation',
     'MultiSquaredCoefficientVariation',
-    
+
     'Multi_Diversity',
     'MultiDiversity',
-    
-    'Simpsons_Concentration', 
-    'SimpsonsConcentration', 
-    
-    'Simpsons_Interaction', 
-    'SimpsonsInteraction', 
-    
+
+    'Simpsons_Concentration',
+    'SimpsonsConcentration',
+
+    'Simpsons_Interaction',
+    'SimpsonsInteraction',
+
     'Multi_Divergence',
-    'MultiDivergence'
+    'MultiDivergence',
+    'MultiDivergenceUD'
 ]
 
 # The Deprecation calls of the classes are located in the end of this script #
@@ -60,7 +64,7 @@ def _multi_dissim(data, groups):
     ----------
 
     data   : a pandas DataFrame
-    
+
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
@@ -69,14 +73,14 @@ def _multi_dissim(data, groups):
 
     statistic : float
                 Multigroup Dissimilarity Index
-                
+
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
     Based on Sakoda, James M. "A generalized index of dissimilarity." Demography 18.2 (1981): 245-250.
-    
+
     Reference: :cite:`sakoda1981generalized`.
 
     """
@@ -104,7 +108,12 @@ def _multi_dissim(data, groups):
     return multi_D, core_data, groups
 
 
-@deprecated("MultiDissim is deprecated.")
+
+
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="multigroup.MultiDissim")
+
 class MultiDissim:
     """
     Calculation of Multigroup Dissimilarity index
@@ -113,7 +122,7 @@ class MultiDissim:
     ----------
 
     data   : a pandas DataFrame
-    
+
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
@@ -122,27 +131,27 @@ class MultiDissim:
 
     statistic : float
                 Multigroup Dissimilarity Index
-                
+
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
 
     Examples
     --------
     In this example, we are going to use 2000 Census Tract Data for Sacramento MSA, CA. The groups of interest are White, Black, Asian and Hispanic population.
-    
+
     Firstly, we need to perform some import the modules and the respective function.
-    
+
     >>> import libpysal
     >>> import geopandas as gpd
     >>> from segregation.multigroup_aspatial import MultiDissim
-    
+
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
-    
+
     >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
     >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
-    
+
     The value is estimated below.
-    
+
     >>> index = MultiDissim(input_df, groups_list)
     >>> index.statistic
     0.41340872573177806
@@ -150,7 +159,7 @@ class MultiDissim:
     Notes
     -----
     Based on Sakoda, James M. "A generalized index of dissimilarity." Demography 18.2 (1981): 245-250.
-    
+
     Reference: :cite:`sakoda1981generalized`.
 
     """
@@ -173,7 +182,7 @@ def _multi_gini_seg(data, groups):
     ----------
 
     data   : a pandas DataFrame
-    
+
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
@@ -182,14 +191,14 @@ def _multi_gini_seg(data, groups):
 
     statistic : float
                 Multigroup Gini Segregation Index
-                
+
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
     Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
-    
+
     Reference: :cite:`reardon2002measures`.
 
     """
@@ -219,6 +228,9 @@ def _multi_gini_seg(data, groups):
     return multi_Gini_Seg, core_data, groups
 
 
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="multigroup.MultiGini")
 class MultiGiniSeg:
     """
     Calculation of Multigroup Gini Segregation index
@@ -227,7 +239,7 @@ class MultiGiniSeg:
     ----------
 
     data   : a pandas DataFrame
-    
+
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
@@ -236,27 +248,27 @@ class MultiGiniSeg:
 
     statistic : float
                 Multigroup Gini Segregation Index
-                
+
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
 
     Examples
     --------
     In this example, we are going to use 2000 Census Tract Data for Sacramento MSA, CA. The groups of interest are White, Black, Asian and Hispanic population.
-    
+
     Firstly, we need to perform some import the modules and the respective function.
-    
+
     >>> import libpysal
     >>> import geopandas as gpd
     >>> from segregation.multigroup_aspatial import MultiGiniSeg
-    
+
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
-    
+
     >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
     >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
-    
+
     The value is estimated below.
-    
+
     >>> index = MultiGiniSeg(input_df, groups_list)
     >>> index.statistic
     0.5456349992598081
@@ -264,7 +276,7 @@ class MultiGiniSeg:
     Notes
     -----
     Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
-    
+
     Reference: :cite:`reardon2002measures`.
 
     """
@@ -287,7 +299,7 @@ def _multi_normalized_exposure(data, groups):
     ----------
 
     data   : a pandas DataFrame
-    
+
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
@@ -296,14 +308,14 @@ def _multi_normalized_exposure(data, groups):
 
     statistic : float
                 Multigroup Normalized Exposure Index
-                
+
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
     Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
-    
+
     Reference: :cite:`reardon2002measures`.
 
     """
@@ -324,6 +336,9 @@ def _multi_normalized_exposure(data, groups):
     return MNE, core_data, groups
 
 
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="multigroup.MultiNormExposure")
 class MultiNormalizedExposure:
     """
     Calculation of Multigroup Normalized Exposure index
@@ -332,7 +347,7 @@ class MultiNormalizedExposure:
     ----------
 
     data   : a pandas DataFrame
-    
+
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
@@ -341,27 +356,27 @@ class MultiNormalizedExposure:
 
     statistic : float
                 Multigroup Normalized Exposure Index
-                
+
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
 
     Examples
     --------
     In this example, we are going to use 2000 Census Tract Data for Sacramento MSA, CA. The groups of interest are White, Black, Asian and Hispanic population.
-    
+
     Firstly, we need to perform some import the modules and the respective function.
-    
+
     >>> import libpysal
     >>> import geopandas as gpd
     >>> from segregation.multigroup_aspatial import MultiNormalizedExposure
-    
+
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
-    
+
     >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
     >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
-    
+
     The value is estimated below.
-    
+
     >>> index = MultiNormalizedExposure(input_df, groups_list)
     >>> index.statistic
     0.18821879029994157
@@ -369,7 +384,7 @@ class MultiNormalizedExposure:
     Notes
     -----
     Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
-    
+
     Reference: :cite:`reardon2002measures`.
 
     """
@@ -392,7 +407,7 @@ def _multi_information_theory(data, groups):
     ----------
 
     data   : a pandas DataFrame
-    
+
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
@@ -401,14 +416,14 @@ def _multi_information_theory(data, groups):
 
     statistic : float
                 Multigroup Information Theory Index
-                
+
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
     Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
-    
+
     Reference: :cite:`reardon2002measures`.
 
     """
@@ -432,16 +447,16 @@ def _multi_information_theory(data, groups):
 
     return MIT, core_data, groups
 
-
-class MultiInformationTheory:
+class MultiInformationTheoryUD:
     """
-    Calculation of Multigroup Information Theory index
+    Calculation of Multigroup Information Theory index (Undeprecated)
+
 
     Parameters
     ----------
 
     data   : a pandas DataFrame
-    
+
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
@@ -450,27 +465,27 @@ class MultiInformationTheory:
 
     statistic : float
                 Multigroup Information Theory Index
-                
+
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
 
     Examples
     --------
     In this example, we are going to use 2000 Census Tract Data for Sacramento MSA, CA. The groups of interest are White, Black, Asian and Hispanic population.
-    
+
     Firstly, we need to perform some import the modules and the respective function.
-    
+
     >>> import libpysal
     >>> import geopandas as gpd
     >>> from segregation.multigroup_aspatial import MultiInformationTheory
-    
+
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
-    
+
     >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
     >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
-    
+
     The value is estimated below.
-    
+
     >>> index = MultiInformationTheory(input_df, groups_list)
     >>> index.statistic
     0.1710160297858887
@@ -478,7 +493,70 @@ class MultiInformationTheory:
     Notes
     -----
     Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
-    
+
+    Reference: :cite:`reardon2002measures`.
+
+    """
+
+    def __init__(self, data, groups):
+
+        aux = _multi_information_theory(data, groups)
+
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._groups   = aux[2]
+        self._function = _multi_information_theory
+
+
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="multigroup.MultiInfoTheory")
+class MultiInformationTheory:
+    """
+    Calculation of Multigroup Information Theory index
+
+    Parameters
+    ----------
+
+    data   : a pandas DataFrame
+
+    groups : list of strings.
+             The variables names in data of the groups of interest of the analysis.
+
+    Attributes
+    ----------
+
+    statistic : float
+                Multigroup Information Theory Index
+
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate.
+
+    Examples
+    --------
+    In this example, we are going to use 2000 Census Tract Data for Sacramento MSA, CA. The groups of interest are White, Black, Asian and Hispanic population.
+
+    Firstly, we need to perform some import the modules and the respective function.
+
+    >>> import libpysal
+    >>> import geopandas as gpd
+    >>> from segregation.multigroup_aspatial import MultiInformationTheory
+
+    Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
+
+    >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
+    >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
+
+    The value is estimated below.
+
+    >>> index = MultiInformationTheory(input_df, groups_list)
+    >>> index.statistic
+    0.1710160297858887
+
+    Notes
+    -----
+    Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
+
     Reference: :cite:`reardon2002measures`.
 
     """
@@ -501,7 +579,7 @@ def _multi_relative_diversity(data, groups):
     ----------
 
     data   : a pandas DataFrame
-    
+
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
@@ -510,7 +588,7 @@ def _multi_relative_diversity(data, groups):
 
     statistic : float
                 Multigroup Relative Diversity Index
-                
+
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
 
@@ -519,7 +597,7 @@ def _multi_relative_diversity(data, groups):
     Based on Reardon, Sean F. "Measures of racial diversity and segregation in multigroup and hierarchically structured populations." annual meeting of the Eastern Sociological Society, Philadelphia, PA. 1998.
 
     High diversity means less segregation.
-    
+
     Reference: :cite:`reardon1998measures`.
 
     """
@@ -541,6 +619,9 @@ def _multi_relative_diversity(data, groups):
     return MRD, core_data, groups
 
 
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="multigroup.MultiRelativeDiversity")
 class MultiRelativeDiversity:
     """
     Calculation of Multigroup Relative Diversity index
@@ -549,7 +630,7 @@ class MultiRelativeDiversity:
     ----------
 
     data   : a pandas DataFrame
-    
+
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
@@ -558,27 +639,27 @@ class MultiRelativeDiversity:
 
     statistic : float
                 Multigroup Relative Diversity Index
-                
+
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
 
     Examples
     --------
     In this example, we are going to use 2000 Census Tract Data for Sacramento MSA, CA. The groups of interest are White, Black, Asian and Hispanic population.
-    
+
     Firstly, we need to perform some import the modules and the respective function.
-    
+
     >>> import libpysal
     >>> import geopandas as gpd
     >>> from segregation.multigroup_aspatial import MultiRelativeDiversity
-    
+
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
-    
+
     >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
     >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
-    
+
     The value is estimated below.
-    
+
     >>> index = MultiRelativeDiversity(input_df, groups_list)
     >>> index.statistic
     0.15820019878220337
@@ -588,7 +669,7 @@ class MultiRelativeDiversity:
     Based on Reardon, Sean F. "Measures of racial diversity and segregation in multigroup and hierarchically structured populations." annual meeting of the Eastern Sociological Society, Philadelphia, PA. 1998.
 
     High diversity means less segregation.
-    
+
     Reference: :cite:`reardon1998measures`.
 
     """
@@ -611,7 +692,7 @@ def _multi_squared_coefficient_of_variation(data, groups):
     ----------
 
     data   : a pandas DataFrame
-    
+
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
@@ -620,7 +701,7 @@ def _multi_squared_coefficient_of_variation(data, groups):
 
     statistic : float
                 Multigroup Squared Coefficient of Variation Index
-                
+
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
 
@@ -650,6 +731,9 @@ def _multi_squared_coefficient_of_variation(data, groups):
     return C, core_data, groups
 
 
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="multigroup.MultiSquaredCoefVar")
 class MultiSquaredCoefficientVariation:
     """
     Calculation of Multigroup Squared Coefficient of Variation index
@@ -658,7 +742,7 @@ class MultiSquaredCoefficientVariation:
     ----------
 
     data   : a pandas DataFrame
-    
+
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
@@ -667,35 +751,35 @@ class MultiSquaredCoefficientVariation:
 
     statistic : float
                 Multigroup Squared Coefficient of Variation Index
-                
+
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
 
     Examples
     --------
     In this example, we are going to use 2000 Census Tract Data for Sacramento MSA, CA. The groups of interest are White, Black, Asian and Hispanic population.
-    
+
     Firstly, we need to perform some import the modules and the respective function.
-    
+
     >>> import libpysal
     >>> import geopandas as gpd
     >>> from segregation.multigroup_aspatial import MultiSquaredCoefficientVariation
-    
+
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
-    
+
     >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
     >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
-    
+
     The value is estimated below.
-    
+
     >>> index = MultiSquaredCoefficientVariation(input_df, groups_list)
     >>> index.statistic
     0.11875484641127525
-    
+
     Notes
     -----
     Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
-    
+
     Reference: :cite:`reardon2002measures`.
 
     """
@@ -718,7 +802,7 @@ def _multi_diversity(data, groups, normalized=False):
     ----------
 
     data   : a pandas DataFrame
-    
+
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
@@ -727,21 +811,21 @@ def _multi_diversity(data, groups, normalized=False):
 
     statistic  : float
                  Multigroup Diversity Index
-                
+
     core_data  : a pandas DataFrame
                  A pandas DataFrame that contains the columns used to perform the estimate.
-                
+
     normalized : bool. Default is False.
                  Wheter the resulting index will be divided by its maximum (natural log of the number of groups)
 
     Notes
     -----
     Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67 and Theil, Henry. "Statistical decomposition analysis; with applications in the social and administrative sciences". No. 04; HA33, T4.. 1972.
-    
+
     This is also know as Theil's Entropy Index (Equation 2 of page 37 of Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67)
-    
+
     High diversity means less segregation.
-    
+
     Reference: :cite:`reardon2002measures`.
 
     """
@@ -762,6 +846,9 @@ def _multi_diversity(data, groups, normalized=False):
     return E, core_data, groups
 
 
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="multigroup.MultiDiversity")
 class MultiDiversity:
     """
     Calculation of Multigroup Diversity index
@@ -770,7 +857,7 @@ class MultiDiversity:
     ----------
 
     data   : a pandas DataFrame
-    
+
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
@@ -779,33 +866,33 @@ class MultiDiversity:
 
     statistic : float
                 Multigroup Diversity Index
-                
+
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
 
     Examples
     --------
     In this example, we are going to use 2000 Census Tract Data for Sacramento MSA, CA. The groups of interest are White, Black, Asian and Hispanic population.
-    
+
     Firstly, we need to perform some import the modules and the respective function.
-    
+
     >>> import libpysal
     >>> import geopandas as gpd
     >>> from segregation.multigroup_aspatial import MultiDiversity
-    
+
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
-    
+
     >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
     >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
-    
+
     The value is estimated below.
-    
+
     >>> index = MultiDiversity(input_df, groups_list)
     >>> index.statistic
     0.9733112243997906
-    
+
     You can also fit the normalized version of the multigroup diversity index.
-    
+
     >>> normalized_index = Multi_Diversity(input_df, groups_list, normalized = True)
     >>> normalized_index.statistic
     0.7020956383415715
@@ -813,11 +900,11 @@ class MultiDiversity:
     Notes
     -----
     Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67 and Theil, Henry. "Statistical decomposition analysis; with applications in the social and administrative sciences". No. 04; HA33, T4.. 1972.
-    
+
     This is also know as Theil's Entropy Index (Equation 2 of page 37 of Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67)
-    
+
     High diversity means less segregation.
-    
+
     Reference: :cite:`reardon2002measures`.
 
     """
@@ -840,7 +927,7 @@ def _simpsons_concentration(data, groups):
     ----------
 
     data   : a pandas DataFrame
-    
+
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
@@ -849,20 +936,20 @@ def _simpsons_concentration(data, groups):
 
     statistic  : float
                  Simpson's Concentration Index
-                
+
     core_data  : a pandas DataFrame
                  A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
     Based on Simpson, Edward H. "Measurement of diversity." nature 163.4148 (1949): 688.
-    
+
     Simpson's concentration index (Lambda) can be simply interpreted as the probability that two individuals chosen at random and independently from the population will be found to belong to the same group.
 
     Higher values means higher segregation.
-    
+
     Simpson's Concentration + Simpson's Interaction = 1
-    
+
     Reference: :cite:`simpson1949measurement`.
 
     """
@@ -879,6 +966,9 @@ def _simpsons_concentration(data, groups):
     return Lambda, core_data, groups
 
 
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="multigroup.SimpsonsConcentration")
 class SimpsonsConcentration:
     """
     Calculation of Simpson's Concentration index
@@ -887,7 +977,7 @@ class SimpsonsConcentration:
     ----------
 
     data   : a pandas DataFrame
-    
+
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
@@ -896,41 +986,41 @@ class SimpsonsConcentration:
 
     statistic  : float
                  Simpson's Concentration Index
-                
+
     core_data  : a pandas DataFrame
                  A pandas DataFrame that contains the columns used to perform the estimate.
 
     Examples
     --------
     In this example, we are going to use 2000 Census Tract Data for Sacramento MSA, CA. The groups of interest are White, Black, Asian and Hispanic population.
-    
+
     Firstly, we need to perform some import the modules and the respective function.
-    
+
     >>> import libpysal
     >>> import geopandas as gpd
     >>> from segregation.multigroup_aspatial import SimpsonsConcentration
-    
+
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
-    
+
     >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
     >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
-    
+
     The value is estimated below.
-    
+
     >>> index = SimpsonsConcentration(input_df, groups_list)
     >>> index.statistic
     0.49182413151957904
-    
+
     Notes
     -----
     Based on Simpson, Edward H. "Measurement of diversity." nature 163.4148 (1949): 688.
-    
+
     Simpson's concentration index (Lambda) can be simply interpreted as the probability that two individuals chosen at random and independently from the population will be found to belong to the same group.
 
     Higher values means higher segregation.
-    
+
     Simpson's Concentration + Simpson's Interaction = 1
-    
+
     Reference: :cite:`simpson1949measurement`.
 
     """
@@ -953,7 +1043,7 @@ def _simpsons_interaction(data, groups):
     ----------
 
     data   : a pandas DataFrame
-    
+
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
@@ -962,20 +1052,20 @@ def _simpsons_interaction(data, groups):
 
     statistic  : float
                  Simpson's Interaction Index
-                
+
     core_data  : a pandas DataFrame
                  A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
     Based on Equation 1 of page 37 of Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
-    
+
     Simpson's interaction index (I) can be simply interpreted as the probability that two individuals chosen at random and independently from the population will be found to not belong to the same group.
 
     Higher values means lesser segregation.
-    
+
     Simpson's Concentration + Simpson's Interaction = 1
-    
+
     Reference: :cite:`reardon2002measures`.
 
     """
@@ -992,6 +1082,9 @@ def _simpsons_interaction(data, groups):
     return I, core_data, groups
 
 
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="multigroup.SimpsonsInteraction")
 class SimpsonsInteraction:
     """
     Calculation of Simpson's Interaction index
@@ -1000,7 +1093,7 @@ class SimpsonsInteraction:
     ----------
 
     data   : a pandas DataFrame
-    
+
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
@@ -1009,41 +1102,41 @@ class SimpsonsInteraction:
 
     statistic  : float
                  Simpson's Interaction Index
-                
+
     core_data  : a pandas DataFrame
                  A pandas DataFrame that contains the columns used to perform the estimate.
 
     Examples
     --------
     In this example, we are going to use 2000 Census Tract Data for Sacramento MSA, CA. The groups of interest are White, Black, Asian and Hispanic population.
-    
+
     Firstly, we need to perform some import the modules and the respective function.
-    
+
     >>> import libpysal
     >>> import geopandas as gpd
     >>> from segregation.multigroup_aspatial import SimpsonsInteraction
-    
+
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
-    
+
     >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
     >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
-    
+
     The value is estimated below.
-    
+
     >>> index = SimpsonsInteraction(input_df, groups_list)
     >>> index.statistic
     0.508175868480421
-    
+
     Notes
     -----
     Based on Equation 1 of page 37 of Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
-    
+
     Simpson's interaction index (I) can be simply interpreted as the probability that two individuals chosen at random and independently from the population will be found to not belong to the same group.
 
     Higher values means lesser segregation.
-    
+
     Simpson's Concentration + Simpson's Interaction = 1
-    
+
     Reference: :cite:`reardon2002measures`.
 
     """
@@ -1066,7 +1159,7 @@ def _multi_divergence(data, groups):
     ----------
 
     data   : a pandas DataFrame
-    
+
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
@@ -1075,14 +1168,14 @@ def _multi_divergence(data, groups):
 
     statistic : float
                 Multigroup Divergence Index
-                
+
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
     Based on Roberto, Elizabeth. "The Divergence Index: A Decomposable Measure of Segregation and Inequality." arXiv preprint arXiv:1508.01167 (2015).
-    
+
     Reference: :cite:`roberto2015divergence`.
 
     """
@@ -1104,16 +1197,15 @@ def _multi_divergence(data, groups):
 
     return Divergence_Index, core_data, groups
 
-
-class MultiDivergence:
+class MultiDivergenceUD:
     """
-    Calculation of Multigroup Divergence index
+    Calculation of Multigroup Divergence index (Undeprecated)
 
     Parameters
     ----------
 
     data   : a pandas DataFrame
-    
+
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
@@ -1122,27 +1214,27 @@ class MultiDivergence:
 
     statistic : float
                 Multigroup Divergence Index
-                
+
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
 
     Examples
     --------
     In this example, we are going to use 2000 Census Tract Data for Sacramento MSA, CA. The groups of interest are White, Black, Asian and Hispanic population.
-    
+
     Firstly, we need to perform some import the modules and the respective function.
-    
+
     >>> import libpysal
     >>> import geopandas as gpd
     >>> from segregation.multigroup_aspatial import MultiDivergence
-    
+
     Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
-    
+
     >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
     >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
-    
+
     The value is estimated below.
-    
+
     >>> index = MultiDivergence(input_df, groups_list)
     >>> index.statistic
     0.16645182134289443
@@ -1150,7 +1242,72 @@ class MultiDivergence:
     Notes
     -----
     Based on Roberto, Elizabeth. "The Divergence Index: A Decomposable Measure of Segregation and Inequality." arXiv preprint arXiv:1508.01167 (2015).
-    
+
+    Reference: :cite:`roberto2015divergence`.
+
+    """
+
+    def __init__(self, data, groups):
+
+        aux = _multi_divergence(data, groups)
+
+        self.statistic = aux[0]
+        self.core_data = aux[1]
+        self._groups   = aux[2]
+        self._function = _multi_divergence
+
+
+
+
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="multigroup.MultiDivergence")
+class MultiDivergence:
+    """
+    Calculation of Multigroup Divergence index
+
+    Parameters
+    ----------
+
+    data   : a pandas DataFrame
+
+    groups : list of strings.
+             The variables names in data of the groups of interest of the analysis.
+
+    Attributes
+    ----------
+
+    statistic : float
+                Multigroup Divergence Index
+
+    core_data : a pandas DataFrame
+                A pandas DataFrame that contains the columns used to perform the estimate.
+
+    Examples
+    --------
+    In this example, we are going to use 2000 Census Tract Data for Sacramento MSA, CA. The groups of interest are White, Black, Asian and Hispanic population.
+
+    Firstly, we need to perform some import the modules and the respective function.
+
+    >>> import libpysal
+    >>> import geopandas as gpd
+    >>> from segregation.multigroup_aspatial import MultiDivergence
+
+    Then, we read the data and create an auxiliary list with only the necessary columns for fitting the index.
+
+    >>> input_df = gpd.read_file(libpysal.examples.get_path("sacramentot2.shp"))
+    >>> groups_list = ['WHITE', 'BLACK', 'ASIAN','HISP']
+
+    The value is estimated below.
+
+    >>> index = MultiDivergence(input_df, groups_list)
+    >>> index.statistic
+    0.16645182134289443
+
+    Notes
+    -----
+    Based on Roberto, Elizabeth. "The Divergence Index: A Decomposable Measure of Segregation and Inequality." arXiv preprint arXiv:1508.01167 (2015).
+
     Reference: :cite:`roberto2015divergence`.
 
     """

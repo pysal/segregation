@@ -1,1 +1,1 @@
-from . spatial_indexes import *#!/usr/bin/env python
+from . spatial_indexes import *

@@ -20,61 +20,62 @@ from scipy.sparse.csgraph import floyd_warshall
 from scipy.sparse import csr_matrix
 
 from segregation.aspatial.aspatial_indexes import _dissim, MinMax
-from segregation.aspatial.multigroup_aspatial_indexes import MultiInformationTheory, MultiDivergence
+from segregation.aspatial.multigroup_aspatial_indexes import MultiInformationTheoryUD, MultiDivergenceUD
 from segregation.network import calc_access
 from libpysal.weights.util import attach_islands
 
 from segregation.util.util import _dep_message, DeprecationHelper, _nan_handle
 
-from deprecated import deprecated
+from segregation import __version__
 
+import deprecation
 # Including old and new api in __all__ so users can use both
 
 __all__ = [
 
-    'Spatial_Prox_Prof', 
+    'Spatial_Prox_Prof',
     'SpatialProxProf',
-    
-    'Spatial_Dissim', 
+
+    'Spatial_Dissim',
     'SpatialDissim',
-    
+
     'Boundary_Spatial_Dissim',
     'BoundarySpatialDissim',
-    
-    'Perimeter_Area_Ratio_Spatial_Dissim', 
+
+    'Perimeter_Area_Ratio_Spatial_Dissim',
     'PerimeterAreaRatioSpatialDissim',
-    
+
     'SpatialMinMax',
-    
+
     'Distance_Decay_Isolation',
     'DistanceDecayIsolation',
-    
-    'Distance_Decay_Exposure', 
-    'DistanceDecayExposure', 
-    
-    'Spatial_Proximity', 
+
+    'Distance_Decay_Exposure',
+    'DistanceDecayExposure',
+
+    'Spatial_Proximity',
     'SpatialProximity',
-    
+
     'Absolute_Clustering',
     'AbsoluteClustering',
-    
-    'Relative_Clustering', 
-    'RelativeClustering', 
-    
-    'Delta', 
-    
+
+    'Relative_Clustering',
+    'RelativeClustering',
+
+    'Delta',
+
     'Absolute_Concentration',
     'AbsoluteConcentration',
-    
-    'Relative_Concentration', 
-    'RelativeConcentration', 
-    
+
+    'Relative_Concentration',
+    'RelativeConcentration',
+
     'Absolute_Centralization',
     'AbsoluteCentralization',
-    
-    'Relative_Centralization', 
-    'RelativeCentralization', 
-    
+
+    'Relative_Centralization',
+    'RelativeCentralization',
+
     'SpatialInformationTheory',
     'SpatialDivergence',
 
@@ -115,7 +116,7 @@ def _build_local_environment(data, groups, w):
 def _return_length_weighted_w(data):
     """
     Returns a PySAL weights object that the weights represent the length of the common boundary of two areal units that share border.
-    Author: Levi Wolf <levi.john.wolf@gmail.com>. 
+    Author: Levi Wolf <levi.john.wolf@gmail.com>.
     Thank you, Levi!
 
     Parameters
@@ -184,15 +185,15 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, m=1000):
     ----------
 
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-                    
+
     m             : int
-                    a numeric value indicating the number of thresholds to be used. Default value is 1000. 
+                    a numeric value indicating the number of thresholds to be used. Default value is 1000.
                     A large value of m creates a smoother-looking graph and a more precise spatial proximity profile value but slows down the calculation speed.
 
     Returns
@@ -200,14 +201,14 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, m=1000):
 
     statistic : float
                 Spatial Proximity Index
-                
+
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
     Based on Hong, Seong-Yun, and Yukio Sadahiro. "Measuring geographic segregation: a graph-based approach." Journal of Geographical Systems 16.2 (2014): 211-231.
-    
+
     Reference: :cite:`hong2014measuring`.
 
     """
@@ -279,6 +280,9 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, m=1000):
     return SPP, grid, curve, core_data
 
 
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.SpatialProxProf")
 class SpatialProxProf:
     """
     Calculation of Spatial Proximity Profile
@@ -287,15 +291,15 @@ class SpatialProxProf:
     ----------
 
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-                    
+
     m             : int
-                    a numeric value indicating the number of thresholds to be used. Default value is 1000. 
+                    a numeric value indicating the number of thresholds to be used. Default value is 1000.
                     A large value of m creates a smoother-looking graph and a more precise spatial proximity profile value but slows down the calculation speed.
 
     Attributes
@@ -303,64 +307,64 @@ class SpatialProxProf:
 
     statistic : float
                 Spatial Proximity Profile Index
-                
+
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
-        
+
     Examples
     --------
     In this example, we will calculate the spatial proximity profile (SPP) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
-    
+
     Firstly, we need to perform some import the modules and the respective function.
-    
+
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
     >>> from segregation.spatial import SpatialProxProf
-    
+
     Secondly, we need to read the data:
-    
+
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
-    
+
     Then, we filter only for the desired county (in this case, Riverside County):
-    
+
     >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
-    
+
     Then, we read the Riverside map data using geopandas (the county id is 06065):
-    
+
     >>> map_url = 'https://raw.githubusercontent.com/renanxcortes/inequality-segregation-supplementary-files/master/Tracts_grouped_by_County/06065.json'
     >>> map_gpd = gpd.read_file(map_url)
-    
+
     It is necessary to harmonize the data type of the dataset and the geopandas in order to work the merging procedure.
     Later, we extract only the columns that will be used.
-    
+
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
     >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
-    
+
     >>> spat_prox_index = SpatialProxProf(gdf, 'nhblk10', 'pop10')
     >>> spat_prox_index.statistic
     0.11217269612149207
-    
+
     You can plot the profile curve with the plot method.
-    
+
     >>> spat_prox_index.plot()
-        
+
     Notes
     -----
     Based on Hong, Seong-Yun, and Yukio Sadahiro. "Measuring geographic segregation: a graph-based approach." Journal of Geographical Systems 16.2 (2014): 211-231.
-    
+
     Reference: :cite:`hong2014measuring`.
 
     """
 
     def __init__(self, data, group_pop_var, total_pop_var, m=1000):
-        
+
         data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _spatial_prox_profile(data, group_pop_var, total_pop_var, m)
@@ -395,34 +399,34 @@ def _spatial_dissim(data,
     ----------
 
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-                    
+
     w             : W
                     A PySAL weights object. If not provided, Queen contiguity matrix is used.
-                    
+
     standardize   : boolean
                     A condition for row standardisation of the weights matrices. If True, the values of cij in the formulas gets row standardized.
                     For the sake of comparison, the seg R package of Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
                     works by default with row standardization.
-        
+
     Returns
     ----------
 
     statistic : float
                 Spatial Dissimilarity Index
-                
+
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
-                
+
     Notes
     -----
     Based on Morrill, R. L. (1991) "On the Measure of Geographic Segregation". Geography Research Forum.
-    
+
     Reference: :cite:`morrill1991measure`.
 
     """
@@ -480,7 +484,10 @@ def _spatial_dissim(data,
 
     return SD, core_data
 
-@deprecated('spatial.SpatialDissim has been deprecated. Please use singlegroup.SpatialDissim')
+
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.SpatialDissim")
 class SpatialDissim:
     """
     Calculation of Spatial Dissimilarity index
@@ -489,16 +496,16 @@ class SpatialDissim:
     ----------
 
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-                    
+
     w             : W
                     A PySAL weights object. If not provided, Queen contiguity matrix is used.
-    
+
     standardize   : boolean
                     A condition for row standardisation of the weights matrices. If True, the values of cij in the formulas gets row standardized.
                     For the sake of comparison, the seg R package of Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
@@ -509,76 +516,76 @@ class SpatialDissim:
 
     statistic : float
                 Spatial Dissimilarity Index
-                
+
     core_data : a geopandas DataFrame
-                A geopandas DataFrame that contains the columns used to perform the estimate.   
-                
+                A geopandas DataFrame that contains the columns used to perform the estimate.
+
     Examples
     --------
     In this example, we will calculate the degree of spatial dissimilarity (D) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset. The neighborhood contiguity matrix is used.
-    
+
     Firstly, we need to perform some import the modules and the respective function.
-    
+
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
     >>> from segregation.spatial import SpatialDissim
-    
+
     Secondly, we need to read the data:
-    
+
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
-    
+
     Then, we filter only for the desired county (in this case, Riverside County):
-    
+
     >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
-    
+
     Then, we read the Riverside map data using geopandas (the county id is 06065):
-    
+
     >>> map_url = 'https://raw.githubusercontent.com/renanxcortes/inequality-segregation-supplementary-files/master/Tracts_grouped_by_County/06065.json'
     >>> map_gpd = gpd.read_file(map_url)
-    
+
     It is necessary to harmonize the data type of the dataset and the geopandas in order to work the merging procedure.
     Later, we extract only the columns that will be used.
-    
+
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
     >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
-    
+
     The value is estimated below.
-    
+
     >>> spatial_dissim_index = SpatialDissim(gdf, 'nhblk10', 'pop10')
     >>> spatial_dissim_index.statistic
     0.2864885055405311
-        
+
     To use different neighborhood matrices:
-        
+
     >>> from libpysal.weights import Rook, KNN
-    
+
     Assuming K-nearest neighbors with k = 4
-    
+
     >>> knn = KNN.from_dataframe(gdf, k=4)
     >>> spatial_dissim_index = Spatial_Dissim(gdf, 'nhblk10', 'pop10', w = knn)
     >>> spatial_dissim_index.statistic
     0.28544347200877285
-    
+
     Assuming Rook contiguity neighborhood
-    
+
     >>> roo = Rook.from_dataframe(gdf)
     >>> spatial_dissim_index = Spatial_Dissim(gdf, 'nhblk10', 'pop10', w = roo)
     >>> spatial_dissim_index.statistic
     0.2866269198707091
-            
+
     Notes
     -----
     Based on Morrill, R. L. (1991) "On the Measure of Geographic Segregation". Geography Research Forum.
-    
+
     Reference: :cite:`morrill1991measure`.
-    
+
     """
 
     def __init__(self,
@@ -587,7 +594,7 @@ class SpatialDissim:
                  total_pop_var,
                  w=None,
                  standardize=False):
-        
+
         data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _spatial_dissim(data, group_pop_var, total_pop_var, w,
@@ -609,33 +616,33 @@ def _boundary_spatial_dissim(data,
     ----------
 
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-                    
+
     standardize   : boolean
                     A condition for row standardisation of the weights matrices. If True, the values of cij in the formulas gets row standardized.
                     For the sake of comparison, the seg R package of Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
                     works by default without row standardization. That is, directly with border length.
-        
+
     Returns
     ----------
 
     statistic : float
                 Boundary Spatial Dissimilarity Index
-                
+
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
-                
+
     Notes
     -----
     The formula is based on Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
-    
+
     Original paper by Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
-    
+
     References: :cite:`hong2014implementing` and :cite:`wong1993spatial`.
 
     """
@@ -682,6 +689,9 @@ def _boundary_spatial_dissim(data,
     return BSD, core_data
 
 
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.BoundarySpatialDissim")
 class BoundarySpatialDissim:
     """
     Calculation of Boundary Spatial Dissimilarity index
@@ -690,82 +700,82 @@ class BoundarySpatialDissim:
     ----------
 
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-                    
+
     standardize   : boolean
                     A condition for row standardisation of the weights matrices. If True, the values of cij in the formulas gets row standardized.
                     For the sake of comparison, the seg R package of Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
                     works by default without row standardization. That is, directly with border length.
-        
+
 
     Attributes
     ----------
 
     statistic : float
                 Boundary Spatial Dissimilarity Index
-                
+
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
-         
+
     Examples
     --------
     In this example, we will calculate the degree of boundary spatial dissimilarity (D) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
-    
+
     Firstly, we need to perform some import the modules and the respective function.
-    
+
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
     >>> from segregation.spatial import BoundarySpatialDissim
-    
+
     Secondly, we need to read the data:
-    
+
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
-    
+
     Then, we filter only for the desired county (in this case, Riverside County):
-    
+
     >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
-    
+
     Then, we read the Riverside map data using geopandas (the county id is 06065):
-    
+
     >>> map_url = 'https://raw.githubusercontent.com/renanxcortes/inequality-segregation-supplementary-files/master/Tracts_grouped_by_County/06065.json'
     >>> map_gpd = gpd.read_file(map_url)
-    
+
     It is necessary to harmonize the data type of the dataset and the geopandas in order to work the merging procedure.
     Later, we extract only the columns that will be used.
-    
+
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
     >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
-    
+
     The value is estimated below.
-    
+
     >>> boundary_spatial_dissim_index = BoundarySpatialDissim(gdf, 'nhblk10', 'pop10')
     >>> boundary_spatial_dissim_index.statistic
     0.28869903953453163
-            
+
     Notes
     -----
     The formula is based on Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
-    
+
     Original paper by Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
-    
+
     References: :cite:`hong2014implementing` and :cite:`wong1993spatial`.
-    
+
     """
 
     def __init__(self, data, group_pop_var, total_pop_var, standardize=False):
-        
+
         data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _boundary_spatial_dissim(data, group_pop_var, total_pop_var,
@@ -787,15 +797,15 @@ def _perimeter_area_ratio_spatial_dissim(data,
     ----------
 
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-                    
+
     standardize   : boolean
-                    A condition for standardisation of the weights matrices. 
+                    A condition for standardisation of the weights matrices.
                     If True, the values of cij in the formulas gets standardized and the overall sum is 1.
 
     Returns
@@ -803,20 +813,20 @@ def _perimeter_area_ratio_spatial_dissim(data,
 
     statistic : float
                 Perimeter/Area Ratio Spatial Dissimilarity Index
-                
+
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
-                
+
     Notes
     -----
     Originally based on Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
-    
+
     However, Tivadar, Mihai. "OasisR: An R Package to Bring Some Order to the World of Segregation Measurement." Journal of Statistical Software 89.1 (2019): 1-39.
     points out that in Wong’s original there is an issue with the formula which is an extra division by 2 in the spatial interaction component.
     This function follows the formula present in the first Appendix of Tivadar, Mihai. "OasisR: An R Package to Bring Some Order to the World of Segregation Measurement." Journal of Statistical Software 89.1 (2019): 1-39.
 
     References: :cite:`wong1993spatial` and :cite:`tivadar2019oasisr`.
-        
+
     """
 
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
@@ -871,6 +881,9 @@ def _perimeter_area_ratio_spatial_dissim(data,
     return PARD, core_data
 
 
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.PARDissim")
 class PerimeterAreaRatioSpatialDissim:
     """
     Calculation of Perimeter/Area Ratio Spatial Dissimilarity index
@@ -879,82 +892,82 @@ class PerimeterAreaRatioSpatialDissim:
     ----------
 
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-                    
+
     standardize   : boolean
-                    A condition for standardisation of the weights matrices. 
+                    A condition for standardisation of the weights matrices.
                     If True, the values of cij in the formulas gets standardized and the overall sum is 1.
-        
+
     Attributes
     ----------
 
     statistic : float
                 Perimeter/Area Ratio Spatial Dissimilarity Index
-                
+
     core_data : a geopandas DataFrame
-                A geopandas DataFrame that contains the columns used to perform the estimate.      
-                
+                A geopandas DataFrame that contains the columns used to perform the estimate.
+
     Examples
     --------
     In this example, we will calculate the degree of perimeter/area ratio spatial dissimilarity (PARD) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
-    
+
     Firstly, we need to perform some import the modules and the respective function.
-    
+
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
     >>> from segregation.spatial import PerimeterAreaRatioSpatialDissim
-    
+
     Secondly, we need to read the data:
-    
+
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
-    
+
     Then, we filter only for the desired county (in this case, Riverside County):
-    
+
     >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
-    
+
     Then, we read the Riverside map data using geopandas (the county id is 06065):
-    
+
     >>> map_url = 'https://raw.githubusercontent.com/renanxcortes/inequality-segregation-supplementary-files/master/Tracts_grouped_by_County/06065.json'
     >>> map_gpd = gpd.read_file(map_url)
-    
+
     It is necessary to harmonize the data type of the dataset and the geopandas in order to work the merging procedure.
     Later, we extract only the columns that will be used.
-    
+
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
     >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
-    
+
     The value is estimated below.
-    
+
     >>> perimeter_area_ratio_spatial_dissim_index = PerimeterAreaRatioSpatialDissim(gdf, 'nhblk10', 'pop10')
     >>> perimeter_area_ratio_spatial_dissim_index.statistic
     0.31260876347432687
-            
+
     Notes
     -----
     Originally based on Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
-    
+
     However, Tivadar, Mihai. "OasisR: An R Package to Bring Some Order to the World of Segregation Measurement." Journal of Statistical Software 89.1 (2019): 1-39.
     points out that in Wong’s original there is an issue with the formula which is an extra division by 2 in the spatial interaction component.
     This function follows the formula present in the first Appendix of Tivadar, Mihai. "OasisR: An R Package to Bring Some Order to the World of Segregation Measurement." Journal of Statistical Software 89.1 (2019): 1-39.
-    
+
     References: :cite:`wong1993spatial` and :cite:`tivadar2019oasisr`.
-    
+
     """
 
     def __init__(self, data, group_pop_var, total_pop_var, standardize=True):
-        
+
         data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _perimeter_area_ratio_spatial_dissim(data, group_pop_var,
@@ -963,9 +976,12 @@ class PerimeterAreaRatioSpatialDissim:
         self.statistic = aux[0]
         self.core_data = aux[1]
         self._function = _perimeter_area_ratio_spatial_dissim
-        
 
 
+
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.SpatialMinMax")
 class SpatialMinMax(MinMax):
     """Spatial MinMax Index.
 
@@ -999,13 +1015,13 @@ class SpatialMinMax(MinMax):
         indices using the same network, then you can set this
         parameter to `False` to avoid precomputing repeatedly inside the
         function
-        
+
     Attributes
     ----------
 
     statistic : float
                 SpatialMinMax Index
-                
+
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
 
@@ -1015,28 +1031,28 @@ class SpatialMinMax(MinMax):
     Geographical Analysis 39 (2). https://doi.org/10.1111/j.1538-4632.2007.00699.x
 
     Reference: :cite:`osullivanwong2007surface`.
-    
+
     We'd like to thank @AnttiHaerkoenen for this contribution!
-    
+
     """
 
-    def __init__(self, 
-                 data, 
-                 group_pop_var, 
+    def __init__(self,
+                 data,
+                 group_pop_var,
                  total_pop_var,
                  network=None,
                  w=None,
                  decay='linear',
                  distance=2000,
                  precompute=True):
-        
-        data = data.rename(columns={group_pop_var: 'group_pop_var', 
+
+        data = data.rename(columns={group_pop_var: 'group_pop_var',
                                     total_pop_var: 'total_pop_var'})
-    
+
         data['group_2_pop_var'] = data['total_pop_var'] - data['group_pop_var']
-        
+
         groups = ['group_pop_var', 'group_2_pop_var']
-        
+
         if w is None and network is None:
             points = [(p.x, p.y) for p in data.centroid]
             w = Kernel(points)
@@ -1055,9 +1071,9 @@ class SpatialMinMax(MinMax):
             groups = ["acc_" + group for group in groups]
         else:
             df = _build_local_environment(data, groups, w)
-        
+
         df['resulting_total'] = df['group_pop_var'] + df['group_2_pop_var']
-        
+
         super().__init__(df, 'group_pop_var', 'resulting_total')
 
 
@@ -1075,21 +1091,21 @@ def _distance_decay_isolation(data,
     ----------
 
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-                    
+
     alpha         : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.6
-    
+
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
-                    
+
     metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
-                    The metric used for the distance between spatial units. 
+                    The metric used for the distance between spatial units.
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
 
     Returns
@@ -1097,25 +1113,25 @@ def _distance_decay_isolation(data,
 
     statistic : float
                 Distance Decay Isolation Index
-                
+
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
     It may be interpreted as the probability that the next person a group member meets anywhere in space is from the same group.
-    
+
     Based on Morgan, Barrie S. "A distance-decay based interaction index to measure residential segregation." Area (1983): 211-217.
-    
+
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
-    
+
     Reference: :cite:`morgan1983distance`.
 
     """
-    
+
     if not metric in ['euclidean', 'haversine']:
         raise ValueError('metric must one of \'euclidean\', \'haversine\'')
-    
+
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
             'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
@@ -1173,14 +1189,14 @@ def _distance_decay_isolation(data,
             }))  # This needs to be latitude first!
 
     c = np.exp(-dist)
-    
-    if c.sum() < 10 ** (-15): 
+
+    if c.sum() < 10 ** (-15):
         raise ValueError('It not possible to determine accurately the exponential of the negative distances. This is probably due to the large magnitude of the centroids numbers. It is recommended to reproject the geopandas DataFrame. Also, if this is a not lat-long CRS, it is recommended to set metric to \'haversine\'')
-    
+
     np.fill_diagonal(c, val = np.exp(-(alpha * data.area)**(beta)))
-    
+
     Pij = np.multiply(c, t) / np.sum(np.multiply(c, t), axis=1)
-        
+
     DDxPx = (np.array(x / X) *
              np.nansum(np.multiply(Pij, np.array(x / t)), axis=1)).sum()
 
@@ -1189,6 +1205,9 @@ def _distance_decay_isolation(data,
     return DDxPx, core_data
 
 
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.DistanceDecayIsolation")
 class DistanceDecayIsolation:
     """
     Calculation of Distance Decay Isolation index
@@ -1197,21 +1216,21 @@ class DistanceDecayIsolation:
     ----------
 
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-                    
+
     alpha         : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.6
-    
+
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
-                    
+
     metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
-                    The metric used for the distance between spatial units. 
+                    The metric used for the distance between spatial units.
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
 
     Attributes
@@ -1219,62 +1238,62 @@ class DistanceDecayIsolation:
 
     statistic : float
                 Distance Decay Isolation Index
-                
+
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
-        
+
     Examples
     --------
     In this example, we will calculate the distance decay isolation index (DDxPx) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
-    
+
     Firstly, we need to perform some import the modules and the respective function.
-    
+
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
     >>> from segregation.spatial import DistanceDecayIsolation
-    
+
     Secondly, we need to read the data:
-    
+
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
-    
+
     Then, we filter only for the desired county (in this case, Riverside County):
-    
+
     >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
-    
+
     Then, we read the Riverside map data using geopandas (the county id is 06065):
-    
+
     >>> map_url = 'https://raw.githubusercontent.com/renanxcortes/inequality-segregation-supplementary-files/master/Tracts_grouped_by_County/06065.json'
     >>> map_gpd = gpd.read_file(map_url)
-    
+
     It is necessary to harmonize the data type of the dataset and the geopandas in order to work the merging procedure.
     Later, we extract only the columns that will be used.
-    
+
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
     >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
-    
+
     The value is estimated below.
-    
+
     >>> spatial_isolation_index = DistanceDecayIsolation(gdf, 'nhblk10', 'pop10')
     >>> spatial_isolation_index.statistic
     0.07214112078134231
-            
+
     Notes
     -----
     It may be interpreted as the probability that the next person a group member meets anywhere in space is from the same group.
-    
+
     Based on Morgan, Barrie S. "A distance-decay based interaction index to measure residential segregation." Area (1983): 211-217.
-    
+
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
-    
+
     Reference: :cite:`morgan1983distance`.
-    
+
     """
 
     def __init__(self,
@@ -1284,7 +1303,7 @@ class DistanceDecayIsolation:
                  alpha=0.6,
                  beta=0.5,
                  metric='euclidean'):
-        
+
         data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _distance_decay_isolation(data, group_pop_var, total_pop_var,
@@ -1308,21 +1327,21 @@ def _distance_decay_exposure(data,
     ----------
 
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-                    
+
     alpha         : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.6
-    
+
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
-                    
+
     metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
-                    The metric used for the distance between spatial units. 
+                    The metric used for the distance between spatial units.
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
 
     Returns
@@ -1330,25 +1349,25 @@ def _distance_decay_exposure(data,
 
     statistic : float
                 Distance Decay Exposure Index
-                
+
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
     It may be interpreted as the probability that the next person a group member meets anywhere in space is from the other group.
-    
+
     Based on Morgan, Barrie S. "A distance-decay based interaction index to measure residential segregation." Area (1983): 211-217.
-    
+
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
-    
+
     Reference: :cite:`morgan1983distance`.
 
     """
-    
+
     if not metric in ['euclidean', 'haversine']:
         raise ValueError('metric must one of \'euclidean\', \'haversine\'')
-    
+
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
             'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
@@ -1407,14 +1426,14 @@ def _distance_decay_exposure(data,
             }))  # This needs to be latitude first!
 
     c = np.exp(-dist)
-    
-    if c.sum() < 10 ** (-15): 
+
+    if c.sum() < 10 ** (-15):
         raise ValueError('It not possible to determine accurately the exponential of the negative distances. This is probably due to the large magnitude of the centroids numbers. It is recommended to reproject the geopandas DataFrame. Also, if this is a not lat-long CRS, it is recommended to set metric to \'haversine\'')
-    
+
     np.fill_diagonal(c, val = np.exp(-(alpha * data.area)**(beta)))
-    
+
     Pij = np.multiply(c, t) / np.sum(np.multiply(c, t), axis=1)
-    
+
     DDxPy = (x / X * np.nansum(np.multiply(Pij, y / t), axis=1)).sum()
 
     core_data = data[['group_pop_var', 'total_pop_var', 'geometry']]
@@ -1422,6 +1441,9 @@ def _distance_decay_exposure(data,
     return DDxPy, core_data
 
 
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.DistanceDecayExposure")
 class DistanceDecayExposure:
     """
     Calculation of Distance Decay Exposure index
@@ -1430,21 +1452,21 @@ class DistanceDecayExposure:
     ----------
 
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-                    
+
     alpha         : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.6
-    
+
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
-                    
+
     metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
-                    The metric used for the distance between spatial units. 
+                    The metric used for the distance between spatial units.
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
 
     Attributes
@@ -1452,62 +1474,62 @@ class DistanceDecayExposure:
 
     statistic : float
                 Distance Decay Exposure Index
-                
+
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
-        
+
     Examples
     --------
     In this example, we will calculate the distance decay exposure index (DDxPy) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
-    
+
     Firstly, we need to perform some import the modules and the respective function.
-    
+
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
     >>> from segregation.spatial import DistanceDecayExposure
-    
+
     Secondly, we need to read the data:
-    
+
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
-    
+
     Then, we filter only for the desired county (in this case, Riverside County):
-    
+
     >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
-    
+
     Then, we read the Riverside map data using geopandas (the county id is 06065):
-    
+
     >>> map_url = 'https://raw.githubusercontent.com/renanxcortes/inequality-segregation-supplementary-files/master/Tracts_grouped_by_County/06065.json'
     >>> map_gpd = gpd.read_file(map_url)
-    
+
     It is necessary to harmonize the data type of the dataset and the geopandas in order to work the merging procedure.
     Later, we extract only the columns that will be used.
-    
+
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
     >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
-    
+
     The value is estimated below.
-    
+
     >>> spatial_exposure_index = DistanceDecayExposure(gdf, 'nhblk10', 'pop10')
     >>> spatial_exposure_index.statistic
     0.9605053172501217
-            
+
     Notes
     -----
     It may be interpreted as the probability that the next person a group member meets anywhere in space is from the other group.
-    
+
     Based on Morgan, Barrie S. "A distance-decay based interaction index to measure residential segregation." Area (1983): 211-217.
-    
+
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
-    
+
     Reference: :cite:`morgan1983distance`.
-    
+
     """
 
     def __init__(self,
@@ -1517,7 +1539,7 @@ class DistanceDecayExposure:
                  alpha=0.6,
                  beta=0.5,
                  metric='euclidean'):
-        
+
         data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _distance_decay_exposure(data, group_pop_var, total_pop_var,
@@ -1536,44 +1558,44 @@ def _spatial_proximity(data,
                        metric='euclidean'):
     """
     Calculation of Spatial Proximity index
-    
+
     Parameters
     ----------
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-                    
+
     alpha         : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.6
-    
+
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
-                    
+
     metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
-                    The metric used for the distance between spatial units. 
+                    The metric used for the distance between spatial units.
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
-                    
+
     Returns
     ----------
     statistic : float
                 Spatial Proximity Index
-                
+
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
-    
+
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
-    
+
     Reference: :cite:`massey1988dimensions`.
-    
+
     """
-    
+
     if not metric in ['euclidean', 'haversine']:
         raise ValueError('metric must one of \'euclidean\', \'haversine\'')
 
@@ -1638,12 +1660,12 @@ def _spatial_proximity(data,
             }))  # This needs to be latitude first!
 
     c = np.exp(-dist)
-    
-    if c.sum() < 10 ** (-15): 
+
+    if c.sum() < 10 ** (-15):
         raise ValueError('It not possible to determine accurately the exponential of the negative distances. This is probably due to the large magnitude of the centroids numbers. It is recommended to reproject the geopandas DataFrame. Also, if this is a not lat-long CRS, it is recommended to set metric to \'haversine\'')
-    
+
     np.fill_diagonal(c, val = np.exp(-(alpha * data.area)**(beta)))
-    
+
     Pxx = ((np.array(data.xi) * c).T * np.array(data.xi)).sum() / X**2
     Pyy = ((np.array(data.yi) * c).T * np.array(data.yi)).sum() / Y**2
     Ptt = ((np.array(data.ti) * c).T * np.array(data.ti)).sum() / T**2
@@ -1654,88 +1676,91 @@ def _spatial_proximity(data,
     return SP, core_data
 
 
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.SpatialProximity")
 class SpatialProximity:
     """
     Calculation of Spatial Proximity index
-    
+
     Parameters
     ----------
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-                    
+
     alpha         : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.6
-    
+
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
-                    
+
     metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
-                    The metric used for the distance between spatial units. 
+                    The metric used for the distance between spatial units.
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
-                    
+
     Attributes
     ----------
     statistic : float
                 Spatial Proximity Index
-                
+
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
-        
+
     Examples
     --------
     In this example, we will calculate the degree of spatial proximity (SP) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
-    
+
     Firstly, we need to perform some import the modules and the respective function.
-    
+
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
     >>> from segregation.spatial import SpatialProximity
-    
+
     Secondly, we need to read the data:
-    
+
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
-    
+
     Then, we filter only for the desired county (in this case, Riverside County):
-    
+
     >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
-    
+
     Then, we read the Riverside map data using geopandas (the county id is 06065):
-    
+
     >>> map_url = 'https://raw.githubusercontent.com/renanxcortes/inequality-segregation-supplementary-files/master/Tracts_grouped_by_County/06065.json'
     >>> map_gpd = gpd.read_file(map_url)
-    
+
     It is necessary to harmonize the data type of the dataset and the geopandas in order to work the merging procedure.
     Later, we extract only the columns that will be used.
-    
+
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
     >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
-    
+
     The value is estimated below.
-    
+
     >>> spatial_prox_index = SpatialProximity(gdf, 'nhblk10', 'pop10')
     >>> spatial_prox_index.statistic
     1.002191883006537
-            
+
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
-    
+
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
-    
+
     Reference: :cite:`massey1988dimensions`.
-    
+
     """
 
     def __init__(self,
@@ -1745,7 +1770,7 @@ class SpatialProximity:
                  alpha=0.6,
                  beta=0.5,
                  metric='euclidean'):
-        
+
         data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _spatial_proximity(data, group_pop_var, total_pop_var, alpha,
@@ -1764,44 +1789,44 @@ def _absolute_clustering(data,
                          metric='euclidean'):
     """
     Calculation of Absolute Clustering index
-    
+
     Parameters
     ----------
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-                    
+
     alpha         : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.6
-    
+
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
-                    
+
     metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
-                    The metric used for the distance between spatial units. 
+                    The metric used for the distance between spatial units.
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
-                    
+
     Returns
     ----------
     statistic : float
                 Absolute Clustering Index
-                
+
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
-    
+
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
-    
+
     Reference: :cite:`massey1988dimensions`.
-    
+
     """
-    
+
     if not metric in ['euclidean', 'haversine']:
         raise ValueError('metric must one of \'euclidean\', \'haversine\'')
 
@@ -1866,12 +1891,12 @@ def _absolute_clustering(data,
             }))  # This needs to be latitude first!
 
     c = np.exp(-dist)
-    
-    if c.sum() < 10 ** (-15): 
+
+    if c.sum() < 10 ** (-15):
         raise ValueError('It not possible to determine accurately the exponential of the negative distances. This is probably due to the large magnitude of the centroids numbers. It is recommended to reproject the geopandas DataFrame. Also, if this is a not lat-long CRS, it is recommended to set metric to \'haversine\'')
-    
+
     np.fill_diagonal(c, val = np.exp(-(alpha * data.area)**(beta)))
-    
+
     ACL = ((((x/X) * (c * x).sum(axis = 1)).sum()) - ((X / n**2) * c.sum())) / \
           ((((x/X) * (c * t).sum(axis = 1)).sum()) - ((X / n**2) * c.sum()))
 
@@ -1879,82 +1904,84 @@ def _absolute_clustering(data,
 
     return ACL, core_data
 
-
+#@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+#                                                current_version=__version__,
+#                                                details="singlegroup.AbsoluteClustering")
 class AbsoluteClustering:
     """
     Calculation of Absolute Clustering index
-    
+
     Parameters
     ----------
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-                    
+
     alpha         : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.6
-    
+
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
-                    
+
     metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
-                    The metric used for the distance between spatial units. 
+                    The metric used for the distance between spatial units.
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
-                    
+
     Attributes
     ----------
     statistic : float
                 Absolute Clustering Index
-                
+
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
-        
+
     Examples
     --------
     In this example, we will calculate the absolute clustering measure (ACL) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
-    
+
     Firstly, we need to read the data:
-    
+
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
-    
+
     Then, we filter only for the desired county (in this case, Riverside County):
-    
+
     >>> df = census_2010.loc[census_2010.county == "Riverside County"][['trtid10', 'pop10','nhblk10']]
-    
+
     Then, we read the Riverside map data using geopandas (the county id is 06065):
-    
+
     >>> map_url = 'https://raw.githubusercontent.com/renanxcortes/inequality-segregation-supplementary-files/master/Tracts_grouped_by_County/06065.json'
     >>> map_gpd = gpd.read_file(map_url)
-    
+
     It is necessary to harmonize the data type of the dataset and the geopandas in order to work the merging procedure.
     Later, we extract only the columns that will be used.
-    
+
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
     >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'trtid10')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
-    
+
     The value is estimated below.
-    
+
     >>> absolute_clust_index = Absolute_Clustering(gdf, 'nhblk10', 'pop10')
     >>> absolute_clust_index.statistic
     0.20979814508119624
-            
+
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
-    
+
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
-    
+
     Reference: :cite:`massey1988dimensions`.
-    
+
     """
 
     def __init__(self,
@@ -1964,7 +1991,7 @@ class AbsoluteClustering:
                  alpha=0.6,
                  beta=0.5,
                  metric='euclidean'):
-        
+
         data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _absolute_clustering(data, group_pop_var, total_pop_var, alpha,
@@ -1983,44 +2010,44 @@ def _relative_clustering(data,
                          metric='euclidean'):
     """
     Calculation of Relative Clustering index
-    
+
     Parameters
     ----------
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-                    
+
     alpha         : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.6
-    
+
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
-                    
+
     metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
-                    The metric used for the distance between spatial units. 
+                    The metric used for the distance between spatial units.
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
-                    
+
     Returns
     ----------
     statistic : float
                 Relative Clustering Index
-                
+
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
-    
+
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
-    
+
     Reference: :cite:`massey1988dimensions`.
-    
+
     """
-    
+
     if not metric in ['euclidean', 'haversine']:
         raise ValueError('metric must one of \'euclidean\', \'haversine\'')
 
@@ -2082,16 +2109,16 @@ def _relative_clustering(data,
             }))  # This needs to be latitude first!
 
     c = np.exp(-dist)
-    
-    if c.sum() < 10 ** (-15): 
+
+    if c.sum() < 10 ** (-15):
         raise ValueError('It not possible to determine accurately the exponential of the negative distances. This is probably due to the large magnitude of the centroids numbers. It is recommended to reproject the geopandas DataFrame. Also, if this is a not lat-long CRS, it is recommended to set metric to \'haversine\'')
-    
+
     np.fill_diagonal(c, val = np.exp(-(alpha * data.area)**(beta)))
-    
+
     Pxx = ((np.array(data.xi) * c).T * np.array(data.xi)).sum() / X**2
     Pyy = ((np.array(data.yi) * c).T * np.array(data.yi)).sum() / Y**2
     RCL = Pxx / Pyy - 1
-    
+
     if np.isnan(RCL):
         raise ValueError('It not possible to determine the distance between, at least, one pair of units. This is probably due to the magnitude of the number of the centroids. We recommend to reproject the geopandas DataFrame.')
 
@@ -2100,88 +2127,91 @@ def _relative_clustering(data,
     return RCL, core_data
 
 
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.RelativeClustering")
 class RelativeClustering:
     """
     Calculation of Relative Clustering index
-    
+
     Parameters
     ----------
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-                    
+
     alpha         : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.6
-    
+
     beta          : float
                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
-                    
+
     metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
-                    The metric used for the distance between spatial units. 
+                    The metric used for the distance between spatial units.
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
-                    
+
     Attributes
     ----------
     statistic : float
                 Relative Clustering Index
-                
+
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
-        
+
     Examples
     --------
     In this example, we will calculate the relative clustering measure (RCL) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
-    
+
     Firstly, we need to perform some import the modules and the respective function.
-    
+
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
     >>> from segregation.spatial import RelativeClustering
-    
+
     Secondly, we need to read the data:
-    
+
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
-    
+
     Then, we filter only for the desired county (in this case, Riverside County):
-    
+
     >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
-    
+
     Then, we read the Riverside map data using geopandas (the county id is 06065):
-    
+
     >>> map_url = 'https://raw.githubusercontent.com/renanxcortes/inequality-segregation-supplementary-files/master/Tracts_grouped_by_County/06065.json'
     >>> map_gpd = gpd.read_file(map_url)
-    
+
     It is necessary to harmonize the data type of the dataset and the geopandas in order to work the merging procedure.
     Later, we extract only the columns that will be used.
-    
+
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
     >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
-    
+
     The value is estimated below.
-    
+
     >>> relative_clust_index = RelativeClustering(gdf, 'nhblk10', 'pop10')
     >>> relative_clust_index.statistic
     0.12418089857347714
-            
+
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
-    
+
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
-    
+
     Reference: :cite:`massey1988dimensions`.
-    
+
     """
 
     def __init__(self,
@@ -2191,7 +2221,7 @@ class RelativeClustering:
                  alpha=0.6,
                  beta=0.5,
                  metric='euclidean'):
-        
+
         data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _relative_clustering(data, group_pop_var, total_pop_var, alpha,
@@ -2210,10 +2240,10 @@ def _delta(data, group_pop_var, total_pop_var):
     ----------
 
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
 
@@ -2222,14 +2252,14 @@ def _delta(data, group_pop_var, total_pop_var):
 
     statistic : float
                 Delta Index
-                
+
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
-    
+
     Reference: :cite:`massey1988dimensions`.
 
     """
@@ -2276,6 +2306,9 @@ def _delta(data, group_pop_var, total_pop_var):
     return DEL, core_data
 
 
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.Delta")
 class Delta:
     """
     Calculation of Delta index
@@ -2284,10 +2317,10 @@ class Delta:
     ----------
 
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
 
@@ -2296,62 +2329,62 @@ class Delta:
 
     statistic : float
                 Delta Index
-                
+
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
-        
+
     Examples
     --------
     In this example, we will calculate the delta index (D) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
-    
+
     Firstly, we need to perform some import the modules and the respective function.
-    
+
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
     >>> from segregation.spatial import Delta
-    
+
     Secondly, we need to read the data:
-    
+
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
-    
+
     Then, we filter only for the desired county (in this case, Riverside County):
-    
+
     >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
-    
+
     Then, we read the Riverside map data using geopandas (the county id is 06065):
-    
+
     >>> map_url = 'https://raw.githubusercontent.com/renanxcortes/inequality-segregation-supplementary-files/master/Tracts_grouped_by_County/06065.json'
     >>> map_gpd = gpd.read_file(map_url)
-    
+
     It is necessary to harmonize the data type of the dataset and the geopandas in order to work the merging procedure.
     Later, we extract only the columns that will be used.
-    
+
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
     >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
-    
+
     The value is estimated below.
-    
+
     >>> delta_index = Delta(gdf, 'nhblk10', 'pop10')
     >>> delta_index.statistic
     0.8367330649317353
-            
+
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
-    
+
     Reference: :cite:`massey1988dimensions`.
-    
+
     """
 
     def __init__(self, data, group_pop_var, total_pop_var):
-        
+
         data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _delta(data, group_pop_var, total_pop_var)
@@ -2369,10 +2402,10 @@ def _absolute_concentration(data, group_pop_var, total_pop_var):
     ----------
 
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
 
@@ -2381,14 +2414,14 @@ def _absolute_concentration(data, group_pop_var, total_pop_var):
 
     statistic : float
                 Absolute Concentration Index
-                
+
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
-                
+
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
-    
+
     Reference: :cite:`massey1988dimensions`.
 
     """
@@ -2449,6 +2482,9 @@ def _absolute_concentration(data, group_pop_var, total_pop_var):
     return ACO, core_data
 
 
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.AbsoluteConcentration")
 class AbsoluteConcentration:
     """
     Calculation of Absolute Concentration index
@@ -2457,10 +2493,10 @@ class AbsoluteConcentration:
     ----------
 
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
 
@@ -2469,62 +2505,62 @@ class AbsoluteConcentration:
 
     statistic : float
                 Absolute Concentration Index
-                
+
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
-                
+
     Examples
     --------
     In this example, we will calculate the absolute concentration index (ACO) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
-    
+
     Firstly, we need to perform some import the modules and the respective function.
-    
+
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
     >>> from segregation.spatial import AbsoluteConcentration
-    
+
     Secondly, we need to read the data:
-    
+
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
-    
+
     Then, we filter only for the desired county (in this case, Riverside County):
-    
+
     >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
-    
+
     Then, we read the Riverside map data using geopandas (the county id is 06065):
-    
+
     >>> map_url = 'https://raw.githubusercontent.com/renanxcortes/inequality-segregation-supplementary-files/master/Tracts_grouped_by_County/06065.json'
     >>> map_gpd = gpd.read_file(map_url)
-    
+
     It is necessary to harmonize the data type of the dataset and the geopandas in order to work the merging procedure.
     Later, we extract only the columns that will be used.
-    
+
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
     >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
-    
+
     The value is estimated below.
-    
+
     >>> absolute_concentration_index = AbsoluteConcentration(gdf, 'nhblk10', 'pop10')
     >>> absolute_concentration_index.statistic
     0.9577607171503524
-            
+
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
-    
+
     Reference: :cite:`massey1988dimensions`.
 
     """
 
     def __init__(self, data, group_pop_var, total_pop_var):
-        
+
         data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _absolute_concentration(data, group_pop_var, total_pop_var)
@@ -2542,7 +2578,7 @@ def _relative_concentration(data, group_pop_var, total_pop_var):
     ----------
 
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
 
@@ -2554,14 +2590,14 @@ def _relative_concentration(data, group_pop_var, total_pop_var):
 
     statistic : float
                 Relative Concentration Index
-                
+
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
-    
+
     Reference: :cite:`massey1988dimensions`.
 
     """
@@ -2625,6 +2661,9 @@ def _relative_concentration(data, group_pop_var, total_pop_var):
     return RCO, core_data
 
 
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.RelativeConcentration")
 class RelativeConcentration:
     """
     Calculation of Relative Concentration index
@@ -2633,10 +2672,10 @@ class RelativeConcentration:
     ----------
 
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
 
@@ -2645,62 +2684,62 @@ class RelativeConcentration:
 
     statistic : float
                 Relative Concentration Index
-                
+
     core_data : a geopandas DataFrame
                 A geopandas DataFrame that contains the columns used to perform the estimate.
-       
+
     Examples
     --------
     In this example, we will calculate the relative concentration index (RCO) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
-    
+
     Firstly, we need to perform some import the modules and the respective function.
-    
+
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
     >>> from segregation.spatial import RelativeConcentration
-    
+
     Secondly, we need to read the data:
-    
+
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
-    
+
     Then, we filter only for the desired county (in this case, Riverside County):
-    
+
     >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
-    
+
     Then, we read the Riverside map data using geopandas (the county id is 06065):
-    
+
     >>> map_url = 'https://raw.githubusercontent.com/renanxcortes/inequality-segregation-supplementary-files/master/Tracts_grouped_by_County/06065.json'
     >>> map_gpd = gpd.read_file(map_url)
-    
+
     It is necessary to harmonize the data type of the dataset and the geopandas in order to work the merging procedure.
     Later, we extract only the columns that will be used.
-    
+
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
     >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
-    
+
     The value is estimated below.
-    
+
     >>> relative_concentration_index = RelativeConcentration(gdf, 'nhblk10', 'pop10')
     >>> relative_concentration_index.statistic
     0.5204046784837685
-            
+
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
-    
+
     Reference: :cite:`massey1988dimensions`.
 
     """
 
     def __init__(self, data, group_pop_var, total_pop_var):
-        
+
         data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _relative_concentration(data, group_pop_var, total_pop_var)
@@ -2722,10 +2761,10 @@ def _absolute_centralization(data,
     ----------
 
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
 
@@ -2733,19 +2772,19 @@ def _absolute_centralization(data,
                     This defines what is considered to be the center of the spatial context under study.
 
                     If string, this can be set to:
-                        
-                        "mean": the center longitude/latitude is the mean of longitudes/latitudes of all units. 
-                        "median": the center longitude/latitude is the median of longitudes/latitudes of all units. 
+
+                        "mean": the center longitude/latitude is the mean of longitudes/latitudes of all units.
+                        "median": the center longitude/latitude is the median of longitudes/latitudes of all units.
                         "population_weighted_mean": the center longitude/latitude is the mean of longitudes/latitudes of all units weighted by the total population.
                         "largest_population": the center longitude/latitude is the centroid of the unit with largest total population. If there is a tie in the maximum population, the mean of all coordinates will be taken.
-                    
+
                     If tuple, list or array, this argument should be the coordinates of the desired center assuming longitude as first value and latitude second value. Therefore, in the form (longitude, latitude), if tuple, or [longitude, latitude] if list or numpy array.
-                    
-                    If integer, the center will be the centroid of the polygon from data corresponding to the integer interpreted as index. 
+
+                    If integer, the center will be the centroid of the polygon from data corresponding to the integer interpreted as index.
                     For example, if `center = 0` the centroid of the first row of data is used as center, if `center = 1` the second row will be used, and so on.
 
     metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
-                    The metric used for the distance between spatial units. 
+                    The metric used for the distance between spatial units.
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
 
     Returns
@@ -2753,23 +2792,23 @@ def _absolute_centralization(data,
 
     statistic     : float
                     Absolute Centralization Index
-                
+
     core_data     : a geopandas DataFrame
                     A geopandas DataFrame that contains the columns used to perform the estimate.
-    
+
     center_values : list
                     The center, in the form [longitude, latitude], values used for the calculation of the centralization distances.
-    
+
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
-    
+
     A discussion of defining the center in this function can be found in https://github.com/pysal/segregation/issues/18.
-    
+
     Reference: :cite:`massey1988dimensions`.
 
     """
-    
+
     if not metric in ['euclidean', 'haversine']:
         raise ValueError('metric must one of \'euclidean\', \'haversine\'')
 
@@ -2860,10 +2899,10 @@ def _absolute_centralization(data,
 
     if (metric == 'haversine'):
         center_dist = 2 * np.arcsin(np.sqrt(np.sin(dlat/2)**2 + np.cos(center_lat) * np.cos(c_lats) * np.sin(dlon/2)**2))
-    
+
     if np.isnan(center_dist).sum() > 0:
         raise ValueError('It not possible to determine the center distance for, at least, one unit. This is probably due to the magnitude of the number of the centroids. We recommend to reproject the geopandas DataFrame.')
-    
+
     asc_ind = center_dist.argsort()
 
     Xi = np.cumsum(x[asc_ind]) / X
@@ -2879,6 +2918,9 @@ def _absolute_centralization(data,
     return ACE, core_data, center_values
 
 
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.AbsoluteCentralization")
 class AbsoluteCentralization:
     """
     Calculation of Absolute Centralization index
@@ -2887,26 +2929,26 @@ class AbsoluteCentralization:
     ----------
 
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-                    
+
     center        : string, two-dimension values (tuple, list, array) or integer.
                     This defines what is considered to be the center of the spatial context under study.
 
                     If string, this can be set to:
-                        
-                        "mean": the center longitude/latitude is the mean of longitudes/latitudes of all units. 
-                        "median": the center longitude/latitude is the median of longitudes/latitudes of all units. 
+
+                        "mean": the center longitude/latitude is the mean of longitudes/latitudes of all units.
+                        "median": the center longitude/latitude is the median of longitudes/latitudes of all units.
                         "population_weighted_mean": the center longitude/latitude is the mean of longitudes/latitudes of all units weighted by the total population.
                         "largest_population": the center longitude/latitude is the centroid of the unit with largest total population. If there is a tie in the maximum population, the mean of all coordinates will be taken.
-                    
+
                     If tuple, list or array, this argument should be the coordinates of the desired center assuming longitude as first value and latitude second value. Therefore, in the form (longitude, latitude), if tuple, or [longitude, latitude] if list or numpy array.
-                    
-                    If integer, the center will be the centroid of the polygon from data corresponding to the integer interpreted as index. 
+
+                    If integer, the center will be the centroid of the polygon from data corresponding to the integer interpreted as index.
                     For example, if `center = 0` the centroid of the first row of data is used as center, if `center = 1` the second row will be used, and so on.
 
     Attributes
@@ -2914,61 +2956,61 @@ class AbsoluteCentralization:
 
     statistic     : float
                     Absolute Centralization Index
-                
+
     core_data     : a geopandas DataFrame
                     A geopandas DataFrame that contains the columns used to perform the estimate.
-    
+
     center_values : list
                     The center, in the form [longitude, latitude], values used for the calculation of the centralization distances.
-                
+
     Examples
     --------
     In this example, we will calculate the absolute centralization index (ACE) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
-    
+
     Firstly, we need to perform some import the modules and the respective function.
-    
+
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
     >>> from segregation.spatial import AbsoluteCentralization
-    
+
     Secondly, we need to read the data:
-    
+
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
-    
+
     Then, we filter only for the desired county (in this case, Riverside County):
-    
+
     >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
-    
+
     Then, we read the Riverside map data using geopandas (the county id is 06065):
-    
+
     >>> map_url = 'https://raw.githubusercontent.com/renanxcortes/inequality-segregation-supplementary-files/master/Tracts_grouped_by_County/06065.json'
     >>> map_gpd = gpd.read_file(map_url)
-    
+
     It is necessary to harmonize the data type of the dataset and the geopandas in order to work the merging procedure.
     Later, we extract only the columns that will be used.
-    
+
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
     >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
-    
+
     The value is estimated below.
-    
+
     >>> absolute_centralization_index = AbsoluteCentralization(gdf, 'nhblk10', 'pop10')
     >>> absolute_centralization_index.statistic
     0.6416113799795511
-            
+
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
-    
+
     A discussion of defining the center in this function can be found in https://github.com/pysal/segregation/issues/18.
-    
+
     Reference: :cite:`massey1988dimensions`.
 
     """
@@ -2979,7 +3021,7 @@ class AbsoluteCentralization:
                  total_pop_var,
                  center="mean",
                  metric='euclidean'):
-        
+
         data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _absolute_centralization(data, group_pop_var, total_pop_var,
@@ -3003,10 +3045,10 @@ def _relative_centralization(data,
     ----------
 
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
 
@@ -3014,19 +3056,19 @@ def _relative_centralization(data,
                     This defines what is considered to be the center of the spatial context under study.
 
                     If string, this can be set to:
-                        
-                        "mean": the center longitude/latitude is the mean of longitudes/latitudes of all units. 
-                        "median": the center longitude/latitude is the median of longitudes/latitudes of all units. 
+
+                        "mean": the center longitude/latitude is the mean of longitudes/latitudes of all units.
+                        "median": the center longitude/latitude is the median of longitudes/latitudes of all units.
                         "population_weighted_mean": the center longitude/latitude is the mean of longitudes/latitudes of all units weighted by the total population.
                         "largest_population": the center longitude/latitude is the centroid of the unit with largest total population. If there is a tie in the maximum population, the mean of all coordinates will be taken.
-                    
+
                     If tuple, list or array, this argument should be the coordinates of the desired center assuming longitude as first value and latitude second value. Therefore, in the form (longitude, latitude), if tuple, or [longitude, latitude] if list or numpy array.
-                    
-                    If integer, the center will be the centroid of the polygon from data corresponding to the integer interpreted as index. 
+
+                    If integer, the center will be the centroid of the polygon from data corresponding to the integer interpreted as index.
                     For example, if `center = 0` the centroid of the first row of data is used as center, if `center = 1` the second row will be used, and so on.
 
     metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
-                    The metric used for the distance between spatial units. 
+                    The metric used for the distance between spatial units.
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
 
     Returns
@@ -3034,24 +3076,24 @@ def _relative_centralization(data,
 
     statistic     : float
                     Relative Centralization Index
-                
+
     core_data     : a geopandas DataFrame
                     A geopandas DataFrame that contains the columns used to perform the estimate.
-    
+
     center_values : list
                     The center, in the form [longitude, latitude], values used for the calculation of the centralization distances.
 
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
-    
+
     A discussion of defining the center in this function can be found in https://github.com/pysal/segregation/issues/18.
 
     """
-    
+
     if not metric in ['euclidean', 'haversine']:
         raise ValueError('metric must one of \'euclidean\', \'haversine\'')
-    
+
     if (str(type(data)) != '<class \'geopandas.geodataframe.GeoDataFrame\'>'):
         raise TypeError(
             'data is not a GeoDataFrame and, therefore, this index cannot be calculated.'
@@ -3161,6 +3203,9 @@ def _relative_centralization(data,
     return RCE, core_data, center_values
 
 
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.RelativeCentralization")
 class RelativeCentralization:
     """
     Calculation of Relative Centralization index
@@ -3169,10 +3214,10 @@ class RelativeCentralization:
     ----------
 
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
 
@@ -3180,19 +3225,19 @@ class RelativeCentralization:
                     This defines what is considered to be the center of the spatial context under study.
 
                     If string, this can be set to:
-                        
-                        "mean": the center longitude/latitude is the mean of longitudes/latitudes of all units. 
-                        "median": the center longitude/latitude is the median of longitudes/latitudes of all units. 
+
+                        "mean": the center longitude/latitude is the mean of longitudes/latitudes of all units.
+                        "median": the center longitude/latitude is the median of longitudes/latitudes of all units.
                         "population_weighted_mean": the center longitude/latitude is the mean of longitudes/latitudes of all units weighted by the total population.
                         "largest_population": the center longitude/latitude is the centroid of the unit with largest total population. If there is a tie in the maximum population, the mean of all coordinates will be taken.
-                    
+
                     If tuple, list or array, this argument should be the coordinates of the desired center assuming longitude as first value and latitude second value. Therefore, in the form (longitude, latitude), if tuple, or [longitude, latitude] if list or numpy array.
-                    
-                    If integer, the center will be the centroid of the polygon from data corresponding to the integer interpreted as index. 
+
+                    If integer, the center will be the centroid of the polygon from data corresponding to the integer interpreted as index.
                     For example, if `center = 0` the centroid of the first row of data is used as center, if `center = 1` the second row will be used, and so on.
-    
+
     metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
-                    The metric used for the distance between spatial units. 
+                    The metric used for the distance between spatial units.
                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
 
     Attributes
@@ -3200,61 +3245,61 @@ class RelativeCentralization:
 
     statistic     : float
                     Relative Centralization Index
-            
+
     core_data     : a geopandas DataFrame
                     A geopandas DataFrame that contains the columns used to perform the estimate.
-    
+
     center_values : list
                     The center, in the form [longitude, latitude], values used for the calculation of the centralization distances.
-        
+
     Examples
     --------
     In this example, we will calculate the relative centralization index (RCE) for the Riverside County using the census tract data of 2010.
     The group of interest is non-hispanic black people which is the variable nhblk10 in the dataset.
-    
+
     Firstly, we need to perform some import the modules and the respective function.
-    
+
     >>> import pandas as pd
     >>> import geopandas as gpd
     >>> import segregation
     >>> from segregation.spatial import RelativeCentralization
-    
+
     Secondly, we need to read the data:
-    
+
     >>> # This example uses all census data that the user must provide your own copy of the external database.
     >>> # A step-by-step procedure for downloading the data can be found here: https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb
     >>> # After the user download the LTDB_Std_All_fullcount.zip and extract the files, the filepath might be something like presented below.
     >>> filepath = '~/data/LTDB_Std_2010_fullcount.csv'
     >>> census_2010 = pd.read_csv(filepath, encoding = "ISO-8859-1", sep = ",")
-    
+
     Then, we filter only for the desired county (in this case, Riverside County):
-    
+
     >>> df = census_2010.loc[census_2010.county == "Riverside County"][['tractid', 'pop10','nhblk10']]
-    
+
     Then, we read the Riverside map data using geopandas (the county id is 06065):
-    
+
     >>> map_url = 'https://raw.githubusercontent.com/renanxcortes/inequality-segregation-supplementary-files/master/Tracts_grouped_by_County/06065.json'
     >>> map_gpd = gpd.read_file(map_url)
-    
+
     It is necessary to harmonize the data type of the dataset and the geopandas in order to work the merging procedure.
     Later, we extract only the columns that will be used.
-    
+
     >>> map_gpd['INTGEOID10'] = pd.to_numeric(map_gpd["GEOID10"])
     >>> gdf_pre = map_gpd.merge(df, left_on = 'INTGEOID10', right_on = 'tractid')
     >>> gdf = gdf_pre[['geometry', 'pop10', 'nhblk10']]
-    
+
     The value is estimated below.
-    
+
     >>> relative_centralization_index = RelativeCentralization(gdf, 'nhblk10', 'pop10')
     >>> relative_centralization_index.statistic
     0.18550429720565376
-            
+
     Notes
     -----
     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
-    
+
     A discussion of defining the center in this function can be found in https://github.com/pysal/segregation/issues/18.
-    
+
     Reference: :cite:`massey1988dimensions`.
 
     """
@@ -3265,7 +3310,7 @@ class RelativeCentralization:
                  total_pop_var,
                  center="mean",
                  metric='euclidean'):
-        
+
         data = _nan_handle(data[[group_pop_var, total_pop_var, data._geometry_column_name]])
 
         aux = _relative_centralization(data, group_pop_var, total_pop_var,
@@ -3277,7 +3322,11 @@ class RelativeCentralization:
         self._function = _relative_centralization
 
 
-class SpatialInformationTheory(MultiInformationTheory):
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="multigroup.MultiInfoTheory")
+
+class SpatialInformationTheory(MultiInformationTheoryUD):
     """Spatial Multigroup Information Theory Index.
 
     This class calculates the spatial version of the multigroup information
@@ -3338,7 +3387,10 @@ class SpatialInformationTheory(MultiInformationTheory):
         super().__init__(df, groups)
 
 
-class SpatialDivergence(MultiDivergence):
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="Will be removed.")
+class SpatialDivergence(MultiDivergenceUD):
     """Spatial Multigroup Divergence Index.
 
     This class calculates the spatial version of the multigroup divergence
