@@ -1904,9 +1904,9 @@ def _absolute_clustering(data,
 
     return ACL, core_data
 
-#@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
-#                                                current_version=__version__,
-#                                                details="singlegroup.AbsoluteClustering")
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.AbsoluteClustering")
 class AbsoluteClustering:
     """
     Calculation of Absolute Clustering index
@@ -3389,7 +3389,7 @@ class SpatialInformationTheory(MultiInformationTheoryUD):
 
 @deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
                                                 current_version=__version__,
-                                                details="Will be removed.")
+                                                details="multigroup.MultiDivergence")
 class SpatialDivergence(MultiDivergenceUD):
     """Spatial Multigroup Divergence Index.
 
