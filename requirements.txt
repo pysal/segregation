@@ -9,3 +9,4 @@ libpysal
 tqdm
 mapclassify
 pygeos
+deprecation
