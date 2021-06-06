@@ -12,9 +12,14 @@ import geopandas as gpd
 from scipy.stats import norm
 from scipy.optimize import minimize
 
-from segregation.util.util import _dep_message, DeprecationHelper, _nan_handle
+from .. util.util import  _nan_handle, _dep_message, DeprecationHelper
 
-from deprecated import deprecated
+
+from segregation import __version__
+
+
+import deprecation
+
 
 # Including old and new api in __all__ so users can use both
 
@@ -238,7 +243,13 @@ def _dissim(data, group_pop_var, total_pop_var):
 
     return D, core_data
 
-@deprecated("aspatial.Dissim has been deprecated. Please use XXX.")
+
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.Dissim or multigroup.MultiDissim")
+
+
+
 class Dissim:
     """
     Classic Dissimilarity Index
@@ -389,7 +400,11 @@ def _gini_seg(data, group_pop_var, total_pop_var):
     return G, core_data
 
 
-@deprecated("aspatial.GiniSeg has been deprecated. Please use singlegroup.Gini.")
+
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.GiniSeg or multigroup.GiniSeg")
+
 class GiniSeg:
     """
     Classic Gini Segregation Index
@@ -528,7 +543,9 @@ def _entropy(data, group_pop_var, total_pop_var):
 
     return H, core_data
 
-
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.Entropy")
 class Entropy:
     """
     Classic Entropy Index
@@ -667,6 +684,9 @@ def _isolation(data, group_pop_var, total_pop_var):
     return xPx, core_data
 
 
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.Isolation")
 class Isolation:
     """
     Classic Isolation Index
@@ -810,6 +830,9 @@ def _exposure(data, group_pop_var, total_pop_var):
     return xPy, core_data
 
 
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.Interaction")
 class Exposure:
     """
     Classic Exposure Index
@@ -964,6 +987,9 @@ def _atkinson(data, group_pop_var, total_pop_var, b = 0.5):
     return A, core_data
 
 
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.Atkinson")
 class Atkinson:
     """
     Classic Atkinson Index
@@ -1108,6 +1134,9 @@ def _correlationr(data, group_pop_var, total_pop_var):
     return V, core_data
 
 
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.CorrelationR")
 class CorrelationR:
     """
     Classic Correlation Ratio Index
@@ -1261,6 +1290,9 @@ def _conprof(data, group_pop_var, total_pop_var, m = 1000):
     return R, grid, curve, core_data
 
 
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.ConProf")
 class ConProf:
     """
     Concentration Profile Index
@@ -1438,6 +1470,9 @@ def _modified_dissim(data, group_pop_var, total_pop_var, iterations = 500):
     return Dct, core_data
 
 
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.ModifiedDissim")
 class ModifiedDissim:
     """
     Calculation of Modified Dissimilarity index
@@ -1595,6 +1630,9 @@ def _modified_gini_seg(data, group_pop_var, total_pop_var, iterations = 500):
 
     return Gct, core_data
 
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.ModifiedGiniSeg")
 
 class ModifiedGiniSeg:
     """
@@ -1758,7 +1796,9 @@ def _bias_corrected_dissim(data, group_pop_var, total_pop_var, B = 500):
 
     return Dbc, core_data
 
-
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.BiasCorrectedDissim")
 class BiasCorrectedDissim:
     """
     Calculation of Bias Corrected Dissimilarity index
@@ -1927,7 +1967,9 @@ def _density_corrected_dissim(data, group_pop_var, total_pop_var, xtol = 1e-5):
 
     return Ddc, core_data
 
-
+@deprecation.deprecated(deprecated_in="2.0", removed_in="2.2",
+                                                current_version=__version__,
+                                                details="singlegroup.DensityCorrectedDissim")
 class DensityCorrectedDissim:
     """
     Calculation of Density Corrected Dissimilarity index
@@ -2009,15 +2051,6 @@ class DensityCorrectedDissim:
 
 
 
-
-
-
-
-
-
-
-
-
 # Deprecation Calls
 
 msg = _dep_message("Gini_Seg", "GiniSeg")
@@ -2040,3 +2073,9 @@ Bias_Corrected_Dissim = DeprecationHelper(BiasCorrectedDissim, message=msg)
 
 msg = _dep_message("Density_Corrected_Dissim", "DensityCorrectedDissim")
 Density_Corrected_Dissim = DeprecationHelper(DensityCorrectedDissim, message=msg)
+
+
+
+
+
+
