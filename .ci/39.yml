@@ -30,3 +30,4 @@ dependencies:
   - mapclassify
   - pygeos
   - quilt3
+  - deprecation
