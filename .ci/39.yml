@@ -31,3 +31,4 @@ dependencies:
   - pygeos
   - quilt3
   - deprecation
+  - nbsphinx
