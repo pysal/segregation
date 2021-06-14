@@ -279,8 +279,8 @@ autodoc_member_order ='alphabetical'
 # display the source code for Plot directive
 plot_include_source = True
 
-def setup(app):
-    app.add_stylesheet("pysal-styles.css")
+#def setup(app):
+    #app.add_stylesheet("pysal-styles.css")
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
