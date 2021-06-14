@@ -1,7 +1,7 @@
 import unittest
 from libpysal.examples import load_example
 import geopandas as gpd
-from segregation.network import get_osm_network, calc_access
+from segregation.util import get_osm_network, calc_access
 
 
 class Network_Tester(unittest.TestCase):
@@ -15,7 +15,7 @@ class Network_Tester(unittest.TestCase):
         df[variables] = df[variables].astype(float)
         test_net = get_osm_network(df, maxdist=0)
         acc = calc_access(df, test_net, distance=1., variables=variables)
-        assert acc.acc_WHITE.sum() > 100
+        assert acc.WHITE.sum() > 100
 
 
 if __name__ == '__main__':

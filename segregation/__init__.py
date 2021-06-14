@@ -1,14 +1,11 @@
-__version__ = "1.5.0"
+__version__ = "2.0.0"
 """
 :mod:`segregation` --- Spatial/Aspatial Segregation Analysis
 =================================================
 
 """
-from . import aspatial
-from . import spatial
-from . import inference
-from . import decomposition
-from . import util
-from . import network
-from . import local
-from . import compute_all
+from . import batch, decomposition, dynamics, inference, local, multigroup, singlegroup, util
+
+
+# below handles deprecation warnings. Remove in 2.2.0
+from . import  aspatial, spatial

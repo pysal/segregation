@@ -2,7 +2,7 @@ import unittest
 from libpysal.examples import load_example
 import geopandas as gpd
 import numpy as np
-from segregation.spatial import DistanceDecayIsolation
+from segregation.singlegroup import DistanceDecayIsolation
 
 
 class Distance_Decay_Isolation_Tester(unittest.TestCase):
@@ -10,7 +10,7 @@ class Distance_Decay_Isolation_Tester(unittest.TestCase):
         s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
         df = s_map[['geometry', 'HISP', 'TOT_POP']]
         index = DistanceDecayIsolation(df, 'HISP', 'TOT_POP')
-        np.testing.assert_almost_equal(index.statistic, 0.1562162475606278)
+        np.testing.assert_almost_equal(index.statistic, 0.14913778285850937)
 
 
 if __name__ == '__main__':

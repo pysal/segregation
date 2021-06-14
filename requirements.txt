@@ -1,5 +1,5 @@
 pandas
-geopandas
+geopandas>=0.9
 matplotlib
 scikit-learn>=0.21.3
 seaborn
@@ -8,3 +8,5 @@ scipy
 libpysal
 tqdm
 mapclassify
+pygeos
+deprecation

@@ -2,7 +2,7 @@ import unittest
 from libpysal.examples import load_example
 import geopandas as gpd
 import numpy as np
-from segregation.aspatial import Dissim
+from segregation.singlegroup import Dissim
 from segregation.decomposition import DecomposeSegregation
 
 

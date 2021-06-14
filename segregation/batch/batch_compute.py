@@ -1,0 +1,164 @@
+"""Batch compute wrappers for calculating all relevant statistics at once."""
+
+import inspect
+import warnings
+
+import pandas as pd
+
+from .. import multigroup, singlegroup
+from .._base import SpatialImplicitIndex
+from ..dynamics import compute_multiscalar_profile
+
+singlegroup_classes = {}
+for name, obj in inspect.getmembers(singlegroup):
+    if inspect.isclass(obj):
+        singlegroup_classes[name] = obj
+
+multigroup_classes = {}
+for name, obj in inspect.getmembers(multigroup):
+    if inspect.isclass(obj):
+        multigroup_classes[name] = obj
+
+implicit_single_indices = {}
+for name, obj in inspect.getmembers(singlegroup):
+    if inspect.isclass(obj):
+        if str(SpatialImplicitIndex) in [str(i) for i in obj.__bases__]:
+            implicit_single_indices[name] = obj
+
+implicit_multi_indices = {}
+for name, obj in inspect.getmembers(multigroup):
+    if inspect.isclass(obj):
+        if str(SpatialImplicitIndex) in [str(i) for i in obj.__bases__]:
+            implicit_multi_indices[name] = obj
+
+
+def batch_compute_singlegroup(gdf, group_pop_var, total_pop_var, **kwargs):
+    """Batch compute single-group indices.
+
+    Parameters
+    ----------
+    gdf : DataFrame or GeoDataFrame
+        DataFrame holding demographic data for study region
+    group_pop_var : str
+        The name of variable in data that contains the population size of the group of interest
+    total_pop_var : str
+        Variable in data that contains the total population count of the unit
+
+    Returns
+    -------
+    pandas.DataFrame
+        dataframe with statistic name as dataframe index and statistic value as dataframe values
+    """
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        fitted = {}
+        for each in sorted(singlegroup_classes.keys()):
+            fitted[each] = singlegroup_classes[each](
+                gdf, group_pop_var, total_pop_var, **kwargs
+            ).statistic
+        fitted = pd.DataFrame.from_dict(fitted, orient="index").round(4)
+        fitted.columns = ["Statistic"]
+        fitted.index.name='Name'
+        return fitted
+
+
+def batch_compute_multigroup(gdf, groups, **kwargs):
+    """Batch compute multi-group indices.
+
+    Parameters
+    ----------
+    gdf : DataFrame or GeoDataFrame
+        DataFrame holding demographic data for study region
+    groups : list
+        The variables names in data of the groups of interest of the analysis.
+
+    Returns
+    -------
+    pandas.DataFrame
+        dataframe with statistic name as dataframe index and statistic value as dataframe values
+    """
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        fitted = {}
+        for each in sorted(multigroup_classes.keys()):
+            fitted[each] = multigroup_classes[each](gdf, groups, **kwargs).statistic
+        fitted = pd.DataFrame.from_dict(fitted, orient="index").round(4)
+        fitted.columns = ["Statistic"]
+        fitted.index.name='Name'
+    return fitted
+
+
+def batch_multiscalar_singlegroup(
+    gdf, distances, group_pop_var, total_pop_var, **kwargs
+):
+    """Batch compute multiscalar profiles for single-group indices.
+
+    Parameters
+    ----------
+    gdf : DataFrame or GeoDataFrame
+        DataFrame holding demographic data for study region
+    distances : list
+        list of floats representing bandwidth distances that define a local
+        environment.
+    group_pop_var : str
+        The name of variable in data that contains the population size of the group
+        of interest
+    total_pop_var : str
+        Variable in data that contains the total population count of the unit
+
+    Returns
+    -------
+    pandas.DataFrame
+        pandas Dataframe with distance as dataframe index and each segregation
+        statistic as dataframe columns
+    """
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        profs = []
+        for idx in sorted(implicit_single_indices.keys()):
+            prof = compute_multiscalar_profile(
+                gdf=gdf,
+                segregation_index=implicit_single_indices[idx],
+                distances=distances,
+                group_pop_var=group_pop_var,
+                total_pop_var=total_pop_var,
+                **kwargs
+            )
+            profs.append(prof)
+        df = pd.concat(profs, axis=1)
+        return df
+
+
+def batch_multiscalar_multigroup(gdf, distances, groups, **kwargs):
+    """Batch compute multiscalar profiles for multi-group indices.
+
+    Parameters
+    ----------
+    gdf : DataFrame or GeoDataFrame
+        DataFrame holding demographic data for study region
+    distances : list
+        list of floats representing bandwidth distances that define a local
+        environment.
+    groups : list
+        The variables names in data of the groups of interest of the analysis.
+
+    Returns
+    -------
+    pandas.DataFrame
+        pandas Dataframe with distance as dataframe index and each segregation
+        statistic as dataframe columns
+    """
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        profs = []
+        for idx in sorted(implicit_multi_indices.keys()):
+            prof = compute_multiscalar_profile(
+                gdf=gdf,
+                segregation_index=implicit_multi_indices[idx],
+                distances=distances,
+                groups=groups,
+                **kwargs
+            )
+            profs.append(prof)
+        df = pd.concat(profs, axis=1)
+        return df

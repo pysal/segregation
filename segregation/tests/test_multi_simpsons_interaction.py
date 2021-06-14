@@ -2,7 +2,7 @@ import unittest
 from libpysal.examples import load_example
 import geopandas as gpd
 import numpy as np
-from segregation.aspatial import SimpsonsInteraction
+from segregation.multigroup import SimpsonsInteraction
 
 
 class Simpsons_Interaction_Tester(unittest.TestCase):

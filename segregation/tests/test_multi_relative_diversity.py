@@ -2,7 +2,7 @@ import unittest
 from libpysal.examples import load_example
 import geopandas as gpd
 import numpy as np
-from segregation.aspatial import MultiRelativeDiversity
+from segregation.multigroup import MultiRelativeDiversity
 
 
 class Multi_Relative_Diversity_Tester(unittest.TestCase):

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>segregation.decomposition.DecomposeSegregation &#8212; segregation v2.0.0 Manual</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    <link rel="shortcut icon" href="../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="segregation.util.get_osm_network" href="segregation.util.get_osm_network.html" />
+    <link rel="prev" title="segregation.inference.TwoValueTest" href="segregation.inference.TwoValueTest.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.12.4.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.4.1/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          segregation</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.0.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../installation.html">Installation</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="../tutorial.html">Tutorial</a></li>
+                <li><a href="../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">segregation.decomposition.DecomposeSegregation</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="segregation-decomposition-decomposesegregation">
+<h1>segregation.decomposition.DecomposeSegregation<a class="headerlink" href="#segregation-decomposition-decomposesegregation" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="segregation.decomposition.DecomposeSegregation">
+<em class="property">class </em><code class="sig-prename descclassname">segregation.decomposition.</code><code class="sig-name descname">DecomposeSegregation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">index1</span></em>, <em class="sig-param"><span class="n">index2</span></em>, <em class="sig-param"><span class="n">counterfactual_approach</span><span class="o">=</span><span class="default_value">'composition'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/segregation/decomposition/decompose_segregation.html#DecomposeSegregation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#segregation.decomposition.DecomposeSegregation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decompose segregation differences into spatial and attribute components.</p>
+<p>Given two segregation indices of the same type, use Shapley decomposition
+to measure whether the differences between index measures arise from
+differences in spatial structure or population structure</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>index1</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">segregation.SegIndex</span></code> <code class="xref py py-obj docutils literal notranslate"><span class="pre">class</span></code></span></dt><dd><p>First SegIndex class to compare.</p>
+</dd>
+<dt><strong>index2</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">segregation.SegIndex</span></code> <code class="xref py py-obj docutils literal notranslate"><span class="pre">class</span></code></span></dt><dd><p>Second SegIndex class to compare.</p>
+</dd>
+<dt><strong>counterfactual_approach</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">one</span></code> <code class="xref py py-obj docutils literal notranslate"><span class="pre">of</span></code> {“composition”, “share”, “dual_composition”}</span></dt><dd><p>The technique used to generate the counterfactual population
+distributions.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl>
+<dt><strong>c_s</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>Shapley’s Spatial Component of the decomposition</p>
+</dd>
+<dt><strong>c_a</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>Shapley’s Attribute Component of the decomposition</p>
+</dd>
+<dt><strong>indices</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">dict</span></code></a></span></dt><dd><p>Dictionary of index values for all four combinations of spatial/attribute data</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="segregation.decomposition.DecomposeSegregation.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">index1</span></em>, <em class="sig-param"><span class="n">index2</span></em>, <em class="sig-param"><span class="n">counterfactual_approach</span><span class="o">=</span><span class="default_value">'composition'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/segregation/decomposition/decompose_segregation.html#DecomposeSegregation.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#segregation.decomposition.DecomposeSegregation.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize class.</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#segregation.decomposition.DecomposeSegregation.__init__" title="segregation.decomposition.DecomposeSegregation.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(index1, index2[, …])</p></td>
+<td><p>Initialize class.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#segregation.decomposition.DecomposeSegregation.plot" title="segregation.decomposition.DecomposeSegregation.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>([plot_type, figsize, city_a, city_b, …])</p></td>
+<td><p>Plot maps or CDFs of urban contexts used in calculating the Decomposition class.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt id="segregation.decomposition.DecomposeSegregation.plot">
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">plot_type</span><span class="o">=</span><span class="default_value">'cdfs'</span></em>, <em class="sig-param"><span class="n">figsize</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">city_a</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">city_b</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cmap</span><span class="o">=</span><span class="default_value">'OrRd'</span></em>, <em class="sig-param"><span class="n">scheme</span><span class="o">=</span><span class="default_value">'equalinterval'</span></em>, <em class="sig-param"><span class="n">k</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">suptitle_size</span><span class="o">=</span><span class="default_value">16</span></em>, <em class="sig-param"><span class="n">title_size</span><span class="o">=</span><span class="default_value">12</span></em>, <em class="sig-param"><span class="n">savefig</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dpi</span><span class="o">=</span><span class="default_value">300</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/segregation/decomposition/decompose_segregation.html#DecomposeSegregation.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#segregation.decomposition.DecomposeSegregation.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot maps or CDFs of urban contexts used in calculating the Decomposition class.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>plot_type</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, {‘cdfs, ‘maps’}</span></dt><dd><p>which type of plot to generate. Options include <cite>cdfs</cite> and <cite>maps</cite> by default “cdfs”</p>
+</dd>
+<dt><strong>figsize</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">tuple</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>figsize parameter passed to matplotlib.pyplot</p>
+</dd>
+<dt><strong>city_a</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Name of the first “city” to be used in plotting. If None, defaults to ‘City A’</p>
+</dd>
+<dt><strong>city_b</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Name of the second “city” to be used in plotting. If None, defaults to ‘City B’</p>
+</dd>
+<dt><strong>cmap</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>matplotlib colormap used to shade the map, by default “OrRd”</p>
+</dd>
+<dt><strong>scheme</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>pysal.mapclassify classification scheme used to shade the map, by default “equalinterval”</p>
+</dd>
+<dt><strong>k</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>number of classes in pysal.mapclassify classification scheme, by default 10</p>
+</dd>
+<dt><strong>suptitle_size</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>size parameter passed to <cite>matplotlib.Figure.suptitle</cite>, by default 16</p>
+</dd>
+<dt><strong>title_size</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>size parameter passed to <cite>matplotlib.Axes.set_title</cite>, by default 12</p>
+</dd>
+<dt><strong>savefig</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Location to save the figure if desired. If None, fig will not be saved</p>
+</dd>
+<dt><strong>dpi</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>dpi parameter passed to matplotlib.pyplot, by default 300</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3.9/library/constants.html#None" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>Generates a new matplotlib.Figure instance and optionally saves to disk</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="../_sources/generated/segregation.decomposition.DecomposeSegregation.rst.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.3.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
