@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Segregation Index Decomposition &#8212; segregation v2.0.0 Manual</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    <link rel="shortcut icon" href="../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.12.4.min.js "></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-3.4.1/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          segregation</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.0.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../installation.html">Installation</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="../tutorial.html">Tutorial</a></li>
+                <li><a href="../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Segregation Index Decomposition</a><ul>
+<li><a class="reference internal" href="#Table-of-Contents">Table of Contents</a></li>
+<li><a class="reference internal" href="#Map-of-the-composition-of-the-Metropolitan-area-of-Los-Angeles">Map of the composition of the Metropolitan area of Los Angeles</a></li>
+<li><a class="reference internal" href="#Map-of-the-composition-of-the-Metropolitan-area-of-New-York">Map of the composition of the Metropolitan area of New York</a></li>
+<li><a class="reference internal" href="#Composition-Approach-(default)">Composition Approach (default)</a></li>
+<li><a class="reference internal" href="#Share-Approach">Share Approach</a></li>
+<li><a class="reference internal" href="#Dual-Composition-Approach">Dual Composition Approach</a></li>
+<li><a class="reference internal" href="#Inspecting-a-different-index:-Relative-Concentration">Inspecting a different index: Relative Concentration</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<section id="Segregation-Index-Decomposition">
+<h1>Segregation Index Decomposition<a class="headerlink" href="#Segregation-Index-Decomposition" title="Permalink to this headline">¶</a></h1>
+<section id="Table-of-Contents">
+<h2>Table of Contents<a class="headerlink" href="#Table-of-Contents" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="#Decomposition-framework-of-the-PySAL-*segregation*-module">Decomposition framework of the PySAL segregation module</a></p>
+<ul>
+<li><p><a class="reference external" href="#Map-of-the-composition-of-the-Metropolitan-area-of-Los-Angeles">Map of the composition of the Metropolitan area of Los Angeles</a></p></li>
+<li><p><a class="reference external" href="#Map-of-the-composition-of-the-Metropolitan-area-of-New-York">Map of the composition of the Metropolitan area of New York</a></p></li>
+<li><p><a class="reference external" href="#Composition-Approach-%28default%29">Composition Approach (default)</a></p></li>
+<li><p><a class="reference external" href="#Share-Approach">Share Approach</a></p></li>
+<li><p><a class="reference external" href="#Dual-Composition-Approach">Dual Composition Approach</a></p></li>
+<li><p><a class="reference external" href="#Inspecting-a-different-index:-Relative-Concentration">Inspecting a different index: Relative Concentration</a></p></li>
+</ul>
+</li>
+</ul>
+<p>This is a notebook that explains a step-by-step procedure to perform decomposition on comparative segregation measures.</p>
+<p>First, let’s import all the needed libraries.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="kn">import</span> <span class="nn">segregation</span>
+<span class="kn">from</span> <span class="nn">segregation.decomposition</span> <span class="kn">import</span> <span class="n">DecomposeSegregation</span>
+</pre></div>
+</div>
+</div>
+<p>In this example, we are going to use census data that the user must download its own copy, following similar guidelines explained in <a class="reference external" href="https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb">https://github.com/spatialucr/geosnap/blob/master/examples/01_getting_started.ipynb</a> where you should download the full type file of 2010. The zipped file download will have a name that looks like <code class="docutils literal notranslate"><span class="pre">LTDB_Std_All_fullcount.zip</span></code>. After extracting the zipped content, the filepath of the data should looks like this:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">#filepath = &#39;~/LTDB_Std_2010_fullcount.csv&#39;</span>
+</pre></div>
+</div>
+</div>
+<p>Then, we read the data:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">encoding</span> <span class="o">=</span> <span class="s2">&quot;ISO-8859-1&quot;</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>We are going to work with the variable of the nonhispanic black people (<code class="docutils literal notranslate"><span class="pre">nhblk10</span></code>) and the total population of each unit (<code class="docutils literal notranslate"><span class="pre">pop10</span></code>). So, let’s read the map of all census tracts of US and select some specific columns for the analysis:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># This file can be download here: https://drive.google.com/open?id=1gWF0OCn6xuR_WrEj7Ot2jY6KI2t6taIm</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;data/tracts_US.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="nb">input</span><span class="p">:</span>
+    <span class="n">map_gpd</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+
+<span class="n">map_gpd</span><span class="p">[</span><span class="s1">&#39;INTGEOID10&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">map_gpd</span><span class="p">[</span><span class="s2">&quot;GEOID10&quot;</span><span class="p">])</span>
+<span class="n">gdf_pre</span> <span class="o">=</span> <span class="n">map_gpd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">left_on</span> <span class="o">=</span> <span class="s1">&#39;INTGEOID10&#39;</span><span class="p">,</span> <span class="n">right_on</span> <span class="o">=</span> <span class="s1">&#39;tractid&#39;</span><span class="p">)</span>
+<span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf_pre</span><span class="p">[[</span><span class="s1">&#39;GEOID10&#39;</span><span class="p">,</span> <span class="s1">&#39;geometry&#39;</span><span class="p">,</span> <span class="s1">&#39;pop10&#39;</span><span class="p">,</span> <span class="s1">&#39;nhblk10&#39;</span><span class="p">]]</span>
+</pre></div>
+</div>
+</div>
+<p>In this notebook, we use the Metropolitan Statistical Area (MSA) of US (we’re also using the word ‘cities’ here to refer them). So, let’s read the correspondence table that relates the tract id with the corresponding Metropolitan area…</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># You can download this file here: https://drive.google.com/open?id=10HUUJSy9dkZS6m4vCVZ-8GiwH0EXqIau</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;data/tract_metro_corresp.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="nb">input</span><span class="p">:</span>
+    <span class="n">tract_metro_corresp</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>..and merge them with the previous data.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">merged_gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">tract_metro_corresp</span><span class="p">,</span> <span class="n">left_on</span> <span class="o">=</span> <span class="s1">&#39;GEOID10&#39;</span><span class="p">,</span> <span class="n">right_on</span> <span class="o">=</span> <span class="s1">&#39;geoid10&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>We now build the composition variable (<code class="docutils literal notranslate"><span class="pre">compo</span></code>) which is the division of the frequency of the chosen group and total population. Let’s inspect the first rows of the data.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">merged_gdf</span><span class="p">[</span><span class="s1">&#39;compo&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">merged_gdf</span><span class="p">[</span><span class="s1">&#39;pop10&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">merged_gdf</span><span class="p">[</span><span class="s1">&#39;nhblk10&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">merged_gdf</span><span class="p">[</span><span class="s1">&#39;pop10&#39;</span><span class="p">])</span>
+<span class="n">merged_gdf</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>GEOID10</th>
+      <th>geometry</th>
+      <th>pop10</th>
+      <th>nhblk10</th>
+      <th>geoid10</th>
+      <th>metro_id</th>
+      <th>numeric_id</th>
+      <th>geoid</th>
+      <th>name</th>
+      <th>compo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>01001020801</td>
+      <td>POLYGON ((-86.456273 32.405837, -86.4570349999...</td>
+      <td>3081</td>
+      <td>293</td>
+      <td>01001020801</td>
+      <td>33860</td>
+      <td>33860</td>
+      <td>33860</td>
+      <td>Montgomery, AL</td>
+      <td>0.095099</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>01001020802</td>
+      <td>POLYGON ((-86.412497 32.589422, -86.412442 32....</td>
+      <td>10435</td>
+      <td>1420</td>
+      <td>01001020802</td>
+      <td>33860</td>
+      <td>33860</td>
+      <td>33860</td>
+      <td>Montgomery, AL</td>
+      <td>0.136080</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>01001020200</td>
+      <td>POLYGON ((-86.467354 32.459308, -86.46764 32.4...</td>
+      <td>2170</td>
+      <td>1226</td>
+      <td>01001020200</td>
+      <td>33860</td>
+      <td>33860</td>
+      <td>33860</td>
+      <td>Montgomery, AL</td>
+      <td>0.564977</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>01001020700</td>
+      <td>POLYGON ((-86.46106999999999 32.42709, -86.461...</td>
+      <td>2891</td>
+      <td>452</td>
+      <td>01001020700</td>
+      <td>33860</td>
+      <td>33860</td>
+      <td>33860</td>
+      <td>Montgomery, AL</td>
+      <td>0.156347</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>01001020600</td>
+      <td>POLYGON ((-86.470524 32.456117, -86.4700469999...</td>
+      <td>3668</td>
+      <td>776</td>
+      <td>01001020600</td>
+      <td>33860</td>
+      <td>33860</td>
+      <td>33860</td>
+      <td>Montgomery, AL</td>
+      <td>0.211559</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>Now, we chose two different metropolitan areas to compare the degree of segregation.</p>
+</section>
+<section id="Map-of-the-composition-of-the-Metropolitan-area-of-Los-Angeles">
+<h2>Map of the composition of the Metropolitan area of Los Angeles<a class="headerlink" href="#Map-of-the-composition-of-the-Metropolitan-area-of-Los-Angeles" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">la_2010</span> <span class="o">=</span> <span class="n">merged_gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">merged_gdf</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Los Angeles-Long Beach-Anaheim, CA&quot;</span><span class="p">)]</span>
+<span class="n">la_2010</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">column</span> <span class="o">=</span> <span class="s1">&#39;compo&#39;</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s1">&#39;OrRd&#39;</span><span class="p">,</span> <span class="n">legend</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(-119.02865769999998, -117.3360503, 32.6463769, 34.9269651)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_decomposition_example_18_1.png" src="../_images/notebooks_06_decomposition_example_18_1.png" />
+</div>
+</div>
+</section>
+<section id="Map-of-the-composition-of-the-Metropolitan-area-of-New-York">
+<h2>Map of the composition of the Metropolitan area of New York<a class="headerlink" href="#Map-of-the-composition-of-the-Metropolitan-area-of-New-York" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">ny_2010</span> <span class="o">=</span> <span class="n">merged_gdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">merged_gdf</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;New York-Newark-Jersey City, NY-NJ-PA&#39;</span><span class="p">)]</span>
+<span class="n">ny_2010</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">column</span> <span class="o">=</span> <span class="s1">&#39;compo&#39;</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s1">&#39;OrRd&#39;</span><span class="p">,</span> <span class="n">legend</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(-75.5381038, -71.59841419999998, 39.36886419999999, 41.70820779999999)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_decomposition_example_20_1.png" src="../_images/notebooks_06_decomposition_example_20_1.png" />
+</div>
+</div>
+<p>We first compare the Gini index of both cities. Let’s import the <code class="docutils literal notranslate"><span class="pre">Gini_Seg</span></code> class from <code class="docutils literal notranslate"><span class="pre">segregation</span></code>, fit both indexes and check the difference in point estimation.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">segregation.aspatial</span> <span class="kn">import</span> <span class="n">GiniSeg</span>
+
+<span class="n">G_la</span> <span class="o">=</span> <span class="n">GiniSeg</span><span class="p">(</span><span class="n">la_2010</span><span class="p">,</span> <span class="s1">&#39;nhblk10&#39;</span><span class="p">,</span> <span class="s1">&#39;pop10&#39;</span><span class="p">)</span>
+<span class="n">G_ny</span> <span class="o">=</span> <span class="n">GiniSeg</span><span class="p">(</span><span class="n">ny_2010</span><span class="p">,</span> <span class="s1">&#39;nhblk10&#39;</span><span class="p">,</span> <span class="s1">&#39;pop10&#39;</span><span class="p">)</span>
+
+<span class="n">G_la</span><span class="o">.</span><span class="n">statistic</span> <span class="o">-</span> <span class="n">G_ny</span><span class="o">.</span><span class="n">statistic</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+-0.10652888790131243
+</pre></div></div>
+</div>
+<p>Let’s decompose these difference according to <em>Rey, S. et al “Comparative Spatial Segregation Analytics”. Forthcoming</em>. You can check the options available in this decomposition below:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">help</span><span class="p">(</span><span class="n">DecomposeSegregation</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Help on class DecomposeSegregation in module segregation.decomposition.decompose_segregation:
+
+class DecomposeSegregation(builtins.object)
+ |  Decompose segregation differences into spatial and attribute components.
+ |
+ |  Given two segregation indices of the same type, use Shapley decomposition
+ |  to measure whether the differences between index measures arise from
+ |  differences in spatial structure or population structure
+ |
+ |  Parameters
+ |  ----------
+ |  index1 : segregation.SegIndex class
+ |      First SegIndex class to compare.
+ |  index2 : segregation.SegIndex class
+ |      Second SegIndex class to compare.
+ |  counterfactual_approach : str, one of
+ |                            [&#34;composition&#34;, &#34;share&#34;, &#34;dual_composition&#34;]
+ |      The technique used to generate the counterfactual population
+ |      distributions.
+ |
+ |  Attributes
+ |  ----------
+ |
+ |  c_s : float
+ |      Shapley&#39;s Spatial Component of the decomposition
+ |
+ |  c_a : float
+ |      Shapley&#39;s Attribute Component of the decomposition
+ |
+ |  Methods
+ |  ----------
+ |
+ |  plot : Visualize features of the Decomposition performed
+ |      plot_type : str, one of [&#39;cdfs&#39;, &#39;maps&#39;]
+ |
+ |      &#39;cdfs&#39; : visualize the cumulative distribution functions of the compositions/shares
+ |      &#39;maps&#39; : visualize the spatial distributions for original data and counterfactuals generated and Shapley&#39;s components (only available for GeoDataFrames)
+ |
+ |  Examples
+ |  --------
+ |  Several examples can be found at https://github.com/pysal/segregation/blob/master/notebooks/decomposition_wrapper_example.ipynb.
+ |
+ |  Methods defined here:
+ |
+ |  __init__(self, index1, index2, counterfactual_approach=&#39;composition&#39;)
+ |      Initialize self.  See help(type(self)) for accurate signature.
+ |
+ |  plot(self, plot_type=&#39;cdfs&#39;)
+ |      Plot the Segregation Decomposition Profile
+ |
+ |  ----------------------------------------------------------------------
+ |  Data descriptors defined here:
+ |
+ |  __dict__
+ |      dictionary for instance variables (if defined)
+ |
+ |  __weakref__
+ |      list of weak references to the object (if defined)
+
+</pre></div></div>
+</div>
+</section>
+<section id="Composition-Approach-(default)">
+<h2>Composition Approach (default)<a class="headerlink" href="#Composition-Approach-(default)" title="Permalink to this headline">¶</a></h2>
+<p>The difference of -0.10653 fitted previously, can be decomposed into two components. The Spatial component and the attribute component. Let’s estimate both, respectively.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">DS_composition</span> <span class="o">=</span> <span class="n">DecomposeSegregation</span><span class="p">(</span><span class="n">G_la</span><span class="p">,</span> <span class="n">G_ny</span><span class="p">)</span>
+<span class="n">DS_composition</span><span class="o">.</span><span class="n">c_s</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0.029575766160051364
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">DS_composition</span><span class="o">.</span><span class="n">c_a</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+-0.1361046540613638
+</pre></div></div>
+</div>
+<p>So, the first thing to notice is that attribute component, i.e., given by a difference in the population structure (in this case, the composition) plays a more important role in the difference, since it has a higher absolute value.</p>
+<p>The difference in the composition can be inspected in the plotting method with the type <code class="docutils literal notranslate"><span class="pre">cdfs</span></code>:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">DS_composition</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span> <span class="o">=</span> <span class="s1">&#39;cdfs&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_decomposition_example_30_0.png" src="../_images/notebooks_06_decomposition_example_30_0.png" />
+</div>
+</div>
+<p>If your data is a GeoDataFrame, it is also possible to visualize the counterfactual compositions with the argument <code class="docutils literal notranslate"><span class="pre">plot_type</span> <span class="pre">=</span> <span class="pre">'maps'</span></code></p>
+<p>The first and second contexts are Los Angeles and New York, respectively.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">DS_composition</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span> <span class="o">=</span> <span class="s1">&#39;maps&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_decomposition_example_32_0.png" src="../_images/notebooks_06_decomposition_example_32_0.png" />
+</div>
+</div>
+<p><em>Note that in all plotting methods, the title presents each component of the decomposition performed.</em></p>
+</section>
+<section id="Share-Approach">
+<h2>Share Approach<a class="headerlink" href="#Share-Approach" title="Permalink to this headline">¶</a></h2>
+<p>The share approach takes into consideration the share of each group in each city. Since this approach takes into consideration the focus group and the complementary group share to build the “counterfactual” total population of each unit, it is of interest to inspect all these four cdf’s.</p>
+<p><em>ps.: The share is the population frequency of each group in each unit over the total population of that respectively group.</em></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">DS_share</span> <span class="o">=</span> <span class="n">DecomposeSegregation</span><span class="p">(</span><span class="n">G_la</span><span class="p">,</span> <span class="n">G_ny</span><span class="p">,</span> <span class="n">counterfactual_approach</span> <span class="o">=</span> <span class="s1">&#39;share&#39;</span><span class="p">)</span>
+<span class="n">DS_share</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span> <span class="o">=</span> <span class="s1">&#39;cdfs&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_decomposition_example_36_0.png" src="../_images/notebooks_06_decomposition_example_36_0.png" />
+</div>
+</div>
+<p>We can see that curve between the contexts are closer to each other which represent a drop in the importance of the population structure (attribute component) to -0.062. However, this attribute still overcomes the spatial component (-0.045) in terms of importance due to both absolute magnitudes.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">DS_share</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span> <span class="o">=</span> <span class="s1">&#39;maps&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_decomposition_example_38_0.png" src="../_images/notebooks_06_decomposition_example_38_0.png" />
+</div>
+</div>
+<p>We can see that the counterfactual maps of the composition (outside of the main diagonal), in this case, are slightly different from the previous approach.</p>
+</section>
+<section id="Dual-Composition-Approach">
+<h2>Dual Composition Approach<a class="headerlink" href="#Dual-Composition-Approach" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">dual_composition</span></code> approach is similar to the composition approach. However, it uses also the counterfactual composition of the cdf of the complementary group.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">DS_dual</span> <span class="o">=</span> <span class="n">DecomposeSegregation</span><span class="p">(</span><span class="n">G_la</span><span class="p">,</span> <span class="n">G_ny</span><span class="p">,</span> <span class="n">counterfactual_approach</span> <span class="o">=</span> <span class="s1">&#39;dual_composition&#39;</span><span class="p">)</span>
+<span class="n">DS_dual</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span> <span class="o">=</span> <span class="s1">&#39;cdfs&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_decomposition_example_42_0.png" src="../_images/notebooks_06_decomposition_example_42_0.png" />
+</div>
+</div>
+<p>It is possible to see that the component values are very similar with slight changes from the <code class="docutils literal notranslate"><span class="pre">composition</span></code> approach.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">DS_dual</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plot_type</span> <span class="o">=</span> <span class="s1">&#39;maps&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_decomposition_example_44_0.png" src="../_images/notebooks_06_decomposition_example_44_0.png" />
+</div>
+</div>
+<p>The counterfactual distributions are virtually the same (but not equal) as the one from the <code class="docutils literal notranslate"><span class="pre">composition</span></code> approach.</p>
+</section>
+<section id="Inspecting-a-different-index:-Relative-Concentration">
+<h2>Inspecting a different index: Relative Concentration<a class="headerlink" href="#Inspecting-a-different-index:-Relative-Concentration" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">segregation.spatial</span> <span class="kn">import</span> <span class="n">RelativeConcentration</span>
+
+<span class="n">RCO_la</span> <span class="o">=</span> <span class="n">RelativeConcentration</span><span class="p">(</span><span class="n">la_2010</span><span class="p">,</span> <span class="s1">&#39;nhblk10&#39;</span><span class="p">,</span> <span class="s1">&#39;pop10&#39;</span><span class="p">)</span>
+<span class="n">RCO_ny</span> <span class="o">=</span> <span class="n">RelativeConcentration</span><span class="p">(</span><span class="n">ny_2010</span><span class="p">,</span> <span class="s1">&#39;nhblk10&#39;</span><span class="p">,</span> <span class="s1">&#39;pop10&#39;</span><span class="p">)</span>
+
+<span class="n">RCO_la</span><span class="o">.</span><span class="n">statistic</span> <span class="o">-</span> <span class="n">RCO_ny</span><span class="o">.</span><span class="n">statistic</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+-0.4252237137424809
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">RCO_DS_composition</span> <span class="o">=</span> <span class="n">DecomposeSegregation</span><span class="p">(</span><span class="n">RCO_la</span><span class="p">,</span> <span class="n">RCO_ny</span><span class="p">)</span>
+<span class="n">RCO_DS_composition</span><span class="o">.</span><span class="n">c_s</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+-0.37586237172215886
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">RCO_DS_composition</span><span class="o">.</span><span class="n">c_a</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+-0.049361342020322
+</pre></div></div>
+</div>
+<p>It is possible to note that, in this case, the spatial component is playing a much more relevant role in the decomposition.</p>
+<script type="application/vnd.jupyter.widget-state+json">
+{"state": {}, "version_major": 2, "version_minor": 0}
+</script></section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="../_sources/notebooks/06_decomposition_example.ipynb.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.3.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

@@ -4,7 +4,7 @@ channels:
 dependencies:
   - python=3.9
   - pandas
-  - geopandas>=0.7
+  - geopandas>=0.9
   - matplotlib
   - scikit-learn
   - seaborn
@@ -28,3 +28,6 @@ dependencies:
   - sphinx_bootstrap_theme
   - numpydoc  
   - mapclassify
+  - pygeos
+  - quilt3
+  - deprecation

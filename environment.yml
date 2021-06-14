@@ -5,7 +5,7 @@ channels:
 dependencies:
   - python>=3.6
   - pandas
-  - geopandas>=0.7
+  - geopandas>=0.9
   - matplotlib
   - scikit-learn
   - seaborn
@@ -16,3 +16,4 @@ dependencies:
   - libpysal
   - tqdm
   - mapclassify
+  - pygeos

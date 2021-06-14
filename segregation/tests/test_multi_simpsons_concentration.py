@@ -2,7 +2,7 @@ import unittest
 from libpysal.examples import load_example
 import geopandas as gpd
 import numpy as np
-from segregation.aspatial import SimpsonsConcentration
+from segregation.multigroup import SimpsonsConcentration
 
 
 class Simpsons_Concentration_Tester(unittest.TestCase):

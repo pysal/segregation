@@ -47,8 +47,8 @@ def _decompose_segregation(index1, index2, counterfactual_approach="composition"
          data with counterfactual variables for index2)
 
     """
-    df1 = index1.core_data.copy()
-    df2 = index2.core_data.copy()
+    df1 = index1.data.copy()
+    df2 = index2.data.copy()
 
     assert (
         index1._function == index2._function
@@ -57,8 +57,10 @@ def _decompose_segregation(index1, index2, counterfactual_approach="composition"
     counterfac_df1, counterfac_df2 = _generate_counterfactual(
         df1,
         df2,
-        "group_pop_var",
-        "total_pop_var",
+        index1.group_pop_var,
+        index1.total_pop_var,
+        index2.group_pop_var,
+        index2.total_pop_var,
         counterfactual_approach=counterfactual_approach,
     )
 

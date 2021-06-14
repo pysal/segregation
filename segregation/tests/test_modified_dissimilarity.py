@@ -2,7 +2,7 @@ import unittest
 from libpysal.examples import load_example
 import geopandas as gpd
 import numpy as np
-from segregation.aspatial import ModifiedDissim
+from segregation.singlegroup import ModifiedDissim
 
 
 class Modified_Dissim_Tester(unittest.TestCase):

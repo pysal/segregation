@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>segregation.singlegroup.density_corrected_dissim &#8212; segregation v2.0.0 Manual</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pysal-styles.css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    <link rel="shortcut icon" href="../../../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../../_static/js/jquery-1.12.4.min.js "></script>
+<script type="text/javascript" src="../../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../../_static/bootstrap-3.4.1/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          segregation</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.0.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../../../installation.html">Installation</a></li>
+                <li><a href="../../../api.html">API</a></li>
+                <li><a href="../../../tutorial.html">Tutorial</a></li>
+                <li><a href="../../../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <h1>Source code for segregation.singlegroup.density_corrected_dissim</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Density-Corrected Dissim Segregation Index.&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Renan X. Cortes &lt;renanc@ucr.edu&gt;, Sergio J. Rey &lt;sergio.rey@ucr.edu&gt; and Elijah Knaap &lt;elijah.knaap@ucr.edu&gt;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">geopandas</span> <span class="k">as</span> <span class="nn">gpd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">minimize</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">norm</span>
+
+<span class="kn">from</span> <span class="nn">.._base</span> <span class="kn">import</span> <span class="n">SingleGroupIndex</span><span class="p">,</span> <span class="n">SpatialImplicitIndex</span>
+
+
+<span class="k">def</span> <span class="nf">_density_corrected_dissim</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">group_pop_var</span><span class="p">,</span> <span class="n">total_pop_var</span><span class="p">,</span> <span class="n">xtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate Density Corrected Dissimilarity index.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data :  pandas.DataFrame</span>
+<span class="sd">        DataFrame storing necessary data</span>
+<span class="sd">    group_pop_var : string</span>
+<span class="sd">        The name of variable in data that contains the population size of the group of interest</span>
+<span class="sd">    total_pop_var : string</span>
+<span class="sd">        The name of variable in data that contains the total population of the unit</span>
+<span class="sd">    xtol : float</span>
+<span class="sd">        The degree of tolerance in the optimization process of returning optimal theta_j</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ----------</span>
+<span class="sd">    statistic : float</span>
+<span class="sd">        Dissimilarity with Density-Correction (density correction from Allen, Rebecca et al. (2015))</span>
+<span class="sd">    core_data : pandas.DataFrame</span>
+<span class="sd">        A pandas DataFrame that contains the columns used to perform the estimate.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Based on Allen, Rebecca, et al. &quot;More reliable inference for the dissimilarity index of segregation.&quot; The econometrics journal 18.1 (2015): 40-66.</span>
+
+<span class="sd">    Reference: :cite:`allen2015more`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">group_pop_var</span><span class="p">])</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">total_pop_var</span><span class="p">])</span>
+
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span>
+        <span class="n">t</span> <span class="o">&gt;</span> <span class="n">g</span>
+    <span class="p">),</span> <span class="s2">&quot;Group of interest population must equal or lower than the total population of the units.&quot;</span>
+
+    <span class="n">other_group_pop</span> <span class="o">=</span> <span class="n">t</span> <span class="o">-</span> <span class="n">g</span>
+
+    <span class="c1"># Group 0: minority group</span>
+    <span class="n">p0_i</span> <span class="o">=</span> <span class="n">g</span> <span class="o">/</span> <span class="n">g</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">n0</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="c1"># Group 1: complement group</span>
+    <span class="n">p1_i</span> <span class="o">=</span> <span class="n">other_group_pop</span> <span class="o">/</span> <span class="n">other_group_pop</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">n1</span> <span class="o">=</span> <span class="n">other_group_pop</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="n">sigma_hat_j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(((</span><span class="n">p1_i</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p1_i</span><span class="p">))</span> <span class="o">/</span> <span class="n">n1</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="n">p0_i</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p0_i</span><span class="p">))</span> <span class="o">/</span> <span class="n">n0</span><span class="p">))</span>
+    <span class="n">theta_hat_j</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">p1_i</span> <span class="o">-</span> <span class="n">p0_i</span><span class="p">)</span> <span class="o">/</span> <span class="n">sigma_hat_j</span>
+
+    <span class="c1"># Constructing function that returns $n(\hat{\theta}_j)$</span>
+    <span class="k">def</span> <span class="nf">return_optimal_theta</span><span class="p">(</span><span class="n">theta_j</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">fold_norm</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">theta_j</span><span class="p">)</span> <span class="o">+</span> <span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">theta_j</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">y</span>
+
+        <span class="n">initial_guesses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
+            <span class="n">fold_norm</span><span class="p">,</span> <span class="n">initial_guesses</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nelder-mead&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;xtol&quot;</span><span class="p">:</span> <span class="n">xtol</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">final_simplex</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">optimal_thetas</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">theta_hat_j</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">return_optimal_theta</span><span class="p">)</span>
+
+    <span class="n">Ddc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">sigma_hat_j</span><span class="p">,</span> <span class="n">optimal_thetas</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">):</span>
+        <span class="n">core_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[[</span><span class="n">group_pop_var</span><span class="p">,</span> <span class="n">total_pop_var</span><span class="p">]]</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">core_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[[</span><span class="n">group_pop_var</span><span class="p">,</span> <span class="n">total_pop_var</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="p">]]</span>
+
+    <span class="k">return</span> <span class="n">Ddc</span><span class="p">,</span> <span class="n">core_data</span>
+
+
+<div class="viewcode-block" id="DensityCorrectedDissim"><a class="viewcode-back" href="../../../generated/segregation.singlegroup.DensityCorrectedDissim.html#segregation.singlegroup.DensityCorrectedDissim">[docs]</a><span class="k">class</span> <span class="nc">DensityCorrectedDissim</span><span class="p">(</span><span class="n">SingleGroupIndex</span><span class="p">,</span> <span class="n">SpatialImplicitIndex</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Density Corrected Dissimilarity Index.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : pandas.DataFrame or geopandas.GeoDataFrame, required</span>
+<span class="sd">        dataframe or geodataframe if spatial index holding data for location of interest</span>
+<span class="sd">    group_pop_var : str, required</span>
+<span class="sd">        name of column on dataframe holding population totals for focal group</span>
+<span class="sd">    total_pop_var : str, required</span>
+<span class="sd">        name of column on dataframe holding total overall population</span>
+<span class="sd">    w : libpysal.weights.KernelW, optional</span>
+<span class="sd">        lipysal spatial kernel weights object used to define an egohood</span>
+<span class="sd">    network : pandana.Network</span>
+<span class="sd">        pandana Network object representing the study area</span>
+<span class="sd">    distance : int</span>
+<span class="sd">        Maximum distance (in units of geodataframe CRS) to consider the extent of the egohood</span>
+<span class="sd">    decay : str</span>
+<span class="sd">        type of decay function to apply. Options include</span>
+<span class="sd">    precompute : bool</span>
+<span class="sd">        Whether to precompute the pandana Network object</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    statistic : float</span>
+<span class="sd">        Segregation Index</span>
+<span class="sd">    core_data : a pandas DataFrame</span>
+<span class="sd">        A pandas DataFrame that contains the columns used to perform the estimate.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Based on Allen, Rebecca, et al. &quot;More reliable inference for the dissimilarity index of segregation.&quot; The econometrics journal 18.1 (2015): 40-66.</span>
+
+<span class="sd">    Reference: :cite:`allen2015more`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="DensityCorrectedDissim.__init__"><a class="viewcode-back" href="../../../generated/segregation.singlegroup.DensityCorrectedDissim.html#segregation.singlegroup.DensityCorrectedDissim.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">group_pop_var</span><span class="p">,</span>
+        <span class="n">total_pop_var</span><span class="p">,</span>
+        <span class="n">w</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">network</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">distance</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">decay</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">function</span><span class="o">=</span><span class="s2">&quot;triangular&quot;</span><span class="p">,</span>
+        <span class="n">precompute</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
+
+        <span class="n">SingleGroupIndex</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">group_pop_var</span><span class="p">,</span> <span class="n">total_pop_var</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">w</span><span class="p">,</span> <span class="n">network</span><span class="p">,</span> <span class="n">distance</span><span class="p">]):</span>
+            <span class="n">SpatialImplicitIndex</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">network</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">decay</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">precompute</span>
+            <span class="p">)</span>
+        <span class="n">aux</span> <span class="o">=</span> <span class="n">_density_corrected_dissim</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_pop_var</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_pop_var</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistic</span> <span class="o">=</span> <span class="n">aux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">aux</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_function</span> <span class="o">=</span> <span class="n">_density_corrected_dissim</span></div></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.3.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
