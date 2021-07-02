@@ -47,7 +47,6 @@ def _infer_segregation(
         If True, p_value is two-tailed. Otherwise, it is right one-tailed.
     **kwargs : customizable parameters to pass to the segregation measures. Usually they need to be the same input that the seg_class was built.
 
-
     Attributes
     ----------
     p_value     : float
