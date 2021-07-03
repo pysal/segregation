@@ -1,10 +1,11 @@
 """Tools for simulating spatial population distributions."""
 
+import itertools
+
 import geopandas as gpd
 import numpy as np
 import pandas as pd
 from tqdm.auto import tqdm
-import itertools
 
 
 def simulate_reallocation_slow(df, group=None, total=None, groups=None):
@@ -67,9 +68,8 @@ def simulate_reallocation(df, group=None, total=None, groups=None):
 
     # create a  list of 1s representing the population in each unit
     df["people"] = df[total].apply(lambda x: [1 for i in range(x)])
-
     # explode the dataframe to have n_rows = total_population
-    df = df.explode("people")[["index"]]
+    df = df["people"].explode().reset_index()["index"].to_frame()
     df["groups"] = pop_groups
 
     # randomize people's group id
