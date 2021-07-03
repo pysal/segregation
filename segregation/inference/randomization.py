@@ -6,7 +6,7 @@ import pandas as pd
 from tqdm.auto import tqdm
 
 
-def simulate_reallocation(df, group=None, total=None, groups=None):
+def simulate_reallocation_slow(df, group=None, total=None, groups=None):
     df = df.copy()
     df = df.reset_index(drop=True)
     # shuffle the spatial units so we allocate at random
@@ -45,13 +45,47 @@ def simulate_reallocation(df, group=None, total=None, groups=None):
         return output
 
 
+def simulate_reallocation(df, group=None, total=None, groups=None):
+
+    df = df.copy()
+    # ensure we have a coilumn named "index"
+    df = df.reset_index(drop=True)
+    df = df.reset_index()
+    geoms = df[[df.geometry.name]]
+    df = df[df[total] > 0]
+    if group:
+        df[total] = df[total].astype(int)
+        df["other"] = df[total] - df[group]
+        # create a list of group membership for each person
+        g = [group for i in range(df[group].astype(int).sum())]
+        other = ["other" for i in range(df["other"].astype(int).sum())]
+        pop_groups = g + other
+        # create a  list of 1s representing the population in each unit
+        df["people"] = df[total].apply(lambda x: [1 for i in range(x)])
+
+        # explode the dataframe to have n_rows = total_population
+        df = df.explode("people")[["index"]]
+        df["groups"] = pop_groups
+
+        # randomize people's group id
+        df["groups"] = df["groups"].sample(frac=1).values
+
+        # reaggregate by unit index
+        df = df.groupby("index")["groups"].value_counts().unstack()
+        df[total] = df[group] + df["other"]
+        df = df.join(geoms)
+        return gpd.GeoDataFrame(df, geometry=geoms.geometry.name)
+
+
 def simulate_evenness(df, group=None, total=None, groups=None):
+    df = df.copy()
+    df[[group, total]] = df[[group, total]].astype(int)
     if group:
         p_null = df[group].sum() / df[total].sum()
 
         output = gpd.GeoDataFrame()
         output[group] = np.random.binomial(n=df[total].values, p=p_null)
         output[total] = df[total].tolist()
-        output[df.geometry.name] = df[df.geometry.name]
+        output["geometry"] = df[df.geometry.name]
 
     return output
