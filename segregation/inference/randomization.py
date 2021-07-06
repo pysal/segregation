@@ -25,7 +25,7 @@ def _generate_estimate(input):
 
 
 def simulate_null(
-    iterations=1000, sim_func=None, seg_func=None, n_jobs=-1, segfunc_args=None, backend='threading'
+    iterations=1000, sim_func=None, seg_func=None, n_jobs=-1, segfunc_args=None, backend='loky'
 ):
     if n_jobs == -1:
         n_jobs = multiprocessing.cpu_count()    
@@ -237,6 +237,7 @@ def simulate_systematic_randomization(df, group=None, total=None, groups=None):
         n = df[group].sum()
         sim = np.random.multinomial(n, p_j)
         data_aux[group] = sim.tolist()
+    data_aux[total] = df[total].tolist()
     df_aux = pd.DataFrame.from_dict(data_aux)
 
     return df_aux
