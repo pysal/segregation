@@ -6,7 +6,31 @@ import geopandas as gpd
 import numpy as np
 import pandas as pd
 from tqdm.auto import tqdm
+from joblib import Parallel, delayed
+import multiprocessing
 
+
+def _generate_estimate(input):
+    if input[0].index_type=='singlegroup':
+        df = input[1](
+            input[0].data.copy(), group=input[0].group_pop_var, total=input[0].total_pop_var,
+        )
+        estimate = input[0]._function(df, input[0].group_pop_var, input[0].total_pop_var)
+    else:
+        df = input[1](
+            input[0].data.copy(), groups=input[0].groups,
+        )
+        estimate = input[0]._function(df, input[0].groups)
+    return estimate[0]
+
+
+def simulate_null(
+    iterations=1000, sim_func=None, seg_func=None, n_jobs=-1, segfunc_args=None, backend='threading'
+):
+    if n_jobs == -1:
+        n_jobs = multiprocessing.cpu_count()    
+    estimates= Parallel(n_jobs=n_jobs, backend=backend)(delayed(_generate_estimate)((seg_func, sim_func)) for i in tqdm(range(iterations)))
+    return estimates
 
 def simulate_reallocation_slow(df, group=None, total=None, groups=None):
     df = df.copy()
@@ -72,9 +96,10 @@ def simulate_reallocation(df, group=None, total=None, groups=None):
     Notes
     -------
     Simulates the random redistribution of the existing population. Given a pool
-    of the total population in the region, randomly allocate each person to a 
+    of the total population in the region, randomly allocate each person to a
     geographic unit, subject to the total capacity of each unit. Results are
-    guaranteed to respect regional and local totals for groups and geographic units
+    guaranteed to respect regional and local totals for geographic units as well
+    as regional totals and relative shares for groups
     """
     df = df.copy()
     # ensure we have a coilumn named "index"
@@ -136,7 +161,7 @@ def simulate_evenness(df, group=None, total=None, groups=None):
 
     Notes
     -------
-    Simulates the random allocation of racial groups, given the total population of
+    Simulates the random allocation of groups, given the total population of
     each geographic unit (randomizes group totals for each location). Given the total
     population of each location, take draws from a multinomial distribution to assign
     group categories for each person, where the probability of each group is equal to
