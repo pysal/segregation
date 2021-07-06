@@ -3,6 +3,7 @@
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
 import numpy as np
+from geopandas import GeoDataFrame
 
 from .._base import MultiGroupIndex, SpatialImplicitIndex
 
@@ -36,7 +37,7 @@ def _multi_information_theory(data, groups):
     Reference: :cite:`reardon2002measures`.
 
     """
-
+    data = data.copy()
     core_data = data[groups]
     df = np.array(core_data)
 
@@ -51,7 +52,8 @@ def _multi_information_theory(data, groups):
     E = (Pk * np.log(1 / Pk)).sum()
 
     MIT = np.nansum(ti[:, None] * pik * np.log(pik / Pk)) / (T * E)
-
+    if isinstance(data, GeoDataFrame):
+        core_data = data[[data.geometry.name]].join(core_data)
     return MIT, core_data, groups
 
 

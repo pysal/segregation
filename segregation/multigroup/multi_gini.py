@@ -4,6 +4,7 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.ed
 
 import numpy as np
 from sklearn.metrics.pairwise import manhattan_distances
+from geopandas import GeoDataFrame
 
 from .._base import MultiGroupIndex, SpatialImplicitIndex
 
@@ -54,7 +55,8 @@ def _multi_gini_seg(data, groups):
         elements_sum[k] = aux
 
     multi_Gini_Seg = elements_sum.sum() / (2 * (T ** 2) * Is)
-
+    if isinstance(data, GeoDataFrame):
+        core_data = data[[data.geometry.name]].join(core_data)
     return multi_Gini_Seg, core_data, groups
 
 

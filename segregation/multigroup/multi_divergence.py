@@ -3,6 +3,7 @@
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
 import numpy as np
+from geopandas import GeoDataFrame
 
 from .._base import MultiGroupIndex, SpatialImplicitIndex
 
@@ -50,7 +51,8 @@ def _multi_divergence(data, groups):
     Di = np.nansum(pik * np.log(pik / Pk), axis=1)
 
     Divergence_Index = ((ti / T) * Di).sum()
-
+    if isinstance(data, GeoDataFrame):
+        core_data = data[[data.geometry.name]].join(core_data)
     return Divergence_Index, core_data, groups
 
 
