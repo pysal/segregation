@@ -11,26 +11,42 @@ import multiprocessing
 
 
 def _generate_estimate(input):
-    if input[0].index_type=='singlegroup':
-        df = input[1](
-            input[0].data.copy(), group=input[0].group_pop_var, total=input[0].total_pop_var,
-        )
-        estimate = input[0]._function(df, input[0].group_pop_var, input[0].total_pop_var)
+    if hasattr(input[0], "_original_data"):
+        df = input[0]._original_data.copy()
     else:
-        df = input[1](
-            input[0].data.copy(), groups=input[0].groups,
+        df = input[0].data.copy()
+    if input[0].index_type == "singlegroup":
+        df = input[1](df,
+            group=input[0].group_pop_var,
+            total=input[0].total_pop_var,
         )
-        estimate = input[0]._function(df, input[0].groups)
-    return estimate[0]
+        estimate = input[0].__class__(
+            df, input[0].group_pop_var, input[0].total_pop_var, **input[2]
+        ).statistic
+    else:
+        df = input[1](df, groups=input[0].groups)
+        estimate = input[0].__class__(df, input[0].groups, **input[2]).statistic
+    return estimate
 
 
 def simulate_null(
-    iterations=1000, sim_func=None, seg_func=None, n_jobs=-1, segfunc_args=None, backend='loky'
+    iterations=1000,
+    sim_func=None,
+    seg_func=None,
+    n_jobs=-1,
+    backend="loky",
+    index_kwargs=None,
 ):
+    if not index_kwargs:
+        index_kwargs = {}
     if n_jobs == -1:
-        n_jobs = multiprocessing.cpu_count()    
-    estimates= Parallel(n_jobs=n_jobs, backend=backend)(delayed(_generate_estimate)((seg_func, sim_func)) for i in tqdm(range(iterations)))
+        n_jobs = multiprocessing.cpu_count()
+    estimates = Parallel(n_jobs=n_jobs, backend=backend)(
+        delayed(_generate_estimate)((seg_func, sim_func, index_kwargs))
+        for i in tqdm(range(iterations))
+    )
     return estimates
+
 
 def simulate_reallocation_slow(df, group=None, total=None, groups=None):
     df = df.copy()
@@ -239,5 +255,7 @@ def simulate_systematic_randomization(df, group=None, total=None, groups=None):
         data_aux[group] = sim.tolist()
     data_aux[total] = df[total].tolist()
     df_aux = pd.DataFrame.from_dict(data_aux)
+    if isinstance(df, gpd.GeoDataFrame):
+        df_aux = df[[df.geometry.name]].reset_index().join(df_aux)
 
     return df_aux

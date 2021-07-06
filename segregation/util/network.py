@@ -144,7 +144,7 @@ def calc_access(
     # names = ["acc_" + variable for variable in variables]
     access = pd.DataFrame(dict(zip(variables, access)))
     if return_node_data:
-        return access
+        return access.round(0)
     access = geodataframe[["node_ids", geodataframe.geometry.name]].merge(access, right_index=True, left_on="node_ids", how="left"
     )
 
