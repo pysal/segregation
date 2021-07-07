@@ -13,6 +13,7 @@ from segregation.util.util import _generate_counterfactual
 from tqdm.auto import tqdm
 
 from .._base import MultiGroupIndex, SingleGroupIndex
+from .randomization import SIMULATORS, simulate_null
 
 __all__ = [
     "SingleValueTest",
@@ -25,7 +26,7 @@ def _infer_segregation(
     iterations_under_null=500,
     null_approach="systematic",
     two_tailed=True,
-    **kwargs
+    **kwargs,
 ):
     """
     Perform inference for a single segregation measure
@@ -65,346 +66,25 @@ def _infer_segregation(
     2) The one-tailed p_value attribute might not be appropriate for some measures, as the two-tailed. Therefore, it is better to rely on the est_sim attribute.
     
     """
-    if not null_approach in [
-        "systematic",
-        "bootstrap",
-        "evenness",
-        "permutation",
-        "systematic_permutation",
-        "even_permutation",
-    ]:
-        raise ValueError(
-            "null_approach must one of 'systematic', 'bootstrap', 'evenness', 'permutation', 'systematic_permutation', 'even_permutation'"
-        )
+    if null_approach not in SIMULATORS.keys():
+        raise ValueError(f"null_approach must one of {SIMULATORS.keys()}")
 
     if type(two_tailed) is not bool:
         raise TypeError("two_tailed is not a boolean object")
 
     point_estimation = seg_class.statistic
-    data = seg_class.data.copy()
 
     aux = str(type(seg_class))
     _class_name = aux[
         1 + aux.rfind(".") : -2
     ]  # 'rfind' finds the last occurence of a pattern in a string
 
-    Estimates_Stars = np.empty(iterations_under_null)
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-
-    ##############
-    # SYSTEMATIC #
-    ##############
-    if null_approach == "systematic":
-
-        if isinstance(seg_class, SingleGroupIndex):
-
-            data["other_group_pop"] = (
-                data[seg_class.total_pop_var] - data[seg_class.group_pop_var]
-            )
-            p_j = data[seg_class.total_pop_var] / data[seg_class.total_pop_var].sum()
-
-            # Group 0: minority group
-            p0_i = p_j
-            n0 = data[seg_class.group_pop_var].sum()
-            sim0 = np.random.multinomial(n0, p0_i, size=iterations_under_null)
-
-            # Group 1: complement group
-            p1_i = p_j
-            n1 = data["other_group_pop"].sum()
-            sim1 = np.random.multinomial(n1, p1_i, size=iterations_under_null)
-
-            with tqdm(total=iterations_under_null) as pbar:
-                for i in np.array(range(iterations_under_null)):
-                    data_aux = {
-                        "simul_group": sim0[i].tolist(),
-                        "simul_tot": (sim0[i] + sim1[i]).tolist(),
-                    }
-                    df_aux = pd.DataFrame.from_dict(data_aux)
-
-                    if (
-                        str(type(data))
-                        == "<class 'geopandas.geodataframe.GeoDataFrame'>"
-                    ):
-                        df_aux = gpd.GeoDataFrame(df_aux)
-                        df_aux["geometry"] = data["geometry"]
-
-                    Estimates_Stars[i] = seg_class._function(
-                        df_aux, "simul_group", "simul_tot", **kwargs
-                    )[0]
-                    pbar.set_description(
-                        "Processed {} iterations out of {}".format(
-                            i + 1, iterations_under_null
-                        )
-                    )
-                    pbar.update(1)
-
-        if isinstance(seg_class, MultiGroupIndex):
-            raise ValueError("Not implemented for MultiGroup indexes.")
-
-    #############
-    # BOOTSTRAP #
-    #############
-    if null_approach == "bootstrap":
-
-        if isinstance(seg_class, SingleGroupIndex):
-
-            with tqdm(total=iterations_under_null) as pbar:
-                for i in np.array(range(iterations_under_null)):
-
-                    sample_index = np.random.choice(
-                        data.index, size=len(data), replace=True
-                    )
-                    df_aux = data.iloc[sample_index]
-                    Estimates_Stars[i] = seg_class._function(
-                        df_aux,
-                        seg_class.group_pop_var,
-                        seg_class.total_pop_var,
-                        **kwargs
-                    )[0]
-
-                    pbar.set_description(
-                        "Processed {} iterations out of {}".format(
-                            i + 1, iterations_under_null
-                        )
-                    )
-                    pbar.update(1)
-
-        if isinstance(seg_class, MultiGroupIndex):
-
-            with tqdm(total=iterations_under_null) as pbar:
-                for i in np.array(range(iterations_under_null)):
-
-                    sample_index = np.random.choice(
-                        data.index, size=len(data), replace=True
-                    )
-                    df_aux = data.iloc[sample_index]
-                    Estimates_Stars[i] = seg_class._function(
-                        df_aux, seg_class.groups, **kwargs
-                    )[0]
-
-                    pbar.set_description(
-                        "Processed {} iterations out of {}".format(
-                            i + 1, iterations_under_null
-                        )
-                    )
-                    pbar.update(1)
-
-    ############
-    # EVENNESS #
-    ############
-    if null_approach == "evenness":
-
-        if isinstance(seg_class, SingleGroupIndex):
-
-            p_null = (
-                data[seg_class.group_pop_var].sum()
-                / data[seg_class.total_pop_var].sum()
-            )
-
-            with tqdm(total=iterations_under_null) as pbar:
-                for i in np.array(range(iterations_under_null)):
-                    sim = np.random.binomial(
-                        n=np.array([data[seg_class.total_pop_var].tolist()]), p=p_null
-                    )
-                    data_aux = {
-                        "simul_group": sim[0],
-                        "simul_tot": data[seg_class.total_pop_var].tolist(),
-                    }
-                    df_aux = pd.DataFrame.from_dict(data_aux)
-
-                    if (
-                        str(type(data))
-                        == "<class 'geopandas.geodataframe.GeoDataFrame'>"
-                    ):
-                        df_aux = gpd.GeoDataFrame(df_aux)
-                        df_aux["geometry"] = data["geometry"]
-
-                    Estimates_Stars[i] = seg_class._function(
-                        df_aux, "simul_group", "simul_tot", **kwargs
-                    )[0]
-
-                    pbar.set_description(
-                        "Processed {} iterations out of {}".format(
-                            i + 1, iterations_under_null
-                        )
-                    )
-                    pbar.update(1)
-
-        if isinstance(seg_class, MultiGroupIndex):
-
-            df = np.array(seg_class.data)
-            global_prob_vector = df.sum(axis=0) / df.sum()
-            t = df.sum(axis=1)
-
-            with tqdm(total=iterations_under_null) as pbar:
-                for i in np.array(range(iterations_under_null)):
-
-                    simul = map(
-                        lambda i: list(np.random.multinomial(i, global_prob_vector)), t
-                    )
-                    df_simul = pd.DataFrame(list(simul), columns=seg_class.groups)
-
-                    Estimates_Stars[i] = seg_class._function(
-                        df_simul, seg_class.groups, **kwargs
-                    )[0]
-                    pbar.set_description(
-                        "Processed {} iterations out of {}".format(
-                            i + 1, iterations_under_null
-                        )
-                    )
-                    pbar.update(1)
-
-    ###############
-    # PERMUTATION #
-    ###############
-    if null_approach == "permutation":
-
-        if isinstance(seg_class, SingleGroupIndex):
-
-            if str(type(data)) != "<class 'geopandas.geodataframe.GeoDataFrame'>":
-                raise TypeError(
-                    "data is not a GeoDataFrame, therefore, this null approach does not apply."
-                )
-
-            with tqdm(total=iterations_under_null) as pbar:
-
-                for i in np.array(range(iterations_under_null)):
-                    data = data.assign(
-                        geometry=data[data.geometry.name][
-                            list(
-                                np.random.choice(
-                                    data.shape[0], data.shape[0], replace=False
-                                )
-                            )
-                        ].reset_index()[data.geometry.name]
-                    )
-                    df_aux = data
-                    Estimates_Stars[i] = seg_class._function(
-                        df_aux,
-                        seg_class.group_pop_var,
-                        seg_class.total_pop_var,
-                        **kwargs
-                    )[0]
-                    pbar.set_description(
-                        "Processed {} iterations out of {}".format(
-                            i + 1, iterations_under_null
-                        )
-                    )
-                    pbar.update(1)
-
-        if isinstance(seg_class, MultiGroupIndex):
-            raise ValueError("Not implemented for MultiGroup indexes.")
-
-    ##########################
-    # SYSTEMATIC PERMUTATION #
-    ##########################
-    if null_approach == "systematic_permutation":
-
-        if isinstance(seg_class, SingleGroupIndex):
-
-            if str(type(data)) != "<class 'geopandas.geodataframe.GeoDataFrame'>":
-                raise TypeError(
-                    "data is not a GeoDataFrame, therefore, this null approach does not apply."
-                )
-
-            data["other_group_pop"] = (
-                data[seg_class.total_pop_var] - data[seg_class.group_pop_var]
-            )
-            p_j = data[seg_class.total_pop_var] / data[seg_class.total_pop_var].sum()
-
-            # Group 0: minority group
-            p0_i = p_j
-            n0 = data[seg_class.group_pop_var].sum()
-            sim0 = np.random.multinomial(n0, p0_i, size=iterations_under_null)
-
-            # Group 1: complement group
-            p1_i = p_j
-            n1 = data["other_group_pop"].sum()
-            sim1 = np.random.multinomial(n1, p1_i, size=iterations_under_null)
-
-            with tqdm(total=iterations_under_null) as pbar:
-                for i in np.array(range(iterations_under_null)):
-                    data_aux = {
-                        "simul_group": sim0[i].tolist(),
-                        "simul_tot": (sim0[i] + sim1[i]).tolist(),
-                    }
-                    df_aux = pd.DataFrame.from_dict(data_aux)
-                    df_aux = gpd.GeoDataFrame(df_aux)
-                    df_aux["geometry"] = data["geometry"]
-                    df_aux = df_aux.assign(
-                        geometry=df_aux["geometry"][
-                            list(
-                                np.random.choice(
-                                    df_aux.shape[0], df_aux.shape[0], replace=False
-                                )
-                            )
-                        ].reset_index()["geometry"]
-                    )
-                    Estimates_Stars[i] = seg_class._function(
-                        df_aux, "simul_group", "simul_tot", **kwargs
-                    )[0]
-
-                    pbar.set_description(
-                        "Processed {} iterations out of {}".format(
-                            i + 1, iterations_under_null
-                        )
-                    )
-                    pbar.update(1)
-
-        if isinstance(seg_class, MultiGroupIndex):
-            raise ValueError("Not implemented for MultiGroup indexes.")
-
-    ########################
-    # EVENNESS PERMUTATION #
-    ########################
-    if null_approach == "even_permutation":
-
-        if isinstance(seg_class, SingleGroupIndex):
-
-            if str(type(data)) != "<class 'geopandas.geodataframe.GeoDataFrame'>":
-                raise TypeError(
-                    "data is not a GeoDataFrame, therefore, this null approach does not apply."
-                )
-
-            p_null = (
-                data[seg_class.group_pop_var].sum()
-                / data[seg_class.total_pop_var].sum()
-            )
-
-            with tqdm(total=iterations_under_null) as pbar:
-                for i in np.array(range(iterations_under_null)):
-                    sim = np.random.binomial(
-                        n=np.array([data[seg_class.total_pop_var].tolist()]), p=p_null
-                    )
-                    data_aux = {
-                        "simul_group": sim[0],
-                        "simul_tot": data[seg_class.total_pop_var].tolist(),
-                    }
-                    df_aux = pd.DataFrame.from_dict(data_aux)
-                    df_aux = gpd.GeoDataFrame(df_aux)
-                    df_aux["geometry"] = data["geometry"]
-                    df_aux = df_aux.assign(
-                        geometry=df_aux["geometry"][
-                            list(
-                                np.random.choice(
-                                    df_aux.shape[0], df_aux.shape[0], replace=False
-                                )
-                            )
-                        ].reset_index()["geometry"]
-                    )
-                    Estimates_Stars[i] = seg_class._function(
-                        df_aux, "simul_group", "simul_tot", **kwargs
-                    )[0]
-                    pbar.set_description(
-                        "Processed {} iterations out of {}".format(
-                            i + 1, iterations_under_null
-                        )
-                    )
-                    pbar.update(1)
-
-        if isinstance(seg_class, MultiGroupIndex):
-            raise ValueError("Not implemented for MultiGroup indexes.")
+    Estimates_Stars = simulate_null(
+        iterations=iterations_under_null,
+        sim_func=SIMULATORS[null_approach],
+        seg_func=seg_class,
+        index_kwargs=kwargs,
+    ).values
 
     # Check and, if the case, remove iterations_under_null that resulted in nan or infinite values
     if any((np.isinf(Estimates_Stars) | np.isnan(Estimates_Stars))):
@@ -426,57 +106,49 @@ def _infer_segregation(
 
 
 class SingleValueTest:
-    """
-    Perform inference for a single segregation measure
+    """Statistical inference for a single segregation measure.
 
     Parameters
     ----------
+    seg_class : segregation.singlegroup or segregation.multigroup object
+        fitted segregation index class
+    iterations_under_null : int
+        number of iterations under null hyphothesis
+    null_approach : str
+        Which counterfactual approach to use when generating null hypothesis distribution. Please take a look at Notes (1).
 
-    seg_class                    : a PySAL segregation object
-    
-    iterations_under_null        : number of iterations under null hyphothesis
-    
-    null_approach : argument that specifies which type of null hypothesis the inference will iterate. Please take a look at Notes (1).
-    
-        "systematic"             : assumes that every group has the same probability with restricted conditional probabilities p_0_j = p_1_j = p_j = n_j/n (multinomial distribution).
-        "bootstrap"              : generates bootstrap replications of the units with replacement of the same size of the original data.
-        "evenness"               : assumes that each spatial unit has the same global probability of drawing elements from the minority group of the fixed total unit population (binomial distribution).
-        
-        "permutation"            : randomly allocates the units over space keeping the original values.
-        
-        "systematic_permutation" : assumes absence of systematic segregation and randomly allocates the units over space.
-        "even_permutation"       : assumes the same global probability of drawning elements from the minority group in each spatial unit and randomly allocates the units over space.
-    
-    two_tailed    : boolean. Please take a look at Notes (2).
-                    If True, p_value is two-tailed. Otherwise, it is right one-tailed.
-    
-    **kwargs      : customizable parameters to pass to the segregation measures. Usually they need to be the same input that the seg_class was built.
+            * "systematic" : assumes that every group has the same probability with restricted conditional probabilities p_0_j = p_1_j = p_j = n_j/n (multinomial distribution).
+            * "bootstrap" : generates bootstrap replications of the units with replacement of the same size of the original data.
+            * "evenness" : assumes that each spatial unit has the same global probability of drawing elements from the minority group of the fixed total unit population (binomial distribution).
+            * "person_permutation" : randomly allocates individuals into units keeping the total population of each equal to the original.
+            * "geographic_permutation" : randomly allocates the units over space keeping the original values.
+            * "systematic_permutation" : assumes absence of systematic segregation and randomly allocates the units over space.
+            * "even_permutation" : assumes the same global probability of drawning elements from the minority group in each spatial unit and randomly allocates the units over space.
+    two_tailed : boolean. 
+        If True, p_value is two-tailed. Otherwise, it is right one-tailed. The one-tailed p_value attribute 
+        might not be appropriate for some measures, as the two-tailed. Therefore, it is better to rely on the
+        est_sim attribute.
+    **kwargs : dict
+        customizable parameters to pass to the segregation measures. Usually they need to be the same input that the seg_class was built.
     
     Attributes
     ----------
+    p_value : float
+        Pseudo One or Two-Tailed p-value estimated from the simulations
+    est_sim : numpy array
+       Estimates of the segregation measure under the null hypothesis
+    statistic : float
+        The point estimate of the segregation measure that is under test
 
-    p_value     : float
-                  Pseudo One or Two-Tailed p-value estimated from the simulations
-    
-    est_sim     : numpy array
-                  Estimates of the segregation measure under the null hypothesis
-                  
-    statistic   : float
-                  The point estimation of the segregation measure that is under test
-                
     Notes
     -----
-    
     1) The different approaches for the null hypothesis affect directly the results of the inference depending on the combination of the index type of seg_class and the null_approach chosen.
     Therefore, the user needs to be aware of how these approaches are affecting the data generation process of the simulations in order to draw meaningful conclusions. 
     For example, the Modified Dissimilarity (ModifiedDissim) and  Modified Gini (ModifiedGiniSeg) indexes, rely exactly on the distance between evenness through sampling which, therefore, the "evenness" value for null approach would not be the most appropriate for these indexes.
-    
-    2) The one-tailed p_value attribute might not be appropriate for some measures, as the two-tailed. Therefore, it is better to rely on the est_sim attribute.
-    
+
     Examples
     --------
     Several examples can be found here https://github.com/pysal/segregation/blob/master/notebooks/inference_wrappers_example.ipynb.
-    
     """
 
     def __init__(
@@ -485,7 +157,7 @@ class SingleValueTest:
         iterations_under_null=500,
         null_approach="systematic",
         two_tailed=True,
-        **kwargs
+        **kwargs,
     ):
 
         aux = _infer_segregation(
@@ -525,7 +197,7 @@ def _compare_segregation(
     seg_class_2,
     iterations_under_null=500,
     null_approach="random_label",
-    **kwargs
+    **kwargs,
 ):
     """
     Perform inference comparison for a two segregation measures
@@ -762,7 +434,7 @@ def _compare_segregation(
                     data_1_test,
                     "test_group_pop_var",
                     seg_class_1.total_pop_var,
-                    **kwargs
+                    **kwargs,
                 )[0]
 
                 # Dropping to avoid confusion in the next iteration
@@ -782,7 +454,7 @@ def _compare_segregation(
                     data_2_test,
                     "test_group_pop_var",
                     seg_class_2.total_pop_var,
-                    **kwargs
+                    **kwargs,
                 )[0]
 
                 # Dropping to avoid confusion in the next iteration
@@ -870,7 +542,7 @@ class TwoValueTest:
         seg_class_2,
         iterations_under_null=500,
         null_approach="random_label",
-        **kwargs
+        **kwargs,
     ):
 
         aux = _compare_segregation(
