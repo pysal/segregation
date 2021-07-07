@@ -1,12 +1,7 @@
-nose
-nose-progressive
-nose-exclude
-coverage
-coveralls
-matplotlib
-pandas
-ipywidgets
+codecov
 pandana
-urbanaccess
-descartes
+pytest
+pytest-mpl
+pytest-cov
 quilt3
+urbanaccess
