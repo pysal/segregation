@@ -4,7 +4,6 @@ channels:
 dependencies:
   - python=3.8
   - deprecation
-  - descartes
   - geopandas>=0.9
   - libpysal
   - mapclassify
