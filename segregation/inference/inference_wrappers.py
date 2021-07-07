@@ -26,7 +26,7 @@ def _infer_segregation(
     iterations_under_null=500,
     null_approach="systematic",
     two_tailed=True,
-    **kwargs,
+    index_kwargs=None,
 ):
     """
     Perform inference for a single segregation measure
@@ -46,7 +46,7 @@ def _infer_segregation(
         "even_permutation" : assumes the same global probability of drawning elements from the minority group in each spatial unit and randomly allocates the units over space.
     two_tailed : boolean. Please take a look at Notes (2).
         If True, p_value is two-tailed. Otherwise, it is right one-tailed.
-    **kwargs : customizable parameters to pass to the segregation measures. Usually they need to be the same input that the seg_class was built.
+    index_kwargs : customizable parameters to pass to the segregation measures. Usually they need to be the same input that the seg_class was built.
 
     Attributes
     ----------
@@ -67,7 +67,7 @@ def _infer_segregation(
     
     """
     if null_approach not in SIMULATORS.keys():
-        raise ValueError(f"null_approach must one of {SIMULATORS.keys()}")
+        raise ValueError(f"null_approach must one of {list(SIMULATORS.keys())}")
 
     if type(two_tailed) is not bool:
         raise TypeError("two_tailed is not a boolean object")
@@ -82,8 +82,8 @@ def _infer_segregation(
     Estimates_Stars = simulate_null(
         iterations=iterations_under_null,
         sim_func=SIMULATORS[null_approach],
-        seg_func=seg_class,
-        index_kwargs=kwargs,
+        seg_class=seg_class,
+        index_kwargs=index_kwargs,
     ).values
 
     # Check and, if the case, remove iterations_under_null that resulted in nan or infinite values
@@ -179,12 +179,10 @@ class SingleValueTest:
         except ImportError:
             warnings.warn("This method relies on importing `matplotlib` and `seaborn`")
 
-        f = sns.distplot(
+        f = sns.kdeplot(
             self.est_sim,
-            hist=True,
             color="darkblue",
-            hist_kws={"edgecolor": "black"},
-            kde_kws={"linewidth": 2},
+            linewidth=2,
             ax=ax,
         )
         plt.axvline(self.statistic, color="red")

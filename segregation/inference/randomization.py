@@ -31,7 +31,7 @@ def _generate_estimate(input):
 def simulate_null(
     iterations=500,
     sim_func=None,
-    seg_func=None,
+    seg_class=None,
     n_jobs=-1,
     backend="loky",
     index_kwargs=None,
@@ -59,14 +59,14 @@ def simulate_null(
     Returns
     -------
     list
-        list of segregation index values
+        pandas.Series of segregation indices for simulated data
     """
     if not index_kwargs:
         index_kwargs = {}
     if n_jobs == -1:
         n_jobs = multiprocessing.cpu_count()
     estimates = Parallel(n_jobs=n_jobs, backend=backend)(
-        delayed(_generate_estimate)((seg_func, sim_func, index_kwargs))
+        delayed(_generate_estimate)((seg_class, sim_func, index_kwargs))
         for i in tqdm(range(iterations))
     )
     return pd.Series(estimates)
@@ -193,7 +193,7 @@ def simulate_evenness(df, group=None, total=None, groups=None):
 
 
 def simulate_systematic_randomization(df, group=None, total=None, groups=None):
-    """Simulate even redistribution of population groups across spatial units.
+    """Simulate systematic redistribution of population groups across spatial units.
 
     Parameters
     ----------

@@ -252,6 +252,7 @@ def _generate_counterfactual(
 
     return df1, df2
 
+
 def _dep_message(original, replacement, when="2020-01-31", version="2.1.0"):
     msg = "Deprecated (%s): %s" % (version, original)
     msg += " is being renamed to %s." % replacement
@@ -276,49 +277,3 @@ class DeprecationHelper(object):
     def __getattr__(self, attr):
         self._warn()
         return getattr(self.new_target, attr)
-
-
-
-def project_gdf(gdf, to_crs=None, to_latlong=False):
-    """
-    lovingly copied from OSMNX <https://github.com/gboeing/osmnx/blob/master/osmnx/projection.py>
-    Project a GeoDataFrame to the UTM zone appropriate for its geometries'
-    centroid.
-    The simple calculation in this function works well for most latitudes, but
-    won't work for some far northern locations like Svalbard and parts of far
-    northern Norway.
-    Parameters
-    ----------
-    gdf : GeoDataFrame
-        the gdf to be projected
-    to_crs : dict or string or pyproj.CRS
-        if not None, just project to this CRS instead of to UTM
-    to_latlong : bool
-        if True, projects to latlong instead of to UTM
-    Returns
-    -------
-    GeoDataFrame
-    """
-    assert len(gdf) > 0, "You cannot project an empty GeoDataFrame."
-
-    # else, project the gdf to UTM
-    # if GeoDataFrame is already in UTM, just return it
-    if is_crs_utm(gdf.crs):
-        return gdf
-
-    # calculate the centroid of the union of all the geometries in the
-    # GeoDataFrame
-    avg_longitude = gdf["geometry"].unary_union.centroid.x
-
-    # calculate the UTM zone from this avg longitude and define the UTM
-    # CRS to project
-    utm_zone = int(math.floor((avg_longitude + 180) / 6.0) + 1)
-    utm_crs = "+proj=utm +zone={} +ellps=WGS84 +datum=WGS84 +units=m +no_defs".format(
-        utm_zone
-    )
-
-    # project the GeoDataFrame to the UTM CRS
-    projected_gdf = gdf.to_crs(utm_crs)
-
-    return projected_gdf
-

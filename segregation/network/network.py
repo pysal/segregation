@@ -5,7 +5,6 @@ __author__ = "Elijah Knaap <elijah.knaap@ucr.edu> Renan X. Cortes <renanc@ucr.ed
 import numpy as np
 import pandas as pd
 from warnings import warn
-from segregation.util import project_gdf
 import os
 import sys
 
@@ -56,7 +55,7 @@ def get_osm_network(geodataframe, maxdist=5000, quiet=True, **kwargs):
             "or `conda install -c udst pandana urbanaccess`")
 
     gdf = geodataframe.copy()
-    gdf = project_gdf(gdf)
+    gdf = gdf.to_crs(gdf.estimate_utm_crs())
     gdf = gdf.buffer(maxdist)
     bounds = gdf.to_crs(epsg=4326).total_bounds
 
