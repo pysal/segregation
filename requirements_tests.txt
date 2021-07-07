@@ -1,5 +1,7 @@
 codecov
+pandana
 pytest
 pytest-mpl
 pytest-cov
-twine
+quilt3
+urbanaccess
