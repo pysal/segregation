@@ -3,25 +3,26 @@ channels:
   - conda-forge
 dependencies:
   - python=3.8
-  - pandas
-  - geopandas>=0.9
-  - matplotlib
-  - scikit-learn
-  - seaborn
-  - numpy
-  - scipy
-  - pip
-  - libpysal
+  - deprecation
   - descartes
-  - coveralls
+  - geopandas>=0.9
+  - libpysal
+  - mapclassify
+  - matplotlib
+  - numpy
+  - pandana
+  - pandas
+  - pip
+  - pygeos
+  - quilt3
+  - scikit-learn
+  - scipy
+  - seaborn
+  - tqdm
+  - urbanaccess
+  # testing, etc
+  - codecov
   - pytest
   - pytest-mpl
   - pytest-cov
   - twine
-  - tqdm
-  - pandana
-  - urbanaccess
-  - mapclassify
-  - pygeos
-  - quilt3
-  - deprecation
