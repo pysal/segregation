@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from joblib import Parallel, delayed
 from tqdm.auto import tqdm
-
+from warnings import warn
 
 def _generate_estimate(input):
     if hasattr(input[0], "_original_data"):
@@ -106,7 +106,10 @@ def simulate_person_permutation(df, group=None, total=None, groups=None):
     # ensure we have a coilumn named "index"
     df = df.reset_index(drop=True)
     df = df.reset_index()
-    geoms = df[[df.geometry.name]]
+    if isinstance(df, gpd.GeoDataFrame):
+        geoms = df[[df.geometry.name]]
+    else:
+        geoms = df.assign(idx=df.index.values)[['idx']]
     if not total:
         total = "total"
         df["total"] = df[groups].sum(axis=1).astype(int)
@@ -133,7 +136,10 @@ def simulate_person_permutation(df, group=None, total=None, groups=None):
     # reaggregate by unit index
     df = df.groupby("index")["groups"].value_counts().unstack()
     df[total] = df[groups].sum(axis=1)
-    df = df.join(geoms)
+    df = df.join(geoms, how='right').fillna(0)
+    if 'idx' in df.columns:
+        df = df.drop(columns=['idx'])
+        return df
 
     return gpd.GeoDataFrame(df, geometry=geoms.geometry.name)
 
@@ -201,13 +207,17 @@ def simulate_systematic_randomization(df, group=None, total=None, groups=None):
         geodataframe with population data to be randomized
     group : str, optional
         name of column on geodataframe that holds the group total
-        (for use with single group indices)
+        (for use with singlegroup indices). 
     total : str, optional
         name of column on geodataframe that holds the total population for
-        each unit (for use with single group indices)
+        each unit. For singlegroup indices, this parameter is required. For
+        multigroup indices, this is optional if groups are not exhaustive.
     groups : list, optional
         list of columns on inut dataframe that hold total population counts
-        for each group of interest
+        for each group of interest. Note that if not passing a `total` argument,
+        groups are assumed to be exhaustive. If total is not set and groups are not
+        exhaustive, the function will estimate incorrect probabilities of choosing
+        each geographic unit.
 
     Returns
     -------
@@ -228,7 +238,9 @@ def simulate_systematic_randomization(df, group=None, total=None, groups=None):
     Reference: :cite:`allen2015more`
     """
     if groups:
-        total = 'total'
+        if not total:
+            warn("No `total` argument passed. Assuming population groups are exhaustive")
+            total = 'total'
         df[total] = df[groups].sum(axis=1)
     if group:
         assert (
