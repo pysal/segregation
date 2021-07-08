@@ -218,12 +218,17 @@ def simulate_systematic_randomization(df, group=None, total=None, groups=None):
     -------
     Simulates the random allocation of each group across geographic units, given the total population
     of each group (randomizes location totals for each group). Given the total population of
-    each group in the region, take draws from a multinomial distribution where the
-    probability of choosing each geographic unit is equal to the total regional share
-    currently residing in the unit. Results will include regional and local variation in
-    both total population and relative group shares.
+    each group in the region, take draws from a multinomial distribution where the probability of
+    choosing each geographic unit is equal to the total regional share currently residing in the unit.
+    Results are guaranteed to respect regional group totals and relative shares, but will include
+    variation in the total population of each geographic unit.
+
+    For more, see Allen, R., Burgess, S., Davidson, R., & Windmeijer, F. (2015). More reliable inference for the dissimilarity index of segregation. The Econometrics Journal, 18(1), 40–66. https://doi.org/10.1111/ectj.12039
+
+    Reference: :cite:`allen2015more`
     """
     if groups:
+        total = 'total'
         df[total] = df[groups].sum(axis=1)
     if group:
         assert (
@@ -238,8 +243,8 @@ def simulate_systematic_randomization(df, group=None, total=None, groups=None):
         n = df[group].sum()
         sim = np.random.multinomial(n, p_j)
         data_aux[group] = sim.tolist()
-    data_aux[total] = df[total].tolist()
     df_aux = pd.DataFrame.from_dict(data_aux)
+    df_aux[total] = df_aux[groups].sum(axis=1)
     if isinstance(df, gpd.GeoDataFrame):
         df_aux = df[[df.geometry.name]].reset_index().join(df_aux)
 
@@ -360,4 +365,3 @@ SIMULATORS = {
     "systematic_permutation": simulate_systematic_geo_permutation,
     "even_permutation": simulate_evenness_geo_permutation,
 }
-
