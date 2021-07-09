@@ -4,15 +4,22 @@ Inference Wrappers for Segregation measures
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu> Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
+import multiprocessing
 import warnings
 
 import geopandas as gpd
 import numpy as np
 import pandas as pd
-from segregation.util.util import _generate_counterfactual
+from joblib import Parallel, delayed
 from tqdm.auto import tqdm
 
-from .._base import MultiGroupIndex, SingleGroupIndex
+from .._base import MultiGroupIndex
+from .comparative import (
+    _estimate_counterfac_difference,
+    _estimate_random_label_difference,
+    _generate_counterfactual,
+    _prepare_random_label,
+)
 from .randomization import SIMULATORS, simulate_null
 
 __all__ = [
@@ -51,12 +58,12 @@ def _infer_segregation(
     Attributes
     ----------
     p_value     : float
-                  Pseudo One or Two-Tailed p-value estimated from the simulations
+        Pseudo One or Two-Tailed p-value estimated from the simulations
     est_sim     : numpy array
-                  Estimates of the segregation measure under the null hypothesis
+        Estimates of the segregation measure under the null hypothesis
     statistic   : float
-                  The point estimation of the segregation measure that is under test
- 
+        The point estimation of the segregation measure that is under test
+
     Notes
     -----
     1) The different approaches for the null hypothesis affect directly the results of the inference depending on the combination of the index type of seg_class and the null_approach chosen.
@@ -169,9 +176,24 @@ class SingleValueTest:
         self.statistic = aux[2]
         self._class_name = aux[3]
 
-    def plot(self, ax=None):
-        """
-        Plot the Infer_Segregation class
+    def plot(self, color="darkblue", kde=True, ax=None, **kwargs):
+        """Plot the distribution of simulated values and the index value being tested.
+
+        Parameters
+        ----------
+        color : str, optional
+            color of histogram, by default 'darkblue'
+        kde : bool, optional
+            Whether to plot the kernel density estimate along with the histogram, by default True
+        ax : matplotlib.axes, optional
+            axes object to plot onto, by default None
+        kwargs : seaborn.histplot argument, optional
+            additional keyword arguments passed to seaborn's histplot function
+
+        Returns
+        -------
+        matplotlib.axes
+            pyplot axes object
         """
         try:
             import matplotlib.pyplot as plt
@@ -179,12 +201,7 @@ class SingleValueTest:
         except ImportError:
             warnings.warn("This method relies on importing `matplotlib` and `seaborn`")
 
-        f = sns.kdeplot(
-            self.est_sim,
-            color="darkblue",
-            linewidth=2,
-            ax=ax,
-        )
+        f = sns.histplot(self.est_sim, color=color, kde=kde, ax=ax, **kwargs)
         plt.axvline(self.statistic, color="red")
         plt.title("{} (Value = {})".format(self._class_name, round(self.statistic, 3)))
         return f
@@ -193,9 +210,12 @@ class SingleValueTest:
 def _compare_segregation(
     seg_class_1,
     seg_class_2,
-    iterations_under_null=500,
+    iterations=500,
     null_approach="random_label",
-    **kwargs,
+    index_kwargs_1=None,
+    index_kwargs_2=None,
+    n_jobs=-1,
+    backend="loky",
 ):
     """
     Perform inference comparison for a two segregation measures
@@ -213,11 +233,11 @@ def _compare_segregation(
     
         "random_label"               : random label the data in each iteration
         
-        "counterfactual_composition" : randomizes the number of minority population according to both cumulative distribution function of a variable that represents the composition of the minority group. The composition is the division of the minority population of unit i divided by total population of tract i.
+        "composition" : randomizes the number of minority population according to both cumulative distribution function of a variable that represents the composition of the minority group. The composition is the division of the minority population of unit i divided by total population of tract i.
 
-        "counterfactual_share" : randomizes the number of minority population and total population according to both cumulative distribution function of a variable that represents the share of the minority group. The share is the division of the minority population of unit i divided by total population of minority population.
+        "share" : randomizes the number of minority population and total population according to both cumulative distribution function of a variable that represents the share of the minority group. The share is the division of the minority population of unit i divided by total population of minority population.
         
-        "counterfactual_dual_composition" : applies the "counterfactual_composition" for both minority and complementary groups.
+        "composition" : applies the "counterfactual_composition" for both minority and complementary groups.
 
     **kwargs : customizable parameters to pass to the segregation measures. Usually they need to be the same as both seg_class_1 and seg_class_2  was built.
     
@@ -242,12 +262,17 @@ def _compare_segregation(
     Based on Rey, Sergio J., and Myrna L. Sastré-Gutiérrez. "Interregional inequality dynamics in Mexico." Spatial Economic Analysis 5.3 (2010): 277-298.
 
     """
-
-    if not null_approach in [
+    if not index_kwargs_1:
+        index_kwargs_1 = {}
+    if not index_kwargs_2:
+        index_kwargs_2 = {}
+    if n_jobs == -1:
+        n_jobs = multiprocessing.cpu_count()
+    if null_approach not in [
         "random_label",
-        "counterfactual_composition",
-        "counterfactual_share",
-        "counterfactual_dual_composition",
+        "composition",
+        "share",
+        "dual_composition",
     ]:
         raise ValueError(
             "null_approach must one of 'random_label', 'counterfactual_composition', 'counterfactual_share', 'counterfactual_dual_composition'"
@@ -266,137 +291,31 @@ def _compare_segregation(
     data_1 = seg_class_1.data.copy()
     data_2 = seg_class_2.data.copy()
 
-    est_sim = np.empty(iterations_under_null)
-
     ################
     # RANDOM LABEL #
     ################
     if null_approach == "random_label":
 
-        data_1["grouping_variable"] = "Group_1"
-        data_2["grouping_variable"] = "Group_2"
+        stacked = _prepare_random_label(seg_class_1, seg_class_2)
 
-        if isinstance(seg_class_1, SingleGroupIndex):
-
-            # This step is just to make sure the each frequecy column is integer for the approaches and from the same type in order to be able to stack them
-            data_1.loc[:, (seg_class_1.group_pop_var, seg_class_1.total_pop_var)] = (
-                data_1.loc[:, (seg_class_1.group_pop_var, seg_class_1.total_pop_var)]
-                .round(0)
-                .astype(int)
+        estimates = Parallel(n_jobs=n_jobs, backend=backend)(
+            delayed(_estimate_random_label_difference)(
+                (stacked, seg_class_1._function, index_kwargs_1, index_kwargs_2)
             )
-
-            # random permutation needs the columns to have the same names
-            data_1 = data_1[
-                [
-                    seg_class_1.group_pop_var,
-                    seg_class_1.total_pop_var,
-                    "grouping_variable",
-                ]
-            ]
-            data_1.columns = ["group", "total", "grouping_variable"]
-
-            data_2.loc[:, (seg_class_2.group_pop_var, seg_class_2.total_pop_var)] = (
-                data_2.loc[:, (seg_class_2.group_pop_var, seg_class_2.total_pop_var)]
-                .round(0)
-                .astype(int)
-            )
-            data_2 = data_2[
-                [
-                    seg_class_2.group_pop_var,
-                    seg_class_2.total_pop_var,
-                    "grouping_variable",
-                ]
-            ]
-            data_2.columns = ["group", "total", "grouping_variable"]
-
-            stacked_data = pd.concat([data_1, data_2], axis=0)
-
-            with tqdm(total=iterations_under_null) as pbar:
-                for i in np.array(range(iterations_under_null)):
-
-                    stacked_data["grouping_variable"] = np.random.permutation(
-                        stacked_data["grouping_variable"].values
-                    )
-
-                    stacked_data_1 = stacked_data[
-                        stacked_data["grouping_variable"] == "Group_1"
-                    ]
-                    stacked_data_2 = stacked_data[
-                        stacked_data["grouping_variable"] == "Group_2"
-                    ]
-
-                    simulations_1 = seg_class_1._function(
-                        stacked_data_1, "group", "total", **kwargs
-                    )[0]
-                    simulations_2 = seg_class_2._function(
-                        stacked_data_2, "group", "total", **kwargs
-                    )[0]
-
-                    est_sim[i] = simulations_1 - simulations_2
-                    pbar.set_description(
-                        "Processed {} iterations out of {}".format(
-                            i + 1, iterations_under_null
-                        )
-                    )
-                    pbar.update(1)
-
-        if isinstance(seg_class_1, MultiGroupIndex):
-
-            groups_list = seg_class_1.groups
-
-            for i in range(len(groups_list)):
-                data_1[groups_list[i]] = round(data_1[groups_list[i]]).astype(int)
-                data_2[groups_list[i]] = round(data_2[groups_list[i]]).astype(int)
-
-            if seg_class_1.groups != seg_class_2.groups:
-                raise ValueError("MultiGroup groups should be the same")
-
-            stacked_data = pd.concat([data_1, data_2], ignore_index=True)
-
-            with tqdm(total=iterations_under_null) as pbar:
-                for i in np.array(range(iterations_under_null)):
-
-                    stacked_data["grouping_variable"] = np.random.permutation(
-                        stacked_data["grouping_variable"]
-                    )
-
-                    stacked_data_1 = stacked_data.loc[
-                        stacked_data["grouping_variable"] == "Group_1"
-                    ]
-                    stacked_data_2 = stacked_data.loc[
-                        stacked_data["grouping_variable"] == "Group_2"
-                    ]
-
-                    simulations_1 = seg_class_1._function(
-                        stacked_data_1, groups_list, **kwargs
-                    )[0]
-                    simulations_2 = seg_class_2._function(
-                        stacked_data_2, groups_list, **kwargs
-                    )[0]
-
-                    est_sim[i] = simulations_1 - simulations_2
-                    pbar.set_description(
-                        "Processed {} iterations out of {}".format(
-                            i + 1, iterations_under_null
-                        )
-                    )
-                    pbar.update(1)
+            for i in tqdm(range(iterations))
+        )
 
     ##############################
     # COUNTERFACTUAL COMPOSITION #
     ##############################
     if null_approach in [
-        "counterfactual_composition",
-        "counterfactual_share",
-        "counterfactual_dual_composition",
+        "composition",
+        "share",
+        "dual_composition",
     ]:
 
         if isinstance(seg_class_1, MultiGroupIndex):
             raise ValueError("Not implemented for MultiGroup indexes.")
-
-        internal_arg = null_approach[
-            15:
-        ]  # Remove 'counterfactual_' from the beginning of the string
 
         counterfac_df1, counterfac_df2 = _generate_counterfactual(
             data_1,
@@ -405,82 +324,45 @@ def _compare_segregation(
             seg_class_1.total_pop_var,
             seg_class_2.group_pop_var,
             seg_class_2.total_pop_var,
-            counterfactual_approach=internal_arg,
+            null_approach,
         )
 
-        if null_approach in ["counterfactual_share", "counterfactual_dual_composition"]:
+        if null_approach in ["share", "dual_composition"]:
             data_1[seg_class_1.total_pop_var] = counterfac_df1[
                 "counterfactual_total_pop"
             ]
             data_2[seg_class_2.total_pop_var] = counterfac_df2[
                 "counterfactual_total_pop"
             ]
-        with tqdm(total=iterations_under_null) as pbar:
-            for i in np.array(range(iterations_under_null)):
 
-                data_1["fair_coin"] = np.random.uniform(size=len(data_1))
-                data_1["test_group_pop_var"] = np.where(
-                    data_1["fair_coin"] > 0.5,
-                    data_1[seg_class_1.group_pop_var],
-                    counterfac_df1["counterfactual_group_pop"],
-                )
-
-                # Dropping to avoid confusion in the internal function
-                data_1_test = data_1.drop([seg_class_1.group_pop_var], axis=1)
-
-                simulations_1 = seg_class_1._function(
-                    data_1_test,
-                    "test_group_pop_var",
+        estimates = Parallel(n_jobs=n_jobs, backend=backend)(
+            delayed(_estimate_counterfac_difference)(
+                (
+                    data_1,
+                    data_2,
+                    seg_class_1.group_pop_var,
                     seg_class_1.total_pop_var,
-                    **kwargs,
-                )[0]
-
-                # Dropping to avoid confusion in the next iteration
-                data_1 = data_1.drop(["fair_coin", "test_group_pop_var"], axis=1)
-
-                data_2["fair_coin"] = np.random.uniform(size=len(data_2))
-                data_2["test_group_pop_var"] = np.where(
-                    data_2["fair_coin"] > 0.5,
-                    data_2[seg_class_2.group_pop_var],
-                    counterfac_df2["counterfactual_group_pop"],
-                )
-
-                # Dropping to avoid confusion in the internal function
-                data_2_test = data_2.drop([seg_class_2.group_pop_var], axis=1)
-
-                simulations_2 = seg_class_2._function(
-                    data_2_test,
-                    "test_group_pop_var",
+                    seg_class_2.group_pop_var,
                     seg_class_2.total_pop_var,
-                    **kwargs,
-                )[0]
-
-                # Dropping to avoid confusion in the next iteration
-                data_2 = data_2.drop(["fair_coin", "test_group_pop_var"], axis=1)
-
-                est_sim[i] = simulations_1 - simulations_2
-
-                pbar.set_description(
-                    "Processed {} iterations out of {}".format(
-                        i + 1, iterations_under_null
-                    )
+                    index_kwargs_1,
+                    index_kwargs_2,
+                    null_approach,
+                    seg_class_1._function,
                 )
-                pbar.update(1)
-
-    # Check and, if the case, remove iterations_under_null that resulted in nan or infinite values
-    if any((np.isinf(est_sim) | np.isnan(est_sim))):
-        warnings.warn(
-            "Some estimates resulted in NaN or infinite values for estimations under null hypothesis. These values will be removed for the final results."
+            )
+            for i in tqdm(range(iterations))
         )
-        est_sim = est_sim[~(np.isinf(est_sim) | np.isnan(est_sim))]
+        estimates = pd.Series(estimates).dropna()
+        if len(estimates) < iterations:
+            warnings.warn("Some observations were removed for NA values")
 
     # Two-Tailed p-value
     # Obs.: the null distribution can be located far from zero. Therefore, this is the the appropriate way to calculate the two tailed p-value.
-    aux1 = (point_estimation < est_sim).sum()
-    aux2 = (point_estimation > est_sim).sum()
-    p_value = 2 * np.array([aux1, aux2]).min() / len(est_sim)
+    aux1 = (point_estimation < estimates).sum()
+    aux2 = (point_estimation > estimates).sum()
+    p_value = 2 * np.array([aux1, aux2]).min() / len(estimates)
 
-    return p_value, est_sim, point_estimation, _class_name
+    return p_value, estimates, point_estimation, _class_name
 
 
 class TwoValueTest:
@@ -552,9 +434,25 @@ class TwoValueTest:
         self.est_point_diff = aux[2]
         self._class_name = aux[3]
 
-    def plot(self, ax=None):
-        """
-        Plot the Compare_Segregation class
+    def plot(self, color="darkblue", kde=True, ax=None, **kwargs):
+        """Plot the distribution of simulated values and the index value being tested.
+
+        Parameters
+        ----------
+        color : str, optional
+            histogram color, by default 'darkblue'
+        kde : bool, optional
+            Whether to plot the kernel density estimate along with the histogram,
+            by default True
+        ax : matplotlib.axes, optional
+            axes object to plot onto, by default None
+        kwargs : seaborn.histplot argument, optional
+            additional keyword arguments passed to seaborn's histplot function
+
+        Returns
+        -------
+        matplotlib.axes
+            pyplot axes object
         """
         try:
             import matplotlib.pyplot as plt
@@ -562,14 +460,7 @@ class TwoValueTest:
         except ImportError:
             warnings.warn("This method relies on importing `matplotlib` and `seaborn`")
 
-        f = sns.distplot(
-            self.est_sim,
-            hist=True,
-            color="darkblue",
-            hist_kws={"edgecolor": "black"},
-            kde_kws={"linewidth": 2},
-            ax=ax,
-        )
+        f = sns.histplot(self.est_sim, color=color, kde=kde, ax=ax, **kwargs)
         plt.axvline(self.est_point_diff, color="red")
         plt.title(
             "{} (Diff. value = {})".format(
@@ -577,3 +468,4 @@ class TwoValueTest:
             )
         )
         return f
+

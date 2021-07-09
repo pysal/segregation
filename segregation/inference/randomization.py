@@ -172,8 +172,8 @@ def simulate_evenness(df, group=None, total=None, groups=None):
     each geographic unit (randomizes group totals for each location). Given the total
     population of each location, take draws from a multinomial distribution to assign
     group categories for each person, where the probability of each group is equal to
-    its regional share. Results are guaranteed to match regional and local population
-    totals, but will include variation in the relative share of each group
+    its regional share. Results are guaranteed to match local population
+    totals, but will include variation in the regional totals for each group
     """
     df = df.copy()
     geoms = df[df.geometry.name].values
@@ -230,8 +230,8 @@ def simulate_systematic_randomization(df, group=None, total=None, groups=None):
     of each group (randomizes location totals for each group). Given the total population of
     each group in the region, take draws from a multinomial distribution where the probability of
     choosing each geographic unit is equal to the total regional share currently residing in the unit.
-    Results are guaranteed to respect regional group totals and relative shares, but will include
-    variation in the total population of each geographic unit.
+    Results are guaranteed to respect regional group totals, but will include variation in the total
+    population of each geographic unit.
 
     For more, see Allen, R., Burgess, S., Davidson, R., & Windmeijer, F. (2015). More reliable inference for the dissimilarity index of segregation. The Econometrics Journal, 18(1), 40–66. https://doi.org/10.1111/ectj.12039
 
