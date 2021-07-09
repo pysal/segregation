@@ -9,7 +9,7 @@ import warnings
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
-from segregation.util.util import _generate_counterfactual
+from segregation.inference.comparative import _generate_counterfactual
 
 # Including old and new api in __all__ so users can use both
 
