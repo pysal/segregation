@@ -358,9 +358,9 @@ def _compare_segregation(
             )
             for i in tqdm(range(iterations))
         )
-        estimates = pd.Series(estimates).dropna()
-        if len(estimates) < iterations:
-            warnings.warn("Some observations were removed for NA values")
+    estimates = pd.Series(estimates).dropna()
+    if len(estimates) < iterations:
+        warnings.warn("Some observations were removed for NA values")
 
     # Two-Tailed p-value
     # Obs.: the null distribution can be located far from zero. Therefore, this is the the appropriate way to calculate the two tailed p-value.
