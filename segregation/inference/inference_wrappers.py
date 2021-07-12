@@ -1,13 +1,10 @@
-"""
-Inference Wrappers for Segregation measures
-"""
+"""Inference wrapper classes for segregation measures."""
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu> Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
 import multiprocessing
 import warnings
 
-import geopandas as gpd
 import numpy as np
 import pandas as pd
 from joblib import Parallel, delayed
@@ -67,9 +64,9 @@ def _infer_segregation(
     1) The different approaches for the null hypothesis affect directly the results of the inference depending on the combination of the index type of seg_class and the null_approach chosen.
     Therefore, the user needs to be aware of how these approaches are affecting the data generation process of the simulations in order to draw meaningful conclusions. 
     For example, the Modified Dissimilarity (ModifiedDissim) and  Modified Gini (ModifiedGiniSeg) indexes, rely exactly on the distance between evenness through sampling which, therefore, the "evenness" value for null approach would not be the most appropriate for these indexes.
-    
+
     2) The one-tailed p_value attribute might not be appropriate for some measures, as the two-tailed. Therefore, it is better to rely on the est_sim attribute.
-    
+
     """
     if null_approach not in SIMULATORS.keys():
         raise ValueError(f"null_approach must one of {list(SIMULATORS.keys())}")
@@ -221,8 +218,7 @@ def _compare_segregation(
     n_jobs=-1,
     backend="loky",
 ):
-    """
-    Perform inference comparison for a two segregation measures
+    """Perform inference comparison for a two segregation measures
 
     Parameters
     ----------
@@ -264,8 +260,8 @@ def _compare_segregation(
     The null hypothesis is H0: Segregation_1 is not different than Segregation_2.
     
     Based on Rey, Sergio J., and Myrna L. Sastré-Gutiérrez. "Interregional inequality dynamics in Mexico." Spatial Economic Analysis 5.3 (2010): 277-298.
-
     """
+
     if not index_kwargs_1:
         index_kwargs_1 = {}
     if not index_kwargs_2:
@@ -295,23 +291,28 @@ def _compare_segregation(
     data_1 = seg_class_1.data.copy()
     data_2 = seg_class_2.data.copy()
 
-    ################
-    # RANDOM LABEL #
-    ################
     if null_approach == "random_label":
+        if isinstance(seg_class_1, MultiGroupIndex):
+            groups = seg_class_1.groups
+        else:
+            groups = None
 
         stacked = _prepare_random_label(seg_class_1, seg_class_2)
 
         estimates = Parallel(n_jobs=n_jobs, backend=backend)(
             delayed(_estimate_random_label_difference)(
-                (stacked, seg_class_1._function, index_kwargs_1, index_kwargs_2)
+                (
+                    stacked,
+                    seg_class_1._function,
+                    index_kwargs_1,
+                    index_kwargs_2,
+                    seg_class_1.index_type,
+                    groups,
+                )
             )
             for i in tqdm(range(iterations))
         )
 
-    ##############################
-    # COUNTERFACTUAL COMPOSITION #
-    ##############################
     if null_approach in [
         "composition",
         "share",
@@ -385,10 +386,10 @@ class TwoValueTest:
     null_approach : str
         which type of null hypothesis the inference will iterate.
 
-            "random_label" : random label the data in each iteration
-            "composition" : randomizes the number of minority population according to both cumulative distribution function of a variable that represents the composition of the minority group. The composition is the division of the minority population of unit i divided by total population of tract i.
-            "share" : randomizes the number of minority population and total population according to both cumulative distribution function of a variable that represents the share of the minority group. The share is the division of the minority population of unit i divided by total population of minority population.
-            "dual_composition" : applies the "counterfactual_composition" for both minority and complementary groups.
+            * "random_label" : random label the data in each iteration
+            * "composition" : randomizes the number of minority population according to both cumulative distribution function of a variable that represents the composition of the minority group. The composition is the division of the minority population of unit i divided by total population of tract i.
+            * "share" : randomizes the number of minority population and total population according to both cumulative distribution function of a variable that represents the share of the minority group. The share is the division of the minority population of unit i divided by total population of minority population.
+            * "dual_composition" : applies the "counterfactual_composition" for both minority and complementary groups.
     n_jobs: int, optional
         number of cores to use for estimation. If -1 all available cpus will be used
     backend: str, optional
@@ -397,27 +398,27 @@ class TwoValueTest:
         extra parameters to pass to segregation index 1.
     index_kwargs_2 : dict, optional
         extra parameters to pass to segregation index 2.
-    
+
     Attributes
     ----------
-    p_value        : float
-                     Two-Tailed p-value
-    est_sim        : numpy array
-                     Estimates of the segregation measure differences under the null hypothesis
+    p_value : float
+        Two-Tailed p-value
+    est_sim : numpy array
+        Estimates of the segregation measure differences under the null hypothesis
     est_point_diff : float
-                     Point estimation of the difference between the segregation measures
-
+        Point estimation of the difference between the segregation measures
 
     Notes
     -----
-    This function performs inference to compare two segregation measures. This can be either two measures of the same locations in two different points in time or it can be two different locations at the same point in time.
-    The null hypothesis is H0: Segregation_1 is not different than Segregation_2.
+    This function performs inference to compare two segregation measures. This can be either
+    two measures of the same locations in two different points in time or it can be two
+    different locations at the same point in time. The null hypothesis is H0: Segregation_1
+    is not different than Segregation_2.
     Based on Rey, Sergio J., and Myrna L. Sastré-Gutiérrez. "Interregional inequality dynamics in Mexico." Spatial Economic Analysis 5.3 (2010): 277-298.
-    
+
     Examples
     --------
     Several examples can be found here https://github.com/pysal/segregation/blob/master/notebooks/inference_wrappers_example.ipynb.
-
     """
 
     def __init__(
@@ -483,4 +484,3 @@ class TwoValueTest:
             )
         )
         return f
-

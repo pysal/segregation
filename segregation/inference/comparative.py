@@ -1,15 +1,9 @@
-"""Tools for simulating comparative datasets across spatial contexts"""
+"""Tools for simulating comparative datasets across spatial contexts."""
 
-import itertools
-import multiprocessing
-
-import geopandas as gpd
 import numpy as np
 import pandas as pd
-from joblib import Parallel, delayed
-from tqdm.auto import tqdm
 
-from .._base import SingleGroupIndex, MultiGroupIndex
+from .._base import MultiGroupIndex, SingleGroupIndex
 
 
 def _generate_counterfactual(
@@ -101,12 +95,12 @@ def sim_composition(
     """
     df1 = df1.copy()
     df2 = df2.copy()
-    if hasattr(df1, 'geometry'):
+    if hasattr(df1, "geometry"):
         df1 = df1[[group_pop_var1, total_pop_var1, df1.geometry.name]]
     else:
         df1 = df1[[group_pop_var1, total_pop_var1]]
 
-    if hasattr(df2, 'geometry'):
+    if hasattr(df2, "geometry"):
         df2 = df2[[group_pop_var2, total_pop_var2, df2.geometry.name]]
     else:
         df2 = df2[[group_pop_var2, total_pop_var2]]
@@ -157,12 +151,12 @@ def sim_dual_composition(
     """
     df1 = df1.copy()
     df2 = df2.copy()
-    if hasattr(df1, 'geometry'):
+    if hasattr(df1, "geometry"):
         df1 = df1[[group_pop_var1, total_pop_var1, df1.geometry.name]]
     else:
         df1 = df1[[group_pop_var1, total_pop_var1]]
 
-    if hasattr(df2, 'geometry'):
+    if hasattr(df2, "geometry"):
         df2 = df2[[group_pop_var2, total_pop_var2, df2.geometry.name]]
     else:
         df2 = df2[[group_pop_var2, total_pop_var2]]
@@ -232,16 +226,16 @@ def sim_share(
     """
     df1 = df1.copy()
     df2 = df2.copy()
-    if hasattr(df1, 'geometry'):
+    if hasattr(df1, "geometry"):
         df1 = df1[[group_pop_var1, total_pop_var1, df1.geometry.name]]
     else:
         df1 = df1[[group_pop_var1, total_pop_var1]]
 
-    if hasattr(df2, 'geometry'):
+    if hasattr(df2, "geometry"):
         df2 = df2[[group_pop_var2, total_pop_var2, df2.geometry.name]]
     else:
         df2 = df2[[group_pop_var2, total_pop_var2]]
-    
+
     df1["compl_pop_var"] = df1[total_pop_var1] - df1[group_pop_var1]
     df2["compl_pop_var"] = df2[total_pop_var2] - df2[group_pop_var2]
 
@@ -356,6 +350,8 @@ def _estimate_random_label_difference(data):
     function = data[1]
     index_args_1 = data[2]
     index_args_2 = data[3]
+    idx_type = data[4]
+    groups = data[5]
 
     stacked_data["grouping_variable"] = np.random.permutation(
         stacked_data["grouping_variable"].values
@@ -363,9 +359,12 @@ def _estimate_random_label_difference(data):
 
     stacked_data_1 = stacked_data[stacked_data["grouping_variable"] == "Group_1"]
     stacked_data_2 = stacked_data[stacked_data["grouping_variable"] == "Group_2"]
-
-    simulations_1 = function(stacked_data_1, "group", "total", **index_args_1)[0]
-    simulations_2 = function(stacked_data_2, "group", "total", **index_args_2)[0]
+    if idx_type == "singlegroup":
+        simulations_1 = function(stacked_data_1, "group", "total", **index_args_1)[0]
+        simulations_2 = function(stacked_data_2, "group", "total", **index_args_2)[0]
+    elif idx_type == "multigroup":
+        simulations_1 = function(stacked_data_1, groups, **index_args_1)[0]
+        simulations_2 = function(stacked_data_2, groups, **index_args_2)[0]
 
     est = simulations_1 - simulations_2
 
