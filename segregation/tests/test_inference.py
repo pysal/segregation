@@ -42,7 +42,7 @@ class Inference_Tester(unittest.TestCase):
             index1, null_approach="evenness", iterations_under_null=50
         )
         np.testing.assert_almost_equal(
-            res.est_sim.mean(), 0.01596295861644252, decimal=3
+            res.est_sim.mean(), 0.01596295861644252, decimal=2
         )
 
         np.random.seed(123)
@@ -50,7 +50,7 @@ class Inference_Tester(unittest.TestCase):
             index1, null_approach="geographic_permutation", iterations_under_null=50
         )
         np.testing.assert_almost_equal(
-            res.est_sim.mean(), 0.32184656076566864, decimal=3
+            res.est_sim.mean(), 0.32184656076566864, decimal=2
         )
 
         np.random.seed(123)
@@ -66,7 +66,7 @@ class Inference_Tester(unittest.TestCase):
             index1, null_approach="even_permutation", iterations_under_null=50
         )
         np.testing.assert_almost_equal(
-            res.est_sim.mean(), 0.01619436868061094, decimal=3
+            res.est_sim.mean(), 0.01619436868061094, decimal=2
         )
 
         np.random.seed(123)
@@ -82,7 +82,7 @@ class Inference_Tester(unittest.TestCase):
             m_index, null_approach="evenness", iterations_under_null=50
         )
         np.testing.assert_almost_equal(
-            res.est_sim.mean(), 0.01633979237418177, decimal=3
+            res.est_sim.mean(), 0.01633979237418177, decimal=2
         )
 
         # Two Value Tests #
@@ -113,7 +113,7 @@ class Inference_Tester(unittest.TestCase):
             iterations_under_null=50,
         )
         np.testing.assert_almost_equal(
-            res.est_sim.mean(), -0.034350440515125, decimal=3
+            res.est_sim.mean(), -0.034350440515125, decimal=2
         )
 
         np.random.seed(123)
