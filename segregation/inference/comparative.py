@@ -51,25 +51,6 @@ def _generate_counterfactual(
         df1 and df2  with appended columns 'counterfactual_group_pop', 'counterfactual_total_pop', 'group_composition' and 'counterfactual_composition'
 
     """
-    if (group_pop_var1 not in data1.columns) or (total_pop_var1 not in data1.columns):
-        raise ValueError("group_pop_var and total_pop_var must be variables of data1")
-
-    if (group_pop_var2 not in data2.columns) or (total_pop_var2 not in data2.columns):
-        raise ValueError("group_pop_var and total_pop_var must be variables of data2")
-
-    if any(data1[total_pop_var1] < data1[group_pop_var1]):
-        raise ValueError(
-            "Group of interest population must equal or lower than the total population of the units in data1."
-        )
-
-    if any(data2[total_pop_var2] < data2[group_pop_var2]):
-        raise ValueError(
-            "Group of interest population must equal or lower than the total population of the units in data2."
-        )
-
-    df1 = data1.copy()
-    df2 = data2.copy()
-
     df1, df2 = DUAL_SIMULATORS[counterfactual_approach](
         data1, data2, group_pop_var1, total_pop_var1, group_pop_var2, total_pop_var2,
     )
@@ -100,24 +81,36 @@ def sim_composition(
 
     Parameters
     ----------
-    df1 : [type]
-        [description]
-    df2 : [type]
-        [description]
-    group_pop_var1 : [type]
-        [description]
-    total_pop_var1 : [type]
-        [description]
-    group_pop_var2 : [type]
-        [description]
-    total_pop_var2 : [type]
-        [description]
+    df1 : pandas.DataFrame or geopandas.GeoDataFrame
+        dataframe for first dataset with columns holding group and total population counts
+    df2 : pandas.DataFrame or geopandas.GeoDataFrame
+        dataframe for second dataset with columns holding group and total population counts
+    group_pop_var1 : str
+        column holding population counts for group of interest on input df1
+    total_pop_var1 : str
+        column holding total population counts on input df1
+    group_pop_var2 : str
+        column holding population counts for group of interest on input df2
+    total_pop_var2 : str
+        column holding total population counts on input df2
 
     Returns
     -------
     [type]
         [description]
     """
+    df1 = df1.copy()
+    df2 = df2.copy()
+    if hasattr(df1, 'geometry'):
+        df1 = df1[[group_pop_var1, total_pop_var1, df1.geometry.name]]
+    else:
+        df1 = df1[[group_pop_var1, total_pop_var1]]
+
+    if hasattr(df2, 'geometry'):
+        df2 = df2[[group_pop_var2, total_pop_var2, df2.geometry.name]]
+    else:
+        df2 = df2[[group_pop_var2, total_pop_var2]]
+
     df1["group_composition"] = (df1[group_pop_var1] / df1[total_pop_var1]).fillna(0)
     df2["group_composition"] = (df2[group_pop_var2] / df2[total_pop_var2]).fillna(0)
 
@@ -144,24 +137,36 @@ def sim_dual_composition(
 
     Parameters
     ----------
-    df1 : [type]
-        [description]
-    df2 : [type]
-        [description]
-    group_pop_var1 : [type]
-        [description]
-    total_pop_var1 : [type]
-        [description]
-    group_pop_var2 : [type]
-        [description]
-    total_pop_var2 : [type]
-        [description]
+    df1 : pandas.DataFrame or geopandas.GeoDataFrame
+        dataframe for first dataset with columns holding group and total population counts
+    df2 : pandas.DataFrame or geopandas.GeoDataFrame
+        dataframe for second dataset with columns holding group and total population counts
+    group_pop_var1 : str
+        column holding population counts for group of interest on input df1
+    total_pop_var1 : str
+        column holding total population counts on input df1
+    group_pop_var2 : str
+        column holding population counts for group of interest on input df2
+    total_pop_var2 : str
+        column holding total population counts on input df2
 
     Returns
     -------
     [type]
         [description]
     """
+    df1 = df1.copy()
+    df2 = df2.copy()
+    if hasattr(df1, 'geometry'):
+        df1 = df1[[group_pop_var1, total_pop_var1, df1.geometry.name]]
+    else:
+        df1 = df1[[group_pop_var1, total_pop_var1]]
+
+    if hasattr(df2, 'geometry'):
+        df2 = df2[[group_pop_var2, total_pop_var2, df2.geometry.name]]
+    else:
+        df2 = df2[[group_pop_var2, total_pop_var2]]
+
     df1["group_composition"] = (df1[group_pop_var1] / df1[total_pop_var1]).fillna(0)
     df2["group_composition"] = (df2[group_pop_var2] / df2[total_pop_var2]).fillna(0)
 
@@ -207,24 +212,36 @@ def sim_share(
 
     Parameters
     ----------
-    df1 : [type]
-        [description]
-    df2 : [type]
-        [description]
-    group_pop_var1 : [type]
-        [description]
-    total_pop_var1 : [type]
-        [description]
-    group_pop_var2 : [type]
-        [description]
-    total_pop_var2 : [type]
-        [description]
+    df1 : pandas.DataFrame or geopandas.GeoDataFrame
+        dataframe for first dataset with columns holding group and total population counts
+    df2 : pandas.DataFrame or geopandas.GeoDataFrame
+        dataframe for second dataset with columns holding group and total population counts
+    group_pop_var1 : str
+        column holding population counts for group of interest on input df1
+    total_pop_var1 : str
+        column holding total population counts on input df1
+    group_pop_var2 : str
+        column holding population counts for group of interest on input df2
+    total_pop_var2 : str
+        column holding total population counts on input df2
 
     Returns
     -------
     [type]
         [description]
     """
+    df1 = df1.copy()
+    df2 = df2.copy()
+    if hasattr(df1, 'geometry'):
+        df1 = df1[[group_pop_var1, total_pop_var1, df1.geometry.name]]
+    else:
+        df1 = df1[[group_pop_var1, total_pop_var1]]
+
+    if hasattr(df2, 'geometry'):
+        df2 = df2[[group_pop_var2, total_pop_var2, df2.geometry.name]]
+    else:
+        df2 = df2[[group_pop_var2, total_pop_var2]]
+    
     df1["compl_pop_var"] = df1[total_pop_var1] - df1[group_pop_var1]
     df2["compl_pop_var"] = df2[total_pop_var2] - df2[group_pop_var2]
 
@@ -276,7 +293,7 @@ def sim_share(
     df2["counterfactual_total_pop"] = (
         df2["counterfactual_group_pop"] + df2["counterfactual_compl_pop"]
     )
-    return df1, df2
+    return df1.fillna(0), df2.fillna(0)
 
 
 def _prepare_random_label(seg_class_1, seg_class_2):
@@ -284,7 +301,7 @@ def _prepare_random_label(seg_class_1, seg_class_2):
         data_1 = seg_class_1._original_data.copy()
     else:
         data_1 = seg_class_1.data.copy()
-    if hasattr(seg_class_2,'_original_data'):
+    if hasattr(seg_class_2, "_original_data"):
         data_2 = seg_class_2._original_data.copy()
     else:
         data_2 = seg_class_2.data.copy()
@@ -358,6 +375,9 @@ def _estimate_random_label_difference(data):
 def _estimate_counterfac_difference(data):
     data_1 = data[0]
     data_2 = data[1]
+    counterfac_df1 = data[10]
+    counterfac_df2 = data[11]
+
     group_1 = data[2]
     total_1 = data[3]
     group_2 = data[4]
@@ -366,10 +386,6 @@ def _estimate_counterfac_difference(data):
     index_args_2 = data[7]
     approach = data[8]
     function = data[9]
-
-    counterfac_df1, counterfac_df2 = _generate_counterfactual(
-        data_1, data_2, group_1, total_1, group_2, total_2, approach
-    )
 
     if approach in ["counterfactual_share", "counterfactual_dual_composition"]:
         data_1[total_1] = counterfac_df1["counterfactual_total_pop"]
@@ -414,10 +430,8 @@ def _estimate_counterfac_difference(data):
     return est
 
 
-
 DUAL_SIMULATORS = {
     "composition": sim_composition,
     "dual_composition": sim_dual_composition,
     "share": sim_share,
 }
-

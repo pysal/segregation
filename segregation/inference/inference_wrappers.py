@@ -14,18 +14,10 @@ from joblib import Parallel, delayed
 from tqdm.auto import tqdm
 
 from .._base import MultiGroupIndex
-from .comparative import (
-    _estimate_counterfac_difference,
-    _estimate_random_label_difference,
-    _generate_counterfactual,
-    _prepare_random_label,
-)
+from .comparative import (DUAL_SIMULATORS, _estimate_counterfac_difference,
+                          _estimate_random_label_difference,
+                          _generate_counterfactual, _prepare_random_label)
 from .randomization import SIMULATORS, simulate_null
-
-__all__ = [
-    "SingleValueTest",
-    "TwoValueTest",
-]
 
 
 def _infer_segregation(
@@ -34,9 +26,10 @@ def _infer_segregation(
     null_approach="systematic",
     two_tailed=True,
     index_kwargs=None,
+    n_jobs=-1,
+    backend="loky",
 ):
-    """
-    Perform inference for a single segregation measure
+    """Perform inference for a single segregation measure.
 
     Parameters
     ----------
@@ -53,7 +46,12 @@ def _infer_segregation(
         "even_permutation" : assumes the same global probability of drawning elements from the minority group in each spatial unit and randomly allocates the units over space.
     two_tailed : boolean. Please take a look at Notes (2).
         If True, p_value is two-tailed. Otherwise, it is right one-tailed.
-    index_kwargs : customizable parameters to pass to the segregation measures. Usually they need to be the same input that the seg_class was built.
+    n_jobs: int, optional
+        number of cores to use for estimation. If -1 all available cpus will be used
+    backend: str, optional
+        which backend to use with joblib. Options include "loky", "multiprocessing", or "threading"
+    index_kwargs : dict, optional
+        customizable parameters to pass to the segregation measures. Usually they need to be the same input that the seg_class was built.
 
     Attributes
     ----------
@@ -91,6 +89,8 @@ def _infer_segregation(
         sim_func=SIMULATORS[null_approach],
         seg_class=seg_class,
         index_kwargs=index_kwargs,
+        n_jobs=n_jobs,
+        backend=backend,
     ).values
 
     # Check and, if the case, remove iterations_under_null that resulted in nan or infinite values
@@ -131,13 +131,17 @@ class SingleValueTest:
             * "geographic_permutation" : randomly allocates the units over space keeping the original values.
             * "systematic_permutation" : assumes absence of systematic segregation and randomly allocates the units over space.
             * "even_permutation" : assumes the same global probability of drawning elements from the minority group in each spatial unit and randomly allocates the units over space.
-    two_tailed : boolean. 
+    two_tailed : boolean
         If True, p_value is two-tailed. Otherwise, it is right one-tailed. The one-tailed p_value attribute 
         might not be appropriate for some measures, as the two-tailed. Therefore, it is better to rely on the
         est_sim attribute.
-    **kwargs : dict
+    n_jobs: int, optional
+        number of cores to use for estimation. If -1 all available cpus will be used
+    backend: str, optional
+        which backend to use with joblib. Options include "loky", "multiprocessing", or "threading"
+    index_kwargs : dict, optional
         customizable parameters to pass to the segregation measures. Usually they need to be the same input that the seg_class was built.
-    
+
     Attributes
     ----------
     p_value : float
@@ -275,7 +279,7 @@ def _compare_segregation(
         "dual_composition",
     ]:
         raise ValueError(
-            "null_approach must one of 'random_label', 'counterfactual_composition', 'counterfactual_share', 'counterfactual_dual_composition'"
+            f"null_approach must one of {list(DUAL_SIMULATORS.keys())+['random_label']}"
         )
 
     if type(seg_class_1) != type(seg_class_2):
@@ -348,6 +352,8 @@ def _compare_segregation(
                     index_kwargs_2,
                     null_approach,
                     seg_class_1._function,
+                    counterfac_df1,
+                    counterfac_df2,
                 )
             )
             for i in tqdm(range(iterations))
@@ -366,48 +372,46 @@ def _compare_segregation(
 
 
 class TwoValueTest:
-    """
-    Perform inference comparison for a two segregation measures
+    """Perform comparative inferencefor two segregation measures.
 
     Parameters
     ----------
+    seg_class_1 : segregation.singlegroup or segregation.multigroup class
+        a fitted segregation class to be compared to seg_class_2
+    seg_class_2 :
+        a fitted segregation class to be compared to seg_class_1
+    iterations_under_null : int
+        number of iterations under null hyphothesis
+    null_approach : str
+        which type of null hypothesis the inference will iterate.
 
-    seg_class_1           : a PySAL segregation object to be compared to seg_class_2
-    
-    seg_class_2           : a PySAL segregation object to be compared to seg_class_1
-    
-    iterations_under_null : number of iterations under null hyphothesis
-    
-    null_approach : argument that specifies which type of null hypothesis the inference will iterate.
-    
-        "random_label"      : random label the data in each iteration
-        
-        "counterfactual_composition" : randomizes the number of minority population according to both cumulative distribution function of a variable that represents the composition of the minority group. The composition is the division of the minority population of unit i divided by total population of tract i.
-
-        "counterfactual_share" : randomizes the number of minority population and total population according to both cumulative distribution function of a variable that represents the share of the minority group. The share is the division of the minority population of unit i divided by total population of minority population.
-        
-        "counterfactual_dual_composition" : applies the "counterfactual_composition" for both minority and complementary groups.
-
-    **kwargs : customizable parameters to pass to the segregation measures. Usually they need to be the same as both seg_class_1 and seg_class_2  was built.
+            "random_label" : random label the data in each iteration
+            "composition" : randomizes the number of minority population according to both cumulative distribution function of a variable that represents the composition of the minority group. The composition is the division of the minority population of unit i divided by total population of tract i.
+            "share" : randomizes the number of minority population and total population according to both cumulative distribution function of a variable that represents the share of the minority group. The share is the division of the minority population of unit i divided by total population of minority population.
+            "dual_composition" : applies the "counterfactual_composition" for both minority and complementary groups.
+    n_jobs: int, optional
+        number of cores to use for estimation. If -1 all available cpus will be used
+    backend: str, optional
+        which backend to use with joblib. Options include "loky", "multiprocessing", or "threading"
+    index_kwargs_1 : dict, optional
+        extra parameters to pass to segregation index 1.
+    index_kwargs_2 : dict, optional
+        extra parameters to pass to segregation index 2.
     
     Attributes
     ----------
-
     p_value        : float
                      Two-Tailed p-value
-    
     est_sim        : numpy array
                      Estimates of the segregation measure differences under the null hypothesis
-                  
     est_point_diff : float
                      Point estimation of the difference between the segregation measures
-                
+
+
     Notes
     -----
     This function performs inference to compare two segregation measures. This can be either two measures of the same locations in two different points in time or it can be two different locations at the same point in time.
-    
     The null hypothesis is H0: Segregation_1 is not different than Segregation_2.
-    
     Based on Rey, Sergio J., and Myrna L. Sastré-Gutiérrez. "Interregional inequality dynamics in Mexico." Spatial Economic Analysis 5.3 (2010): 277-298.
     
     Examples
@@ -422,11 +426,22 @@ class TwoValueTest:
         seg_class_2,
         iterations_under_null=500,
         null_approach="random_label",
+        n_jobs=-1,
+        backend="loky",
+        index_kwargs_1=None,
+        index_kwargs_2=None,
         **kwargs,
     ):
 
         aux = _compare_segregation(
-            seg_class_1, seg_class_2, iterations_under_null, null_approach, **kwargs
+            seg_class_1,
+            seg_class_2,
+            iterations_under_null,
+            null_approach,
+            n_jobs=n_jobs,
+            backend=backend,
+            index_kwargs_1=index_kwargs_1,
+            index_kwargs_2=index_kwargs_2,
         )
 
         self.p_value = aux[0]
