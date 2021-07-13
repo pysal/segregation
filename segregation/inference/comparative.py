@@ -90,8 +90,8 @@ def sim_composition(
 
     Returns
     -------
-    [type]
-        [description]
+    two pandas.DataFrame
+        dataframes with simulated population columns appended
     """
     df1 = df1.copy()
     df2 = df2.copy()
@@ -146,8 +146,8 @@ def sim_dual_composition(
 
     Returns
     -------
-    [type]
-        [description]
+    two pandas.DataFrame
+        dataframes with simulated population columns appended
     """
     df1 = df1.copy()
     df2 = df2.copy()
@@ -221,8 +221,8 @@ def sim_share(
 
     Returns
     -------
-    [type]
-        [description]
+    two pandas.DataFrame
+        dataframes with simulated population columns appended
     """
     df1 = df1.copy()
     df2 = df2.copy()
