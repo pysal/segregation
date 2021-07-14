@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 
 from .._base import MultiGroupIndex, SingleGroupIndex
+from .randomization import simulate_person_permutation
 
 
 def _generate_counterfactual(
@@ -48,7 +49,6 @@ def _generate_counterfactual(
     df1, df2 = DUAL_SIMULATORS[counterfactual_approach](
         data1, data2, group_pop_var1, total_pop_var1, group_pop_var2, total_pop_var2,
     )
-
     df1["group_composition"] = (df1[group_pop_var1] / df1[total_pop_var1]).fillna(0)
     df2["group_composition"] = (df2[group_pop_var2] / df2[total_pop_var2]).fillna(0)
 
@@ -68,10 +68,12 @@ def _generate_counterfactual(
 def sim_composition(
     df1, df2, group_pop_var1, total_pop_var1, group_pop_var2, total_pop_var2,
 ):
-    """"randomizes the number of minority population 
-    according to both cumulative distribution function of a variable that represents 
-    the composition of the minority group. The composition is the division of the 
-    minority population of unit i divided by total population of tract i.
+    """Simulate the spatial distribution of a population group in a region using the CDF of a comparison region.
+
+    For each spatial unit i in region 1, take the unit's rank in the distribution, and swap the group composition
+    with the value of the corresponding rank in region 2. The composition is the minority population of unit i
+    divided by total population of tract i. This approach will shift the relative composition of each spatial
+    unit without changing its total population.
 
     Parameters
     ----------
@@ -126,8 +128,7 @@ def sim_composition(
 def sim_dual_composition(
     df1, df2, group_pop_var1, total_pop_var1, group_pop_var2, total_pop_var2,
 ):
-    """applies the 'counterfactual_composition' for both minority and complementary groups.
-
+    """Apply the 'composition' for both minority and complementary groups.
 
     Parameters
     ----------
@@ -148,6 +149,7 @@ def sim_dual_composition(
     -------
     two pandas.DataFrame
         dataframes with simulated population columns appended
+
     """
     df1 = df1.copy()
     df2 = df2.copy()
@@ -201,8 +203,12 @@ def sim_dual_composition(
 def sim_share(
     df1, df2, group_pop_var1, total_pop_var1, group_pop_var2, total_pop_var2,
 ):
-    """randomizes the number of minority population and total population according to both cumulative distribution function of a variable that represents the share of the minority group. The share is the division of the minority population of unit i divided by total population of minority population.
+    """Simulate the spatial population distribution of a region using the CDF of a comparison region.
 
+    For each spatial unit i in region 1, take the unit's rank in the distribution, and swap the group share
+    with the value of the corresponding rank in region 2. The share is the minority population of unit i
+    divided by total population of minority population. This approach will shift the total population of
+    each unit without changing the regional proportion of each group
 
     Parameters
     ----------
@@ -223,6 +229,7 @@ def sim_share(
     -------
     two pandas.DataFrame
         dataframes with simulated population columns appended
+
     """
     df1 = df1.copy()
     df2 = df2.copy()
@@ -352,10 +359,20 @@ def _estimate_random_label_difference(data):
     index_args_2 = data[3]
     idx_type = data[4]
     groups = data[5]
+    approach = data[6]
 
-    stacked_data["grouping_variable"] = np.random.permutation(
-        stacked_data["grouping_variable"].values
-    )
+    if approach == 'person_permutation':
+        grouping = stacked_data[['grouping_variable']].values
+        if groups:
+            stacked_data = simulate_person_permutation(stacked_data, groups=groups)
+        else:
+            stacked_data = simulate_person_permutation(stacked_data, group='group', total='total')
+        stacked_data['grouping_variable'] = grouping
+
+    else:
+        stacked_data["grouping_variable"] = np.random.permutation(
+            stacked_data["grouping_variable"].values
+        )
 
     stacked_data_1 = stacked_data[stacked_data["grouping_variable"] == "Group_1"]
     stacked_data_2 = stacked_data[stacked_data["grouping_variable"] == "Group_2"]

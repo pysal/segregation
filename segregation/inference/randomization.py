@@ -10,6 +10,7 @@ from joblib import Parallel, delayed
 from tqdm.auto import tqdm
 from warnings import warn
 
+
 def _generate_estimate(input):
     if hasattr(input[0], "_original_data"):
         df = input[0]._original_data.copy()
