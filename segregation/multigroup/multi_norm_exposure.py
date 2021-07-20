@@ -46,6 +46,7 @@ def _multi_normalized_exposure(data, groups):
 
     ti = df.sum(axis=1)
     pik = df / ti[:, None]
+    pik = np.nan_to_num(pik)  # Replace NaN from zerodivision when unit has no population
     Pk = df.sum(axis=0) / df.sum()
 
     MNE = ((ti[:, None] * (pik - Pk) ** 2) / (1 - Pk)).sum() / T

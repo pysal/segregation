@@ -44,6 +44,7 @@ def _multi_dissim(data, groups):
 
     ti = df.sum(axis=1)
     pik = df / ti[:, None]
+    pik = np.nan_to_num(pik)  # Replace NaN from zerodivision when unit has no population
     Pk = df.sum(axis=0) / df.sum()
 
     Is = (Pk * (1 - Pk)).sum()
