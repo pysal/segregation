@@ -66,7 +66,7 @@ def _distance_decay_isolation(data, group_pop_var, total_pop_var, alpha=0.6, bet
     )
     w = DistanceBand.from_dataframe(data, binary=False, alpha=1, threshold=maxdist)
     w.transform = "r"
-    dist = np.exp(-w.full()[0])
+    dist = np.exp(-w.sparse.toarray())
     np.fill_diagonal(dist, val=np.exp(-((alpha * data.area.values) ** (beta))))
 
     c = 1 - dist.copy()  # proximity matrix

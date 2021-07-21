@@ -45,8 +45,7 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, w, m):
     # This step was well discussed in https://github.com/pysal/segregation/issues/5.
     if not w:
         w = Queen.from_dataframe(data)
-    graph = csr_matrix(w.full()[0])
-    delta = floyd_warshall(csgraph=graph, directed=False)
+    delta = floyd_warshall(csgraph=w.sparse, directed=False)
 
     def calculate_etat(t):
         g_t_i = np.where(data[group_pop_var] / data[total_pop_var] >= t, True, False)
