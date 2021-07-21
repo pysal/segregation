@@ -1,0 +1,6 @@
+2021-07-12 13:34:51,489 INFO urbanaccess checking for low connectivity nodes...
+2021-07-12 13:34:59,458 INFO urbanaccess 112 out of 37,832 nodes (0.30 percent of total) were identified as having low connectivity and have been removed.
+2021-07-12 13:34:59,479 INFO urbanaccess Completed OSM data download and graph node and edge table creation in 42.14 seconds
+2021-07-12 13:35:06,183 INFO urbanaccess checking for low connectivity nodes...
+2021-07-12 13:35:06,306 INFO urbanaccess 12 out of 2,833 nodes (0.42 percent of total) were identified as having low connectivity and have been removed.
+2021-07-12 13:35:06,309 INFO urbanaccess Completed OSM data download and graph node and edge table creation in 5.12 seconds
