@@ -4,7 +4,8 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.ed
 
 import geopandas as gpd
 import numpy as np
-import pandas as pd
+
+np.seterr(divide="ignore", invalid="ignore")
 
 from .._base import SingleGroupIndex, SpatialImplicitIndex
 
@@ -51,7 +52,7 @@ def _entropy(data, group_pop_var, total_pop_var):
 
     E = P * np.log(1 / P) + (1 - P) * np.log(1 / (1 - P))
     Ei = pi * np.log(1 / pi) + (1 - pi) * np.log(1 / (1 - pi))
-    Ei = np.nan_to_num(Ei) # replace nan with 0
+    Ei = np.nan_to_num(Ei)  # replace nan with 0
     H = np.nansum(
         t * (E - Ei) / (E * T)
     )  # If some pi is zero, numpy will treat as zero

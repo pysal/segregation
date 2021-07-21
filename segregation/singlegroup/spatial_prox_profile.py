@@ -4,7 +4,6 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.ed
 
 import numpy as np
 from libpysal.weights import Queen
-from scipy.sparse import csr_matrix
 from scipy.sparse.csgraph import floyd_warshall
 
 from .._base import SingleGroupIndex, SpatialExplicitIndex
