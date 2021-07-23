@@ -8,7 +8,7 @@ import warnings
 import numpy as np
 import pandas as pd
 from joblib import Parallel, delayed
-from scipy.stats import ttest_ind
+from scipy import stats
 from tqdm.auto import tqdm
 
 from .._base import MultiGroupIndex
@@ -279,7 +279,6 @@ def _compare_segregation(
     index_kwargs_2,
     n_jobs,
     backend,
-    test_style,
 ):
     """Perform inference comparison for a two segregation measures.
 
@@ -299,7 +298,7 @@ def _compare_segregation(
 
         * ``bootstrap``:
         Use bootstrap resampling to generate distributions of the segregation index for each index in the comparison,
-        then use a Welch's two sample t-test to compare differences in the mean of each distribution
+        then use a two sample t-test to compare differences in the mean of each distribution
 
         * ``composition``:
         Generate counterfactual estimates for each region using the sim_composition approach.
@@ -397,8 +396,13 @@ def _compare_segregation(
             backend=backend,
             **index_kwargs_2,
         ).est_sim
-        ttest = ttest_ind(boot1, boot2, equal_var=False, alternative=test_style)
-        p_value = ttest.pvalue
+        # test statistic follows from <http://dx.doi.org/10.1016/j.jeconom.2008.11.004>, page 34
+        tt = (boot1.mean() - boot2.mean()) / np.sqrt(
+            (np.std(boot1) ** 2 + np.std(boot2) ** 2)
+        )
+        # p-value from <https://docs.scipy.org/doc/scipy/reference/tutorial/stats.html>
+        pval = stats.t.sf(np.abs(tt), iterations - 1) * 2
+        p_value = pval
         estimates = (boot1, boot2)
         return p_value, estimates, point_estimation, _class_name
 
@@ -531,9 +535,6 @@ class TwoValueTest:
         number of cores to use for estimation. If -1 all available cpus will be used
     backend: str, optional
         which backend to use with joblib. Options include "loky", "multiprocessing", or "threading"
-    test_style: str
-        If using a bootstrap test, whether the test should be one-tailed or two-tailed. Options include
-        'two-sided', 'less', or 'greater'
     index_kwargs_1 : dict, optional
         extra parameters to pass to segregation index 1.
     index_kwargs_2 : dict, optional
@@ -571,7 +572,6 @@ class TwoValueTest:
         backend="loky",
         index_kwargs_1=None,
         index_kwargs_2=None,
-        test_style="two-sided",
         **kwargs,
     ):
 
@@ -582,7 +582,6 @@ class TwoValueTest:
             null_approach=null_approach,
             n_jobs=n_jobs,
             backend=backend,
-            test_style=test_style,
             index_kwargs_1=index_kwargs_1,
             index_kwargs_2=index_kwargs_2,
         )
