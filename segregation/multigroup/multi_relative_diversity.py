@@ -3,7 +3,7 @@
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
 import numpy as np
-from sklearn.metrics.pairwise import manhattan_distances
+from geopandas import GeoDataFrame
 
 from .._base import MultiGroupIndex, SpatialImplicitIndex
 
@@ -48,11 +48,13 @@ def _multi_relative_diversity(data, groups):
 
     ti = df.sum(axis=1)
     pik = df / ti[:, None]
+    pik = np.nan_to_num(pik)  # Replace NaN from zerodivision when unit has no population
     Pk = df.sum(axis=0) / df.sum()
     Is = (Pk * (1 - Pk)).sum()
 
     MRD = (ti[:, None] * (pik - Pk) ** 2).sum() / (T * Is)
-
+    if isinstance(data, GeoDataFrame):
+        core_data = data[[data.geometry.name]].join(core_data)
     return MRD, core_data, groups
 
 

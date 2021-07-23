@@ -108,6 +108,19 @@ Inference
    
 	  inference.SingleValueTest
 	  inference.TwoValueTest
+
+     inference.simulate_bootstrap_resample
+     inference.sim_composition
+     inference.sim_dual_composition
+     inference.simulate_evenness
+     inference.simulate_evenness_geo_permutation
+     inference.simulate_geo_permutation
+     inference.simulate_null
+     inference.simulate_person_permutation
+     inference.sim_share
+     inference.simulate_systematic_randomization
+     inference.simulate_systematic_geo_permutation
+
 	  
 Decomposition
 ---------------------

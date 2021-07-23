@@ -32,3 +32,4 @@ dependencies:
   - quilt3
   - deprecation
   - nbsphinx
+  - joblib

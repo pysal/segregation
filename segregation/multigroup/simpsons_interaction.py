@@ -3,8 +3,7 @@
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
 import numpy as np
-from sklearn.metrics.pairwise import manhattan_distances
-
+from geopandas import GeoDataFrame
 from .._base import MultiGroupIndex, SpatialImplicitIndex
 
 np.seterr(divide="ignore", invalid="ignore")
@@ -51,7 +50,8 @@ def _simpsons_interaction(data, groups):
     Pk = df.sum(axis=0) / df.sum()
 
     I = (Pk * (1 - Pk)).sum()
-
+    if isinstance(data, GeoDataFrame):
+        core_data = data[[data.geometry.name]].join(core_data)
     return I, core_data, groups
 
 

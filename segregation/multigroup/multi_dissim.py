@@ -3,6 +3,7 @@
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
 import numpy as np
+from geopandas import GeoDataFrame
 
 from .._base import MultiGroupIndex, SpatialImplicitIndex
 
@@ -43,6 +44,7 @@ def _multi_dissim(data, groups):
 
     ti = df.sum(axis=1)
     pik = df / ti[:, None]
+    pik = np.nan_to_num(pik)  # Replace NaN from zerodivision when unit has no population
     Pk = df.sum(axis=0) / df.sum()
 
     Is = (Pk * (1 - Pk)).sum()
@@ -52,7 +54,8 @@ def _multi_dissim(data, groups):
         / (2 * T * Is)
         * np.multiply(abs(pik - Pk), np.repeat(ti, K, axis=0).reshape(n, K)).sum()
     )
-
+    if isinstance(data, GeoDataFrame):
+        core_data = data[[data.geometry.name]].join(core_data)
     return multi_D, core_data, groups
 
 

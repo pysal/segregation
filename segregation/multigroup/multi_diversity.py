@@ -3,6 +3,7 @@
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
 import numpy as np
+from geopandas import GeoDataFrame
 
 from .._base import MultiGroupIndex, SpatialImplicitIndex
 
@@ -50,7 +51,8 @@ def _multi_diversity(data, groups, normalized=False):
     if normalized:
         K = df.shape[1]
         E = E / np.log(K)
-
+    if isinstance(data, GeoDataFrame):
+        core_data = data[[data.geometry.name]].join(core_data)
     return E, core_data, groups
 
 

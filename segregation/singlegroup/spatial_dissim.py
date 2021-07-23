@@ -61,9 +61,9 @@ def _spatial_dissim(data, group_pop_var, total_pop_var, w=None, standardize=Fals
     pi = np.where(t == 0, 0, x / t)
 
     if not standardize:
-        cij = w_object.full()[0]
+        cij = w_object.sparse.toarray()
     else:
-        cij = w_object.full()[0]
+        cij = w_object.sparse.toarray()
         cij = cij / cij.sum(axis=1).reshape((cij.shape[0], 1))
 
     # Inspired in (second solution): https://stackoverflow.com/questions/22720864/efficiently-calculating-a-euclidean-distance-matrix-using-numpy

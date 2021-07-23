@@ -3,7 +3,7 @@
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
 import numpy as np
-from sklearn.metrics.pairwise import manhattan_distances
+from geopandas import GeoDataFrame
 
 from .._base import MultiGroupIndex, SpatialImplicitIndex
 
@@ -51,7 +51,8 @@ def _simpsons_concentration(data, groups):
     Pk = df.sum(axis=0) / df.sum()
 
     Lambda = (Pk * Pk).sum()
-
+    if isinstance(data, GeoDataFrame):
+        core_data = data[[data.geometry.name]].join(core_data)
     return Lambda, core_data, groups
 
 

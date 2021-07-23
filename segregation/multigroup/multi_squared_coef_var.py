@@ -3,7 +3,7 @@
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
 import numpy as np
-from sklearn.metrics.pairwise import manhattan_distances
+from geopandas import GeoDataFrame
 
 from .._base import MultiGroupIndex, SpatialImplicitIndex
 
@@ -48,10 +48,12 @@ def _multi_squared_coefficient_of_variation(data, groups):
 
     ti = df.sum(axis=1)
     pik = df / ti[:, None]
+    pik = np.nan_to_num(pik)  # Replace NaN from zerodivision when unit has no population
     Pk = df.sum(axis=0) / df.sum()
 
     C = ((ti[:, None] * (pik - Pk) ** 2) / (T * (K - 1) * Pk)).sum()
-
+    if isinstance(data, GeoDataFrame):
+        core_data = data[[data.geometry.name]].join(core_data)
     return C, core_data, groups
 
 

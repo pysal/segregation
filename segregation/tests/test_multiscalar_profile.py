@@ -21,7 +21,7 @@ def test_multiscalar():
         groups=["HISP", "BLACK", "WHITE"],
     )
     np.testing.assert_array_almost_equal(
-        profile.values, [0.42469982, 0.42465797, 0.41734378, 0.40082459, 0.37768411]
+        profile.values, [0.4246, 0.4246, 0.4173, 0.4008, 0.3776], decimal=4
     )
 
 
@@ -35,5 +35,5 @@ def test_multiscalar_network():
         groups=["HISP", "BLACK", "WHITE"],
     )
     np.testing.assert_array_almost_equal(
-        profile.values, [0.4247, 0.424658, 0.417344]
+        profile.values, [0.4247, 0.4246, 0.4173], decimal=4
     )

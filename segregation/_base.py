@@ -217,12 +217,14 @@ class SpatialImplicitIndex:
                 decay=decay,
                 precompute=precompute,
             )
+            self._original_data = self.data.copy()
             self.data = access
             self.network = network
         elif w:
             self.data = _build_local_environment(self.data, self._groups, w, function=function)
             self.w = w
         elif distance and not network:
+            self._original_data = self.data.copy()
             self.data = _build_local_environment(
                 self.data, self._groups, bandwidth=distance, function=function
             )
@@ -244,6 +246,7 @@ def _build_local_environment(data, groups, w=None, bandwidth=1000, function="tri
         Spatialized data
 
     """
+    data = data.copy().reset_index()
     if data.crs.is_geographic:
         warnings.warn('GeoDataFrame appears to have a geographic coordinate system and likely needs to be reprojected')
     with warnings.catch_warnings():
@@ -254,7 +257,7 @@ def _build_local_environment(data, groups, w=None, bandwidth=1000, function="tri
         w = fill_diagonal(w)
         for y in data[groups]:
             new_data.append(lag_spatial(w, data[y]))
-        new_data = pd.DataFrame(dict(zip(groups, new_data)))
-        new_data['geometry'] = data.geometry
-        new_data = gpd.GeoDataFrame(new_data)
+        new_data = pd.DataFrame(dict(zip(groups, new_data))).round(0)
+        new_data = data.geometry.to_frame().join(new_data.reset_index())
+
         return new_data
