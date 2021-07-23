@@ -8,6 +8,7 @@ import warnings
 import numpy as np
 import pandas as pd
 from joblib import Parallel, delayed
+from scipy.stats import ttest_ind
 from tqdm.auto import tqdm
 
 from .._base import MultiGroupIndex
@@ -25,6 +26,7 @@ def _infer_segregation(
     index_kwargs=None,
     n_jobs=-1,
     backend="loky",
+    null_value=0,
 ):
     """Compare segregation statistic against a simulated null distribution.
 
@@ -43,11 +45,12 @@ def _infer_segregation(
 
         * ``bootstrap``:
         generates bootstrap replications of the units with replacement of the same size of the
-        original data.
+        original data. This procedure creates a confidence interval for the index statistic to test 
+        whether the null value lies within.
 
         * ``evenness``:
         assumes that each spatial unit has the same global probability of drawing elements from the
-        minority group of the fixed total unit population (binomial distribution).
+        minority group of the fixed total unit population (binomial distribution). 
 
         * ``person_permutation``:
         randomly allocates individuals into units keeping the total population of each
@@ -93,9 +96,14 @@ def _infer_segregation(
 
     point_estimation = seg_class.statistic
 
+    # if using the bootstrap test, we're testing the null estimate against the index's distribution
+    # in all other cases, we test the index value against a null distribution
+    if null_approach == "bootstrap":
+        point_estimation = null_value
+
     aux = str(type(seg_class))
     _class_name = aux[
-        1 + aux.rfind("."): -2
+        1 + aux.rfind(".") : -2
     ]  # 'rfind' finds the last occurence of a pattern in a string
 
     Estimates_Stars = simulate_null(
@@ -139,32 +147,39 @@ class SingleValueTest:
     null_approach : str
         Which counterfactual approach to use when generating null hypothesis distribution. One of the following:.
 
+        * ``bootstrap``:
+        Generate bootstrap replications of the units with replacement of the same size of the
+        original data to create a distribution of the segregation index. Then the `null_value` argument
+        is tested against this distribution. The null_value may be 0, or may be estimated empirically using
+        the `simulate_null` function.
+
         * ``systematic``:
         assumes that every group has the same probability with restricted conditional probabilities
         p_0_j = p_1_j = p_j = n_j/n (multinomial distribution).
 
-        * ``bootstrap``:
-        generates bootstrap replications of the units with replacement of the same size of the
-        original data.
-
         * ``evenness``:
+        Generate a distribution of segregation indices under the assumption of evenness, which
         assumes that each spatial unit has the same global probability of drawing elements from the
-        minority group of the fixed total unit population (binomial distribution).
+        minority group of the fixed total unit population (binomial distribution). Then test the observed
+        segregation index against this distribution
 
         * ``person_permutation``:
-        randomly allocates individuals into units keeping the total population of each
-        equal to the original.
+        Generate a distribution of segregation indices under the assumption of individual-level randomization,
+        which randomly allocates individuals into units keeping the total population of each
+        equal to the original.Then test the observed segregation index against this distribution
 
         * ``geographic_permutation``:
-        randomly allocates the units over space keeping the original values.
+        Generate a distribution of segregation indices under the assumption of geographit unit-level randomization,
+        which randomly allocates the units over space keeping the original values. Then test the observed segregation
+        index against this distribution
 
         * ``systematic_permutation``:
-        assumes absence of systematic segregation and randomly allocates the units over
-        space.
+        Generate a distribution of segregation indices under the assumption of systemic randomization,
+        then randomly allocate units over space. Then test the observed segregation index against this distribution
 
         * ``even_permutation``:
-        Assumes the same global probability of drawning elements from the minority group in
-        each spatial unit and randomly allocates the units over space.
+        Generate a distribution of segregation indices under the assumption of evenness, then randomly allocating
+        the units over space. Then test the observed segregation index against this distribution
 
     two_tailed : boolean
         If True, p_value is two-tailed. Otherwise, it is right one-tailed. The one-tailed p_value attribute
@@ -206,11 +221,17 @@ class SingleValueTest:
         iterations_under_null=500,
         null_approach="systematic",
         two_tailed=True,
+        n_jobs=-1,
         **kwargs,
     ):
 
         aux = _infer_segregation(
-            seg_class, iterations_under_null, null_approach, two_tailed, **kwargs
+            seg_class,
+            iterations_under_null,
+            null_approach,
+            two_tailed,
+            n_jobs=n_jobs,
+            **kwargs,
         )
 
         self.p_value = aux[0]
@@ -252,12 +273,13 @@ class SingleValueTest:
 def _compare_segregation(
     seg_class_1,
     seg_class_2,
-    iterations=500,
-    null_approach="random_label",
-    index_kwargs_1=None,
-    index_kwargs_2=None,
-    n_jobs=-1,
-    backend="loky",
+    iterations,
+    null_approach,
+    index_kwargs_1,
+    index_kwargs_2,
+    n_jobs,
+    backend,
+    test_style,
 ):
     """Perform inference comparison for a two segregation measures.
 
@@ -273,7 +295,11 @@ def _compare_segregation(
         Which type of null hypothesis the inference will iterate. One of the following:
 
         * ``random_label``:
-        Randomly assign each spatial unit to a region then recalculate segregation indices
+        Randomly assign each spatial unit to a region then recalculate segregation indices and take the difference
+
+        * ``bootstrap``:
+        Use bootstrap resampling to generate distributions of the segregation index for each index in the comparison,
+        then use a Welch's two sample t-test to compare differences in the mean of each distribution
 
         * ``composition``:
         Generate counterfactual estimates for each region using the sim_composition approach.
@@ -334,10 +360,11 @@ def _compare_segregation(
         "composition",
         "share",
         "dual_composition",
-        'person_permutation'
+        "person_permutation",
+        "bootstrap",
     ]:
         raise ValueError(
-            f"null_approach must one of {list(DUAL_SIMULATORS.keys())+['random_label', 'person_permutation']}"
+            f"null_approach must one of {list(DUAL_SIMULATORS.keys())+['random_label', 'person_permutation', 'bootstrap']}"
         )
 
     if type(seg_class_1) != type(seg_class_2):
@@ -347,13 +374,35 @@ def _compare_segregation(
 
     aux = str(type(seg_class_1))
     _class_name = aux[
-        1 + aux.rfind("."): -2
+        1 + aux.rfind(".") : -2
     ]  # 'rfind' finds the last occurence of a pattern in a string
 
     data_1 = seg_class_1.data.copy()
     data_2 = seg_class_2.data.copy()
 
-    if null_approach in ["random_label", 'person_permutation']:
+    if null_approach == "bootstrap":
+        boot1 = SingleValueTest(
+            seg_class_1,
+            iterations_under_null=iterations,
+            null_approach="bootstrap",
+            n_jobs=n_jobs,
+            backend=backend,
+            **index_kwargs_1,
+        ).est_sim
+        boot2 = SingleValueTest(
+            seg_class_2,
+            iterations_under_null=iterations,
+            null_approach="bootstrap",
+            n_jobs=n_jobs,
+            backend=backend,
+            **index_kwargs_2,
+        ).est_sim
+        ttest = ttest_ind(boot1, boot2, equal_var=False, alternative=test_style)
+        p_value = ttest.pvalue
+        estimates = (boot1, boot2)
+        return p_value, estimates, point_estimation, _class_name
+
+    if null_approach in ["random_label", "person_permutation"]:
         if isinstance(seg_class_1, MultiGroupIndex):
             groups = seg_class_1.groups
         else:
@@ -370,7 +419,7 @@ def _compare_segregation(
                     index_kwargs_2,
                     seg_class_1.index_type,
                     groups,
-                    null_approach
+                    null_approach,
                 )
             )
             for i in tqdm(range(iterations))
@@ -452,6 +501,10 @@ class TwoValueTest:
         * ``random_label``:
         Randomly assign each spatial unit to a region then recalculate segregation indices
 
+        * ``bootstrap``:
+        Use bootstrap resampling to generate distributions of the segregation index for each index in the comparison,
+        then use a Welch's two sample t-test to compare differences in the mean of each distribution
+
         * ``composition``:
         Generate counterfactual estimates for each region using the sim_composition approach.
         On each iteration, generate a synthetic dataset for each region where each unit has a 50% chance
@@ -478,6 +531,9 @@ class TwoValueTest:
         number of cores to use for estimation. If -1 all available cpus will be used
     backend: str, optional
         which backend to use with joblib. Options include "loky", "multiprocessing", or "threading"
+    test_style: str
+        If using a bootstrap test, whether the test should be one-tailed or two-tailed. Options include
+        'two-sided', 'less', or 'greater'
     index_kwargs_1 : dict, optional
         extra parameters to pass to segregation index 1.
     index_kwargs_2 : dict, optional
@@ -515,16 +571,18 @@ class TwoValueTest:
         backend="loky",
         index_kwargs_1=None,
         index_kwargs_2=None,
+        test_style="two-sided",
         **kwargs,
     ):
 
         aux = _compare_segregation(
             seg_class_1,
             seg_class_2,
-            iterations_under_null,
-            null_approach,
+            iterations=iterations_under_null,
+            null_approach=null_approach,
             n_jobs=n_jobs,
             backend=backend,
+            test_style=test_style,
             index_kwargs_1=index_kwargs_1,
             index_kwargs_2=index_kwargs_2,
         )
@@ -533,14 +591,17 @@ class TwoValueTest:
         self.est_sim = aux[1]
         self.est_point_diff = aux[2]
         self._class_name = aux[3]
+        self._null_approach = null_approach
 
-    def plot(self, color="darkblue", kde=True, ax=None, **kwargs):
+    def plot(self, color="darkblue", color2="darkred", kde=True, ax=None, **kwargs):
         """Plot the distribution of simulated values and the index value being tested.
 
         Parameters
         ----------
         color : str, optional
             histogram color, by default 'darkblue'
+        color2: str, optional, by default "darkred"
+             Color for second histogram. Only relevant for bootstrap test
         kde : bool, optional
             Whether to plot the kernel density estimate along with the histogram,
             by default True
@@ -560,11 +621,20 @@ class TwoValueTest:
         except ImportError:
             warnings.warn("This method relies on importing `matplotlib` and `seaborn`")
 
-        f = sns.histplot(self.est_sim, color=color, kde=kde, ax=ax, **kwargs)
-        plt.axvline(self.est_point_diff, color="red")
-        plt.title(
-            "{} (Diff. value = {})".format(
-                self._class_name, round(self.est_point_diff, 3)
+        if self._null_approach == "bootstrap":
+            ax = sns.histplot(self.est_sim[0], color=color, kde=kde, ax=ax, **kwargs)
+            ax = sns.histplot(self.est_sim[1], color=color2, kde=kde, ax=ax, **kwargs)
+            plt.title(
+                "{} (Diff. value = {})".format(
+                    self._class_name, round(self.est_point_diff, 3)
+                )
             )
-        )
-        return f
+        else:
+            ax = sns.histplot(self.est_sim, color=color, kde=kde, ax=ax, **kwargs)
+            plt.axvline(self.est_point_diff, color="red")
+            plt.title(
+                "{} (Diff. value = {})".format(
+                    self._class_name, round(self.est_point_diff, 3)
+                )
+            )
+        return ax

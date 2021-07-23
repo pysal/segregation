@@ -2,13 +2,13 @@
 
 import itertools
 import multiprocessing
+from warnings import warn
 
 import geopandas as gpd
 import numpy as np
 import pandas as pd
 from joblib import Parallel, delayed
 from tqdm.auto import tqdm
-from warnings import warn
 
 
 def _generate_estimate(input):
@@ -110,7 +110,7 @@ def simulate_person_permutation(df, group=None, total=None, groups=None):
     if isinstance(df, gpd.GeoDataFrame):
         geoms = df[[df.geometry.name]]
     else:
-        geoms = df.assign(idx=df.index.values)[['idx']]
+        geoms = df.assign(idx=df.index.values)[["idx"]]
     if not total:
         total = "total"
         df["total"] = df[groups].sum(axis=1).astype(int)
@@ -137,9 +137,9 @@ def simulate_person_permutation(df, group=None, total=None, groups=None):
     # reaggregate by unit index
     df = df.groupby("index")["groups"].value_counts().unstack()
     df[total] = df[groups].sum(axis=1)
-    df = df.join(geoms, how='right').fillna(0)
-    if 'idx' in df.columns:
-        df = df.drop(columns=['idx'])
+    df = df.join(geoms, how="right").fillna(0)
+    if "idx" in df.columns:
+        df = df.drop(columns=["idx"])
         return df
 
     return gpd.GeoDataFrame(df, geometry=geoms.geometry.name)
@@ -240,8 +240,10 @@ def simulate_systematic_randomization(df, group=None, total=None, groups=None):
     """
     if groups:
         if not total:
-            warn("No `total` argument passed. Assuming population groups are exhaustive")
-            total = 'total'
+            warn(
+                "No `total` argument passed. Assuming population groups are exhaustive"
+            )
+            total = "total"
         df[total] = df[groups].sum(axis=1)
     if group:
         assert (
