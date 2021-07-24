@@ -41,7 +41,7 @@ def simulate_null(
 
     Parameters
     ----------
-    iterations : int, optional
+    iterations : int, required
         Number of iterations to simulate (size of the distribution), by default 1000
     sim_func : function, required
         population randomization function from segregation.inference to serve as
@@ -87,7 +87,7 @@ def simulate_person_permutation(df, group=None, total=None, groups=None):
         name of column on geodataframe that holds the total population for
         each unit (for use with single group indices)
     groups : list, optional
-        list of columns on inut dataframe that hold total population counts
+        list of columns on input dataframe that hold total population counts
         for each group of interest
 
     Returns
@@ -159,7 +159,7 @@ def simulate_evenness(df, group=None, total=None, groups=None):
         name of column on geodataframe that holds the total population for
         each unit (for use with single group indices)
     groups : list, optional
-        list of columns on inut dataframe that hold total population counts
+        list of columns on input dataframe that hold total population counts
         for each group of interest
 
     Returns
@@ -214,7 +214,7 @@ def simulate_systematic_randomization(df, group=None, total=None, groups=None):
         each unit. For singlegroup indices, this parameter is required. For
         multigroup indices, this is optional if groups are not exhaustive.
     groups : list, optional
-        list of columns on inut dataframe that hold total population counts
+        list of columns on input dataframe that hold total population counts
         for each group of interest. Note that if not passing a `total` argument,
         groups are assumed to be exhaustive. If total is not set and groups are not
         exhaustive, the function will estimate incorrect probabilities of choosing
@@ -331,7 +331,7 @@ def simulate_systematic_geo_permutation(df, group=None, total=None, groups=None)
         name of column on geodataframe that holds the total population for
         each unit (for use with single group indices)
     groups : list, optional
-        list of columns on inut dataframe that hold total population counts
+        list of columns on input dataframe that hold total population counts
         for each group of interest
 
     Returns
@@ -358,7 +358,7 @@ def simulate_evenness_geo_permutation(df, group=None, total=None, groups=None):
         name of column on geodataframe that holds the total population for
         each unit (for use with single group indices)
     groups : list, optional
-        list of columns on inut dataframe that hold total population counts
+        list of columns on input dataframe that hold total population counts
         for each group of interest
 
     Returns
