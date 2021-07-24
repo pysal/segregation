@@ -4,7 +4,7 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.ed
 
 import numpy as np
 import pandas as pd
-from sklearn.metrics import euclidean_distances
+from ..util import generate_distance_matrix
 from .._base import SingleGroupIndex, SpatialExplicitIndex
 
 
@@ -56,11 +56,7 @@ def _absolute_clustering(data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5
     t = data[total_pop_var].values
     n = len(data)
 
-    w = euclidean_distances(
-        pd.DataFrame({"x": data.centroid.x.values, "y": data.centroid.y.values})
-    )
-    w = w / w.sum(axis=1)
-    dist = np.exp(-w)
+    dist = generate_distance_matrix(data)
     np.fill_diagonal(dist, val=np.exp(-((alpha * data.area.values) ** (beta))))
 
     c = 1 - dist.copy()  # proximity matrix

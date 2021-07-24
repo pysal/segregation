@@ -240,7 +240,7 @@ class SingleValueTest:
         self._class_name = aux[3]
 
     def plot(self, color="darkblue", kde=True, ax=None, **kwargs):
-        """Plot the distribution of simulated values and the index value being tested.
+        """Plot the distribution of simulated values and the observed index being tested.
 
         Parameters
         ----------
@@ -401,8 +401,7 @@ def _compare_segregation(
             (np.std(boot1) ** 2 + np.std(boot2) ** 2)
         )
         # p-value from <https://docs.scipy.org/doc/scipy/reference/tutorial/stats.html>
-        pval = stats.t.sf(np.abs(tt), iterations - 1) * 2
-        p_value = pval
+        p_value = stats.t.sf(np.abs(tt), iterations - 1) * 2
         estimates = (boot1, boot2)
         return p_value, estimates, point_estimation, _class_name
 
@@ -503,11 +502,13 @@ class TwoValueTest:
         Which type of null hypothesis the inference will iterate. One of the following:
 
         * ``random_label``:
-        Randomly assign each spatial unit to a region then recalculate segregation indices
+        Randomly assign each spatial unit to a region then recalculate segregation indices and take their
+        difference. Repeat this process `iterations` times to generate a reference distribution. Then test
+        the observed difference aginst this distribution.
 
         * ``bootstrap``:
-        Use bootstrap resampling to generate distributions of the segregation index for each index in the comparison,
-        then use a Welch's two sample t-test to compare differences in the mean of each distribution
+        Use bootstrap resampling to generate distributions of each segregation index in the
+        comparison, then use a two sample t-test to compare differences between the distribution means.
 
         * ``composition``:
         Generate counterfactual estimates for each region using the sim_composition approach.
@@ -519,13 +520,13 @@ class TwoValueTest:
         Generate counterfactual estimates for each region using the sim_share approach.
         On each iteration, generate a synthetic dataset for each region where each unit has a 50% chance
         of belonging to the original data or the counterfactual data. Recalculate segregation indices on
-        the synthetic datasets.
+        the synthetic datasets. Then follow the random labeling method on these synthetic data
 
         * ``dual_composition``:
         Generate counterfactual estimates for each region using the sim_dual_composition
         approach. On each iteration, generate a synthetic dataset for each region where each unit has a 50%
-        chance of belonging to the original data or the counterfactual data. Recalculate segregation
-        indices on the synthetic datasets.
+        chance of belonging to the original data or the counterfactual data. Then follow the random labeling
+        method on these synthetic data
 
         * ``person_permutation``:
         Use the simulate_person_permutation approach to randomly reallocate the combined

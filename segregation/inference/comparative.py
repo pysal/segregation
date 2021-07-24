@@ -7,6 +7,23 @@ from .._base import MultiGroupIndex, SingleGroupIndex
 from .randomization import simulate_person_permutation
 
 
+def _prepare_comparative_data(df1, df2, group_pop_var1, group_pop_var2, total_pop_var1, total_pop_var2):
+    df1 = df1.copy()
+    df2 = df2.copy()
+    if hasattr(df1, "geometry"):
+        df1 = df1[[group_pop_var1, total_pop_var1, df1.geometry.name]]
+    else:
+        df1 = df1[[group_pop_var1, total_pop_var1]]
+
+    if hasattr(df2, "geometry"):
+        df2 = df2[[group_pop_var2, total_pop_var2, df2.geometry.name]]
+    else:
+        df2 = df2[[group_pop_var2, total_pop_var2]]
+
+    return df1, df2
+
+
+
 def _generate_counterfactual(
     data1,
     data2,
@@ -95,17 +112,7 @@ def sim_composition(
     two pandas.DataFrame
         dataframes with simulated population columns appended
     """
-    df1 = df1.copy()
-    df2 = df2.copy()
-    if hasattr(df1, "geometry"):
-        df1 = df1[[group_pop_var1, total_pop_var1, df1.geometry.name]]
-    else:
-        df1 = df1[[group_pop_var1, total_pop_var1]]
-
-    if hasattr(df2, "geometry"):
-        df2 = df2[[group_pop_var2, total_pop_var2, df2.geometry.name]]
-    else:
-        df2 = df2[[group_pop_var2, total_pop_var2]]
+    df1, df2 = _prepare_comparative_data(df1, df2, group_pop_var1, group_pop_var2, total_pop_var1, total_pop_var2)
 
     df1["group_composition"] = (df1[group_pop_var1] / df1[total_pop_var1]).fillna(0)
     df2["group_composition"] = (df2[group_pop_var2] / df2[total_pop_var2]).fillna(0)
@@ -151,17 +158,7 @@ def sim_dual_composition(
         dataframes with simulated population columns appended
 
     """
-    df1 = df1.copy()
-    df2 = df2.copy()
-    if hasattr(df1, "geometry"):
-        df1 = df1[[group_pop_var1, total_pop_var1, df1.geometry.name]]
-    else:
-        df1 = df1[[group_pop_var1, total_pop_var1]]
-
-    if hasattr(df2, "geometry"):
-        df2 = df2[[group_pop_var2, total_pop_var2, df2.geometry.name]]
-    else:
-        df2 = df2[[group_pop_var2, total_pop_var2]]
+    df1, df2 = _prepare_comparative_data(df1, df2, group_pop_var1, group_pop_var2, total_pop_var1, total_pop_var2)
 
     df1["group_composition"] = (df1[group_pop_var1] / df1[total_pop_var1]).fillna(0)
     df2["group_composition"] = (df2[group_pop_var2] / df2[total_pop_var2]).fillna(0)
@@ -231,17 +228,7 @@ def sim_share(
         dataframes with simulated population columns appended
 
     """
-    df1 = df1.copy()
-    df2 = df2.copy()
-    if hasattr(df1, "geometry"):
-        df1 = df1[[group_pop_var1, total_pop_var1, df1.geometry.name]]
-    else:
-        df1 = df1[[group_pop_var1, total_pop_var1]]
-
-    if hasattr(df2, "geometry"):
-        df2 = df2[[group_pop_var2, total_pop_var2, df2.geometry.name]]
-    else:
-        df2 = df2[[group_pop_var2, total_pop_var2]]
+    df1, df2 = _prepare_comparative_data(df1, df2, group_pop_var1, group_pop_var2, total_pop_var1, total_pop_var2)
 
     df1["compl_pop_var"] = df1[total_pop_var1] - df1[group_pop_var1]
     df2["compl_pop_var"] = df2[total_pop_var2] - df2[group_pop_var2]
@@ -312,7 +299,7 @@ def _prepare_random_label(seg_class_1, seg_class_2):
 
     if isinstance(seg_class_1, SingleGroupIndex):
 
-        # This step is just to make sure the each frequecy column is integer for the approaches and from the same type in order to be able to stack them
+        # This step is just to make sure the each frequency column is integer for the approaches and from the same type in order to be able to stack them
         data_1.loc[:, (seg_class_1.group_pop_var, seg_class_1.total_pop_var)] = (
             data_1.loc[:, (seg_class_1.group_pop_var, seg_class_1.total_pop_var)]
             .round(0)
