@@ -85,6 +85,14 @@ class Inference_Tester(unittest.TestCase):
             res.est_sim.mean(), 0.01633979237418177, decimal=2
         )
 
+        np.random.seed(123)
+        res = SingleValueTest(
+            m_index, null_approach="person_permutation", iterations_under_null=50
+        )
+        np.testing.assert_almost_equal(
+            res.est_sim.mean(), 0.01633979237418177, decimal=2
+        )
+
         # Two Value Tests #
         np.random.seed(123)
         res = TwoValueTest(
@@ -135,6 +143,21 @@ class Inference_Tester(unittest.TestCase):
             res.est_sim.mean(), -0.0024327144012562685, decimal=2
         )
 
+        np.random.seed(123)
+        res = TwoValueTest(
+            m_index_1, m_index_2, null_approach="bootstrap", iterations_under_null=50
+        )
+        np.testing.assert_almost_equal(
+            res.est_sim[0].mean(), 0.38738, decimal=2
+        )
+
+        np.random.seed(123)
+        res = TwoValueTest(
+            m_index_1, m_index_2, null_approach="person_permutation", iterations_under_null=50
+        )
+        np.testing.assert_almost_equal(
+            res.est_sim.mean(), 0.0, decimal=2
+        )
 
 if __name__ == "__main__":
     unittest.main()
