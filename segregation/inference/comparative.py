@@ -87,8 +87,8 @@ def sim_composition(
 ):
     """Simulate the spatial distribution of a population group in a region using the CDF of a comparison region.
 
-    For each spatial unit i in region 1, take the unit's rank in the distribution, and swap the group composition
-    with the value of the corresponding rank in region 2. The composition is the minority population of unit i
+    For each spatial unit i in region 1, take the unit's percentile in the distribution, and swap the group composition
+    with the value of the corresponding percentile in region 2. The composition is the minority population of unit i
     divided by total population of tract i. This approach will shift the relative composition of each spatial
     unit without changing its total population.
 
@@ -202,8 +202,8 @@ def sim_share(
 ):
     """Simulate the spatial population distribution of a region using the CDF of a comparison region.
 
-    For each spatial unit i in region 1, take the unit's rank in the distribution, and swap the group share
-    with the value of the corresponding rank in region 2. The share is the minority population of unit i
+    For each spatial unit i in region 1, take the unit's percentile in the distribution, and swap the group share
+    with the value of the corresponding percentile in region 2. The share is the minority population of unit i
     divided by total population of minority population. This approach will shift the total population of
     each unit without changing the regional proportion of each group
 
