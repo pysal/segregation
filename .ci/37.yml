@@ -25,3 +25,4 @@ dependencies:
   - pygeos
   - quilt3
   - deprecation
+  - joblib
