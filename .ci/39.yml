@@ -27,9 +27,9 @@ dependencies:
   - twine
   # docs
   - nbsphinx
-  - sphinx>=1.4.3
+  - sphinx
   - sphinxcontrib-napoleon
   - sphinx-gallery
-  - sphinxcontrib-bibtex==1.0.0
+  - sphinxcontrib-bibtex
   - sphinx_bootstrap_theme
   - numpydoc
