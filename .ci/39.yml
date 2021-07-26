@@ -26,14 +26,14 @@ dependencies:
   - pytest-cov
   - twine
   # docs
-  _ ipywidgets
-  _ nbsphinx
-  _ numpydoc
-  _ pandana
-  _ quilt3
-  _ sphinx
-  _ sphinxcontrib-napoleon
-  _ sphinx-gallery
-  _ sphinxcontrib-bibtex
-  _ sphinx_bootstrap_theme
+  - ipywidgets
+  - nbsphinx
+  - numpydoc
+  - pandana
+  - quilt3
+  - sphinx
+  - sphinxcontrib-napoleon
+  - sphinx-gallery
+  - sphinxcontrib-bibtex
+  - sphinx_bootstrap_theme
   - watermark
