@@ -1,7 +1,10 @@
+ipywidgets
 nbsphinx
+numpydoc
+pandana
+quilt3
 sphinx
 sphinxcontrib-napoleon
 sphinx-gallery
 sphinxcontrib-bibtex
 sphinx_bootstrap_theme
-numpydoc
