@@ -11,7 +11,7 @@ class SpatialMinMax_Tester(unittest.TestCase):
         df = s_map[['geometry', 'HISP', 'TOT_POP']]
         df = df.to_crs(df.estimate_utm_crs())
         index = MinMax(df, 'HISP', 'TOT_POP', distance=2000, function='triangular')
-        np.testing.assert_almost_equal(index.statistic, 0.4524336967483127)
+        np.testing.assert_almost_equal(index.statistic, 0.4524336967483127, decimal=4)
 
 
 if __name__ == '__main__':

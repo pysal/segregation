@@ -5,6 +5,7 @@ dependencies:
   - python=3.7
   - deprecation
   - geopandas>=0.9
+  - joblib
   - libpysal
   - mapclassify
   - matplotlib

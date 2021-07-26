@@ -1,5 +1,6 @@
 deprecation
 geopandas>=0.9
+joblib
 libpysal
 mapclassify
 matplotlib
