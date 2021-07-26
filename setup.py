@@ -37,33 +37,35 @@ def setup_package():
     install_reqs = reqs.pop("base")
 
     setup(
-        name = 'segregation',
-        version = __version__,
-        description = "Analytics for spatial and non-spatial segregation in Python.",
-        long_description = long_description,
-        long_description_content_type = "text/markdown",
-        maintainer = "Renan Xavier Cortes",
-        maintainer_email = 'renanc@ucr.edu',
-        url='https://pysal.org/segregation',
-        download_url='https://pypi.org/project/segregation/',
-        license = 'BSD',
-        py_modules = ['segregation'],
-        packages = find_packages(),
-        keywords = ['spatial statistics', 'demography'],
-        classifiers = [
-            'Intended Audience :: Science/Research',
-            'Intended Audience :: Developers',
-            'Intended Audience :: Education',
-            'Topic :: Scientific/Engineering',
-            'Topic :: Scientific/Engineering :: GIS',
-            'License :: OSI Approved :: BSD License',
-            'Programming Language :: Python',
-            'Programming Language :: Python :: 3.7',
-            'Programming Language :: Python :: 3.8',
-            'Programming Language :: Python :: 3.9'
+        name="segregation",
+        version=__version__,
+        description="Analytics for spatial and non-spatial segregation in Python.",
+        long_description=long_description,
+        long_description_content_type="text/markdown",
+        maintainer="Renan Xavier Cortes",
+        maintainer_email="renanc@ucr.edu",
+        url="https://pysal.org/segregation",
+        download_url="https://pypi.org/project/segregation/",
+        license="BSD",
+        py_modules=["segregation"],
+        packages=find_packages(),
+        keywords=["spatial statistics", "demography"],
+        classifiers=[
+            "Intended Audience :: Science/Research",
+            "Intended Audience :: Developers",
+            "Intended Audience :: Education",
+            "Topic :: Scientific/Engineering",
+            "Topic :: Scientific/Engineering :: GIS",
+            "License :: OSI Approved :: BSD License",
+            "Programming Language :: Python",
+            "Programming Language :: Python :: 3.7",
+            "Programming Language :: Python :: 3.8",
+            "Programming Language :: Python :: 3.9",
         ],
-        install_requires = install_reqs,
-        python_requires = '>3.5')
+        install_requires=install_reqs,
+        python_requires=">=3.7",
+    )
+
 
 if __name__ == "__main__":
     setup_package()

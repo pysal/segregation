@@ -3,33 +3,38 @@ channels:
   - conda-forge
 dependencies:
   - python=3.9
-  - pandas
+  - deprecation
   - geopandas>=0.9
-  - matplotlib
-  - scikit-learn
-  - seaborn
-  - numpy
-  - scipy
-  - pip
+  - joblib
   - libpysal
-  - coveralls
-  - descartes
+  - mapclassify
+  - matplotlib
+  - numpy
+  - pandana
+  - pandas
+  - pip
+  - pygeos
+  - quilt3
+  - scikit-learn
+  - scipy
+  - seaborn
+  - tqdm
+  - urbanaccess
+  # testing, etc
+  - codecov
   - pytest
   - pytest-mpl
   - pytest-cov
   - twine
-  - tqdm
+  # docs
+  - ipywidgets
+  - nbsphinx
+  - numpydoc
   - pandana
-  - urbanaccess
-  - sphinx>=1.4.3
+  - quilt3
+  - sphinx
   - sphinxcontrib-napoleon
   - sphinx-gallery
-  - sphinxcontrib-bibtex==1.0.0
+  - sphinxcontrib-bibtex
   - sphinx_bootstrap_theme
-  - numpydoc  
-  - mapclassify
-  - pygeos
-  - quilt3
-  - deprecation
-  - nbsphinx
-  - joblib
+  - watermark
