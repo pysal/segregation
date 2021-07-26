@@ -8,3 +8,4 @@ sphinxcontrib-napoleon
 sphinx-gallery
 sphinxcontrib-bibtex
 sphinx_bootstrap_theme
+watermark

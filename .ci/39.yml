@@ -36,3 +36,4 @@ dependencies:
   _ sphinx-gallery
   _ sphinxcontrib-bibtex
   _ sphinx_bootstrap_theme
+  - watermark
