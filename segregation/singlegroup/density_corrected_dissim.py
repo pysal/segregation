@@ -6,7 +6,8 @@ import geopandas as gpd
 import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
-from scipy.stats import norm
+#from scipy.stats import norm
+from rvlib import Normal
 
 from .._base import SingleGroupIndex, SpatialImplicitIndex
 
@@ -57,6 +58,7 @@ def _density_corrected_dissim(data, group_pop_var, total_pop_var, xtol=1e-5):
     # Constructing function that returns $n(\hat{\theta}_j)$
     def return_optimal_theta(theta_j):
         def fold_norm(x):
+            norm = Normal(0,1)
             y = (-1) * (norm.pdf(x - theta_j) + norm.pdf(x + theta_j))
             return y
 

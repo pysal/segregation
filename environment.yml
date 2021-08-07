@@ -21,3 +21,5 @@ dependencies:
   - seaborn
   - tqdm
   - urbanaccess
+  - rvlib
+  - numba
