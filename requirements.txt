@@ -5,7 +5,6 @@ libpysal
 mapclassify
 matplotlib
 numpy
-pandana
 pandas
 pip
 pygeos
@@ -14,6 +13,5 @@ scikit-learn>=0.21.3
 scipy
 seaborn
 tqdm
-urbanaccess
-rvlib
+rvlib>=0.0.5
 numba
