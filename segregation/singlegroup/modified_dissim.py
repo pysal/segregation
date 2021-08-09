@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 from .._base import SingleGroupIndex, SpatialImplicitIndex
 from .dissim import _dissim
-from tqdm.auto import tqdm
 from joblib import Parallel, delayed
 import multiprocessing
 
