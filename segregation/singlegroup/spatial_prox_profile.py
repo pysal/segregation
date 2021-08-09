@@ -5,7 +5,7 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.ed
 import numpy as np
 from libpysal.weights import Queen
 from scipy.sparse.csgraph import floyd_warshall
-
+from numba import njit
 from .._base import SingleGroupIndex, SpatialExplicitIndex
 
 
@@ -45,20 +45,31 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, w, m):
     if not w:
         w = Queen.from_dataframe(data)
     delta = floyd_warshall(csgraph=w.sparse, directed=False)
-
-    def calculate_etat(t):
-        g_t_i = np.where(data[group_pop_var] / data[total_pop_var] >= t, True, False)
-        k = g_t_i.sum()
-
-        # i and j only varies in the units subset within the threshold in eta_t of Hong (2014).
-        sub_delta_ij = delta[g_t_i, :][:, g_t_i]
-
-        den = sub_delta_ij.sum()
-        eta_t = (k ** 2 - k) / den
-        return eta_t
-
+    group_vals = data[group_pop_var].to_numpy()
+    total_vals = data[total_pop_var].to_numpy()
+    
     grid = np.linspace(0, 1, m)
-    aux = np.array(list(map(calculate_etat, grid)))
+
+    @njit(fastmath=True, error_model="numpy")
+    def calc(grid):
+        def calculate_etat(t):
+            g_t_i = np.where(np.divide(group_vals, total_vals) >= t, True, False)
+            k = g_t_i.sum()
+
+            # i and j only varies in the units subset within the threshold in eta_t of Hong (2014).
+            sub_delta_ij = delta[g_t_i, :][:, g_t_i]
+
+            den = sub_delta_ij.sum()
+            eta_t = (k ** 2 - k) / den
+            return eta_t
+
+        results = np.empty(len(grid))
+        for i, est in enumerate(grid):
+            aux = calculate_etat(est)
+            results[i] = aux
+        return results
+
+    aux = calc(grid)
     aux[aux == np.inf] = 0
     aux[aux == -np.inf] = 0
     curve = np.nan_to_num(aux, 0)

@@ -4,12 +4,17 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.ed
 
 import geopandas as gpd
 import numpy as np
-
+import pandas as pd
 from .._base import SingleGroupIndex, SpatialImplicitIndex
 from .gini import _gini_seg
+from tqdm.auto import tqdm
+from joblib import Parallel, delayed
+import multiprocessing
 
 
-def _modified_gini(data, group_pop_var, total_pop_var, iterations=500):
+def _modified_gini(
+    data, group_pop_var, total_pop_var, iterations=500, backend='threading'
+):
     """Calculate Modified Gini index.
 
     Parameters
@@ -37,27 +42,35 @@ def _modified_gini(data, group_pop_var, total_pop_var, iterations=500):
 
     Reference: :cite:`carrington1997measuring`.
     """
+    n_jobs = multiprocessing.cpu_count()
 
     D = _gini_seg(data, group_pop_var, total_pop_var)[0]
 
-    x = np.array(data[group_pop_var].astype(int))
-    t = np.array(data[total_pop_var].astype(int))
+    x = data[group_pop_var].values
+    t = data[total_pop_var].values.astype(int)
 
     p_null = x.sum() / t.sum()
 
-    Ds = np.empty(iterations)
+    # Ds = np.empty(iterations)
 
-    for i in np.array(range(iterations)):
+    def _gen_estimate(i):
+        data = i[0]
+        n = i[1]
+        p = i[2]
 
-        freq_sim = np.random.binomial(
-            n=np.array([t.tolist()]),
-            p=np.array([[p_null] * data.shape[0]]),
-            size=(1, data.shape[0]),
-        ).tolist()[0]
+        freq_sim = np.random.binomial(n=n, p=p, size=(1, data.shape[0]),).tolist()[0]
         data[group_pop_var] = freq_sim
-        # data = data.assign(group_pop_var=freq_sim)
         aux = _gini_seg(data, group_pop_var, total_pop_var)[0]
-        Ds[i] = aux
+        return aux
+
+    Ds = pd.Series(
+        Parallel(n_jobs=n_jobs, backend=backend)(
+            delayed(_gen_estimate)(
+                (data, np.array([t.tolist()]), np.array([[p_null] * data.shape[0]]))
+            )
+            for i in range(iterations)
+        )
+    )
 
     D_star = Ds.mean()
 
@@ -123,6 +136,7 @@ class ModifiedGini(SingleGroupIndex, SpatialImplicitIndex):
         decay="linear",
         function="triangular",
         precompute=None,
+        backend='threading',
         **kwargs
     ):
         """Init."""
@@ -133,7 +147,11 @@ class ModifiedGini(SingleGroupIndex, SpatialImplicitIndex):
                 self, w, network, distance, decay, function, precompute
             )
         aux = _modified_gini(
-            self.data, self.group_pop_var, self.total_pop_var, iterations
+            self.data,
+            self.group_pop_var,
+            self.total_pop_var,
+            iterations,
+            backend=backend
         )
 
         self.statistic = aux[0]

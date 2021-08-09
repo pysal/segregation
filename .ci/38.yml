@@ -20,6 +20,8 @@ dependencies:
   - seaborn
   - tqdm
   - urbanaccess
+  - rvlib
+  - numba
   # testing, etc
   - codecov
   - pytest

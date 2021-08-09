@@ -4,12 +4,16 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.ed
 
 import geopandas as gpd
 import numpy as np
-
+import pandas as pd
 from .._base import SingleGroupIndex, SpatialImplicitIndex
 from .dissim import _dissim
+from joblib import Parallel, delayed
+import multiprocessing
 
 
-def _modified_dissim(data, group_pop_var, total_pop_var, iterations=500):
+def _modified_dissim(
+    data, group_pop_var, total_pop_var, iterations=500, n_jobs=-1, backend="threading"
+):
     """Calculate Modified Dissimilarity index.
 
     Parameters
@@ -38,6 +42,7 @@ def _modified_dissim(data, group_pop_var, total_pop_var, iterations=500):
     Reference: :cite:`carrington1997measuring`.
 
     """
+    n_jobs = multiprocessing.cpu_count()
     if type(iterations) is not int:
         raise TypeError("iterations must be an integer")
 
@@ -51,20 +56,24 @@ def _modified_dissim(data, group_pop_var, total_pop_var, iterations=500):
 
     p_null = x.sum() / t.sum()
 
-    Ds = np.empty(iterations)
+    def _gen_estimate(i):
+        data = i[0]
+        n = i[1]
+        p = i[2]
 
-    for i in np.array(range(iterations)):
-
-        freq_sim = np.random.binomial(
-            n=np.array([t.tolist()]),
-            p=np.array([[p_null] * data.shape[0]]),
-            size=(1, data.shape[0]),
-        ).tolist()[0]
+        freq_sim = np.random.binomial(n=n, p=p, size=(1, data.shape[0]),).tolist()[0]
         data[group_pop_var] = freq_sim
-        # data = data.assign(group_pop_var=freq_sim)
         aux = _dissim(data, group_pop_var, total_pop_var)[0]
-        Ds[i] = aux
+        return aux
 
+    Ds = np.array(
+        Parallel(n_jobs=n_jobs, backend=backend)(
+            delayed(_gen_estimate)(
+                (data, np.array([t.tolist()]), np.array([[p_null] * data.shape[0]]))
+            )
+            for i in range(iterations)
+        )
+    )
     D_star = Ds.mean()
 
     if D >= D_star:
@@ -129,6 +138,8 @@ class ModifiedDissim(SingleGroupIndex, SpatialImplicitIndex):
         decay="linear",
         function="triangular",
         precompute=None,
+        n_jobs=-1,
+        backend="threading",
         **kwargs
     ):
         """Init."""
@@ -139,7 +150,7 @@ class ModifiedDissim(SingleGroupIndex, SpatialImplicitIndex):
                 self, w, network, distance, decay, function, precompute
             )
         aux = _modified_dissim(
-            self.data, self.group_pop_var, self.total_pop_var, iterations
+            self.data, self.group_pop_var, self.total_pop_var, iterations, backend=backend
         )
 
         self.statistic = aux[0]

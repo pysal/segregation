@@ -3,7 +3,6 @@
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
 import numpy as np
-import pandas as pd
 from ..util import generate_distance_matrix
 
 from .._base import SingleGroupIndex, SpatialExplicitIndex

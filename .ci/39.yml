@@ -20,12 +20,14 @@ dependencies:
   - seaborn
   - tqdm
   - urbanaccess
+  - numba
   # testing, etc
   - codecov
   - pytest
   - pytest-mpl
   - pytest-cov
   - twine
+  - rvlib
   # docs
   - ipywidgets
   - nbsphinx

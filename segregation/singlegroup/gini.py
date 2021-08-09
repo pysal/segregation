@@ -4,7 +4,6 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.ed
 
 import geopandas as gpd
 import numpy as np
-import pandas as pd
 
 from .._base import SingleGroupIndex, SpatialImplicitIndex
 
@@ -111,7 +110,6 @@ class Gini(SingleGroupIndex, SpatialImplicitIndex):
         **kwargs
     ):
         """Init."""
-
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
         if any([w, network, distance]):
             SpatialImplicitIndex.__init__(
