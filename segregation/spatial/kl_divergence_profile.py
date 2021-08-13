@@ -3,26 +3,24 @@ import geopandas as gpd
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from scipy.spatial import distance_matrix
+from scipy.spatial.distance import pdist, squareform
 from scipy.special import rel_entr as relative_entropy
-from scipy.interpolate import interp1d
 
 
-def divergence_profile(populations, geodataframe):
+def kl_divergence_profile(populations, coordinates = None, metric = 'euclidean'):
     """
     Description of the function here.
 
     Reference to paper here.
 
     Arguments
-    populations : form(s) of input
-                  form(s) of input
-    geodataframe : form(s) of input
-                 form(s) of input
-    selectioninput1 : form of input
-        Description of what this is and what it does here.
-    selectioninput2 : form of input
-        Description of what this is and what it does here.
+    populations : GeoPandas GeoDataFrame object
+                  NumPy Array object
+                  Population information of raw group numbers (not percentages) to be included in the analysis)
+    coordinates : form of input
+                  Description of what this is and what it does here.
+    metric : form of input
+             Description of what this is and what it does here.
 
     Returns
     ----------
@@ -32,14 +30,36 @@ def divergence_profile(populations, geodataframe):
     ----------
     Basic written example here, using test data if possible or
     creating simple dataframe to run
+    cincin = load_example('Cincinnati')
+    cincin.get_file_list()
+    cincin_df = gpd.read_file(cincin.get_path('cincinnati.shp'))
+    cincin_ethnicity = cincin_df[["WHITE", "BLACK", "AMINDIAN", "ASIAN", "HAWAIIAN", "OTHER_RACE", "geometry"]]
+    cincin_ethnicity.head()
+    kl_divergence_profile(cincin_ethnicity)
     """
-    # Extract populations
-    populations = geodataframe[populations].values.astype(float)
-
-    # Creating a distance matrix
-    centroids = geodataframe.geometry.centroid
-    centroid_coords = np.column_stack((centroids.x, centroids.y))
-    dist_matrix = distance_matrix(centroid_coords, centroid_coords)
+    # Store the observation index to return with the results
+    if hasattr(populations, 'index'):
+        indices = populations.index
+    else:
+        indices = np.arange(len(populations))
+    
+    # Check for geometry present in populations argument
+    if hasattr(populations, 'geometry'):
+        if coordinates is None:
+            coordinates = populations.geometry
+        populations = populations.drop(populations.geometry.name, axis=1).values
+    populations = np.asarray(populations)
+    
+    #  Creating consistent coordinates - GeoSeries input
+    if hasattr(coordinates,'geometry'):
+        centroids = coordinates.geometry.centroid
+        coordinates = np.column_stack((centroids.x, centroids.y)) 
+    #  Creating consistent coordinates - Array input
+    else:
+        assert len(coordinates) == len(populations), "Length of coordinates input needs to be of the same length as populations input"
+       
+    # Creating distance matrix using defined metric (default euclidean distance)
+    dist_matrix = squareform(pdist(coordinates, metric = metric))
 
     # Preparing list for results
     results = []
@@ -65,7 +85,7 @@ def divergence_profile(populations, geodataframe):
 
         # Creating an output dataframe
         output = pd.DataFrame().from_dict(dict(
-            observation = i,
+            observation = indices[i],
             distance = distances[sorted_indices],
             divergence = kl_div_profile,
             nearby_population = pop_within_dist
@@ -75,3 +95,4 @@ def divergence_profile(populations, geodataframe):
         results.append(output)
 
     return(pd.concat(results))
+
