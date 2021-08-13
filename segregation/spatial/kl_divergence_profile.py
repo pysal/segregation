@@ -42,22 +42,22 @@ def kl_divergence_profile(populations, coordinates = None, metric = 'euclidean')
         indices = populations.index
     else:
         indices = np.arange(len(populations))
-
+    
     # Check for geometry present in populations argument
     if hasattr(populations, 'geometry'):
         if coordinates is None:
             coordinates = populations.geometry
-        populations = populations.drop(populations.geometry.name, axis = 1).values
+        populations = populations.drop(populations.geometry.name, axis=1).values
     populations = np.asarray(populations)
-
+    
     #  Creating consistent coordinates - GeoSeries input
     if hasattr(coordinates,'geometry'):
         centroids = coordinates.geometry.centroid
-        coordinates = np.column_stack((centroids.x, centroids.y))
+        coordinates = np.column_stack((centroids.x, centroids.y)) 
     #  Creating consistent coordinates - Array input
     else:
         assert len(coordinates) == len(populations), "Length of coordinates input needs to be of the same length as populations input"
-
+       
     # Creating distance matrix using defined metric (default euclidean distance)
     dist_matrix = squareform(pdist(coordinates, metric = metric))
 
@@ -95,3 +95,4 @@ def kl_divergence_profile(populations, coordinates = None, metric = 'euclidean')
         results.append(output)
 
     return(pd.concat(results))
+
