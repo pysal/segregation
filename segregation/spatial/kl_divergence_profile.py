@@ -9,22 +9,24 @@ from scipy.special import rel_entr as relative_entropy
 
 def kl_divergence_profile(populations, coordinates = None, metric = 'euclidean'):
     """
-    Description of the function here.
+    A segregation metric, using Kullback-Leiber (KL) divergence to quantify the difference in the population characteristics between (1) an area and (2) the total population.
 
-    Reference to paper here.
+    This function utilises the methodology proposed in Olteanu et al. (2019): 'Segregation through the multiscalar lens'. Which can be found here: https://doi.org/10.1073/pnas.1900192116
 
     Arguments
+    ----------
     populations : GeoPandas GeoDataFrame object
                   NumPy Array object
-                  Population information of raw group numbers (not percentages) to be included in the analysis
-    coordinates : form of input
-                  Description of what this is and what it does here.
-    metric : form of input
-             Description of what this is and what it does here.
+                  Population information of raw group numbers (not percentages) to be included in the analysis.
+    coordinates : GeoPandas GeoSeries object
+                  NumPy Array object
+                  Spatial information relating to the areas to be included in the analysis.
+    metric : Acceptable inputs to `scipy.spatial.distance.pdist` - including: ‘braycurtis’, ‘canberra’, ‘chebyshev’, ‘cityblock’, ‘correlation’, ‘cosine’, ‘dice’, ‘euclidean’, ‘hamming’, ‘jaccard’, ‘jensenshannon’, ‘kulsinski’, ‘mahalanobis’, ‘matching’, ‘minkowski’, ‘rogerstanimoto’, ‘russellrao’, ‘seuclidean’, ‘sokalmichener’, ‘sokalsneath’, ‘sqeuclidean’, ‘yule’.
+             Distance metric for calculating pairwise distances, using `scipy.spatial.distance.pdist` - 'euclidean' by default.
 
     Returns
     ----------
-    Description of the format of return
+    Returns a concatenated object of Pandas dataframes. Each dataframe contains a set of divergence levels between an area and the total population. These areas become consecutively larger, starting from a single location and aggregating outward from this location, until the area represents the total population. Thus, together the divergence levels within a dataframe represent a profile of divergence from an area. The concatenated object is the collection of these divergence profiles for every areas within the total population.
 
     Example
     ----------
@@ -47,7 +49,7 @@ def kl_divergence_profile(populations, coordinates = None, metric = 'euclidean')
     if hasattr(populations, 'geometry'):
         if coordinates is None:
             coordinates = populations.geometry
-        populations = populations.drop(populations.geometry.name, axis=1).values
+        populations = populations.drop(populations.geometry.name, axis = 1).values
     populations = np.asarray(populations)
     
     #  Creating consistent coordinates - GeoSeries input
@@ -78,7 +80,7 @@ def kl_divergence_profile(populations, coordinates = None, metric = 'euclidean')
 
         # Input q and r objects into relative entropy (KL divergence) function
         kl_div_profile = relative_entropy(Q_cumul_proportions,
-                                          R_total_proportions).sum(axis=1)
+                                          R_total_proportions).sum(axis = 1)
 
         # Creating object for population at each distance
         pop_within_dist = obs_cumul_pop.sum(axis=1)
