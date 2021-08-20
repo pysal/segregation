@@ -94,7 +94,8 @@ class MultiDivergence(MultiGroupIndex, SpatialImplicitIndex):
         distance=None,
         decay=None,
         precompute=None,
-        function='triangular'
+        function='triangular',
+        **kwargs
     ):
         """Init."""
 

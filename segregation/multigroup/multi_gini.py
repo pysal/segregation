@@ -99,6 +99,7 @@ class MultiGini(MultiGroupIndex, SpatialImplicitIndex):
         decay='linear',
         function='triangular',
         precompute=False,
+        **kwargs
     ):
         """Init."""
         MultiGroupIndex.__init__(self, data, groups)

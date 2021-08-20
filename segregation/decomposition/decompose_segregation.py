@@ -212,7 +212,7 @@ class DecomposeSegregation:
             temp_a["Location"] = city_a
             temp_b = self._counterfac_df2.copy()
             temp_b["Location"] = city_b
-            df = pd.concat([temp_a, temp_b])
+            df = pd.concat([temp_a, temp_b]).reset_index()
 
             if self._counterfactual_approach == "composition":
                 sns.ecdfplot(data=df, x="group_composition", hue="Location", ax=ax)

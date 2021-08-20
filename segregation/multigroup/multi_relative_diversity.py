@@ -101,7 +101,8 @@ class MultiRelativeDiversity(MultiGroupIndex, SpatialImplicitIndex):
         distance=None,
         decay=None,
         precompute=None,
-        function='triangular'
+        function='triangular',
+        **kwargs
     ):
         """Init."""
         MultiGroupIndex.__init__(self, data, groups)
