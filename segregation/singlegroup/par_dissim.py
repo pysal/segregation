@@ -56,9 +56,9 @@ def _perimeter_area_ratio_spatial_dissim(
     )
 
     if not standardize:
-        cij = _return_length_weighted_w(data).full()[0]
+        cij = _return_length_weighted_w(data).sparse.toarray()
     else:
-        cij = _return_length_weighted_w(data).full()[0]
+        cij = _return_length_weighted_w(data).sparse.toarray()
         cij = cij / cij.sum()
 
     peri = data.length
