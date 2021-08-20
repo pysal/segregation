@@ -54,9 +54,9 @@ def _boundary_spatial_dissim(data, group_pop_var, total_pop_var, standardize=Fal
     )
 
     if not standardize:
-        cij = _return_length_weighted_w(data).full()[0]
+        cij = _return_length_weighted_w(data).sparse.todense()
     else:
-        cij = _return_length_weighted_w(data).full()[0]
+        cij = _return_length_weighted_w(data).sparse.todense()
         cij = cij / cij.sum(axis=1).reshape((cij.shape[0], 1))
 
     # manhattan_distances used to compute absolute distances
