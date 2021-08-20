@@ -105,6 +105,7 @@ class SimpsonsInteraction(MultiGroupIndex, SpatialImplicitIndex):
         decay=None,
         precompute=None,
         function="triangular",
+        **kwargs
     ):
         """Init."""
         MultiGroupIndex.__init__(self, data, groups)
