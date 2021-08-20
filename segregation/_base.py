@@ -38,7 +38,7 @@ def _return_length_weighted_w(data):
     if len(w.islands) == 0:
         w = w
     else:
-        warnings("There are some islands in the GeoDataFrame.")
+        warnings.warn("There are some islands in the GeoDataFrame.")
         w_aux = libpysal.weights.KNN.from_dataframe(
             data, ids=data.index.tolist(), geom_col=data._geometry_column_name, k=1
         )
