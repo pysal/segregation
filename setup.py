@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 from distutils.command.build_py import build_py
 
 import os
-import veersioneer
+import versioneer
 
 with open("README.md", "r", encoding="utf8") as file:
     long_description = file.read()

@@ -15,8 +15,10 @@ from scipy.optimize import minimize
 from .. util.util import  _nan_handle, _dep_message, DeprecationHelper
 
 
-from segregation import __version__
-
+#import segregation
+#from segregation import __version__
+from .. import _version
+__version__ = _version.get_versions()['version']
 
 import deprecation
 
