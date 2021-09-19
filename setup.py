@@ -5,12 +5,10 @@ from setuptools import setup, find_packages
 from distutils.command.build_py import build_py
 
 import os
+import veersioneer
 
 with open("README.md", "r", encoding="utf8") as file:
     long_description = file.read()
-
-with open("segregation/__init__.py", "r") as f:
-    exec(f.readline())
 
 
 def _get_requirements_from_files(groups_files):
@@ -38,8 +36,9 @@ def setup_package():
 
     setup(
         name="segregation",
-        version=__version__,
         description="Analytics for spatial and non-spatial segregation in Python.",
+        version=versioneer.get_version(),
+        cmdclass=versioneer.get_cmdclass({"build_py": build_py}),
         long_description=long_description,
         long_description_content_type="text/markdown",
         maintainer="Renan Xavier Cortes",
