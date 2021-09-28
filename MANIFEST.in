@@ -1,1 +1,3 @@
 include LICENSE.txt CHANGELOG.txt MANIFEST.in requirements_tests.txt requirements.txt requirements_docs.txt environment.yml
+include versioneer.py
+include segregation/_version.py
