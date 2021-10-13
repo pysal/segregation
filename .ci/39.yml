@@ -28,6 +28,7 @@ dependencies:
   - pytest-cov
   - twine
   - rvlib
+  - jsonschema==3.*
   # docs
   - ipywidgets
   - nbsphinx
