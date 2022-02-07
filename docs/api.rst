@@ -67,7 +67,8 @@ Local Indices
 
 .. autosummary::
    :toctree: generated/
-   
+
+      local.LocalKLDivergence
       local.LocalRelativeCentralization
       local.MultiLocalDiversity
       local.MultiLocalEntropy

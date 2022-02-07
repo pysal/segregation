@@ -2,18 +2,16 @@
 
 __author__ = "Elijah Knaap <elijah.knaap@ucr.edu> Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr.edu>"
 
-import numpy as np
 import pandas as pd
-from warnings import warn
 import os
 import sys
-
+from tqdm.auto import tqdm
 
 # This class allows us to hide the diagnostic messages from urbanaccess if the `quiet` flag is set
 class _HiddenPrints:  # from https://stackoverflow.com/questions/8391411/suppress-calls-to-print-python
     def __enter__(self):
         self._original_stdout = sys.stdout
-        sys.stdout = open(os.devnull, 'w')
+        sys.stdout = open(os.devnull, "w")
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         sys.stdout.close()
@@ -52,7 +50,8 @@ def get_osm_network(geodataframe, maxdist=5000, quiet=True, **kwargs):
         raise ImportError(
             "You need pandana and urbanaccess to work with segregation's network module\n"
             "You can install them with  `pip install urbanaccess pandana` "
-            "or `conda install -c udst pandana urbanaccess`")
+            "or `conda install -c udst pandana urbanaccess`"
+        )
 
     gdf = geodataframe.copy()
     gdf = gdf.to_crs(gdf.estimate_utm_crs())
@@ -60,26 +59,29 @@ def get_osm_network(geodataframe, maxdist=5000, quiet=True, **kwargs):
     bounds = gdf.to_crs(epsg=4326).total_bounds
 
     if quiet:
-        print('Downloading data from OSM. This may take awhile.')
+        print("Downloading data from OSM. This may take awhile.")
         with _HiddenPrints():
-            net = ua_network_from_bbox(bounds[1], bounds[0], bounds[3],
-                                       bounds[2], **kwargs)
+            net = ua_network_from_bbox(
+                bounds[1], bounds[0], bounds[3], bounds[2], **kwargs
+            )
     else:
-        net = ua_network_from_bbox(bounds[1], bounds[0], bounds[3], bounds[2],
-                                   **kwargs)
+        net = ua_network_from_bbox(bounds[1], bounds[0], bounds[3], bounds[2], **kwargs)
     print("Building network")
-    network = pdna.Network(net[0]["x"], net[0]["y"], net[1]["from"],
-                           net[1]["to"], net[1][["distance"]])
+    network = pdna.Network(
+        net[0]["x"], net[0]["y"], net[1]["from"], net[1]["to"], net[1][["distance"]]
+    )
 
     return network
 
 
-def calc_access(geodataframe,
-                network,
-                distance=2000,
-                decay="linear",
-                variables=None,
-                precompute=True):
+def calc_access(
+    geodataframe,
+    network,
+    distance=2000,
+    decay="linear",
+    variables=None,
+    precompute=True,
+):
     """Calculate access to population groups.
 
     Parameters
@@ -113,19 +115,17 @@ def calc_access(geodataframe,
     if precompute:
         network.precompute(distance)
 
-    geodataframe["node_ids"] = network.get_node_ids(geodataframe.centroid.x,
-                                                    geodataframe.centroid.y)
+    geodataframe["node_ids"] = network.get_node_ids(
+        geodataframe.centroid.x, geodataframe.centroid.y
+    )
 
     access = []
     for variable in variables:
-        network.set(geodataframe.node_ids,
-                    variable=geodataframe[variable],
-                    name=variable)
+        network.set(
+            geodataframe.node_ids, variable=geodataframe[variable], name=variable
+        )
 
-        access_pop = network.aggregate(distance,
-                                       type="sum",
-                                       decay=decay,
-                                       name=variable)
+        access_pop = network.aggregate(distance, type="sum", decay=decay, name=variable)
 
         access.append(access_pop)
     names = ["acc_" + variable for variable in variables]
@@ -133,3 +133,31 @@ def calc_access(geodataframe,
 
     return access
 
+
+def compute_travel_cost_matrix(origins, destinations, network, reindex_name=False):
+    origins = origins.copy()
+    destinations = destinations.copy()
+
+    origins["osm_ids"] = network.get_node_ids(
+        origins.centroid.x, origins.centroid.y
+    ).astype(int)
+    destinations["osm_ids"] = network.get_node_ids(
+        destinations.centroid.x, destinations.centroid.y
+    ).astype(int)
+
+    ods = {}
+
+    with tqdm(total=len(origins["osm_ids"])) as pbar:
+        for origin in origins["osm_ids"]:
+            ods[f"{origin}"] = network.shortest_path_lengths(
+                [int(origin)] * len(origins), destinations["osm_ids"]
+            )
+            pbar.update(1)
+
+    if reindex_name:
+        df = pd.DataFrame(ods, index=origins[reindex_name])
+        df.columns = df.index
+    else:
+        df = pd.DataFrame(ods, index=origins)
+
+    return df
