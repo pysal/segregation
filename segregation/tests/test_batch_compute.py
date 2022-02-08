@@ -63,7 +63,7 @@ def test_batch_multi():
     )
     np.testing.assert_array_almost_equal(
         mfit.Statistic,
-        [
+        [   11.78 ,
             0.37768411,
             0.11294892,
             0.78242435,
