@@ -48,7 +48,8 @@ Multigroup Indices
 
 .. autosummary::
    :toctree: generated/
-   
+
+      multigroup.GlobalDistortion
       multigroup.MultiDissim
       multigroup.MultiDivergence
       multigroup.MultiDiversity      
@@ -68,7 +69,7 @@ Local Indices
 .. autosummary::
    :toctree: generated/
 
-      local.LocalKLDivergence
+      local.LocalDistortion
       local.LocalRelativeCentralization
       local.MultiLocalDiversity
       local.MultiLocalEntropy
@@ -85,6 +86,7 @@ Dynamics
    :toctree: generated/
    
       dynamics.compute_multiscalar_profile
+      dynamics.compute_divergence_profiles
   
 Batch Computation
 ---------------------

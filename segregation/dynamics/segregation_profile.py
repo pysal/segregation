@@ -67,7 +67,7 @@ def compute_multiscalar_profile(
     -----
     Based on Sean F. Reardon, Stephen A. Matthews, David O’Sullivan, Barrett A. Lee, Glenn Firebaugh, Chad R. Farrell, & Kendra Bischoff. (2008). The Geographic Scale of Metropolitan Racial Segregation. Demography, 45(3), 489–514. https://doi.org/10.1353/dem.0.0019.
 
-    Reference: :cite:`Reardon2008`.
+    Reference: :cite:`reardon2008`.
 
     """
     if not segregation_index:

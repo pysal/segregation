@@ -6,6 +6,8 @@ import pandas as pd
 import os
 import sys
 from tqdm.auto import tqdm
+import geopandas as gpd
+
 
 # This class allows us to hide the diagnostic messages from urbanaccess if the `quiet` flag is set
 class _HiddenPrints:  # from https://stackoverflow.com/questions/8391411/suppress-calls-to-print-python
@@ -134,23 +136,44 @@ def calc_access(
     return access
 
 
-def compute_travel_cost_matrix(origins, destinations, network, reindex_name=False):
+def compute_travel_cost_matrix(origins, destinations, network, reindex_name=None):
+    """Compute a shortest path matrix from a pandana network
+
+    Parameters
+    ----------
+    origins : geopandas.GeoDataFrame
+        the set of origin geometries. If polygon input, the function will use their centroids
+    destinations : geopandas.GeoDataFrame
+        the set of destination geometries. If polygon input, the function will use their centroids
+    network : pandana.Network
+        Initialized pandana Network object holding a travel network for a study region
+    reindex_name : str, optional
+        Name of column on the origin/destinatation dataframe that holds unique index values
+        If none (default), the index of the pandana Network node will be used
+
+    Returns
+    -------
+    pandas.DataFrame
+        an origin-destination cost matrix. Rows are origin indices, columns are destination indices,
+        and values are shortest network path cost between the two
+    """
     origins = origins.copy()
     destinations = destinations.copy()
 
-    origins["osm_ids"] = network.get_node_ids(
-        origins.centroid.x, origins.centroid.y
-    ).astype(int)
+    #  Note: these are not necessarily "OSM" ids, they're just the identifiers for each  node.
+    #  with an integrated ped/transit network, these could be bus stops...
+    origins["osm_ids"] = network.get_node_ids(origins.centroid.x, origins.centroid.y)
+
     destinations["osm_ids"] = network.get_node_ids(
         destinations.centroid.x, destinations.centroid.y
-    ).astype(int)
+    )
 
     ods = {}
 
     with tqdm(total=len(origins["osm_ids"])) as pbar:
         for origin in origins["osm_ids"]:
             ods[f"{origin}"] = network.shortest_path_lengths(
-                [int(origin)] * len(origins), destinations["osm_ids"]
+                [origin] * len(origins), destinations["osm_ids"]
             )
             pbar.update(1)
 
@@ -161,3 +184,14 @@ def compute_travel_cost_matrix(origins, destinations, network, reindex_name=Fals
         df = pd.DataFrame(ods, index=origins)
 
     return df
+
+
+def reproject_network(network, crs):
+
+    nodes = gpd.points_from_xy(network.nodes_df.x, network.nodes_df.y, crs=4326).to_crs(
+        crs
+    )
+    network.nodes_df["x"] = nodes.x
+    network.nodes_df["y"] = nodes.y
+
+    return network

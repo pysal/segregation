@@ -1,1 +1,2 @@
 from .segregation_profile import compute_multiscalar_profile
+from .divergence_profile import compute_divergence_profiles
