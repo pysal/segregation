@@ -1,12 +1,6 @@
-import numpy as np
 import geopandas as gpd
-import pandas as pd
-
-from scipy.spatial.distance import pdist, squareform
-from scipy.special import rel_entr as relative_entropy
 
 from .._base import MultiGroupIndex, SpatialExplicitIndex
-from ..network import compute_travel_cost_matrix
 from ..dynamics import compute_divergence_profiles
 
 def _local_distortion(
@@ -104,6 +98,8 @@ class LocalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         groups=None,
         metric="euclidean",
         normalize=False,
+        **kwargs
+
     ):
         """Init."""
 
