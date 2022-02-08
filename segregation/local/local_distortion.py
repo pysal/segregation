@@ -75,11 +75,14 @@ class LocalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         dataframe or geodataframe if spatial index holding data for location of interest
     groups : list, required
         list of columns on dataframe holding population totals for each group
-    network : pandana.Network
-        pandana Network object representing the study area
-    coefs: bool
-        whether to return KL Divergence coefficients for each observation (instead of a matrix
-        of values for each observation)
+    network : pandana.Network (optional)
+        A pandana Network object used to compute distance between observations
+    metric : str
+        Distance metric for calculating pairwise distances,
+        Accepts any inputs to `scipy.spatial.distance.pdist`
+        'euclidean' by default. Ignored if passing a network
+    normalization:
+        NOT YET IMPLEMENTED
 
     Attributes
     ----------
