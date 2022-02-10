@@ -79,12 +79,13 @@ def compute_multiscalar_profile(
 
     if groups:
         gdf[groups] = gdf[groups].astype(float)
-        indices[0] = segregation_index(gdf, groups=groups).statistic
+        indices[0] = segregation_index(gdf, groups=groups, **kwargs).statistic
     elif group_pop_var:
         indices[0] = segregation_index(
             gdf,
             group_pop_var=group_pop_var,
             total_pop_var=total_pop_var,
+            **kwargs
         ).statistic
 
     with warnings.catch_warnings():
