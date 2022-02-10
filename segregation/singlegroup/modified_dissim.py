@@ -78,8 +78,8 @@ def _modified_dissim(
 
     def _gen_estimate(i):
         n_retries = 5
-        try:
-            if n_retries > 0:
+        while n_retries >0:
+            try:
                 data = i[0]
                 n = i[1]
                 p = i[2]
@@ -91,11 +91,12 @@ def _modified_dissim(
                 ).tolist()[0]
                 data[group_pop_var] = freq_sim
                 aux = _dissim(data, group_pop_var, total_pop_var)[0]
-        except ValueError:
-            warn("Simulator generated invalid data. Redrawing")
-            n_retries -= 1
+                return aux
 
-        return aux
+            except ValueError:
+                warn("Simulator generated invalid data. Redrawing")
+                n_retries -= 1
+
 
     Ds = np.array(
         Parallel(n_jobs=n_jobs, backend=backend)(

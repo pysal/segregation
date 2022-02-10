@@ -10,6 +10,7 @@ from .gini import _gini_seg
 from tqdm.auto import tqdm
 from joblib import Parallel, delayed
 import multiprocessing
+from warnings import warn
 
 
 def _modified_gini(
@@ -76,7 +77,7 @@ def _modified_gini(
     def _gen_estimate(i):
         n_retries = 5
         try:
-            if n_retries > 0:
+            while n_retries > 0:
                 data = i[0]
                 n = i[1]
                 p = i[2]
