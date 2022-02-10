@@ -1,3 +1,4 @@
+from tkinter import N
 import geopandas as gpd
 import numpy as np
 from libpysal.examples import load_example
@@ -21,6 +22,9 @@ def test_batch_single():
         center="mean",
         function="triangular",
         seed=1234,
+        backend='loky'
+        # loky is slower but more robust in testing
+
     )
     np.testing.assert_array_almost_equal(
         fit.Statistic,
@@ -94,13 +98,14 @@ def test_batch_multiscalar_multi():
 
 
 def test_batch_multiscalar_single():
-    np.random.seed(1234)
     mfit = batch_multiscalar_singlegroup(
         s_map.to_crs(s_map.estimate_utm_crs()),
         distances=[500, 1000],
         group_pop_var="HISP",
         total_pop_var="TOT_POP",
-        seed=1234
+        seed=1234,
+        backend='loky'
+        # loky is slower but more robust in testing
     )
     assert mfit.shape == (3, 13)
 
