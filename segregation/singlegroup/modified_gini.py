@@ -74,18 +74,25 @@ def _modified_gini(
     # Ds = np.empty(iterations)
 
     def _gen_estimate(i):
-        data = i[0]
-        n = i[1]
-        p = i[2]
-        np.random.seed(i[3])
-        freq_sim = np.random.binomial(
-            n=n,
-            p=p,
-            size=(1, data.shape[0]),
-        ).tolist()[0]
-        data[group_pop_var] = freq_sim
-        aux = _gini_seg(data, group_pop_var, total_pop_var)[0]
-        return aux
+        n_retries = 5
+        try:
+            if n_retries > 0:
+                data = i[0]
+                n = i[1]
+                p = i[2]
+                np.random.seed(i[3])
+                freq_sim = np.random.binomial(
+                    n=n,
+                    p=p,
+                    size=(1, data.shape[0]),
+                ).tolist()[0]
+                data[group_pop_var] = freq_sim
+                aux = _gini_seg(data, group_pop_var, total_pop_var)[0]
+                return aux
+
+        except ValueError:
+            warn("Simulator generated invalid data. Redrawing")
+            n_retries -= 1
 
     Ds = pd.Series(
         Parallel(n_jobs=n_jobs, backend=backend)(

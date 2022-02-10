@@ -9,6 +9,7 @@ from .._base import SingleGroupIndex, SpatialImplicitIndex
 from .dissim import _dissim
 from joblib import Parallel, delayed
 import multiprocessing
+from warnings import warn
 
 
 def _modified_dissim(
@@ -76,17 +77,24 @@ def _modified_dissim(
     p_null = x.sum() / t.sum()
 
     def _gen_estimate(i):
-        data = i[0]
-        n = i[1]
-        p = i[2]
-        np.random.seed(i[3])
-        freq_sim = np.random.binomial(
-            n=n,
-            p=p,
-            size=(1, data.shape[0]),
-        ).tolist()[0]
-        data[group_pop_var] = freq_sim
-        aux = _dissim(data, group_pop_var, total_pop_var)[0]
+        n_retries = 5
+        try:
+            if n_retries > 0:
+                data = i[0]
+                n = i[1]
+                p = i[2]
+                np.random.seed(i[3])
+                freq_sim = np.random.binomial(
+                    n=n,
+                    p=p,
+                    size=(1, data.shape[0]),
+                ).tolist()[0]
+                data[group_pop_var] = freq_sim
+                aux = _dissim(data, group_pop_var, total_pop_var)[0]
+        except ValueError:
+            warn("Simulator generated invalid data. Redrawing")
+            n_retries -= 1
+
         return aux
 
     Ds = np.array(

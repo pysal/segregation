@@ -133,7 +133,7 @@ def compute_multiscalar_profile(
                         **kwargs
                     )
                 else:
-                    idx = segregation_index(gdf, groups, w=w)
+                    idx = segregation_index(gdf, groups, w=w, **kwargs)
                 indices[distance] = idx.statistic
         series = pd.Series(indices, name=str(type(idx)).split(".")[-1][:-2])
         series.index.name = "distance"
