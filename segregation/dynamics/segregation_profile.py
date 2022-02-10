@@ -18,6 +18,7 @@ def compute_multiscalar_profile(
     decay="linear",
     function="triangular",
     precompute=True,
+    **kwargs
 ):
     """Compute multiscalar segregation profile.
 
@@ -46,7 +47,7 @@ def compute_multiscalar_profile(
         A pandana.Network likely created with
         `segregation.network.get_osm_network`.
     decay : str (optional)
-        decay type to be used in pandana accessibility calculation 
+        decay type to be used in pandana accessibility calculation
         options are {'linear', 'exp', 'flat'}. The default is 'linear'.
     function: 'str' (optional)
         which weighting function should be passed to libpysal.weights.Kernel
@@ -54,8 +55,9 @@ def compute_multiscalar_profile(
     precompute: bool
         Whether the pandana.Network instance should precompute the range
         queries. This is True by default
-    index_type : str options: {single_group, multi_group}
-        Whether the index is a single-group or -multigroup index
+    **kwargs : dict
+        additional keyword arguments passed to each index (e.g. for setting a random
+        seed in indices like ModifiedGini or ModifiedDissm)
 
 
     Returns
@@ -80,7 +82,9 @@ def compute_multiscalar_profile(
         indices[0] = segregation_index(gdf, groups=groups).statistic
     elif group_pop_var:
         indices[0] = segregation_index(
-            gdf, group_pop_var=group_pop_var, total_pop_var=total_pop_var,
+            gdf,
+            group_pop_var=group_pop_var,
+            total_pop_var=total_pop_var,
         ).statistic
 
     with warnings.catch_warnings():
@@ -102,6 +106,7 @@ def compute_multiscalar_profile(
                         decay=decay,
                         distance=distance,
                         precompute=False,
+                        **kwargs
                     )
                 elif groups:
                     idx = segregation_index(
@@ -111,6 +116,7 @@ def compute_multiscalar_profile(
                         decay=decay,
                         distance=distance,
                         precompute=False,
+                        **kwargs
                     )
 
                 indices[distance] = idx.statistic
@@ -123,6 +129,7 @@ def compute_multiscalar_profile(
                         group_pop_var=group_pop_var,
                         total_pop_var=total_pop_var,
                         w=w,
+                        **kwargs
                     )
                 else:
                     idx = segregation_index(gdf, groups, w=w)

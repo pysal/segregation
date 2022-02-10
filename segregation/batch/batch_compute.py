@@ -48,6 +48,9 @@ def batch_compute_singlegroup(
         Variable in data that contains the total population count of the unit
     progress_bar: bool
         Whether to show a progress bar during calculation
+    **kwargs : dict
+        additional keyword arguments passed to each index (e.g. for setting a random
+        seed in indices like ModifiedGini or ModifiedDissm)
 
     Returns
     -------
@@ -86,6 +89,9 @@ def batch_compute_multigroup(gdf, groups, **kwargs):
         DataFrame holding demographic data for study region
     groups : list
         The variables names in data of the groups of interest of the analysis.
+    **kwargs : dict
+        additional keyword arguments passed to each index (e.g. for setting a random
+        seed in indices like ModifiedGini or ModifiedDissm)
 
     Returns
     -------
@@ -122,6 +128,9 @@ def batch_multiscalar_singlegroup(
         Variable in data that contains the total population count of the unit
     progress_bar: bool
         Whether to show a progress bar during calculation
+    **kwargs : dict
+        additional keyword arguments passed to each index (e.g. for setting a random
+        seed in indices like ModifiedGini or ModifiedDissm)
 
     Returns
     -------
@@ -175,6 +184,9 @@ def batch_multiscalar_multigroup(gdf, distances, groups, progress_bar=True, **kw
         The variables names in data of the groups of interest of the analysis.
     progress_bar: bool
         Whether to show a progress bar during calculation
+    **kwargs : dict
+        additional keyword arguments passed to each index (e.g. for setting a random
+        seed in indices like ModifiedGini or ModifiedDissm)
 
     Returns
     -------

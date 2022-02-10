@@ -12,6 +12,7 @@ s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
 
 
 def test_batch_single():
+    np.random.seed(1234)
     fit = batch_compute_singlegroup(
         s_map.to_crs(s_map.estimate_utm_crs()),
         group_pop_var="HISP",
@@ -19,6 +20,7 @@ def test_batch_single():
         distance=2000,
         center="mean",
         function="triangular",
+        seed=1234,
     )
     np.testing.assert_array_almost_equal(
         fit.Statistic,
@@ -56,6 +58,7 @@ def test_batch_single():
 
 
 def test_batch_multi():
+    np.random.seed(1234)
     mfit = batch_compute_multigroup(
         s_map.to_crs(s_map.estimate_utm_crs()),
         distance=2000,
@@ -80,6 +83,8 @@ def test_batch_multi():
 
 
 def test_batch_multiscalar_multi():
+    np.random.seed(1234)
+
     mfit = batch_multiscalar_multigroup(
         s_map.to_crs(s_map.estimate_utm_crs()),
         distances=[500, 1000],
@@ -89,11 +94,13 @@ def test_batch_multiscalar_multi():
 
 
 def test_batch_multiscalar_single():
+    np.random.seed(1234)
     mfit = batch_multiscalar_singlegroup(
         s_map.to_crs(s_map.estimate_utm_crs()),
         distances=[500, 1000],
         group_pop_var="HISP",
         total_pop_var="TOT_POP",
+        seed=1234
     )
     assert mfit.shape == (3, 13)
 
