@@ -78,7 +78,7 @@ def _modified_dissim(
 
     def _gen_estimate(i):
         n_retries = 5
-        while n_retries >0:
+        if n_retries > 0:
             try:
                 data = i[0]
                 n = i[1]
@@ -96,7 +96,6 @@ def _modified_dissim(
             except ValueError:
                 warn("Simulator generated invalid data. Redrawing")
                 n_retries -= 1
-
 
     Ds = np.array(
         Parallel(n_jobs=n_jobs, backend=backend)(

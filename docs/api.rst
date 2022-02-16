@@ -147,14 +147,3 @@ Network
       network.compute_travel_cost_matrix
       network.get_osm_network
       network.project_network
-
-
-Util
-----------------
-
-.. currentmodule:: segregation
-
-.. autosummary::
- :toctree: generated/
-
-      util.get_osm_network

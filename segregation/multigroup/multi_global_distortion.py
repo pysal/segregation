@@ -108,10 +108,10 @@ class GlobalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         self,
         data,
         groups=None,
-        network=None,
         metric="euclidean",
-        normalize=False,
+        network=None,
         distance_matrix=None,
+        normalize=False,
         **kwargs
 
     ):

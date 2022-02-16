@@ -14,22 +14,21 @@ def _local_distortion(
     Olteanu et al. (2019): 'Segregation through the multiscalar lens'. Which can be
     found here: https://doi.org/10.1073/pnas.1900192116
 
-    Arguments
+    Parameters
     ----------
-    gdf: geopandas.GeoDataFrame
-        geodataframe with group population counts (not percentages) to be included in the analysis.
-    groups: list
-        list of columns on gdf that contain population counts of interest
+    data : pandas.DataFrame or geopandas.GeoDataFrame, required
+        dataframe or geodataframe if spatial index holding data for location of interest
+    groups : list, required
+        list of columns on dataframe holding population totals for each group
     metric : str (optional; 'euclidean' by default)
         Distance metric for calculating pairwise distances,
         Accepts any inputs to `scipy.spatial.distance.pdist`.
         Ignored if passing a network or distance matrix
-    network: pandana.Network object (optional)
+    network: pandana.Network object (optional, None by default)
         A pandana Network object used to compute distance between observations
-    distance_matrix:
+    distance_matrix: numpy.array (optional; None by default)
         numpy array of distances between observations in the dataset
-        or a precomputed distance matrix
-    normalization:
+    normalize: bool
         NOT YET IMPLEMENTED
 
 
@@ -96,11 +95,11 @@ class LocalDistortion(MultiGroupIndex, SpatialExplicitIndex):
     def __init__(
         self,
         data,
-        network=None,
         groups=None,
         metric="euclidean",
-        normalize=False,
+        network=None,
         distance_matrix=None,
+        normalize=False,
         **kwargs
 
     ):
