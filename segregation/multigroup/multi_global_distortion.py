@@ -3,7 +3,10 @@ import geopandas as gpd
 from .._base import MultiGroupIndex, SpatialExplicitIndex
 from ..dynamics import compute_divergence_profiles
 
-def _global_distortion(gdf, groups, network=None, metric="euclidean", normalize=False):
+
+def _global_distortion(
+    gdf, groups, network=None, metric="euclidean", distance_matrix=None, normalize=False
+):
     """
     A segregation metric, using Kullback-Leiber (KL) divergence to quantify the
     difference in the population characteristics between (1) an area and (2) the total population.
@@ -44,7 +47,14 @@ def _global_distortion(gdf, groups, network=None, metric="euclidean", normalize=
 
     total_pop = df.sum().sum()
 
-    aux = compute_divergence_profiles(gdf=gdf, groups=groups, network=network, metric=metric)
+    aux = compute_divergence_profiles(
+        gdf=gdf,
+        groups=groups,
+        network=network,
+        metric=metric,
+        distance_matrix=distance_matrix,
+        normalize=normalize,
+    )
 
     #  this yeilds distortion coefficients
     aux = aux.groupby("observation").sum()[["divergence"]]
@@ -113,7 +123,6 @@ class GlobalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         distance_matrix=None,
         normalize=False,
         **kwargs
-
     ):
         """Init."""
 
@@ -126,7 +135,7 @@ class GlobalDistortion(MultiGroupIndex, SpatialExplicitIndex):
             network=network,
             metric=metric,
             normalize=normalize,
-            distance_matrix=distance_matrix
+            distance_matrix=distance_matrix,
         )
 
         self.statistic = aux[0]
