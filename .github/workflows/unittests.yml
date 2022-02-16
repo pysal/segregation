@@ -14,7 +14,7 @@
      name: CI (${{ matrix.os }}-${{ matrix.environment-file }})
      runs-on: ${{ matrix.os }}
      continue-on-error: true
-     timeout-minutes: 120
+     timeout-minutes: 45
      strategy:
        matrix:
          os: [ubuntu-latest, macos-latest, windows-latest]
