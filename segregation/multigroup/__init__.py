@@ -8,3 +8,4 @@ from .multi_relative_diversity import MultiRelativeDiversity
 from .multi_squared_coef_var import MultiSquaredCoefVar
 from .simpsons_concentration import SimpsonsConcentration
 from .simpsons_interaction import SimpsonsInteraction
+from .multi_global_distortion import GlobalDistortion

@@ -9,10 +9,17 @@ from .._base import SingleGroupIndex, SpatialImplicitIndex
 from .dissim import _dissim
 from joblib import Parallel, delayed
 import multiprocessing
+from warnings import warn
 
 
 def _modified_dissim(
-    data, group_pop_var, total_pop_var, iterations=500, n_jobs=-1, backend="threading"
+    data,
+    group_pop_var,
+    total_pop_var,
+    iterations=500,
+    n_jobs=-1,
+    backend="threading",
+    seed=None,
 ):
     """Calculate Modified Dissimilarity index.
 
@@ -27,6 +34,14 @@ def _modified_dissim(
     iterations : int
         The number of iterations the evaluate average classic dissimilarity under eveness.
         Default value is 500.
+    n_jobs : int
+        [Optional. Default=-1] Number of processes to run in parallel. If -1,
+        this is set to the number of CPUs available
+    backend : str {'loky', 'threading'}
+        backend to pass into joblib's Parallel constructor. Default is "threading"
+    seed : int
+        random seed passed to np.random inside the parallelization constructor to return
+        consistent results
 
     Returns
     ----------
@@ -42,7 +57,12 @@ def _modified_dissim(
     Reference: :cite:`carrington1997measuring`.
 
     """
-    n_jobs = multiprocessing.cpu_count()
+    if not seed:
+        seed = np.random.randint(
+            0, 10e6
+        )  # is there a better practice for this? I think joblib will fail if None passed
+    if n_jobs == -1:
+        n_jobs = multiprocessing.cpu_count()
     if type(iterations) is not int:
         raise TypeError("iterations must be an integer")
 
@@ -57,19 +77,35 @@ def _modified_dissim(
     p_null = x.sum() / t.sum()
 
     def _gen_estimate(i):
-        data = i[0]
-        n = i[1]
-        p = i[2]
+        n_retries = 5
+        if n_retries > 0:
+            try:
+                data = i[0]
+                n = i[1]
+                p = i[2]
+                np.random.seed(i[3])
+                freq_sim = np.random.binomial(
+                    n=n,
+                    p=p,
+                    size=(1, data.shape[0]),
+                ).tolist()[0]
+                data[group_pop_var] = freq_sim
+                aux = _dissim(data, group_pop_var, total_pop_var)[0]
+                return aux
 
-        freq_sim = np.random.binomial(n=n, p=p, size=(1, data.shape[0]),).tolist()[0]
-        data[group_pop_var] = freq_sim
-        aux = _dissim(data, group_pop_var, total_pop_var)[0]
-        return aux
+            except ValueError:
+                warn("Simulator generated invalid data. Redrawing")
+                n_retries -= 1
 
     Ds = np.array(
         Parallel(n_jobs=n_jobs, backend=backend)(
             delayed(_gen_estimate)(
-                (data, np.array([t.tolist()]), np.array([[p_null] * data.shape[0]]))
+                (
+                    data,
+                    np.array([t.tolist()]),
+                    np.array([[p_null] * data.shape[0]]),
+                    seed,
+                )
             )
             for i in range(iterations)
         )
@@ -150,7 +186,12 @@ class ModifiedDissim(SingleGroupIndex, SpatialImplicitIndex):
                 self, w, network, distance, decay, function, precompute
             )
         aux = _modified_dissim(
-            self.data, self.group_pop_var, self.total_pop_var, iterations, backend=backend
+            self.data,
+            self.group_pop_var,
+            self.total_pop_var,
+            iterations,
+            backend=backend,
+            n_jobs=n_jobs,
         )
 
         self.statistic = aux[0]

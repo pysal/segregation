@@ -24,7 +24,7 @@ def _dissim(data, group_pop_var, total_pop_var):
     Returns
     ----------
     statistic : float
-        MinMax index statistic value
+        D index statistic value
     core_data : pandas.DataFrame
         A pandas DataFrame that contains the columns used to perform the estimate.
 

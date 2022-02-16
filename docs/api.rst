@@ -48,7 +48,8 @@ Multigroup Indices
 
 .. autosummary::
    :toctree: generated/
-   
+
+      multigroup.GlobalDistortion
       multigroup.MultiDissim
       multigroup.MultiDivergence
       multigroup.MultiDiversity      
@@ -67,7 +68,8 @@ Local Indices
 
 .. autosummary::
    :toctree: generated/
-   
+
+      local.LocalDistortion
       local.LocalRelativeCentralization
       local.MultiLocalDiversity
       local.MultiLocalEntropy
@@ -84,6 +86,7 @@ Dynamics
    :toctree: generated/
    
       dynamics.compute_multiscalar_profile
+      dynamics.compute_divergence_profiles
   
 Batch Computation
 ---------------------
@@ -132,13 +135,15 @@ Decomposition
   
       decomposition.DecomposeSegregation
 
-
-Util
-----------------
+	  
+Network
+---------------------
 
 .. currentmodule:: segregation
 
 .. autosummary::
- :toctree: generated/
-
-      util.get_osm_network
+   :toctree: generated/
+  
+      network.compute_travel_cost_matrix
+      network.get_osm_network
+      network.project_network

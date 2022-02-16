@@ -10,7 +10,7 @@ from libpysal.weights import lag_spatial
 from libpysal.weights.distance import Kernel
 from libpysal.weights.util import attach_islands, fill_diagonal
 
-from .util import calc_access
+from .network import calc_access
 from .util.util import _nan_handle
 
 
@@ -169,15 +169,26 @@ class SpatialExplicitIndex:
                 "`data` must be a geopanads.GeoDataFrame with a vaild geometry column"
             )
         if self.data.crs.is_geographic:
-            warn('Geometry is in a geographic CRS. Distance and area calculations in this index are likely incorrect. '
-                 'Re-project the input data to a projected CRS using `GeoDataFrame.to_crs()` before calculating this index.')
+            warn(
+                "Geometry is in a geographic CRS. Distance and area calculations in this index are likely incorrect. "
+                "Re-project the input data to a projected CRS using `GeoDataFrame.to_crs()` before calculating this index."
+            )
         self.spatial_type = "explicit"
 
 
 class SpatialImplicitIndex:
     """Class for estimating segregation indices that can be spatial or aspatial."""
 
-    def __init__(self, w, network, distance=1000, decay='linear', function='triangular', precompute=False, **kwargs):
+    def __init__(
+        self,
+        w,
+        network,
+        distance=1000,
+        decay="linear",
+        function="triangular",
+        precompute=False,
+        **kwargs
+    ):
         """Initialize spatially implicit index.
 
         Parameters
@@ -205,8 +216,7 @@ class SpatialImplicitIndex:
 
         if w and network:
             raise AttributeError(
-                "must pass either a pandana network or a pysal weights object\
-                 but not both"
+                "must pass either a pandana network or a pysal weights object, but not both"
             )
         if network:
             access = calc_access(
@@ -221,7 +231,9 @@ class SpatialImplicitIndex:
             self.data = access
             self.network = network
         elif w:
-            self.data = _build_local_environment(self.data, self._groups, w, function=function)
+            self.data = _build_local_environment(
+                self.data, self._groups, w, function=function
+            )
             self.w = w
         elif distance and not network:
             self._original_data = self.data.copy()
@@ -230,7 +242,9 @@ class SpatialImplicitIndex:
             )
 
 
-def _build_local_environment(data, groups, w=None, bandwidth=1000, function="triangular"):
+def _build_local_environment(
+    data, groups, w=None, bandwidth=1000, function="triangular"
+):
     """Convert observations into spatially-weighted sums.
 
     Parameters
@@ -248,9 +262,11 @@ def _build_local_environment(data, groups, w=None, bandwidth=1000, function="tri
     """
     data = data.copy().reset_index()
     if data.crs.is_geographic:
-        warnings.warn('GeoDataFrame appears to have a geographic coordinate system and likely needs to be reprojected')
+        warnings.warn(
+            "GeoDataFrame appears to have a geographic coordinate system and likely needs to be reprojected"
+        )
     with warnings.catch_warnings():
-        warnings.simplefilter("ignore") 
+        warnings.simplefilter("ignore")
         if not w:
             w = Kernel.from_dataframe(data, bandwidth=bandwidth, function=function)
         new_data = []

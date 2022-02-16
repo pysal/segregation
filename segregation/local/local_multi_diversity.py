@@ -17,7 +17,6 @@ def _multi_local_diversity(data, groups):
     ----------
 
     data   : a pandas DataFrame of n rows
-    
     groups : list of strings of length k.
              The variables names in data of the groups of interest of the analysis.
 
@@ -26,14 +25,14 @@ def _multi_local_diversity(data, groups):
 
     statistics : np.array(n,k)
                  Local Diversity values for each group and unit
-                
+
     core_data  : a pandas DataFrame
                  A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
     Based on Theil, Henry. Statistical decomposition analysis; with applications in the social and administrative sciences. No. 04; HA33, T4.. 1972.
-    
+
     Reference: :cite:`theil1972statistical`.
 
     """
@@ -87,13 +86,15 @@ class MultiLocalDiversity(MultiGroupIndex, SpatialImplicitIndex):
         distance=None,
         decay=None,
         precompute=None,
-        function='triangular'
+        function="triangular",
     ):
         """Init."""
 
         MultiGroupIndex.__init__(self, data, groups)
         if any([w, network, distance]):
-            SpatialImplicitIndex.__init__(self, w, network, distance, decay, function, precompute)
+            SpatialImplicitIndex.__init__(
+                self, w, network, distance, decay, function, precompute
+            )
         aux = _multi_local_diversity(self.data, self.groups)
 
         self.statistics = aux[0]
