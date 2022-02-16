@@ -27,7 +27,7 @@ def _global_distortion(
         Ignored if passing a network or distance matrix
     network: pandana.Network object (optional)
         A pandana Network object used to compute distance between observations
-    distance_matrix:
+    distance_matrix: numpy.array
         numpy array of distances between observations in the dataset
     normalization:
         NOT YET IMPLEMENTED
@@ -53,7 +53,6 @@ def _global_distortion(
         network=network,
         metric=metric,
         distance_matrix=distance_matrix,
-        normalize=normalize,
     )
 
     #  this yeilds distortion coefficients

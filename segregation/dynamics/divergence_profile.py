@@ -29,8 +29,6 @@ def compute_divergence_profiles(
         A pandana Network object used to compute distance between observations
     distance_matrix: numpy.array (optional; None by default)
         numpy array of distances between observations in the dataset
-    normalization: bool
-        NOT YET IMPLEMENTED
 
     Returns
     ----------
@@ -68,7 +66,7 @@ def compute_divergence_profiles(
             warn(
                 f"metric set to {metric} but a distance_matrix argument was passed. Using precomputed distances instead"
             )
-            dist_matrix = distance_matrix
+        dist_matrix = distance_matrix
     else:
         dist_matrix = squareform(pdist(coordinates, metric=metric))
 
