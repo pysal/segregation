@@ -2,11 +2,14 @@
 
 __author__ = "Elijah Knaap <elijah.knaap@ucr.edu> Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr.edu>"
 
-import pandas as pd
 import os
 import sys
-from tqdm.auto import tqdm
+from warnings import warn
+
 import geopandas as gpd
+import pandana as pdna
+import pandas as pd
+from tqdm.auto import tqdm
 
 
 # This class allows us to hide the diagnostic messages from urbanaccess if the `quiet` flag is set
@@ -20,7 +23,19 @@ class _HiddenPrints:  # from https://stackoverflow.com/questions/8391411/suppres
         sys.stdout = self._original_stdout
 
 
-def get_osm_network(geodataframe, maxdist=5000, quiet=True, **kwargs):
+def _reproject_osm_nodes(nodes_df, input_crs, output_crs):
+    #  take original x,y coordinates and convert into geopandas.Series, then reproject
+    nodes = gpd.points_from_xy(x=nodes_df.x, y=nodes_df.y, crs=input_crs).to_crs(
+        output_crs
+    )
+    #  convert to dataframe and recreate the x and y cols
+    nodes = gpd.GeoDataFrame(index=nodes_df.index, geometry=nodes)
+    nodes["x"] = nodes.centroid.x
+    nodes["y"] = nodes.centroid.y
+    return nodes
+
+
+def get_osm_network(geodataframe, maxdist=5000, quiet=True, output_crs=None, **kwargs):
     """Download a street network from OSM.
 
     Parameters
@@ -29,9 +44,10 @@ def get_osm_network(geodataframe, maxdist=5000, quiet=True, **kwargs):
         geopandas.GeoDataFrame of the study area.
         Coordinate system should be in WGS84
     maxdist : int
-        Total distance (in meters) of the network queries you may need.
-        This is used to buffer the network to ensure theres enough to satisfy
-        your largest query, otherwise there may be edge effects.
+        Maximum distance of the network queries you may need (this is used to buffer the
+        network to ensure there's enough to satisfy your largest query, otherwise there
+        may be edge effects. Distance is measured in the units of the geodataframe CRS. If
+        the CRS is geographic, a UTM approximation is used, so the units are meters.
     quiet: bool
         If True, diagnostic messages from urbanaccess will be suppressed
     **kwargs : dict
@@ -45,6 +61,9 @@ def get_osm_network(geodataframe, maxdist=5000, quiet=True, **kwargs):
         spatial segregation measures that include a distance decay
 
     """
+    assert geodataframe.crs, "The input geodataframe must have a valid CRS set"
+    if not output_crs:
+        output_crs = geodataframe.crs
     try:
         import pandana as pdna
         from urbanaccess.osm.load import ua_network_from_bbox
@@ -56,21 +75,25 @@ def get_osm_network(geodataframe, maxdist=5000, quiet=True, **kwargs):
         )
 
     gdf = geodataframe.copy()
-    gdf = gdf.to_crs(gdf.estimate_utm_crs())
-    gdf = gdf.buffer(maxdist)
-    bounds = gdf.to_crs(epsg=4326).total_bounds
 
-    if quiet:
-        print("Downloading data from OSM. This may take awhile.")
-        with _HiddenPrints():
-            net = ua_network_from_bbox(
-                bounds[1], bounds[0], bounds[3], bounds[2], **kwargs
-            )
+    #  Need coordinates in 4326 to request from OSM, but need projected for measuring distance
+    if geodataframe.crs.is_geographic:
+        # this is lazy because UTM can be inaccurate in some places on the earth, but generally works fine
+        warn(
+            "The geodataframe passed into the function is stored in a geographic CRS."
+            "Estimating maximum distance threshold using a UTM transformation"
+        )
+        gdf = gdf.to_crs(gdf.estimate_utm_crs())
+        gdf = gdf.buffer(maxdist)
+        bounds = gdf.to_crs(epsg=4326).total_bounds
     else:
-        net = ua_network_from_bbox(bounds[1], bounds[0], bounds[3], bounds[2], **kwargs)
-    print("Building network")
+        bounds = gdf.total_bounds
+
+    nodes,edges = ua_network_from_bbox(bounds[1], bounds[0], bounds[3], bounds[2], **kwargs)
+    nodes = _reproject_osm_nodes(nodes, 4326, output_crs)
+
     network = pdna.Network(
-        net[0]["x"], net[0]["y"], net[1]["from"], net[1]["to"], net[1][["distance"]]
+        nodes["x"], nodes["y"], edges["from"], edges["to"], edges[["distance"]]
     )
 
     return network
@@ -83,6 +106,7 @@ def calc_access(
     decay="linear",
     variables=None,
     precompute=True,
+    return_node_data=False,
 ):
     """Calculate access to population groups.
 
@@ -104,6 +128,9 @@ def calc_access(
         whether pandana should precompute the distance matrix. It can only be
         precomputed once, so If you plan to pass the same network to this
         function several times, you should set precompute=False for later runs
+    return_node_data : bool, default is False
+        Whether to return nodel-level accessibility data or to trim output to
+        the same geometries as the input. Default is the latter.
 
     Returns
     -------
@@ -114,13 +141,14 @@ def calc_access(
         on node_ids
 
     """
+    if not decay:
+        raise Exception("You must pass a decay function such as `linear`")
     if precompute:
         network.precompute(distance)
 
     geodataframe["node_ids"] = network.get_node_ids(
         geodataframe.centroid.x, geodataframe.centroid.y
     )
-
     access = []
     for variable in variables:
         network.set(
@@ -130,15 +158,19 @@ def calc_access(
         access_pop = network.aggregate(distance, type="sum", decay=decay, name=variable)
 
         access.append(access_pop)
-    names = ["acc_" + variable for variable in variables]
-    access = pd.DataFrame(dict(zip(names, access)))
+    access = pd.DataFrame(dict(zip(variables, access)))
+    if return_node_data:
+        return access.round(0)
+    access = geodataframe[["node_ids", geodataframe.geometry.name]].merge(
+        access, right_index=True, left_on="node_ids", how="left"
+    )
 
-    return access
+    return access.dropna()
 
 
 def compute_travel_cost_matrix(origins, destinations, network, reindex_name=None):
     """Compute a shortest path matrix from a pandana network
-
+    
     Parameters
     ----------
     origins : geopandas.GeoDataFrame
@@ -150,7 +182,6 @@ def compute_travel_cost_matrix(origins, destinations, network, reindex_name=None
     reindex_name : str, optional
         Name of column on the origin/destinatation dataframe that holds unique index values
         If none (default), the index of the pandana Network node will be used
-
     Returns
     -------
     pandas.DataFrame
@@ -186,12 +217,38 @@ def compute_travel_cost_matrix(origins, destinations, network, reindex_name=None
     return df
 
 
-def reproject_network(network, crs):
+def project_network(network, output_crs=None, input_crs=4326):
+    """Reproject a pandana.Network object into another coordinate system
 
-    nodes = gpd.points_from_xy(network.nodes_df.x, network.nodes_df.y, crs=4326).to_crs(
-        crs
+    Parameters
+    ----------
+    network : pandana.Network
+        an instantiated pandana Network object
+    input_crs : int, optional
+        the coordinate system used in the Network.node_df dataframe. Typically
+        these data are collected in Lon/Lat, so the default 4326
+    output_crs : int, str, or pyproj.crs.CRS, required
+        EPSG code or pyproj.crs.CRS object of the output coordinate system
+
+    Returns
+    -------
+    pandana.Network
+        an initialized pandana.Network with 'x' and y' values represented
+        by coordinates in the specified CRS
+    """
+    assert output_crs, "You must provide an output CRS"
+
+    #  take original x,y coordinates and convert into geopandas.Series, then reproject
+    nodes = _reproject_osm_nodes(network.nodes_df, input_crs, output_crs)
+
+    #  reinstantiate the network (needs to rebuild the tree)
+    net = pdna.Network(
+        node_x=nodes["x"],
+        node_y=nodes["y"],
+        edge_from=network.edges_df["from"],
+        edge_to=network.edges_df["to"],
+        edge_weights=network.edges_df[network.impedance_names],
+        twoway=network._twoway,
     )
-    network.nodes_df["x"] = nodes.x
-    network.nodes_df["y"] = nodes.y
+    return net
 
-    return network

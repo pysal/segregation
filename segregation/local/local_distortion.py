@@ -4,7 +4,7 @@ from .._base import MultiGroupIndex, SpatialExplicitIndex
 from ..dynamics import compute_divergence_profiles
 
 def _local_distortion(
-    gdf, groups, network=None, metric="euclidean", normalize=False
+    gdf, groups, metric="euclidean", network=None, distance_matrix=None, normalize=False
 ):
     """
     A segregation metric, using Kullback-Leiber (KL) divergence to quantify the
@@ -20,15 +20,15 @@ def _local_distortion(
         geodataframe with group population counts (not percentages) to be included in the analysis.
     groups: list
         list of columns on gdf that contain population counts of interest
+    metric : str (optional; 'euclidean' by default)
+        Distance metric for calculating pairwise distances,
+        Accepts any inputs to `scipy.spatial.distance.pdist`.
+        Ignored if passing a network or distance matrix
     network: pandana.Network object (optional)
         A pandana Network object used to compute distance between observations
-    metric : str
-        Distance metric for calculating pairwise distances,
-        Accepts any inputs to `scipy.spatial.distance.pdist` 
-        'euclidean' by default. Ignored if passing a network
-    coefs: bool (default: True)
-        whether to return KL divergence coefficients. If True, the function will
-        return a geodataframe with one
+    distance_matrix:
+        numpy array of distances between observations in the dataset
+        or a precomputed distance matrix
     normalization:
         NOT YET IMPLEMENTED
 
@@ -43,7 +43,7 @@ def _local_distortion(
     geoms = gdf[gdf.geometry.name]
     centroids = gdf.geometry.centroid
 
-    aux = compute_divergence_profiles(gdf=gdf, groups=groups, network=network, metric=metric)
+    aux = compute_divergence_profiles(gdf=gdf, groups=groups, network=network, metric=metric ,distance_matrix=distance_matrix)
     # divergence --> distortion by summing at each location
     aux = gpd.GeoDataFrame(
         aux.groupby("observation").sum()[["divergence"]], geometry=geoms
@@ -69,12 +69,14 @@ class LocalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         dataframe or geodataframe if spatial index holding data for location of interest
     groups : list, required
         list of columns on dataframe holding population totals for each group
-    network : pandana.Network (optional)
-        A pandana Network object used to compute distance between observations
-    metric : str
+    metric : str (optional; 'euclidean' by default)
         Distance metric for calculating pairwise distances,
-        Accepts any inputs to `scipy.spatial.distance.pdist`
-        'euclidean' by default. Ignored if passing a network
+        Accepts any inputs to `scipy.spatial.distance.pdist`.
+        Ignored if passing a network or distance matrix
+    network: pandana.Network object (optional; None by default)
+        A pandana Network object used to compute distance between observations
+    distance_matrix:
+        numpy array of distances between observations in the dataset
     normalization:
         NOT YET IMPLEMENTED
 
@@ -98,6 +100,7 @@ class LocalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         groups=None,
         metric="euclidean",
         normalize=False,
+        distance_matrix=None,
         **kwargs
 
     ):
@@ -112,6 +115,7 @@ class LocalDistortion(MultiGroupIndex, SpatialExplicitIndex):
             network=network,
             metric=metric,
             normalize=normalize,
+            distance_matrix=distance_matrix
         )
 
         self.statistics = aux["distortion"]

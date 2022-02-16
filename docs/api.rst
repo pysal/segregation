@@ -135,6 +135,19 @@ Decomposition
   
       decomposition.DecomposeSegregation
 
+	  
+Network
+---------------------
+
+.. currentmodule:: segregation
+
+.. autosummary::
+   :toctree: generated/
+  
+      network.compute_travel_cost_matrix
+      network.get_osm_network
+      network.project_network
+
 
 Util
 ----------------

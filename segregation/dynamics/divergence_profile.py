@@ -5,10 +5,11 @@ from scipy.spatial.distance import pdist, squareform
 from scipy.special import rel_entr as relative_entropy
 
 from ..network import compute_travel_cost_matrix
+from warnings import warn
 
 
 def compute_divergence_profiles(
-    gdf, groups, network=None, metric="euclidean"
+    gdf, groups, metric="euclidean", network=None, distance_matrix=None
 ):
     """
     A segregation metric, using Kullback-Leiber (KL) divergence to quantify the
@@ -24,13 +25,14 @@ def compute_divergence_profiles(
         geodataframe with group population counts (not percentages) to be included in the analysis.
     groups: list
         list of columns on gdf that contain population counts of interest
+    metric : str (optional; 'euclidean' by default)
+        Distance metric for calculating pairwise distances,
+        Accepts any inputs to `scipy.spatial.distance.pdist`.
+        Ignored if passing a network or distance matrix
     network: pandana.Network object (optional)
         A pandana Network object used to compute distance between observations
-    metric : str
-        Distance metric for calculating pairwise distances,
-        Accepts any inputs to `scipy.spatial.distance.pdist` 
-        'euclidean' by default. Ignored if passing a network
-
+    distance_matrix:
+        numpy array of distances between observations in the dataset
 
     Returns
     ----------
@@ -57,7 +59,18 @@ def compute_divergence_profiles(
 
     # If given a pandana network, use shortest network distance, otherwise use scikit
     if network:
+        if metric != "network":
+            warn(
+                f"metric set to {metric} but a pandana.Network object was passed. Using network distances instead"
+                "If you wish to use a scipy distance matrix, do not include a `network` argument`"
+            )
         dist_matrix = compute_travel_cost_matrix(gdf, gdf, network).values
+    elif distance_matrix:
+        if metric != "precomputed":
+            warn(
+                f"metric set to {metric} but a distance_matrix argument was passed. Using precomputed distances instead"
+            )
+            dist_matrix = distance_matrix
     else:
         dist_matrix = squareform(pdist(coordinates, metric=metric))
 

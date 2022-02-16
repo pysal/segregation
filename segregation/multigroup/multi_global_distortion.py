@@ -18,12 +18,14 @@ def _global_distortion(gdf, groups, network=None, metric="euclidean", normalize=
         geodataframe with group population counts (not percentages) to be included in the analysis.
     groups : list
         list of columns on gdf that contain population counts of interest
-    network : pandana.Network (optional)
-        A pandana Network object used to compute distance between observations
-    metric : str
+    metric : str (optional; 'euclidean' by default)
         Distance metric for calculating pairwise distances,
-        Accepts any inputs to `scipy.spatial.distance.pdist`
-        'euclidean' by default. Ignored if passing a network
+        Accepts any inputs to `scipy.spatial.distance.pdist`.
+        Ignored if passing a network or distance matrix
+    network: pandana.Network object (optional)
+        A pandana Network object used to compute distance between observations
+    distance_matrix:
+        numpy array of distances between observations in the dataset
     normalization:
         NOT YET IMPLEMENTED
 
@@ -75,13 +77,15 @@ class GlobalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         dataframe or geodataframe if spatial index holding data for location of interest
     groups : list, required
         list of columns on dataframe holding population totals for each group
-    network : pandana.Network (optional)
-        A pandana Network object used to compute distance between observations
-    metric : str
+    metric : str (optional; 'euclidean' by default)
         Distance metric for calculating pairwise distances,
-        Accepts any inputs to `scipy.spatial.distance.pdist`
-        'euclidean' by default. Ignored if passing a network
-    normalization:
+        Accepts any inputs to `scipy.spatial.distance.pdist`.
+        Ignored if passing a network or distance matrix
+    network: pandana.Network object (optional, None by default)
+        A pandana Network object used to compute distance between observations
+    distance_matrix: numpy.array (optional; None by default)
+        numpy array of distances between observations in the dataset
+    normalization: bool
         NOT YET IMPLEMENTED
 
     Attributes
@@ -107,6 +111,7 @@ class GlobalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         network=None,
         metric="euclidean",
         normalize=False,
+        distance_matrix=None,
         **kwargs
 
     ):
@@ -121,6 +126,7 @@ class GlobalDistortion(MultiGroupIndex, SpatialExplicitIndex):
             network=network,
             metric=metric,
             normalize=normalize,
+            distance_matrix=distance_matrix
         )
 
         self.statistic = aux[0]

@@ -1,7 +1,7 @@
 from libpysal.examples import load_example
 import geopandas as gpd
 import numpy as np
-from segregation.util import get_osm_network
+from segregation.network import get_osm_network
 
 
 def test_network_download():
