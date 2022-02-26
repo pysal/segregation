@@ -1,6 +1,7 @@
 nbsphinx
 numpydoc
 pandana
+pandoc
 quilt3
 sphinx
 sphinxcontrib-napoleon
