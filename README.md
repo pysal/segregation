@@ -16,19 +16,19 @@ With only a few lines of code, **segregation** users can
 
 Calculate over 40 segregation measures from simple to state-of-the art, including:
 
-- [aspatial segregation indices](https://github.com/pysal/segregation/blob/master/notebooks/aspatial_examples.ipynb)
+- [single-group segregation indices](https://github.com/pysal/segregation/blob/master/notebooks/10_singlegroup_indices.ipynb)
+- [multi-group segregation indices](https://github.com/pysal/segregation/blob/master/notebooks/02_multigroup_indices.ipynb)
 - spatial segregation indices
-  - [using spatial weights matrices, euclidian distances, or topological relationships](https://github.com/pysal/segregation/blob/master/notebooks/spatial_examples.ipynb)
-  - [using street network distances](https://github.com/pysal/segregation/blob/master/notebooks/network_measures.ipynb)
-  - [using multiscalar definitions](https://github.com/pysal/segregation/blob/master/notebooks/multiscalar_segregation_profiles.ipynb)
-- [local segregation indices](https://github.com/pysal/segregation/blob/master/notebooks/local_measures_example.ipynb)
+  - [using spatial weights matrices, euclidian distances, or topological relationships](https://github.com/pysal/segregation/blob/master/notebooks/10_singlegroup_indices.ipynb)
+  - [using multiscalar definitions](https://github.com/pysal/segregation/blob/master/notebooks/04_multiscalar_example.ipynb)
+  - [Kullback-Leiber divergence index](https://github.com/pysal/segregation/blob/master/notebooks/kl_divergence_profile_walkthrough.ipynb)
+- [local segregation indices](https://github.com/pysal/segregation/blob/master/notebooks/03_local_indices.ipynb)
 
 Test whether segregation estimates are statistically significant:
 
-- [single value inference](https://github.com/pysal/segregation/blob/master/notebooks/inference_wrappers_example.ipynb)
-- [comparative inference](https://github.com/pysal/segregation/blob/master/notebooks/inference_wrappers_example.ipynb)
+- [single value and comparative inference](https://github.com/pysal/segregation/blob/master/notebooks/06_inference.ipynb)
 
-[Decompose](https://github.com/pysal/segregation/blob/master/notebooks/decomposition_wrapper_example.ipynb)
+[Decompose](https://github.com/pysal/segregation/blob/master/notebooks/07_decomposition_example.ipynb)
 segregation comparisons into
 
 - differences arising from spatial structure 
