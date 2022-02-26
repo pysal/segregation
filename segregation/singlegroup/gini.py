@@ -8,6 +8,59 @@ import numpy as np
 from .._base import SingleGroupIndex, SpatialImplicitIndex
 
 
+
+try:
+    from numba import njit, jit, prange, boolean
+except (ImportError, ModuleNotFoundError):
+
+    def jit(*dec_args, **dec_kwargs):
+        """
+        decorator mimicking numba.jit
+        """
+
+        def intercepted_function(f, *f_args, **f_kwargs):
+            return f
+
+        return intercepted_function
+
+    njit = jit
+
+    prange = range
+    boolean = bool
+
+@njit(parallel=True, fastmath=True,)
+def _gini_vecp(pi: np.ndarray, ti: np.ndarray):
+    """Memory efficient calculation of Gini
+
+    Parameters
+    ----------
+    pi : np.ndarray
+        area minority population counts
+    ti : np.ndarray
+        area total population counts
+
+    Returns
+    ----------
+    
+    implicit: float
+             Gini coefficient
+    """
+
+
+    n = ti.shape[0]
+    num = np.zeros(1)
+    T = ti.sum()
+    P = pi.sum() / T
+    pi = np.where(ti == 0, 0, pi / ti)
+    T = ti.sum()
+    for i in prange(n-1):
+        num += (ti[i] * ti[i+1:] * np.abs(pi[i] - pi[i+1:])).sum()
+    num *= 2
+    den = (2 * T * T * P * (1-P))
+    return (num / den)[0]
+
+    
+
 def _gini_seg(data, group_pop_var, total_pop_var):
     """Calculate Gini segregation index.
 
@@ -33,8 +86,6 @@ def _gini_seg(data, group_pop_var, total_pop_var):
 
     Reference: :cite:`massey1988dimensions`.
     """
-    T = data[total_pop_var].sum()
-    P = data[group_pop_var].sum() / T
 
     # If a unit has zero population, the group of interest frequency is zero
     data = data.assign(
@@ -44,12 +95,9 @@ def _gini_seg(data, group_pop_var, total_pop_var):
         ),
     )
 
-    num = (
-        np.matmul(np.array(data.ti)[np.newaxis].T, np.array(data.ti)[np.newaxis])
-        * abs(np.array(data.pi)[np.newaxis].T - np.array(data.pi)[np.newaxis])
-    ).sum()
-    den = 2 * T ** 2 * P * (1 - P)
-    G = num / den
+    pi = data[group_pop_var].values
+    ti = data[total_pop_var].values
+    G = _gini_vecp(pi, ti)
 
     if not isinstance(data, gpd.GeoDataFrame):
         data = data[[group_pop_var, total_pop_var]]
@@ -58,7 +106,6 @@ def _gini_seg(data, group_pop_var, total_pop_var):
         data = data[[group_pop_var, total_pop_var, data.geometry.name]]
 
     return G, data
-
 
 class Gini(SingleGroupIndex, SpatialImplicitIndex):
     """Gini Index.
