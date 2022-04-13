@@ -19,15 +19,6 @@ help:
 %: Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-github:
-	@make html
-
-sync:
-	@rsync -avh _build/html/ ../docs/ --delete
-	@rsync -avh figs/ ../docs/figs/ --delete
-	@make clean
-	touch ../docs/.nojekyll
-
 clean:
 	rm -rf $(BUILDDIR)/*
 	rm -rf auto_examples/
