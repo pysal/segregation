@@ -30,5 +30,4 @@ dependencies:
   - pytest-mpl
   - pytest-cov
   - twine
-  - jsonschema==3.*
 
