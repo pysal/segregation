@@ -21,6 +21,8 @@ dependencies:
   - tqdm
   - urbanaccess
   - numba
+  - pyproj >=3
+
   # testing, etc
   - codecov
   - pytest
@@ -28,7 +30,7 @@ dependencies:
   - pytest-cov
   - twine
   - rvlib
-  - jsonschema==3.*
+
   # docs
   - ipywidgets
   - nbsphinx

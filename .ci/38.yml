@@ -22,6 +22,8 @@ dependencies:
   - urbanaccess
   - rvlib
   - numba
+  - pyproj >=3
+
   # testing, etc
   - codecov
   - pytest

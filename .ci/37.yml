@@ -22,10 +22,11 @@ dependencies:
   - urbanaccess
   - rvlib
   - numba
+  - pyproj >=3
+
   # testing, etc
   - codecov
   - pytest
   - pytest-mpl
   - pytest-cov
   - twine
-  - jsonschema==3.*
