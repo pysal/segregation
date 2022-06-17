@@ -340,6 +340,10 @@ def _prepare_random_label(seg_class_1, seg_class_2):
 
 
 def _estimate_random_label_difference(data):
+    #  note: if estimating a spatial implicit index, then "space" has already been accounted for...
+    #  when the index is computed, the underlying data are transformed to represent the *accessible* population
+    #  so when calculating the simulated difference, we need to pop spatial implicit parameters
+    
     stacked_data = data[0]
     function = data[1]
     index_args_1 = data[2]
@@ -347,6 +351,11 @@ def _estimate_random_label_difference(data):
     idx_type = data[4]
     groups = data[5]
     approach = data[6]
+    for args in [index_args_1, index_args_2]:
+        if 'network' in args:
+            args.pop('network')
+        elif 'distance' in args:
+            args.pop('distance')
 
     if approach == 'person_permutation':
         grouping = stacked_data[['grouping_variable']].values
