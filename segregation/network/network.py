@@ -7,7 +7,6 @@ import sys
 from warnings import warn
 
 import geopandas as gpd
-import pandana as pdna
 import pandas as pd
 from tqdm.auto import tqdm
 
@@ -89,7 +88,9 @@ def get_osm_network(geodataframe, maxdist=5000, quiet=True, output_crs=None, **k
     else:
         bounds = gdf.total_bounds
 
-    nodes,edges = ua_network_from_bbox(bounds[1], bounds[0], bounds[3], bounds[2], **kwargs)
+    nodes, edges = ua_network_from_bbox(
+        bounds[1], bounds[0], bounds[3], bounds[2], **kwargs
+    )
     nodes = _reproject_osm_nodes(nodes, 4326, output_crs)
 
     network = pdna.Network(
@@ -170,7 +171,7 @@ def calc_access(
 
 def compute_travel_cost_matrix(origins, destinations, network, reindex_name=None):
     """Compute a shortest path matrix from a pandana network
-    
+
     Parameters
     ----------
     origins : geopandas.GeoDataFrame
@@ -237,6 +238,15 @@ def project_network(network, output_crs=None, input_crs=4326):
         an initialized pandana.Network with 'x' and y' values represented
         by coordinates in the specified CRS
     """
+    try:
+        import pandana as pdna
+    except ImportError:
+        raise ImportError(
+            "You need pandana and urbanaccess to work with segregation's network module\n"
+            "You can install them with  `pip install urbanaccess pandana` "
+            "or `conda install -c udst pandana urbanaccess`"
+        )
+
     assert output_crs, "You must provide an output CRS"
 
     #  take original x,y coordinates and convert into geopandas.Series, then reproject
@@ -252,4 +262,3 @@ def project_network(network, output_crs=None, input_crs=4326):
         twoway=network._twoway,
     )
     return net
-
