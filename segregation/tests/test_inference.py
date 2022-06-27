@@ -1,5 +1,5 @@
 import unittest
-
+import pandas as pd
 import geopandas as gpd
 import numpy as np
 from libpysal.examples import load_example
@@ -11,6 +11,12 @@ from segregation.singlegroup import Dissim
 class Inference_Tester(unittest.TestCase):
     def test_Inference(self):
         s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
+        # note need to recast as datafrme
+        s_map_no_geom = pd.DataFrame(
+            gpd.read_file(
+                load_example("Sacramento1").get_path("sacramentot2.shp")
+            ).drop(columns=["geometry"])
+        )
         index1 = Dissim(s_map, "HISP", "TOT_POP")
         index2 = Dissim(s_map, "BLACK", "TOT_POP")
 
@@ -23,19 +29,29 @@ class Inference_Tester(unittest.TestCase):
         # Single Value Tests #
         np.random.seed(123)
         res = SingleValueTest(
-            index1, null_approach="systematic", iterations_under_null=50, backend='multiprocessing'
+            index1,
+            null_approach="systematic",
+            iterations_under_null=50,
+            backend="multiprocessing",
         )
-        np.testing.assert_almost_equal(
-            res.est_sim.mean(), 0.017621, decimal=2
+        np.testing.assert_almost_equal(res.est_sim.mean(), 0.017621, decimal=2)
+
+        index1_no_geom = Dissim(s_map_no_geom, "HISP", "TOT_POP")
+
+        np.random.seed(123)
+        res = SingleValueTest(
+            index1_no_geom,
+            null_approach="systematic",
+            iterations_under_null=50,
+            backend="multiprocessing",
         )
+        np.testing.assert_almost_equal(res.est_sim.mean(), 0.017621, decimal=2)
 
         np.random.seed(123)
         res = SingleValueTest(
             index1, null_approach="bootstrap", iterations_under_null=50
         )
-        np.testing.assert_almost_equal(
-            res.est_sim.mean().round(2), 0.32, decimal=2
-        )
+        np.testing.assert_almost_equal(res.est_sim.mean().round(2), 0.32, decimal=2)
 
         np.random.seed(123)
         res = SingleValueTest(
@@ -57,9 +73,7 @@ class Inference_Tester(unittest.TestCase):
         res = SingleValueTest(
             index1, null_approach="systematic_permutation", iterations_under_null=50
         )
-        np.testing.assert_almost_equal(
-            res.est_sim.mean().round(2), 0.016, decimal=2
-        )
+        np.testing.assert_almost_equal(res.est_sim.mean().round(2), 0.016, decimal=2)
 
         np.random.seed(123)
         res = SingleValueTest(
@@ -73,9 +87,7 @@ class Inference_Tester(unittest.TestCase):
         res = SingleValueTest(
             m_index, null_approach="bootstrap", iterations_under_null=50
         )
-        np.testing.assert_almost_equal(
-            res.est_sim.mean().round(2), 0.41, decimal=2
-        )
+        np.testing.assert_almost_equal(res.est_sim.mean().round(2), 0.41, decimal=2)
 
         np.random.seed(123)
         res = SingleValueTest(
@@ -96,7 +108,11 @@ class Inference_Tester(unittest.TestCase):
         # Two Value Tests #
         np.random.seed(123)
         res = TwoValueTest(
-            index1, index2, null_approach="random_label", iterations_under_null=50, backend='multiprocessing'
+            index1,
+            index2,
+            null_approach="random_label",
+            iterations_under_null=50,
+            backend="multiprocessing",
         )
         np.testing.assert_almost_equal(
             res.est_sim.mean(), -0.0031386146371949076, decimal=2
@@ -147,17 +163,17 @@ class Inference_Tester(unittest.TestCase):
         res = TwoValueTest(
             m_index_1, m_index_2, null_approach="bootstrap", iterations_under_null=50
         )
-        np.testing.assert_almost_equal(
-            res.est_sim[0].mean(), 0.38738, decimal=2
-        )
+        np.testing.assert_almost_equal(res.est_sim[0].mean(), 0.38738, decimal=2)
 
         np.random.seed(123)
         res = TwoValueTest(
-            m_index_1, m_index_2, null_approach="person_permutation", iterations_under_null=50
+            m_index_1,
+            m_index_2,
+            null_approach="person_permutation",
+            iterations_under_null=50,
         )
-        np.testing.assert_almost_equal(
-            res.est_sim.mean(), 0.0, decimal=2
-        )
+        np.testing.assert_almost_equal(res.est_sim.mean(), 0.0, decimal=2)
+
 
 if __name__ == "__main__":
     unittest.main()

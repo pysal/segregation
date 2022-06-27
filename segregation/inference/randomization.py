@@ -177,7 +177,8 @@ def simulate_evenness(df, group=None, total=None, groups=None):
     totals, but will include variation in the regional totals for each group
     """
     df = df.copy()
-    geoms = df[df.geometry.name].values
+    if df.geometry.name:
+        geoms = df[df.geometry.name].values
     if group:
         df[[group, total]] = df[[group, total]].astype(int)
         p_null = df[group].sum() / df[total].sum()
@@ -194,7 +195,8 @@ def simulate_evenness(df, group=None, total=None, groups=None):
             map(lambda i: list(np.random.multinomial(i, global_prob_vector)), t)
         )
         output = pd.DataFrame(simul, columns=groups)
-    output["geometry"] = geoms
+    if geoms:
+        output["geometry"] = geoms
 
     return gpd.GeoDataFrame(output)
 
