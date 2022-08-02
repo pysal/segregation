@@ -94,7 +94,7 @@ a specific group with columns like `"hi_income"`, `"med_income"` and `"low_incom
 bracket, and a total column called `"total_population"`. A typical call would be something like this:
 
 ```python
-from segregation.aspatial import Dissim
+from segregation.singlegroup import Dissim
 d_index = Dissim(df, "hi_income", "total_population")
 ```
 
@@ -105,7 +105,7 @@ If a user would want to fit a *spatial* dissimilarity index (SD), the call would
 identical, save for the fact that the `DataFrame` now needs to be a `GeoDataFrame` with an appropriate `geometry` column
 
 ```python
-from segregation.spatial import SpatialDissim
+from segregation.singlegroup import SpatialDissim
 spatial_index = SpatialDissim(gdf, "hi_income", "total_population")
 ```
 
@@ -161,7 +161,7 @@ column names rather than a single string;
 reprising the income segregation example above, an example call might look like this  
 
 ```python
-from segregation.aspatial import MultiDissim
+from segregation.multigroup import MultiDissim
 index = MultiDissim(df, ['hi_income', 'med_income', 'low_income'])
 ```
 
