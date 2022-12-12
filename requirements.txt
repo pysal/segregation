@@ -6,7 +6,6 @@ mapclassify
 matplotlib
 numpy
 pandas
-pip
 pygeos
 scikit-learn>=0.21.3
 scipy
