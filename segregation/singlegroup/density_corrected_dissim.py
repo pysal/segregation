@@ -5,13 +5,38 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.ed
 import geopandas as gpd
 import numpy as np
 import pandas as pd
-from rvlib import Normal
 from scipy.optimize import minimize
+from warnings import warn
 
 from .._base import SingleGroupIndex, SpatialImplicitIndex
 
 
-def _density_corrected_dissim(data, group_pop_var, total_pop_var, xtol=1e-5):
+# Constructing function that returns $n(\hat{\theta}_j)$
+def _return_optimal_theta(theta_j):
+    def fold_norm(x):
+        try:
+            from rvlib import Normal
+            norm = Normal(0, 1)
+
+        except ImportError:
+            warn("Unable to import `rvlib`. Falling back to slower scipy sampler")
+            from scipy.stats import norm
+
+        y = (-1) * (norm.pdf(x - theta_j) + norm.pdf(x + theta_j))
+        return y
+
+    initial_guesses = np.array(0)
+    res = minimize(
+        fold_norm, initial_guesses, method="nelder-mead", options={"xatol": 1e-5}
+    )
+    return res.final_simplex[0][1][0]
+
+
+def _density_corrected_dissim(
+    data,
+    group_pop_var,
+    total_pop_var,
+):
     """Calculate Density Corrected Dissimilarity index.
 
     Parameters
@@ -54,20 +79,7 @@ def _density_corrected_dissim(data, group_pop_var, total_pop_var, xtol=1e-5):
     sigma_hat_j = np.sqrt(((p1_i * (1 - p1_i)) / n1) + ((p0_i * (1 - p0_i)) / n0))
     theta_hat_j = abs(p1_i - p0_i) / sigma_hat_j
 
-    # Constructing function that returns $n(\hat{\theta}_j)$
-    def return_optimal_theta(theta_j):
-        def fold_norm(x):
-            norm = Normal(0, 1)
-            y = (-1) * (norm.pdf(x - theta_j) + norm.pdf(x + theta_j))
-            return y
-
-        initial_guesses = np.array(0)
-        res = minimize(
-            fold_norm, initial_guesses, method="nelder-mead", options={"xtol": xtol}
-        )
-        return res.final_simplex[0][1][0]
-
-    optimal_thetas = pd.Series(data=theta_hat_j).apply(return_optimal_theta)
+    optimal_thetas = pd.Series(data=theta_hat_j).apply(_return_optimal_theta)
 
     Ddc = np.multiply(sigma_hat_j, optimal_thetas).sum() / 2
 
@@ -124,9 +136,9 @@ class DensityCorrectedDissim(SingleGroupIndex, SpatialImplicitIndex):
         w=None,
         network=None,
         distance=None,
-        decay=None,
-        function="triangular",
+        decay="linear",
         precompute=None,
+        function="triangular",
         **kwargs
     ):
         """Init."""

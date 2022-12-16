@@ -5,6 +5,7 @@ import warnings
 import numpy as np
 import pandas as pd
 from libpysal.weights import Kernel
+from pyproj.crs import CRS
 
 
 def compute_multiscalar_profile(
@@ -82,16 +83,13 @@ def compute_multiscalar_profile(
         indices[0] = segregation_index(gdf, groups=groups, **kwargs).statistic
     elif group_pop_var:
         indices[0] = segregation_index(
-            gdf,
-            group_pop_var=group_pop_var,
-            total_pop_var=total_pop_var,
-            **kwargs
+            gdf, group_pop_var=group_pop_var, total_pop_var=total_pop_var, **kwargs
         ).statistic
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         if network:
-            if not gdf.crs.name == "WGS 84":
+            if not gdf.crs.equals(CRS(4326)):
                 gdf = gdf.to_crs(epsg=4326)
             if precompute:
                 maxdist = max(distances)

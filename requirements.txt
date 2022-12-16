@@ -6,13 +6,10 @@ mapclassify
 matplotlib
 numpy
 pandas
-pip
 pygeos
-quilt3
 scikit-learn>=0.21.3
 scipy
 seaborn
 tqdm
-rvlib>=0.0.5
 numba
 pyproj>=3
