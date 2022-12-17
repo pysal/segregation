@@ -179,11 +179,12 @@ def simulate_evenness(df, group=None, total=None, groups=None):
     df = df.copy()
     if df.geometry.name:
         geoms = df[df.geometry.name].values
+        crs = df.crs
     if group:
         df[[group, total]] = df[[group, total]].astype(int)
         p_null = df[group].sum() / df[total].sum()
 
-        output = gpd.GeoDataFrame()
+        output = pd.DataFrame()
         output[group] = np.random.binomial(n=df[total].values, p=p_null)
         output[total] = df[total].tolist()
     if groups:
@@ -196,9 +197,9 @@ def simulate_evenness(df, group=None, total=None, groups=None):
         )
         output = pd.DataFrame(simul, columns=groups)
     if geoms:
-        output["geometry"] = geoms
+        return gpd.GeoDataFrame(output, geometry=geoms, crs=crs)
 
-    return gpd.GeoDataFrame(output)
+    return output
 
 
 def simulate_systematic_randomization(df, group=None, total=None, groups=None):
