@@ -71,39 +71,32 @@ def _modified_dissim(
 
     D = _dissim(data, group_pop_var, total_pop_var)[0]
 
-    x = np.array(data[group_pop_var].astype(int))
-    t = np.array(data[total_pop_var].astype(int))
+    x = data[group_pop_var].copy().astype(int).values
+    t = data[total_pop_var].copy().astype(int).values
 
     p_null = x.sum() / t.sum()
 
     def _gen_estimate(i):
-        n_retries = 5
-        if n_retries > 0:
-            try:
-                data = i[0]
-                n = i[1]
-                p = i[2]
-                np.random.seed(i[3])
-                freq_sim = np.random.binomial(
-                    n=n,
-                    p=p,
-                    size=(1, data.shape[0]),
-                ).tolist()[0]
-                data[group_pop_var] = freq_sim
-                aux = _dissim(data, group_pop_var, total_pop_var)[0]
-                return aux
-
-            except ValueError:
-                warn("Simulator generated invalid data. Redrawing")
-                n_retries -= 1
+        data = i[0].copy()
+        p = i[1]
+        np.random.seed(i[2])
+        # generate synthetic population by drawing from a binomial distribution in each unit
+        # with n_draws == the total population and P(group_pop)= the total regional proportion
+        freq_sim = np.random.binomial(
+            n=data[total_pop_var].astype(int).values,
+            p=p,
+        )
+        # overwrite the group population with synthetic data and recompute the index
+        data[group_pop_var] = freq_sim
+        aux = _dissim(data, group_pop_var, total_pop_var)[0]
+        return aux
 
     Ds = np.array(
         Parallel(n_jobs=n_jobs, backend=backend)(
             delayed(_gen_estimate)(
                 (
-                    data,
-                    np.array([t.tolist()]),
-                    np.array([[p_null] * data.shape[0]]),
+                    data.copy(),
+                    p_null,
                     seed,
                 )
             )
