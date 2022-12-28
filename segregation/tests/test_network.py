@@ -1,7 +1,7 @@
 from libpysal.examples import load_example
 import geopandas as gpd
 import pandana as pdna
-from segregation.network import get_osm_network, calc_access
+from segregation.network import calc_access
 
 
 import quilt3 as q3
