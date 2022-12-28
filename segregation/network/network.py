@@ -2,24 +2,9 @@
 
 __author__ = "Elijah Knaap <elijah.knaap@ucr.edu> Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr.edu>"
 
-import os
-import sys
-from warnings import warn
-
 import geopandas as gpd
 import pandas as pd
 from tqdm.auto import tqdm
-
-
-# This class allows us to hide the diagnostic messages from urbanaccess if the `quiet` flag is set
-class _HiddenPrints:  # from https://stackoverflow.com/questions/8391411/suppress-calls-to-print-python
-    def __enter__(self):
-        self._original_stdout = sys.stdout
-        sys.stdout = open(os.devnull, "w")
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        sys.stdout.close()
-        sys.stdout = self._original_stdout
 
 
 def _reproject_osm_nodes(nodes_df, input_crs, output_crs):
@@ -32,72 +17,6 @@ def _reproject_osm_nodes(nodes_df, input_crs, output_crs):
     nodes["x"] = nodes.centroid.x
     nodes["y"] = nodes.centroid.y
     return nodes
-
-
-def get_osm_network(geodataframe, maxdist=5000, quiet=True, output_crs=None, **kwargs):
-    """Download a street network from OSM.
-
-    Parameters
-    ----------
-    geodataframe : geopandas.GeoDataFrame
-        geopandas.GeoDataFrame of the study area.
-        Coordinate system should be in WGS84
-    maxdist : int
-        Maximum distance of the network queries you may need (this is used to buffer the
-        network to ensure there's enough to satisfy your largest query, otherwise there
-        may be edge effects. Distance is measured in the units of the geodataframe CRS. If
-        the CRS is geographic, a UTM approximation is used, so the units are meters.
-    quiet: bool
-        If True, diagnostic messages from urbanaccess will be suppressed
-    **kwargs : dict
-        additional kwargs passed through to
-        urbanaccess.ua_network_from_bbox
-
-    Returns
-    -------
-    pandana.Network
-        A pandana Network instance for use in accessibility calculations or
-        spatial segregation measures that include a distance decay
-
-    """
-    assert geodataframe.crs, "The input geodataframe must have a valid CRS set"
-    if not output_crs:
-        output_crs = geodataframe.crs
-    try:
-        import pandana as pdna
-        from urbanaccess.osm.load import ua_network_from_bbox
-    except ImportError:
-        raise ImportError(
-            "You need pandana and urbanaccess to work with segregation's network module\n"
-            "You can install them with  `pip install urbanaccess pandana` "
-            "or `conda install -c udst pandana urbanaccess`"
-        )
-
-    gdf = geodataframe.copy()
-
-    #  Need coordinates in 4326 to request from OSM, but need projected for measuring distance
-    if geodataframe.crs.is_geographic:
-        # this is lazy because UTM can be inaccurate in some places on the earth, but generally works fine
-        warn(
-            "The geodataframe passed into the function is stored in a geographic CRS."
-            "Estimating maximum distance threshold using a UTM transformation"
-        )
-        gdf = gdf.to_crs(gdf.estimate_utm_crs())
-        gdf = gdf.buffer(maxdist)
-        bounds = gdf.to_crs(epsg=4326).total_bounds
-    else:
-        bounds = gdf.total_bounds
-
-    nodes, edges = ua_network_from_bbox(
-        bounds[1], bounds[0], bounds[3], bounds[2], **kwargs
-    )
-    nodes = _reproject_osm_nodes(nodes, 4326, output_crs)
-
-    network = pdna.Network(
-        nodes["x"], nodes["y"], edges["from"], edges["to"], edges[["distance"]]
-    )
-
-    return network
 
 
 def calc_access(
@@ -242,7 +161,7 @@ def project_network(network, output_crs=None, input_crs=4326):
         import pandana as pdna
     except ImportError:
         raise ImportError(
-            "You need pandana and urbanaccess to work with segregation's network module\n"
+            "You need pandana to work with segregation's network module\n"
             "You can install them with  `pip install urbanaccess pandana` "
             "or `conda install -c udst pandana urbanaccess`"
         )
