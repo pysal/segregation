@@ -104,7 +104,6 @@ class SingleGroupIndex:
         total_pop_var : str
             name of column on dataframe holding total overall population
         """
-        data = data.copy()
 
         if any([type(group_pop_var) is not str, type(total_pop_var) is not str]):
             raise TypeError("group_pop_var and total_pop_var must be strings")
@@ -132,7 +131,7 @@ class SingleGroupIndex:
         data["group_2_pop_var"] = data[total_pop_var] - data[group_pop_var]
 
         self.index_type = "singlegroup"
-        self.data = data
+        self.data = data.copy()
         self.group_pop_var = group_pop_var
         self.total_pop_var = total_pop_var
 
@@ -155,7 +154,7 @@ class MultiGroupIndex:
             list of column names on input DataFrame that hold population totals for groups of interest
         """
         self.index_type = "multigroup"
-        self.data = data
+        self.data = data.copy()
         self.groups = groups
 
 
