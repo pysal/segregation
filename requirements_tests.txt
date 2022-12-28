@@ -5,5 +5,4 @@ pytest
 pytest-mpl
 pytest-cov
 quilt3
-urbanaccess
 watermark
