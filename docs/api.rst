@@ -145,5 +145,4 @@ Network
    :toctree: generated/
   
       network.compute_travel_cost_matrix
-      network.get_osm_network
       network.project_network

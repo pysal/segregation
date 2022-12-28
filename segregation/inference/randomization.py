@@ -177,12 +177,14 @@ def simulate_evenness(df, group=None, total=None, groups=None):
     totals, but will include variation in the regional totals for each group
     """
     df = df.copy()
-    geoms = df[df.geometry.name].values
+    if df.geometry.name:
+        geoms = df[df.geometry.name].values
+        crs = df.crs
     if group:
         df[[group, total]] = df[[group, total]].astype(int)
         p_null = df[group].sum() / df[total].sum()
 
-        output = gpd.GeoDataFrame()
+        output = pd.DataFrame()
         output[group] = np.random.binomial(n=df[total].values, p=p_null)
         output[total] = df[total].tolist()
     if groups:
@@ -194,9 +196,10 @@ def simulate_evenness(df, group=None, total=None, groups=None):
             map(lambda i: list(np.random.multinomial(i, global_prob_vector)), t)
         )
         output = pd.DataFrame(simul, columns=groups)
-    output["geometry"] = geoms
+    if geoms:
+        return gpd.GeoDataFrame(output, geometry=geoms, crs=crs)
 
-    return gpd.GeoDataFrame(output)
+    return output
 
 
 def simulate_systematic_randomization(df, group=None, total=None, groups=None):

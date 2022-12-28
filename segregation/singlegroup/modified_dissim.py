@@ -9,7 +9,6 @@ from .._base import SingleGroupIndex, SpatialImplicitIndex
 from .dissim import _dissim
 from joblib import Parallel, delayed
 import multiprocessing
-from warnings import warn
 
 
 def _modified_dissim(
