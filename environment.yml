@@ -10,7 +10,7 @@ dependencies:
   - libpysal
   - mapclassify
   - matplotlib
-  - numpy==1.22
+  - numpy
   - pandana
   - pandas
   - pip
