@@ -13,7 +13,6 @@ dependencies:
   - pandana
   - pandas
   - pip
-  - pygeos
   - quilt3
   - scikit-learn
   - scipy

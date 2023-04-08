@@ -6,7 +6,6 @@ mapclassify
 matplotlib
 numpy
 pandas
-pygeos
 scikit-learn>=0.21.3
 scipy
 seaborn
