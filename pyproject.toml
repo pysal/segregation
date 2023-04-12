@@ -43,7 +43,6 @@ dependencies = [
 "tqdm",
 "numba",
 "pyproj>=3"
-
 ]
 
 [project.urls]
