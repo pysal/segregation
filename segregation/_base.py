@@ -1,6 +1,6 @@
 """Base classes for segregation indices."""
 
-from logging import warn
+from warnings import warn
 import warnings
 
 import geopandas as gpd

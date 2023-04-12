@@ -1,8 +1,0 @@
-codecov
-ipywidgets
-pandana
-pytest
-pytest-mpl
-pytest-cov
-quilt3
-watermark

@@ -3,7 +3,7 @@
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
 import numpy as np
-from scipy.ndimage.interpolation import shift
+from scipy.ndimage import shift
 
 from .._base import SingleGroupIndex, SpatialExplicitIndex
 
