@@ -1,0 +1,116 @@
+[build-system]
+requires = ["setuptools>=61.0", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+
+[project]
+name = "segregation"
+dynamic = ["version"]
+authors = [
+    { name = "Eli Knaap", email = "ek@knaaptime.com" },
+    { name = "Renan Xavier Cortes", email = "renanxcortes@gmail.com" },
+    { name = "Serge Rey", email = "sjsrey@gmail.com" },
+]
+maintainers = [{ name = "pysal contributors" }]
+license = { text = "BSD 3-Clause" }
+description = "Analytics for spatial and non-spatial segregation in Python."
+keywords = ["segregation, spatial analysis, demographics, population"]
+readme = { text = """\
+Segregation Measurement, Inferential Statistics, and Decomposition Analysis"
+
+""", content-type = "text/x-rst" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: GIS",
+]
+requires-python = ">=3.8"
+dependencies = [
+"deprecation",
+"geopandas>=0.9",
+"joblib",
+"libpysal",
+"mapclassify",
+"matplotlib",
+"numpy",
+"pandas",
+"scikit-learn>=0.21.3",
+"scipy",
+"seaborn",
+"tqdm",
+"numba",
+"pyproj>=3"
+]
+
+[project.urls]
+Home = "https://github.com/pysal/segregation/"
+Repository = "https://github.com/pysal/segregation"
+
+[project.optional-dependencies]
+dev = ["pre-commit"]
+docs = [
+    "nbsphinx",
+    "numpydoc",
+    "pandoc",
+    "sphinx",
+    "sphinxcontrib-bibtex",
+    "sphinx_bootstrap_theme",
+    "mkdocs-jupyter",
+    "myst-parser"
+]
+tests = [
+    "codecov",
+    "coverage",
+    "pytest",
+    "pytest-mpl",
+    "pytest-cov",
+    "matplotlib",
+    "matplotlib-scalebar",
+    "watermark",
+    "pandana",
+    "quilt3",
+    "ipywidgets"
+]
+
+[tool.setuptools.packages.find]
+include = ["segregation", "segregation.*"]
+
+[tool.black]
+line-length = 88
+
+[tool.ruff]
+line-length = 88
+select = ["E", "F", "W", "I", "UP", "N", "B", "A", "C4", "SIM", "ARG"]
+target-version = "py38"
+ignore = [
+    "B006",
+    "B008",
+    "B009",
+    "B010",
+    "C408",
+    "E731",
+    "F401",
+    "F403",
+    "N803",
+    "N806",
+    "N999",
+    "UP007"
+]
+exclude = ["segregation/tests/*", "docs/*"]
+
+[tool.coverage.run]
+source = ["./segregation"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "if self.debug:",
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "except ModuleNotFoundError:",
+    "except ImportError",
+]
+ignore_errors = true
+omit = ["segregation/tests/*", "docs/conf.py"]

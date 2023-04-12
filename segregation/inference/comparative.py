@@ -358,7 +358,7 @@ def _estimate_random_label_difference(data):
             args.pop('distance')
 
     if approach == 'person_permutation':
-        grouping = stacked_data[['grouping_variable']].values
+        grouping = stacked_data['grouping_variable'].copy().values
         if groups:
             stacked_data = simulate_person_permutation(stacked_data, groups=groups)
         else:
