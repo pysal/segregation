@@ -43,8 +43,9 @@
        - run: pip install -e . --no-deps --force-reinstall
        - run: |
            cd docs
-           make html       - name: Commit documentation changes
-       - run: |
+           make html       
+       - name: Commit documentation changes
+         run: |
            git clone https://github.com/ammaraskar/sphinx-action-test.git --branch gh-pages --single-branch gh-pages
            cp -r docs/_build/html/* gh-pages/
            cd gh-pages
