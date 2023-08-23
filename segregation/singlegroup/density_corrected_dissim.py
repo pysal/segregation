@@ -6,7 +6,7 @@ import geopandas as gpd
 import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
-from warnings import warn
+from scipy.stats import norm
 
 from .._base import SingleGroupIndex, SpatialImplicitIndex
 
@@ -14,13 +14,6 @@ from .._base import SingleGroupIndex, SpatialImplicitIndex
 # Constructing function that returns $n(\hat{\theta}_j)$
 def _return_optimal_theta(theta_j):
     def fold_norm(x):
-        try:
-            from rvlib import Normal
-            norm = Normal(0, 1)
-
-        except ImportError:
-            warn("Unable to import `rvlib`. Falling back to slower scipy sampler")
-            from scipy.stats import norm
 
         y = (-1) * (norm.pdf(x - theta_j) + norm.pdf(x + theta_j))
         return y

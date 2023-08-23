@@ -19,7 +19,6 @@ dependencies:
   - seaborn
   - tqdm
   - urbanaccess
-  - rvlib
   - numba
   - pyproj >=3
 
