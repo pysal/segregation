@@ -2,7 +2,7 @@ name: test
 channels:
   - conda-forge
 dependencies:
-  - python=3.8
+  - python=3.11
   - deprecation
   - geopandas>=0.9
   - joblib
@@ -19,7 +19,6 @@ dependencies:
   - seaborn
   - tqdm
   - urbanaccess
-  - rvlib
   - numba
   - pyproj >=3
 
