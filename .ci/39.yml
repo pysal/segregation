@@ -28,7 +28,6 @@ dependencies:
   - pytest-mpl
   - pytest-cov
   - twine
-  - rvlib
 
   # docs
   - ipywidgets
