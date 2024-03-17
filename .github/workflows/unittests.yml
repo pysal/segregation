@@ -1,13 +1,13 @@
  name: Tests
+
  on:
    push:
-     branches:
-     - '*'
+     branches: [main]
    pull_request:
      branches:
      - '*'
    schedule:
-     - cron: '59 23 * * *'
+     - cron: "0 0 * * 1,4"
    workflow_dispatch:
      inputs:
        version:
@@ -15,72 +15,63 @@
          default: test
          required: false
 
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches:
-      - "*"
-  schedule:
-    - cron: "0 0 * * 1,4"
-
-jobs:
-  Tests:
-    name: ${{ matrix.os }}, ${{ matrix.environment-file }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest]
-        environment-file:
-          - ci/310.yml
-          - ci/311.yml
-          - ci/312.yml
-        include:
-          - environment-file: ci/311.yml
-            os: macos-latest
-          - environment-file: ci/311.yml
-            os: macos-14  # Apple Silicon
-          - environment-file: ci/311.yml
-            os: windows-latest
-    defaults:
-      run:
-        shell: bash -l {0}
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: setup micromamba
-        uses: mamba-org/setup-micromamba@v1
-        with:
-          environment-file: ${{ matrix.environment-file }}
-          micromamba-version: 'latest'
-
-      - name: Test segregation
-        run: |
-          coverage run -m pytest \
-           -v \
-           -r a \
-           -n auto \
-           --color yes \
-           --cov segregation \
-           --cov-append \
-           --cov-report term-missing \
-           --cov-report xml \
-           segregation
-      - name: codecov
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./coverage.xml
-          name: segregation-codecov
-
-      - name: Generate and publish the report
-        if: |
-          failure()
-          && steps.status.outcome == 'failure'
-          && github.event_name == 'schedule'
-          && github.repository_owner == 'oturns'
-        uses: xarray-contrib/issue-from-pytest-log@v1
-        with:
-          log-path: pytest-log.jsonl
+ jobs:
+   Tests:
+     name: ${{ matrix.os }}, ${{ matrix.environment-file }}
+     runs-on: ${{ matrix.os }}
+     strategy:
+       fail-fast: false
+       matrix:
+         os: [ubuntu-latest]
+         environment-file:
+           - ci/310.yml
+           - ci/311.yml
+           - ci/312.yml
+         include:
+           - environment-file: ci/311.yml
+             os: macos-latest
+           - environment-file: ci/311.yml
+             os: macos-14  # Apple Silicon
+           - environment-file: ci/311.yml
+             os: windows-latest
+     defaults:
+       run:
+         shell: bash -l {0}
+ 
+     steps:
+       - uses: actions/checkout@v4
+ 
+       - name: setup micromamba
+         uses: mamba-org/setup-micromamba@v1
+         with:
+           environment-file: ${{ matrix.environment-file }}
+           micromamba-version: 'latest'
+ 
+       - name: Test segregation
+         run: |
+           coverage run -m pytest \
+            -v \
+            -r a \
+            -n auto \
+            --color yes \
+            --cov segregation \
+            --cov-append \
+            --cov-report term-missing \
+            --cov-report xml \
+            segregation
+       - name: codecov
+         uses: codecov/codecov-action@v3
+         with:
+           token: ${{ secrets.CODECOV_TOKEN }}
+           file: ./coverage.xml
+           name: segregation-codecov
+ 
+       - name: Generate and publish the report
+         if: |
+           failure()
+           && steps.status.outcome == 'failure'
+           && github.event_name == 'schedule'
+           && github.repository_owner == 'oturns'
+         uses: xarray-contrib/issue-from-pytest-log@v1
+         with:
+           log-path: pytest-log.jsonl
