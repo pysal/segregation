@@ -1,4 +1,19 @@
-name: Tests
+ name: Unit Tests
+ on:
+   push:
+     branches:
+     - '*'
+   pull_request:
+     branches:
+     - '*'
+   schedule:
+     - cron: '59 23 * * *'
+   workflow_dispatch:
+     inputs:
+       version:
+         description: Manual Unittest Run
+         default: test
+         required: false
 
 on:
   push:
