@@ -1,4 +1,4 @@
- name: Unit Tests
+ name: Tests
  on:
    push:
      branches:
@@ -25,7 +25,7 @@ on:
     - cron: "0 0 * * 1,4"
 
 jobs:
-  Test:
+  Tests:
     name: ${{ matrix.os }}, ${{ matrix.environment-file }}
     runs-on: ${{ matrix.os }}
     strategy:
