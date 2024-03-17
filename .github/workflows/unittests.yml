@@ -49,16 +49,16 @@
  
        - name: Test segregation
          run: |
-           coverage run -m pytest \
-            -v \
-            -r a \
-            -n auto \
-            --color yes \
-            --cov segregation \
-            --cov-append \
-            --cov-report term-missing \
-            --cov-report xml \
-            segregation
+           pytest \
+           segregation \
+           -v \
+           -r a \
+           --color yes \
+           --cov segregation \
+           --cov-append \
+           --cov-report term-missing \
+           --cov-report xml \
+
        - name: codecov
          uses: codecov/codecov-action@v4
          with:
