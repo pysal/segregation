@@ -52,6 +52,7 @@
            pytest \
            segregation \
            -v \
+           -n auto \
            -r a \
            --color yes \
            --cov segregation \
