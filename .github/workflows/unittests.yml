@@ -1,4 +1,4 @@
- name: Tests
+ name: Continuous Integration
 
  on:
    push:
@@ -28,11 +28,11 @@
            - ci/311.yml
            - ci/312.yml
          include:
-           - environment-file: ci/311.yml
-             os: macos-latest
-           - environment-file: ci/311.yml
+           - environment-file: ci/312.yml
+             os: macos-13 # Intel
+           - environment-file: ci/312.yml
              os: macos-14  # Apple Silicon
-           - environment-file: ci/311.yml
+           - environment-file: ci/312.yml
              os: windows-latest
      defaults:
        run:
