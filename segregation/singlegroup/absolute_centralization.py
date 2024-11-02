@@ -143,8 +143,8 @@ def _absolute_centralization(
     Xi = np.cumsum(x[asc_ind]) / X
     Ai = np.cumsum(area[asc_ind]) / A
 
-    ACE = np.nansum(shift(Xi, 1, cval=np.NaN) * Ai) - np.nansum(
-        Xi * shift(Ai, 1, cval=np.NaN)
+    ACE = np.nansum(shift(Xi, 1, cval=np.nan) * Ai) - np.nansum(
+        Xi * shift(Ai, 1, cval=np.nan)
     )
 
     core_data = data[[group_pop_var, total_pop_var, data.geometry.name]]
