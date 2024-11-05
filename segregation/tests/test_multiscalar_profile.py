@@ -7,11 +7,11 @@ import quilt3
 import pandana as pdna
 
 
-p = quilt3.Package.browse('osm/metro_networks_8k', "s3://spatial-ucr/")
-p['40900.h5'].fetch()
-net = pdna.Network.from_hdf5('40900.h5')
-
 def test_multiscalar():
+    p = quilt3.Package.browse('osm/metro_networks_8k', "s3://spatial-ucr/")
+    p['40900.h5'].fetch()
+    net = pdna.Network.from_hdf5('40900.h5')
+
     s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
     df = s_map.to_crs(s_map.estimate_utm_crs())
     profile = compute_multiscalar_profile(
@@ -26,6 +26,11 @@ def test_multiscalar():
 
 
 def test_multiscalar_network():
+
+    p = quilt3.Package.browse('osm/metro_networks_8k', "s3://spatial-ucr/")
+    p['40900.h5'].fetch()
+    net = pdna.Network.from_hdf5('40900.h5')
+
     s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
     df = s_map.to_crs(s_map.estimate_utm_crs())
     profile = compute_multiscalar_profile(
