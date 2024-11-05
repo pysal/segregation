@@ -1,71 +1,89 @@
- name: Tests
+ name: Continuous Integration
 
  on:
    push:
-     branches: [main]
+     branches:
+     - '*'
    pull_request:
      branches:
      - '*'
    schedule:
-     - cron: "0 0 * * 1,4"
+     - cron: '59 23 * * *'
    workflow_dispatch:
-     inputs:
-       version:
-         description: Manual Unittest Run
-         default: test
-         required: false
+    inputs:
+      version:
+        description: Manual CI Run
+        default: test
+        required: false
 
  jobs:
-   Tests:
+   tests:
      name: ${{ matrix.os }}, ${{ matrix.environment-file }}
      runs-on: ${{ matrix.os }}
+     timeout-minutes: 30
      strategy:
-       fail-fast: false
        matrix:
          os: [ubuntu-latest]
-         environment-file:
-           - ci/311.yml
-           - ci/312.yml
-           - ci/313.yml
+         environment-file: [
+            ci/311.yml,
+            ci/312.yml,
+            ci/313.yml,
+         ]
          include:
            - environment-file: ci/312.yml
-             os: macos-latest
+             os: macos-13 # Intel
            - environment-file: ci/312.yml
-             os: macos-14  # Apple Silicon
+             os: macos-14 # Apple Silicon
            - environment-file: ci/312.yml
              os: windows-latest
+       fail-fast: false
+
      defaults:
        run:
          shell: bash -l {0}
- 
+
      steps:
-       - uses: actions/checkout@v4
- 
+       - name: checkout repo
+         uses: actions/checkout@v4
+         with:
+           fetch-depth: 0 # Fetch all history for all branches and tags.
+
        - name: setup micromamba
          uses: mamba-org/setup-micromamba@v1
          with:
            environment-file: ${{ matrix.environment-file }}
            micromamba-version: 'latest'
- 
-       - name: Test segregation
+
+       - name: environment info
          run: |
-           pytest \
-           segregation \
+           micromamba info
+           micromamba list
+
+       - name: spatial versions
+         run: 'python -c "import geopandas; geopandas.show_versions();"'
+
+       - name: install package
+         run: 'pip install . --no-deps'
+
+       - name: run tests
+         run: |
+           pytest segregation \
            -v \
            -r a \
+           -n auto \
            --color yes \
            --cov segregation \
            --cov-append \
            --cov-report term-missing \
-           --cov-report xml \
+           --cov-report xml
 
        - name: codecov
-         uses: codecov/codecov-action@v4
+         uses: codecov/codecov-action@v3
          with:
            token: ${{ secrets.CODECOV_TOKEN }}
            file: ./coverage.xml
            name: segregation-codecov
- 
+
        - name: Generate and publish the report
          if: |
            failure()
