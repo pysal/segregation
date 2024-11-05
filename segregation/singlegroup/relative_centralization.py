@@ -145,8 +145,8 @@ def _relative_centralization(
     Xi = np.cumsum(x[asc_ind]) / X
     Yi = np.cumsum(y[asc_ind]) / Y
 
-    RCE = np.nansum(shift(Xi, 1, cval=np.NaN) * Yi) - np.nansum(
-        Xi * shift(Yi, 1, cval=np.NaN)
+    RCE = np.nansum(shift(Xi, 1, cval=np.nan) * Yi) - np.nansum(
+        Xi * shift(Yi, 1, cval=np.nan)
     )
 
     core_data = data[[group_pop_var, total_pop_var, data.geometry.name]]
