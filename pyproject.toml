@@ -27,7 +27,7 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering :: GIS",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 dependencies = [
 "deprecation",
 "geopandas>=0.9",
