@@ -1,0 +1,6 @@
+﻿segregation.network.project\_network
+====================================
+
+.. currentmodule:: segregation.network
+
+.. autofunction:: project_network
