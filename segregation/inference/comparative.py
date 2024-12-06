@@ -7,7 +7,9 @@ from .._base import MultiGroupIndex, SingleGroupIndex
 from .randomization import simulate_person_permutation
 
 
-def _prepare_comparative_data(df1, df2, group_pop_var1, group_pop_var2, total_pop_var1, total_pop_var2):
+def _prepare_comparative_data(
+    df1, df2, group_pop_var1, group_pop_var2, total_pop_var1, total_pop_var2
+):
     df1 = df1.copy()
     df2 = df2.copy()
     if hasattr(df1, "geometry"):
@@ -21,7 +23,6 @@ def _prepare_comparative_data(df1, df2, group_pop_var1, group_pop_var2, total_po
         df2 = df2[[group_pop_var2, total_pop_var2]]
 
     return df1, df2
-
 
 
 def _generate_counterfactual(
@@ -64,7 +65,12 @@ def _generate_counterfactual(
 
     """
     df1, df2 = DUAL_SIMULATORS[counterfactual_approach](
-        data1, data2, group_pop_var1, total_pop_var1, group_pop_var2, total_pop_var2,
+        data1,
+        data2,
+        group_pop_var1,
+        total_pop_var1,
+        group_pop_var2,
+        total_pop_var2,
     )
     df1["group_composition"] = (df1[group_pop_var1] / df1[total_pop_var1]).fillna(0)
     df2["group_composition"] = (df2[group_pop_var2] / df2[total_pop_var2]).fillna(0)
@@ -83,7 +89,12 @@ def _generate_counterfactual(
 
 
 def sim_composition(
-    df1, df2, group_pop_var1, total_pop_var1, group_pop_var2, total_pop_var2,
+    df1,
+    df2,
+    group_pop_var1,
+    total_pop_var1,
+    group_pop_var2,
+    total_pop_var2,
 ):
     """Simulate the spatial distribution of a population group in a region using the CDF of a comparison region.
 
@@ -112,7 +123,9 @@ def sim_composition(
     two pandas.DataFrame
         dataframes with simulated population columns appended
     """
-    df1, df2 = _prepare_comparative_data(df1, df2, group_pop_var1, group_pop_var2, total_pop_var1, total_pop_var2)
+    df1, df2 = _prepare_comparative_data(
+        df1, df2, group_pop_var1, group_pop_var2, total_pop_var1, total_pop_var2
+    )
 
     df1["group_composition"] = (df1[group_pop_var1] / df1[total_pop_var1]).fillna(0)
     df2["group_composition"] = (df2[group_pop_var2] / df2[total_pop_var2]).fillna(0)
@@ -133,7 +146,12 @@ def sim_composition(
 
 
 def sim_dual_composition(
-    df1, df2, group_pop_var1, total_pop_var1, group_pop_var2, total_pop_var2,
+    df1,
+    df2,
+    group_pop_var1,
+    total_pop_var1,
+    group_pop_var2,
+    total_pop_var2,
 ):
     """Apply the 'composition' for both minority and complementary groups.
 
@@ -158,7 +176,9 @@ def sim_dual_composition(
         dataframes with simulated population columns appended
 
     """
-    df1, df2 = _prepare_comparative_data(df1, df2, group_pop_var1, group_pop_var2, total_pop_var1, total_pop_var2)
+    df1, df2 = _prepare_comparative_data(
+        df1, df2, group_pop_var1, group_pop_var2, total_pop_var1, total_pop_var2
+    )
 
     df1["group_composition"] = (df1[group_pop_var1] / df1[total_pop_var1]).fillna(0)
     df2["group_composition"] = (df2[group_pop_var2] / df2[total_pop_var2]).fillna(0)
@@ -198,7 +218,12 @@ def sim_dual_composition(
 
 
 def sim_share(
-    df1, df2, group_pop_var1, total_pop_var1, group_pop_var2, total_pop_var2,
+    df1,
+    df2,
+    group_pop_var1,
+    total_pop_var1,
+    group_pop_var2,
+    total_pop_var2,
 ):
     """Simulate the spatial population distribution of a region using the CDF of a comparison region.
 
@@ -228,7 +253,9 @@ def sim_share(
         dataframes with simulated population columns appended
 
     """
-    df1, df2 = _prepare_comparative_data(df1, df2, group_pop_var1, group_pop_var2, total_pop_var1, total_pop_var2)
+    df1, df2 = _prepare_comparative_data(
+        df1, df2, group_pop_var1, group_pop_var2, total_pop_var1, total_pop_var2
+    )
 
     df1["compl_pop_var"] = df1[total_pop_var1] - df1[group_pop_var1]
     df2["compl_pop_var"] = df2[total_pop_var2] - df2[group_pop_var2]
@@ -298,7 +325,6 @@ def _prepare_random_label(seg_class_1, seg_class_2):
     data_2["grouping_variable"] = "Group_2"
 
     if isinstance(seg_class_1, SingleGroupIndex):
-
         # This step is just to make sure the each frequency column is integer for the approaches and from the same type in order to be able to stack them
         data_1.loc[:, (seg_class_1.group_pop_var, seg_class_1.total_pop_var)] = (
             data_1.loc[:, (seg_class_1.group_pop_var, seg_class_1.total_pop_var)]
@@ -308,7 +334,11 @@ def _prepare_random_label(seg_class_1, seg_class_2):
 
         # random permutation needs the columns to have the same names
         data_1 = data_1[
-            [seg_class_1.group_pop_var, seg_class_1.total_pop_var, "grouping_variable",]
+            [
+                seg_class_1.group_pop_var,
+                seg_class_1.total_pop_var,
+                "grouping_variable",
+            ]
         ]
         data_1.columns = ["group", "total", "grouping_variable"]
 
@@ -318,14 +348,17 @@ def _prepare_random_label(seg_class_1, seg_class_2):
             .astype(int)
         )
         data_2 = data_2[
-            [seg_class_2.group_pop_var, seg_class_2.total_pop_var, "grouping_variable",]
+            [
+                seg_class_2.group_pop_var,
+                seg_class_2.total_pop_var,
+                "grouping_variable",
+            ]
         ]
         data_2.columns = ["group", "total", "grouping_variable"]
 
         stacked_data = pd.concat([data_1, data_2], axis=0)
 
     elif isinstance(seg_class_1, MultiGroupIndex):
-
         groups_list = seg_class_1.groups
 
         for i in range(len(groups_list)):
@@ -334,7 +367,9 @@ def _prepare_random_label(seg_class_1, seg_class_2):
 
         if seg_class_1.groups != seg_class_2.groups:
             raise ValueError("MultiGroup groups should be the same")
-
+        # geometry has been discarded, but the CRS can cause concatenation problems
+        data_1.crs = None
+        data_2.crs = None
         stacked_data = pd.concat([data_1, data_2], ignore_index=True)
     return stacked_data
 
@@ -343,7 +378,7 @@ def _estimate_random_label_difference(data):
     #  note: if estimating a spatial implicit index, then "space" has already been accounted for...
     #  when the index is computed, the underlying data are transformed to represent the *accessible* population
     #  so when calculating the simulated difference, we need to pop spatial implicit parameters
-    
+
     stacked_data = data[0]
     function = data[1]
     index_args_1 = data[2]
@@ -352,18 +387,20 @@ def _estimate_random_label_difference(data):
     groups = data[5]
     approach = data[6]
     for args in [index_args_1, index_args_2]:
-        if 'network' in args:
-            args.pop('network')
-        elif 'distance' in args:
-            args.pop('distance')
+        if "network" in args:
+            args.pop("network")
+        elif "distance" in args:
+            args.pop("distance")
 
-    if approach == 'person_permutation':
-        grouping = stacked_data['grouping_variable'].copy().values
+    if approach == "person_permutation":
+        grouping = stacked_data["grouping_variable"].copy().values
         if groups:
             stacked_data = simulate_person_permutation(stacked_data, groups=groups)
         else:
-            stacked_data = simulate_person_permutation(stacked_data, group='group', total='total')
-        stacked_data['grouping_variable'] = grouping
+            stacked_data = simulate_person_permutation(
+                stacked_data, group="group", total="total"
+            )
+        stacked_data["grouping_variable"] = grouping
 
     else:
         stacked_data["grouping_variable"] = np.random.permutation(
@@ -414,7 +451,10 @@ def _estimate_counterfac_difference(data):
     data_1_test = data_1.drop([group_1], axis=1)
 
     simulations_1 = function(
-        data_1_test, "test_group_pop_var", total_1, **index_args_1,
+        data_1_test,
+        "test_group_pop_var",
+        total_1,
+        **index_args_1,
     )[0]
 
     # Dropping to avoid confusion in the next iteration
@@ -431,7 +471,10 @@ def _estimate_counterfac_difference(data):
     data_2_test = data_2.drop([group_2], axis=1)
 
     simulations_2 = function(
-        data_2_test, "test_group_pop_var", total_2, **index_args_2,
+        data_2_test,
+        "test_group_pop_var",
+        total_2,
+        **index_args_2,
     )[0]
 
     # Dropping to avoid confusion in the next iteration
