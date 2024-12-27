@@ -621,6 +621,8 @@ class TwoValueTest:
             import seaborn as sns
         except ImportError:
             warnings.warn("This method relies on importing `matplotlib` and `seaborn`")
+        if ax is None:
+            _, ax = plt.subplots()
 
         if self._null_approach == "bootstrap":
             ax = sns.histplot(self.est_sim[0], color=color, kde=kde, ax=ax, **kwargs)
