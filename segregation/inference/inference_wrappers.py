@@ -12,9 +12,13 @@ from scipy import stats
 from tqdm.auto import tqdm
 
 from .._base import MultiGroupIndex
-from .comparative import (DUAL_SIMULATORS, _estimate_counterfac_difference,
-                          _estimate_random_label_difference,
-                          _generate_counterfactual, _prepare_random_label)
+from .comparative import (
+    DUAL_SIMULATORS,
+    _estimate_counterfac_difference,
+    _estimate_random_label_difference,
+    _generate_counterfactual,
+    _prepare_random_label,
+)
 from .randomization import SIMULATORS, simulate_null
 
 
@@ -45,12 +49,12 @@ def _infer_segregation(
 
         * ``bootstrap``:
         generates bootstrap replications of the units with replacement of the same size of the
-        original data. This procedure creates a confidence interval for the index statistic to test 
+        original data. This procedure creates a confidence interval for the index statistic to test
         whether the null value lies within.
 
         * ``evenness``:
         assumes that each spatial unit has the same global probability of drawing elements from the
-        minority group of the fixed total unit population (binomial distribution). 
+        minority group of the fixed total unit population (binomial distribution).
 
         * ``person_permutation``:
         randomly allocates individuals into units keeping the total population of each
@@ -224,7 +228,6 @@ class SingleValueTest:
         n_jobs=-1,
         **kwargs,
     ):
-
         aux = _infer_segregation(
             seg_class,
             iterations_under_null,
@@ -433,7 +436,6 @@ def _compare_segregation(
         "share",
         "dual_composition",
     ]:
-
         if isinstance(seg_class_1, MultiGroupIndex):
             raise ValueError("Not implemented for MultiGroup indexes.")
 
@@ -575,7 +577,6 @@ class TwoValueTest:
         index_kwargs_2=None,
         **kwargs,
     ):
-
         aux = _compare_segregation(
             seg_class_1,
             seg_class_2,
@@ -624,17 +625,13 @@ class TwoValueTest:
         if self._null_approach == "bootstrap":
             ax = sns.histplot(self.est_sim[0], color=color, kde=kde, ax=ax, **kwargs)
             ax = sns.histplot(self.est_sim[1], color=color2, kde=kde, ax=ax, **kwargs)
-            plt.title(
-                "{} (Diff. value = {})".format(
-                    self._class_name, round(self.est_point_diff, 3)
-                )
+            ax.set_title(
+                f"{self._class_name} (Diff. value = {round(self.est_point_diff, 3)})"
             )
         else:
             ax = sns.histplot(self.est_sim, color=color, kde=kde, ax=ax, **kwargs)
-            plt.axvline(self.est_point_diff, color="red")
-            plt.title(
-                "{} (Diff. value = {})".format(
-                    self._class_name, round(self.est_point_diff, 3)
-                )
+            ax.vlines(self.est_point_diff, 0, ax.get_ylim()[1], color="red")
+            ax.set_title(
+                f"{self._class_name} (Diff. value = {round(self.est_point_diff, 3)})"
             )
         return ax
