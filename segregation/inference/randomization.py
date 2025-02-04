@@ -17,14 +17,18 @@ def _generate_estimate(input):
     else:
         df = input[0].data.copy()
     if input[0].index_type == "singlegroup":
-        df = input[1](df, group=input[0].group_pop_var, total=input[0].total_pop_var,)
+        df = input[1](
+            df,
+            group=input[0].group_pop_var,
+            total=input[0].total_pop_var,
+        )
         estimate = (
             input[0]
             .__class__(df, input[0].group_pop_var, input[0].total_pop_var, **input[2])
             .statistic
         )
     else:
-        df = input[1](df, groups=input[0].groups)
+        df = input[1](df, groups=input[0].groups, verbose=input[3])
         estimate = input[0].__class__(df, input[0].groups, **input[2]).statistic
     return estimate
 
@@ -36,6 +40,7 @@ def simulate_null(
     n_jobs=-1,
     backend="loky",
     index_kwargs=None,
+    verbose=False,
 ):
     """Simulate a series of index values in parallel to serve as a null distribution.
 
@@ -56,6 +61,8 @@ def simulate_null(
     index_kwargs : dict, optional
         additional keyword arguments used to fit the index, such as distance or network
         if estimating a spatial index; by default None
+    verbose: bool
+        whether to print warning statements
 
     Returns
     -------
@@ -67,13 +74,13 @@ def simulate_null(
     if n_jobs == -1:
         n_jobs = multiprocessing.cpu_count()
     estimates = Parallel(n_jobs=n_jobs, backend=backend)(
-        delayed(_generate_estimate)((seg_class, sim_func, index_kwargs))
+        delayed(_generate_estimate)((seg_class, sim_func, index_kwargs, verbose))
         for i in tqdm(range(iterations))
     )
     return pd.Series(estimates)
 
 
-def simulate_person_permutation(df, group=None, total=None, groups=None):
+def simulate_person_permutation(df, group=None, total=None, groups=None, verbose=False):
     """Simulate the permutation of individuals across spatial units.
 
     Parameters
@@ -145,7 +152,7 @@ def simulate_person_permutation(df, group=None, total=None, groups=None):
     return gpd.GeoDataFrame(df, geometry=geoms.geometry.name)
 
 
-def simulate_evenness(df, group=None, total=None, groups=None):
+def simulate_evenness(df, group=None, total=None, groups=None, verbose=True):
     """Simulate even redistribution of population groups across spatial units.
 
     Parameters
@@ -192,9 +199,7 @@ def simulate_evenness(df, group=None, total=None, groups=None):
         global_prob_vector = df.sum(axis=0) / df.sum().sum()
         t = df[groups].sum(axis=1).astype(int)
 
-        simul = list(
-            map(lambda i: list(np.random.multinomial(i, global_prob_vector)), t)
-        )
+        simul = [list(np.random.multinomial(i, global_prob_vector)) for i in t]
         output = pd.DataFrame(simul, columns=groups)
     if geoms:
         return gpd.GeoDataFrame(output, geometry=geoms, crs=crs)
@@ -202,7 +207,9 @@ def simulate_evenness(df, group=None, total=None, groups=None):
     return output
 
 
-def simulate_systematic_randomization(df, group=None, total=None, groups=None):
+def simulate_systematic_randomization(
+    df, group=None, total=None, groups=None, verbose=True
+):
     """Simulate systematic redistribution of population groups across spatial units.
 
     Parameters
@@ -211,7 +218,7 @@ def simulate_systematic_randomization(df, group=None, total=None, groups=None):
         geodataframe with population data to be randomized
     group : str, optional
         name of column on geodataframe that holds the group total
-        (for use with singlegroup indices). 
+        (for use with singlegroup indices).
     total : str, optional
         name of column on geodataframe that holds the total population for
         each unit. For singlegroup indices, this parameter is required. For
@@ -242,16 +249,18 @@ def simulate_systematic_randomization(df, group=None, total=None, groups=None):
     Reference: :cite:`allen2015more`
     """
     if groups:
-        if not total:
+        if not total and verbose:
             warn(
-                "No `total` argument passed. Assuming population groups are exhaustive"
+                "No `total` argument passed. Assuming population groups are exhaustive",
+                stacklevel=2,
             )
             total = "total"
         df[total] = df[groups].sum(axis=1)
     if group:
-        assert (
-            total
-        ), "If simulating a single group, you must also supply a total population column"
+        if not total:
+            raise ValueError(
+                "If simulating a single group, you must also supply a total population column"
+            )
         df["other_group_pop"] = df[total] - df[group]
         groups = [group, "other_group_pop"]
 
@@ -320,7 +329,9 @@ def simulate_geo_permutation(df, **kwargs):
     return data
 
 
-def simulate_systematic_geo_permutation(df, group=None, total=None, groups=None):
+def simulate_systematic_geo_permutation(
+    df, group=None, total=None, groups=None, verbose=True
+):
     """Simulate systematic redistribution followed by random permutation of geographic units.
 
     Parameters
@@ -342,12 +353,16 @@ def simulate_systematic_geo_permutation(df, group=None, total=None, groups=None)
     geopandas.GeoDataFrame
         geodataframe with systematically randomized population groups
     """
-    df = simulate_systematic_randomization(df, group=group, total=total, groups=groups)
+    df = simulate_systematic_randomization(
+        df, group=group, total=total, groups=groups, verbose=verbose
+    )
     df = simulate_geo_permutation(df)
     return df
 
 
-def simulate_evenness_geo_permutation(df, group=None, total=None, groups=None):
+def simulate_evenness_geo_permutation(
+    df, group=None, total=None, groups=None, verbose=True
+):
     """Simulate evenness followed by random permutation of geographic units.
 
     Parameters
