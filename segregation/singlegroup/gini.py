@@ -2,15 +2,20 @@
 
 __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
 
+import os
+
 import geopandas as gpd
+
+# must be set prior to importing numpy
+# <https://github.com/numba/numba/issues/5275>
+os.environ["KMP_WARNINGS"] = "off"
+
 import numpy as np
 
 from .._base import SingleGroupIndex, SpatialImplicitIndex
 
-
-
 try:
-    from numba import njit, jit, prange, boolean
+    from numba import boolean, jit, njit, prange
 except (ImportError, ModuleNotFoundError):
 
     def jit(*dec_args, **dec_kwargs):
@@ -28,7 +33,11 @@ except (ImportError, ModuleNotFoundError):
     prange = range
     boolean = bool
 
-@njit(parallel=True, fastmath=True,)
+
+@njit(
+    parallel=True,
+    fastmath=True,
+)
 def _gini_vecp(pi: np.ndarray, ti: np.ndarray):
     """Memory efficient calculation of Gini
 
@@ -41,11 +50,10 @@ def _gini_vecp(pi: np.ndarray, ti: np.ndarray):
 
     Returns
     ----------
-    
+
     implicit: float
              Gini coefficient
     """
-
 
     n = ti.shape[0]
     num = np.zeros(1)
@@ -53,13 +61,12 @@ def _gini_vecp(pi: np.ndarray, ti: np.ndarray):
     P = pi.sum() / T
     pi = np.where(ti == 0, 0, pi / ti)
     T = ti.sum()
-    for i in prange(n-1):
-        num += (ti[i] * ti[i+1:] * np.abs(pi[i] - pi[i+1:])).sum()
+    for i in prange(n - 1):
+        num += (ti[i] * ti[i + 1 :] * np.abs(pi[i] - pi[i + 1 :])).sum()
     num *= 2
-    den = (2 * T * T * P * (1-P))
+    den = 2 * T * T * P * (1 - P)
     return (num / den)[0]
 
-    
 
 def _gini_seg(data, group_pop_var, total_pop_var):
     """Calculate Gini segregation index.
@@ -106,6 +113,7 @@ def _gini_seg(data, group_pop_var, total_pop_var):
         data = data[[group_pop_var, total_pop_var, data.geometry.name]]
 
     return G, data
+
 
 class Gini(SingleGroupIndex, SpatialImplicitIndex):
     """Gini Index.
@@ -154,7 +162,7 @@ class Gini(SingleGroupIndex, SpatialImplicitIndex):
         decay=None,
         function="triangular",
         precompute=None,
-        **kwargs
+        **kwargs,
     ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
