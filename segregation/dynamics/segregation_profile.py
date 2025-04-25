@@ -91,11 +91,11 @@ def compute_multiscalar_profile(
         if network:
             if not gdf.crs.equals(CRS(4326)):
                 gdf = gdf.to_crs(epsg=4326)
+            for distance in distances:
+                distance = float(distance)
             if precompute:
                 maxdist = max(distances)
                 network.precompute(maxdist)
-            for distance in distances:
-                distance = np.float(distance)
                 if group_pop_var:
                     idx = segregation_index(
                         gdf,
