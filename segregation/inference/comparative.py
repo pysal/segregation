@@ -329,7 +329,7 @@ def _prepare_random_label(seg_class_1, seg_class_2):
         data_1.loc[:, (seg_class_1.group_pop_var, seg_class_1.total_pop_var)] = (
             data_1.loc[:, (seg_class_1.group_pop_var, seg_class_1.total_pop_var)]
             .round(0)
-            .astype(int)
+            .astype(float)
         )
 
         # random permutation needs the columns to have the same names
@@ -345,7 +345,7 @@ def _prepare_random_label(seg_class_1, seg_class_2):
         data_2.loc[:, (seg_class_2.group_pop_var, seg_class_2.total_pop_var)] = (
             data_2.loc[:, (seg_class_2.group_pop_var, seg_class_2.total_pop_var)]
             .round(0)
-            .astype(int)
+            .astype(float)
         )
         data_2 = data_2[
             [
@@ -362,8 +362,8 @@ def _prepare_random_label(seg_class_1, seg_class_2):
         groups_list = seg_class_1.groups
 
         for i in range(len(groups_list)):
-            data_1[groups_list[i]] = round(data_1[groups_list[i]]).astype(int)
-            data_2[groups_list[i]] = round(data_2[groups_list[i]]).astype(int)
+            data_1[groups_list[i]] = round(data_1[groups_list[i]]).astype(float)
+            data_2[groups_list[i]] = round(data_2[groups_list[i]]).astype(float)
 
         if seg_class_1.groups != seg_class_2.groups:
             raise ValueError("MultiGroup groups should be the same")

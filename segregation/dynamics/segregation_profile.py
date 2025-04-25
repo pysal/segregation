@@ -1,10 +1,11 @@
 """Compute multiscalar segregation profiles."""
 
 import warnings
+from warnings import warn
 
 import numpy as np
 import pandas as pd
-from libpysal.weights import Kernel
+from libpysal.graph import Graph
 from pyproj.crs import CRS
 
 
@@ -19,7 +20,8 @@ def compute_multiscalar_profile(
     decay="linear",
     function="triangular",
     precompute=True,
-    **kwargs
+    check_crs=True,
+    **kwargs,
 ):
     """Compute multiscalar segregation profile.
 
@@ -56,10 +58,12 @@ def compute_multiscalar_profile(
     precompute: bool
         Whether the pandana.Network instance should precompute the range
         queries. This is True by default
+    check_crs:
+        warn if geodataframe is not stored in WGS coordinates. Can help debug
+        errors when computed index is zero indicating a poor merge. Default is True
     **kwargs : dict
         additional keyword arguments passed to each index (e.g. for setting a random
         seed in indices like ModifiedGini or ModifiedDissm)
-
 
     Returns
     -------
@@ -89,13 +93,16 @@ def compute_multiscalar_profile(
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         if network:
-            if not gdf.crs.equals(CRS(4326)):
-                gdf = gdf.to_crs(epsg=4326)
+            distances = np.array(distances).astype(float)
+            if check_crs:
+                if not gdf.crs.equals(CRS(4326)):
+                    warn(
+                        "GeoDataFrame is in CRS {gdf.crs}. Ensure your network is also stored in this system"
+                    )
             if precompute:
                 maxdist = max(distances)
-                network.precompute(float(maxdist))
+                network.precompute(maxdist)
             for distance in distances:
-                distance = float(distance)
                 if group_pop_var:
                     idx = segregation_index(
                         gdf,
@@ -105,7 +112,7 @@ def compute_multiscalar_profile(
                         decay=decay,
                         distance=distance,
                         precompute=False,
-                        **kwargs
+                        **kwargs,
                     )
                 elif groups:
                     idx = segregation_index(
@@ -115,20 +122,33 @@ def compute_multiscalar_profile(
                         decay=decay,
                         distance=distance,
                         precompute=False,
-                        **kwargs
+                        **kwargs,
                     )
 
                 indices[distance] = idx.statistic
         else:
             for distance in distances:
-                w = Kernel.from_dataframe(gdf, bandwidth=distance, function=function)
+                funcs = [
+                    "triangular",
+                    "parabolic",
+                    "gaussian",
+                    "bisquare",
+                    "cosine",
+                    "boxcar",
+                    "identity",
+                ]
+                if function not in funcs:
+                    raise ValueError(f"function must be one of {funcs}")
+                w = Graph.build_kernel(
+                    gdf.set_geometry(gdf.centroid), bandwidth=distance, kernel=function
+                ).to_W()
                 if group_pop_var:
                     idx = segregation_index(
                         gdf,
                         group_pop_var=group_pop_var,
                         total_pop_var=total_pop_var,
                         w=w,
-                        **kwargs
+                        **kwargs,
                     )
                 else:
                     idx = segregation_index(gdf, groups, w=w, **kwargs)
