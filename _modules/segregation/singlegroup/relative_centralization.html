@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>segregation.singlegroup.relative_centralization &#8212; segregation v2.5.3.dev4+g41250e6 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <script src="../../../_static/documentation_options.js?v=2e3d20c2"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <link rel="icon" href="../../../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../../../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../../../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          segregation</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.5.3.dev4+g41250e6</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../../../installation.html">Installation</a></li>
+                <li><a href="../../../api.html">API</a></li>
+                <li><a href="../../../tutorial.html">Tutorial</a></li>
+                <li><a href="../../../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <h1>Source code for segregation.singlegroup.relative_centralization</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Relative Centralization Index.&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Renan X. Cortes &lt;renanc@ucr.edu&gt;, Sergio J. Rey &lt;sergio.rey@ucr.edu&gt; and Elijah Knaap &lt;elijah.knaap@ucr.edu&gt;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.ndimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">shift</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.._base</span><span class="w"> </span><span class="kn">import</span> <span class="n">SingleGroupIndex</span><span class="p">,</span> <span class="n">SpatialExplicitIndex</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_relative_centralization</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">,</span> <span class="n">group_pop_var</span><span class="p">,</span> <span class="n">total_pop_var</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate Relative Centralization index.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data          : a geopandas DataFrame with a geometry column.</span>
+<span class="sd">    group_pop_var : string</span>
+<span class="sd">                    The name of variable in data that contains the population size of the group of interest</span>
+<span class="sd">    total_pop_var : string</span>
+<span class="sd">                    The name of variable in data that contains the total population of the unit</span>
+<span class="sd">    center        : string, two-dimension values (tuple, list, array) or integer.</span>
+<span class="sd">                    This defines what is considered to be the center of the spatial context under study.</span>
+
+<span class="sd">                    If string, this can be set to:</span>
+
+<span class="sd">                        &quot;mean&quot;: the center longitude/latitude is the mean of longitudes/latitudes of all units.</span>
+<span class="sd">                        &quot;median&quot;: the center longitude/latitude is the median of longitudes/latitudes of all units.</span>
+<span class="sd">                        &quot;population_weighted_mean&quot;: the center longitude/latitude is the mean of longitudes/latitudes of all units weighted by the total population.</span>
+<span class="sd">                        &quot;largest_population&quot;: the center longitude/latitude is the centroid of the unit with largest total population. If there is a tie in the maximum population, the mean of all coordinates will be taken.</span>
+
+<span class="sd">                    If tuple, list or array, this argument should be the coordinates of the desired center assuming longitude as first value and latitude second value. Therefore, in the form (longitude, latitude), if tuple, or [longitude, latitude] if list or numpy array.</span>
+
+<span class="sd">                    If integer, the center will be the centroid of the polygon from data corresponding to the integer interpreted as index.</span>
+<span class="sd">                    For example, if `center = 0` the centroid of the first row of data is used as center, if `center = 1` the second row will be used, and so on.</span>
+<span class="sd">    metric        : string. Can be &#39;euclidean&#39; or &#39;haversine&#39;. Default is &#39;euclidean&#39;.</span>
+<span class="sd">                    The metric used for the distance between spatial units.</span>
+<span class="sd">                    If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to &#39;haversine&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ----------</span>
+<span class="sd">    statistic     : float</span>
+<span class="sd">                    Relative Centralization Index</span>
+
+<span class="sd">    core_data     : a geopandas DataFrame</span>
+<span class="sd">                    A geopandas DataFrame that contains the columns used to perform the estimate.</span>
+
+<span class="sd">    center_values : list</span>
+<span class="sd">                    The center, in the form [longitude, latitude], values used for the calculation of the centralization distances.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Based on Massey, Douglas S., and Nancy A. Denton. &quot;The dimensions of residential segregation.&quot; Social forces 67.2 (1988): 281-315.</span>
+
+<span class="sd">    A discussion of defining the center in this function can be found in https://github.com/pysal/segregation/issues/18.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">metric</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;euclidean&quot;</span><span class="p">,</span> <span class="s2">&quot;haversine&quot;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;metric must one of &#39;euclidean&#39;, &#39;haversine&#39;&quot;</span><span class="p">)</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">group_pop_var</span><span class="p">])</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">total_pop_var</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">t</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Group of interest population must equal or lower than the total population of the units.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">y</span> <span class="o">=</span> <span class="n">t</span> <span class="o">-</span> <span class="n">x</span>
+
+    <span class="n">c_lons</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">c_lats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">center</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="s2">&quot;mean&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;median&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;population_weighted_mean&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;largest_population&quot;</span><span class="p">,</span>
+        <span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The center string must one of &#39;mean&#39;, &#39;median&#39;, &#39;population_weighted_mean&#39;, &#39;largest_population&#39;&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">center</span> <span class="o">==</span> <span class="s2">&quot;mean&quot;</span><span class="p">:</span>
+            <span class="n">center_lon</span> <span class="o">=</span> <span class="n">c_lons</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="n">center_lat</span> <span class="o">=</span> <span class="n">c_lats</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">center</span> <span class="o">==</span> <span class="s2">&quot;median&quot;</span><span class="p">:</span>
+            <span class="n">center_lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">c_lons</span><span class="p">)</span>
+            <span class="n">center_lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">c_lats</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">center</span> <span class="o">==</span> <span class="s2">&quot;population_weighted_mean&quot;</span><span class="p">:</span>
+            <span class="n">center_lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">c_lons</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
+            <span class="n">center_lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">c_lats</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">center</span> <span class="o">==</span> <span class="s2">&quot;largest_population&quot;</span><span class="p">:</span>
+            <span class="n">center_lon</span> <span class="o">=</span> <span class="n">c_lons</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">t</span> <span class="o">==</span> <span class="n">t</span><span class="o">.</span><span class="n">max</span><span class="p">())]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="n">center_lat</span> <span class="o">=</span> <span class="n">c_lats</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">t</span> <span class="o">==</span> <span class="n">t</span><span class="o">.</span><span class="n">max</span><span class="p">())]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
+        <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+        <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">center</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The center tuple/list/array must have length 2.&quot;</span><span class="p">)</span>
+
+        <span class="n">center_lon</span> <span class="o">=</span> <span class="n">center</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">center_lat</span> <span class="o">=</span> <span class="n">center</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">center</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">center</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The center index must by in the range of data.&quot;</span><span class="p">)</span>
+
+        <span class="n">center_lon</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[[</span><span class="n">center</span><span class="p">]]</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">center_lat</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[[</span><span class="n">center</span><span class="p">]]</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">X</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="n">dlon</span> <span class="o">=</span> <span class="n">c_lons</span> <span class="o">-</span> <span class="n">center_lon</span>
+    <span class="n">dlat</span> <span class="o">=</span> <span class="n">c_lats</span> <span class="o">-</span> <span class="n">center_lat</span>
+
+    <span class="k">if</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;euclidean&quot;</span><span class="p">:</span>
+        <span class="n">center_dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">dlon</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">dlat</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;haversine&quot;</span><span class="p">:</span>
+        <span class="n">center_dist</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">dlat</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+                <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">center_lat</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">c_lats</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">dlon</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">center_dist</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;It not possible to determine the center distance for, at least, one unit. This is probably due to the magnitude of the number of the centroids. We recommend to reproject the geopandas DataFrame.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">asc_ind</span> <span class="o">=</span> <span class="n">center_dist</span><span class="o">.</span><span class="n">argsort</span><span class="p">()</span>
+
+    <span class="n">Xi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">asc_ind</span><span class="p">])</span> <span class="o">/</span> <span class="n">X</span>
+    <span class="n">Yi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">asc_ind</span><span class="p">])</span> <span class="o">/</span> <span class="n">Y</span>
+
+    <span class="n">RCE</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">shift</span><span class="p">(</span><span class="n">Xi</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">cval</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span> <span class="o">*</span> <span class="n">Yi</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span>
+        <span class="n">Xi</span> <span class="o">*</span> <span class="n">shift</span><span class="p">(</span><span class="n">Yi</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">cval</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">core_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[[</span><span class="n">group_pop_var</span><span class="p">,</span> <span class="n">total_pop_var</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="p">]]</span>
+
+    <span class="n">center_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">center_lon</span><span class="p">,</span> <span class="n">center_lat</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">RCE</span><span class="p">,</span> <span class="n">core_data</span><span class="p">,</span> <span class="n">center_values</span>
+
+
+<div class="viewcode-block" id="RelativeCentralization">
+<a class="viewcode-back" href="../../../generated/segregation.singlegroup.RelativeCentralization.html#segregation.singlegroup.RelativeCentralization">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RelativeCentralization</span><span class="p">(</span><span class="n">SingleGroupIndex</span><span class="p">,</span> <span class="n">SpatialExplicitIndex</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Relative Centralization Index.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : pandas.DataFrame or geopandas.GeoDataFrame, required</span>
+<span class="sd">        dataframe or geodataframe if spatial index holding data for location of interest</span>
+<span class="sd">    group_pop_var : str, required</span>
+<span class="sd">        name of column on dataframe holding population totals for focal group</span>
+<span class="sd">    total_pop_var : str, required</span>
+<span class="sd">        name of column on dataframe holding total overall population</span>
+<span class="sd">    center  : string, two-dimension values (tuple, list, array) or integer.</span>
+<span class="sd">        This defines what is considered to be the center of the spatial context under study.</span>
+<span class="sd">        If string, this can be set to:</span>
+
+<span class="sd">            &quot;mean&quot;: the center longitude/latitude is the mean of longitudes/latitudes of all units.</span>
+<span class="sd">            &quot;median&quot;: the center longitude/latitude is the median of longitudes/latitudes of all units.</span>
+<span class="sd">            &quot;population_weighted_mean&quot;: the center longitude/latitude is the mean of longitudes/latitudes of all units weighted by the total population.</span>
+<span class="sd">            &quot;largest_population&quot;: the center longitude/latitude is the centroid of the unit with largest total population. If there is a tie in the maximum population, the mean of all coordinates will be taken.</span>
+<span class="sd">    metric : str</span>
+<span class="sd">        The metric used for the distance between spatial units.</span>
+<span class="sd">        If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to &#39;haversine&#39;.</span>
+
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    statistic : float</span>
+<span class="sd">        RelativeCentralization Index</span>
+<span class="sd">    core_data : a pandas DataFrame</span>
+<span class="sd">        A pandas DataFrame that contains the columns used to perform the estimate.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Based on Massey, Douglas S., and Nancy A. Denton. &quot;The dimensions of residential segregation.&quot; Social forces 67.2 (1988): 281-315.</span>
+
+<span class="sd">    A discussion of defining the center in this function can be found in https://github.com/pysal/segregation/issues/18.</span>
+
+<span class="sd">    Reference: :cite:`massey1988dimensions`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RelativeCentralization.__init__">
+<a class="viewcode-back" href="../../../generated/segregation.singlegroup.RelativeCentralization.html#segregation.singlegroup.RelativeCentralization.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">group_pop_var</span><span class="p">,</span>
+        <span class="n">total_pop_var</span><span class="p">,</span>
+        <span class="n">center</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span>
+        <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
+        <span class="n">SingleGroupIndex</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">group_pop_var</span><span class="p">,</span> <span class="n">total_pop_var</span><span class="p">)</span>
+        <span class="n">SpatialExplicitIndex</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">center</span> <span class="o">=</span> <span class="n">center</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metric</span> <span class="o">=</span> <span class="n">metric</span>
+        <span class="n">aux</span> <span class="o">=</span> <span class="n">_relative_centralization</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_pop_var</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_pop_var</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistic</span> <span class="o">=</span> <span class="n">aux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">core_data</span> <span class="o">=</span> <span class="n">aux</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">center_values</span> <span class="o">=</span> <span class="n">aux</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_function</span> <span class="o">=</span> <span class="n">_relative_centralization</span></div>
+</div>
+
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.2.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

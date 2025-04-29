@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>segregation.dynamics.divergence_profile &#8212; segregation v2.5.3.dev4+g41250e6 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <script src="../../../_static/documentation_options.js?v=2e3d20c2"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <link rel="icon" href="../../../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../../../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../../../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          segregation</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.5.3.dev4+g41250e6</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../../../installation.html">Installation</a></li>
+                <li><a href="../../../api.html">API</a></li>
+                <li><a href="../../../tutorial.html">Tutorial</a></li>
+                <li><a href="../../../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <h1>Source code for segregation.dynamics.divergence_profile</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial.distance</span><span class="w"> </span><span class="kn">import</span> <span class="n">pdist</span><span class="p">,</span> <span class="n">squareform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">rel_entr</span> <span class="k">as</span> <span class="n">relative_entropy</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..network</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_travel_cost_matrix</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">warnings</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
+
+
+<div class="viewcode-block" id="compute_divergence_profiles">
+<a class="viewcode-back" href="../../../generated/segregation.dynamics.compute_divergence_profiles.html#segregation.dynamics.compute_divergence_profiles">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_divergence_profiles</span><span class="p">(</span>
+    <span class="n">gdf</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;euclidean&quot;</span><span class="p">,</span> <span class="n">network</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">distance_matrix</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A segregation metric using Kullback-Leiber (KL) divergence to quantify the</span>
+<span class="sd">    difference in the population characteristics between (1) an area and (2) the total population.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : pandas.DataFrame or geopandas.GeoDataFrame, required</span>
+<span class="sd">        dataframe or geodataframe if spatial index holding data for location of interest</span>
+<span class="sd">    groups : list, required</span>
+<span class="sd">        list of columns on dataframe holding population totals for each group</span>
+<span class="sd">    metric : str (optional; &#39;euclidean&#39; by default)</span>
+<span class="sd">        Distance metric for calculating pairwise distances,</span>
+<span class="sd">        Accepts any inputs to `scipy.spatial.distance.pdist`.</span>
+<span class="sd">        Ignored if passing a network or distance matrix</span>
+<span class="sd">    network: pandana.Network object (optional, None by default)</span>
+<span class="sd">        A pandana Network object used to compute distance between observations</span>
+<span class="sd">    distance_matrix: numpy.array (optional; None by default)</span>
+<span class="sd">        numpy array of distances between observations in the dataset</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ----------</span>
+<span class="sd">    aux : geopandas.GeoDataFrame</span>
+<span class="sd">        geodataframe of the KL divergence measure, between the aggregated population and the</span>
+<span class="sd">        total population, will converge to zero for the final row of each</span>
+<span class="sd">        observation to represent that the total population is covered.</span>
+<span class="sd">        population_covered : the population count within the aggregated population.</span>
+<span class="sd">        Returns a concatenated object of Pandas dataframes. Each dataframe contains a</span>
+<span class="sd">        set of divergence levels between an area and the total population. These areas</span>
+<span class="sd">        become consecutively larger, starting from a single location and aggregating</span>
+<span class="sd">        outward from this location, until the area represents the total population.</span>
+<span class="sd">        Thus, together the divergence levels within a dataframe represent a profile</span>
+<span class="sd">        of divergence from an area. The concatenated object is the collection of these</span>
+<span class="sd">        divergence profiles for every areas within the total population.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Store the observation index to return with the results</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">centroids</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">centroid</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[</span><span class="n">groups</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="n">coordinates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">centroids</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">centroids</span><span class="o">.</span><span class="n">y</span><span class="p">))</span>
+
+    <span class="c1"># If given a pandana network, use shortest network distance, otherwise use scikit</span>
+    <span class="k">if</span> <span class="n">network</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">metric</span> <span class="o">!=</span> <span class="s2">&quot;network&quot;</span><span class="p">:</span>
+            <span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;metric set to </span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s2"> but a pandana.Network object was passed. Using network distances instead&quot;</span>
+                <span class="s2">&quot;If you wish to use a scipy distance matrix, do not include a `network` argument`&quot;</span>
+            <span class="p">)</span>
+        <span class="n">dist_matrix</span> <span class="o">=</span> <span class="n">compute_travel_cost_matrix</span><span class="p">(</span><span class="n">gdf</span><span class="p">,</span> <span class="n">gdf</span><span class="p">,</span> <span class="n">network</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">elif</span> <span class="n">distance_matrix</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">metric</span> <span class="o">!=</span> <span class="s2">&quot;precomputed&quot;</span><span class="p">:</span>
+            <span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;metric set to </span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s2"> but a distance_matrix argument was passed. Using precomputed distances instead&quot;</span>
+            <span class="p">)</span>
+        <span class="n">dist_matrix</span> <span class="o">=</span> <span class="n">distance_matrix</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dist_matrix</span> <span class="o">=</span> <span class="n">squareform</span><span class="p">(</span><span class="n">pdist</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">))</span>
+
+    <span class="c1"># Preparing list for results</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Loop to calculate KL divergence</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">distances</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dist_matrix</span><span class="p">):</span>
+
+        <span class="c1"># Creating the q and r objects</span>
+        <span class="n">sorted_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
+        <span class="n">cumul_pop_by_group</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">sorted_indices</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">obs_cumul_pop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">cumul_pop_by_group</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="n">q_cumul_proportions</span> <span class="o">=</span> <span class="n">cumul_pop_by_group</span> <span class="o">/</span> <span class="n">obs_cumul_pop</span>
+        <span class="n">total_pop_by_group</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">total_pop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+        <span class="n">r_total_proportions</span> <span class="o">=</span> <span class="n">total_pop_by_group</span> <span class="o">/</span> <span class="n">total_pop</span>
+
+        <span class="c1"># Input q and r objects into relative entropy (KL divergence) function</span>
+        <span class="n">kl_divergence</span> <span class="o">=</span> <span class="n">relative_entropy</span><span class="p">(</span><span class="n">q_cumul_proportions</span><span class="p">,</span> <span class="n">r_total_proportions</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Creating an output dataframe</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span>
+            <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">observation</span><span class="o">=</span><span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                <span class="n">distance</span><span class="o">=</span><span class="n">distances</span><span class="p">[</span><span class="n">sorted_indices</span><span class="p">],</span>
+                <span class="n">divergence</span><span class="o">=</span><span class="n">kl_divergence</span><span class="p">,</span>
+                <span class="n">population_covered</span><span class="o">=</span><span class="n">obs_cumul_pop</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Append (bring together) all outputs into results list</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+    <span class="n">aux</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">aux</span></div>
+
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.2.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

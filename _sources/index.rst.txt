@@ -1,20 +1,79 @@
-.. No Errors Test Project documentation master file, created by
-   sphinx-quickstart on Fri Aug 30 17:07:56 2019.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Welcome to segregation's documentation!
+=======================================
 
-Welcome to No Errors Test Project's documentation!
-==================================================
+Open Source Segregation Analytics in PySAL!
+
+The PySAL `segregation` package provides a suite of tools for measuring segregation over time and space.
+
+
+.. raw:: html
+
+    <div class="container-fluid">
+      <div class="row equal-height">
+        <div class="col-md-6 col-xs-12">
+            <a href="https://github.com/pysal/segregation/blob/master/notebooks/01_singlegroup_indices.ipynb" class="thumbnail">
+                <img src="_static/images/la_nhblk_2010_profile_wrapper_example.png" class="img-responsive center-block">
+                <div class="caption text-center">
+                <h6>Fit multiple indexes at once</h6>
+                </div>
+            </a>
+        </div>
+        <div class="col-sm-6 col-xs-12">
+            <a href="https://github.com/pysal/segregation/blob/master/notebooks/06_inference.ipynb" class="thumbnail">
+                <img src="_static/images/comparative_inference_example.png" class="img-responsive center-block">
+                <div class="caption text-center">
+                <h6>Single Value and Comparative Inference</h6>
+                </div>
+            </a>
+        </div>
+        <div class="col-sm-6 col-xs-12">
+            <a href="https://github.com/pysal/segregation/blob/master/notebooks/07_decomposition_example.ipynb" class="thumbnail">
+                <img src="_static/images/decomposition_example.png"
+                class="img-responsive center-block">
+                <div class="caption text-center">
+                <h6>Decompose Segregation</h6>
+                </div>
+            </a>
+        </div>
+		<div class="col-sm-6 col-xs-12">
+            <a href="https://github.com/pysal/segregation/blob/master/notebooks/02_multigroup_indices.ipynb" class="thumbnail">
+                <img src="_static/images/multigroup_example.png"
+                class="img-responsive center-block">
+                <div class="caption text-center">
+                <h6>Multigroup segregation measures</h6>
+                </div>
+            </a>
+        </div>
+		<div class="col-sm-6 col-xs-12">
+			<a href="https://github.com/pysal/segregation/blob/master/notebooks/04_multiscalar_example.ipynb" class="thumbnail">
+				<img src="_static/images/network_example.png"
+				class="img-responsive center-block">
+				<div class="caption text-center">
+				<h6>Street network based segregation measures</h6>
+				</div>
+			</a>
+        </div>
+		<div class="col-sm-6 col-xs-12">
+            <a href="https://github.com/pysal/segregation/blob/master/notebooks/03_local_indices.ipynb" class="thumbnail">
+                <img src="_static/images/local_example.png"
+                class="img-responsive center-block">
+                <div class="caption text-center">
+                <h6>Local segregation measures</h6>
+                </div>
+            </a>
+        </div>
+        <div class="col-sm-2 col-xs-hidden">
+        </div>
+      </div>
+    </div>
+
+
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Hello World!
+   :hidden:
+   :maxdepth: 3
+   :caption: Contents:
 
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   Installation <installation>
+   API <api>
+   References <references>

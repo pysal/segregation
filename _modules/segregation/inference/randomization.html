@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>segregation.inference.randomization &#8212; segregation v2.5.3.dev4+g41250e6 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <script src="../../../_static/documentation_options.js?v=2e3d20c2"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <link rel="icon" href="../../../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../../../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../../../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          segregation</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.5.3.dev4+g41250e6</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../../../installation.html">Installation</a></li>
+                <li><a href="../../../api.html">API</a></li>
+                <li><a href="../../../tutorial.html">Tutorial</a></li>
+                <li><a href="../../../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <h1>Source code for segregation.inference.randomization</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Tools for simulating spatial population distributions.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">multiprocessing</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">warnings</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">joblib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm.auto</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_generate_estimate</span><span class="p">(</span><span class="nb">input</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;_original_data&quot;</span><span class="p">):</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">_original_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index_type</span> <span class="o">==</span> <span class="s2">&quot;singlegroup&quot;</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[</span><span class="mi">1</span><span class="p">](</span>
+            <span class="n">df</span><span class="p">,</span>
+            <span class="n">group</span><span class="o">=</span><span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">group_pop_var</span><span class="p">,</span>
+            <span class="n">total</span><span class="o">=</span><span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">total_pop_var</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">estimate</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">group_pop_var</span><span class="p">,</span> <span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">total_pop_var</span><span class="p">,</span> <span class="o">**</span><span class="nb">input</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="o">.</span><span class="n">statistic</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[</span><span class="mi">1</span><span class="p">](</span><span class="n">df</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">groups</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="nb">input</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">estimate</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">groups</span><span class="p">,</span> <span class="o">**</span><span class="nb">input</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">statistic</span>
+    <span class="k">return</span> <span class="n">estimate</span>
+
+
+<div class="viewcode-block" id="simulate_null">
+<a class="viewcode-back" href="../../../generated/segregation.inference.simulate_null.html#segregation.inference.simulate_null">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">simulate_null</span><span class="p">(</span>
+    <span class="n">iterations</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="n">sim_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">seg_class</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;loky&quot;</span><span class="p">,</span>
+    <span class="n">index_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simulate a series of index values in parallel to serve as a null distribution.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    iterations : int, required</span>
+<span class="sd">        Number of iterations to simulate (size of the distribution), by default 1000</span>
+<span class="sd">    sim_func : function, required</span>
+<span class="sd">        population randomization function from segregation.inference to serve as</span>
+<span class="sd">        the null hypothesis.</span>
+<span class="sd">    seg_func : Class from segregation.singlegroup or segregation.singlegroup, required</span>
+<span class="sd">        fitted segregation class from which to generate a reference distribution</span>
+<span class="sd">    n_jobs : int, optional</span>
+<span class="sd">        number of cpus to initialize for parallelization. If -1, use all available,</span>
+<span class="sd">        by default -1</span>
+<span class="sd">    backend : str, optional</span>
+<span class="sd">        backend passed to joblib.Parallel, by default &quot;loky&quot;</span>
+<span class="sd">    index_kwargs : dict, optional</span>
+<span class="sd">        additional keyword arguments used to fit the index, such as distance or network</span>
+<span class="sd">        if estimating a spatial index; by default None</span>
+<span class="sd">    verbose: bool</span>
+<span class="sd">        whether to print warning statements</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">        pandas.Series of segregation indices for simulated data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">index_kwargs</span><span class="p">:</span>
+        <span class="n">index_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">n_jobs</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">n_jobs</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+    <span class="n">estimates</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)(</span>
+        <span class="n">delayed</span><span class="p">(</span><span class="n">_generate_estimate</span><span class="p">)((</span><span class="n">seg_class</span><span class="p">,</span> <span class="n">sim_func</span><span class="p">,</span> <span class="n">index_kwargs</span><span class="p">,</span> <span class="n">verbose</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">iterations</span><span class="p">))</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">estimates</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="simulate_person_permutation">
+<a class="viewcode-back" href="../../../generated/segregation.inference.simulate_person_permutation.html#segregation.inference.simulate_person_permutation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">simulate_person_permutation</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simulate the permutation of individuals across spatial units.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : geopandas.GeoDataFrame</span>
+<span class="sd">        geodataframe with population data to be randomized</span>
+<span class="sd">    group : str, optional</span>
+<span class="sd">        name of column on geodataframe that holds the group total</span>
+<span class="sd">        (for use with single group indices)</span>
+<span class="sd">    total : str, optional</span>
+<span class="sd">        name of column on geodataframe that holds the total population for</span>
+<span class="sd">        each unit (for use with single group indices)</span>
+<span class="sd">    groups : list, optional</span>
+<span class="sd">        list of columns on input dataframe that hold total population counts</span>
+<span class="sd">        for each group of interest</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    geopandas.GeoDataFrame</span>
+<span class="sd">        geodataframe with randomly reallocated population</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -------</span>
+<span class="sd">    Simulates the random permutation of the existing population&#39;s location. Given a pool</span>
+<span class="sd">    of the total population in the region, randomly allocate each person to a</span>
+<span class="sd">    geographic unit, subject to the total capacity of each unit. Results are</span>
+<span class="sd">    guaranteed to respect regional and local totals for geographic units as well</span>
+<span class="sd">    as regional totals and relative shares for groups</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="c1"># ensure we have a coilumn named &quot;index&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">):</span>
+        <span class="n">geoms</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="n">df</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="p">]]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">geoms</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">idx</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">)[[</span><span class="s2">&quot;idx&quot;</span><span class="p">]]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">total</span><span class="p">:</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="s2">&quot;total&quot;</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">groups</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">total</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">group</span><span class="p">:</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">total</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">total</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;other&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">total</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="n">group</span><span class="p">]</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="p">[</span><span class="n">group</span><span class="p">,</span> <span class="s2">&quot;other&quot;</span><span class="p">]</span>
+
+    <span class="c1"># create a list of group membership for each person</span>
+    <span class="n">members</span> <span class="o">=</span> <span class="p">[[</span><span class="n">group</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">group</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">))]</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">]</span>
+    <span class="n">pop_groups</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">members</span><span class="p">))</span>
+
+    <span class="c1"># create a  list of 1s representing the population in each unit</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">total</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x</span><span class="p">)])</span>
+
+    <span class="c1"># explode the dataframe to have n_rows = total_population</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;people&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">explode</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()[</span><span class="s2">&quot;index&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;groups&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pop_groups</span>
+
+    <span class="c1"># randomize people&#39;s group id</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;groups&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;groups&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">frac</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="c1"># reaggregate by unit index</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;index&quot;</span><span class="p">)[</span><span class="s2">&quot;groups&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
+    <span class="n">df</span><span class="p">[</span><span class="n">total</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">groups</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">geoms</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">&quot;idx&quot;</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;idx&quot;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">df</span>
+
+    <span class="k">return</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="n">geoms</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="simulate_evenness">
+<a class="viewcode-back" href="../../../generated/segregation.inference.simulate_evenness.html#segregation.inference.simulate_evenness">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">simulate_evenness</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simulate even redistribution of population groups across spatial units.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : geopandas.GeoDataFrame</span>
+<span class="sd">        geodataframe with population data to be randomized</span>
+<span class="sd">    group : str, optional</span>
+<span class="sd">        name of column on geodataframe that holds the group total</span>
+<span class="sd">        (for use with single group indices)</span>
+<span class="sd">    total : str, optional</span>
+<span class="sd">        name of column on geodataframe that holds the total population for</span>
+<span class="sd">        each unit (for use with single group indices)</span>
+<span class="sd">    groups : list, optional</span>
+<span class="sd">        list of columns on input dataframe that hold total population counts</span>
+<span class="sd">        for each group of interest</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    geopandas.GeoDataFrame</span>
+<span class="sd">        geodataframe with evenly distributed population groups</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -------</span>
+<span class="sd">    Simulates the random allocation of groups, given the total population of</span>
+<span class="sd">    each geographic unit (randomizes group totals for each location). Given the total</span>
+<span class="sd">    population of each location, take draws from a multinomial distribution to assign</span>
+<span class="sd">    group categories for each person, where the probability of each group is equal to</span>
+<span class="sd">    its regional share. Results are guaranteed to match local population</span>
+<span class="sd">    totals, but will include variation in the regional totals for each group</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+        <span class="n">geoms</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">crs</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">crs</span>
+    <span class="k">if</span> <span class="n">group</span><span class="p">:</span>
+        <span class="n">df</span><span class="p">[[</span><span class="n">group</span><span class="p">,</span> <span class="n">total</span><span class="p">]]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="n">group</span><span class="p">,</span> <span class="n">total</span><span class="p">]]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">p_null</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">group</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">df</span><span class="p">[</span><span class="n">total</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+        <span class="n">output</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="n">output</span><span class="p">[</span><span class="n">group</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">binomial</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">total</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">p_null</span><span class="p">)</span>
+        <span class="n">output</span><span class="p">[</span><span class="n">total</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">total</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">groups</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">groups</span><span class="p">]</span>
+        <span class="n">global_prob_vector</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">df</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">groups</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="n">simul</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multinomial</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">global_prob_vector</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">t</span><span class="p">]</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">simul</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">groups</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">geoms</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="n">geoms</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="n">crs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">output</span></div>
+
+
+
+<div class="viewcode-block" id="simulate_systematic_randomization">
+<a class="viewcode-back" href="../../../generated/segregation.inference.simulate_systematic_randomization.html#segregation.inference.simulate_systematic_randomization">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">simulate_systematic_randomization</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simulate systematic redistribution of population groups across spatial units.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : geopandas.GeoDataFrame</span>
+<span class="sd">        geodataframe with population data to be randomized</span>
+<span class="sd">    group : str, optional</span>
+<span class="sd">        name of column on geodataframe that holds the group total</span>
+<span class="sd">        (for use with singlegroup indices).</span>
+<span class="sd">    total : str, optional</span>
+<span class="sd">        name of column on geodataframe that holds the total population for</span>
+<span class="sd">        each unit. For singlegroup indices, this parameter is required. For</span>
+<span class="sd">        multigroup indices, this is optional if groups are not exhaustive.</span>
+<span class="sd">    groups : list, optional</span>
+<span class="sd">        list of columns on input dataframe that hold total population counts</span>
+<span class="sd">        for each group of interest. Note that if not passing a `total` argument,</span>
+<span class="sd">        groups are assumed to be exhaustive. If total is not set and groups are not</span>
+<span class="sd">        exhaustive, the function will estimate incorrect probabilities of choosing</span>
+<span class="sd">        each geographic unit.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    geopandas.GeoDataFrame</span>
+<span class="sd">        geodataframe with systematically randomized population groups</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -------</span>
+<span class="sd">    Simulates the random allocation of each group across geographic units, given the total population</span>
+<span class="sd">    of each group (randomizes location totals for each group). Given the total population of</span>
+<span class="sd">    each group in the region, take draws from a multinomial distribution where the probability of</span>
+<span class="sd">    choosing each geographic unit is equal to the total regional share currently residing in the unit.</span>
+<span class="sd">    Results are guaranteed to respect regional group totals, but will include variation in the total</span>
+<span class="sd">    population of each geographic unit.</span>
+
+<span class="sd">    For more, see Allen, R., Burgess, S., Davidson, R., &amp; Windmeijer, F. (2015). More reliable inference for the dissimilarity index of segregation. The Econometrics Journal, 18(1), 40–66. https://doi.org/10.1111/ectj.12039</span>
+
+<span class="sd">    Reference: :cite:`allen2015more`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">groups</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">total</span> <span class="ow">and</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;No `total` argument passed. Assuming population groups are exhaustive&quot;</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">total</span> <span class="o">=</span> <span class="s2">&quot;total&quot;</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">total</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">groups</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">group</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">total</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;If simulating a single group, you must also supply a total population column&quot;</span>
+            <span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;other_group_pop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">total</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="n">group</span><span class="p">]</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="p">[</span><span class="n">group</span><span class="p">,</span> <span class="s2">&quot;other_group_pop&quot;</span><span class="p">]</span>
+
+    <span class="n">p_j</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">total</span><span class="p">]</span> <span class="o">/</span> <span class="n">df</span><span class="p">[</span><span class="n">total</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">data_aux</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">group</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">sim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multinomial</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">p_j</span><span class="p">)</span>
+        <span class="n">data_aux</span><span class="p">[</span><span class="n">group</span><span class="p">]</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">df_aux</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data_aux</span><span class="p">)</span>
+    <span class="n">df_aux</span><span class="p">[</span><span class="n">total</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_aux</span><span class="p">[</span><span class="n">groups</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">):</span>
+        <span class="n">df_aux</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="n">df</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="p">]]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">df_aux</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df_aux</span></div>
+
+
+
+<div class="viewcode-block" id="simulate_bootstrap_resample">
+<a class="viewcode-back" href="../../../generated/segregation.inference.simulate_bootstrap_resample.html#segregation.inference.simulate_bootstrap_resample">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">simulate_bootstrap_resample</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate bootstrap replications of the units with replacement of the same size of the original data.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : geopandas.GeoDataFrame or pandas.DataFrame</span>
+<span class="sd">        (geo)dataframe with population counts to be randomized</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    DataFrame</span>
+<span class="sd">        DataFrame with bootstrap resampled observations</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -------</span>
+<span class="sd">    Simulate a synthetic dataset by drawing from rows of the input data with replacement</span>
+<span class="sd">    until reaching the same number of observations in the original dataframe. Note that if</span>
+<span class="sd">    input is a geodataframe, then the output will not be planar-enforced, as more than one of</span>
+<span class="sd">    the same unit may appear in the sample.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">sample_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">),</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">df_aux</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">sample_index</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">df_aux</span></div>
+
+
+
+<div class="viewcode-block" id="simulate_geo_permutation">
+<a class="viewcode-back" href="../../../generated/segregation.inference.simulate_geo_permutation.html#segregation.inference.simulate_geo_permutation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">simulate_geo_permutation</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simulate a synthetic dataset by random permutation of geographic units.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : geopandas.GeoDataFrame</span>
+<span class="sd">        geodataframe with population counts to be randomized</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    DataFrame</span>
+<span class="sd">        Simulate a synthetic dataset by randomly allocating the units over space</span>
+<span class="sd">        keeping their original values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span>
+        <span class="n">geometry</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="p">][</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()[</span><span class="n">df</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="simulate_systematic_geo_permutation">
+<a class="viewcode-back" href="../../../generated/segregation.inference.simulate_systematic_geo_permutation.html#segregation.inference.simulate_systematic_geo_permutation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">simulate_systematic_geo_permutation</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simulate systematic redistribution followed by random permutation of geographic units.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : geopandas.GeoDataFrame</span>
+<span class="sd">        geodataframe with population data to be randomized</span>
+<span class="sd">    group : str, optional</span>
+<span class="sd">        name of column on geodataframe that holds the group total</span>
+<span class="sd">        (for use with single group indices)</span>
+<span class="sd">    total : str, optional</span>
+<span class="sd">        name of column on geodataframe that holds the total population for</span>
+<span class="sd">        each unit (for use with single group indices)</span>
+<span class="sd">    groups : list, optional</span>
+<span class="sd">        list of columns on input dataframe that hold total population counts</span>
+<span class="sd">        for each group of interest</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    geopandas.GeoDataFrame</span>
+<span class="sd">        geodataframe with systematically randomized population groups</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">simulate_systematic_randomization</span><span class="p">(</span>
+        <span class="n">df</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">total</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
+    <span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">simulate_geo_permutation</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<div class="viewcode-block" id="simulate_evenness_geo_permutation">
+<a class="viewcode-back" href="../../../generated/segregation.inference.simulate_evenness_geo_permutation.html#segregation.inference.simulate_evenness_geo_permutation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">simulate_evenness_geo_permutation</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simulate evenness followed by random permutation of geographic units.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : geopandas.GeoDataFrame</span>
+<span class="sd">        geodataframe with population data to be randomized</span>
+<span class="sd">    group : str, optional</span>
+<span class="sd">        name of column on geodataframe that holds the group total</span>
+<span class="sd">        (for use with single group indices)</span>
+<span class="sd">    total : str, optional</span>
+<span class="sd">        name of column on geodataframe that holds the total population for</span>
+<span class="sd">        each unit (for use with single group indices)</span>
+<span class="sd">    groups : list, optional</span>
+<span class="sd">        list of columns on input dataframe that hold total population counts</span>
+<span class="sd">        for each group of interest</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    geopandas.GeoDataFrame</span>
+<span class="sd">        geodataframe with evenly distributed population groups</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">simulate_evenness</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">total</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">simulate_geo_permutation</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<span class="n">SIMULATORS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;systematic&quot;</span><span class="p">:</span> <span class="n">simulate_systematic_randomization</span><span class="p">,</span>
+    <span class="s2">&quot;bootstrap&quot;</span><span class="p">:</span> <span class="n">simulate_bootstrap_resample</span><span class="p">,</span>
+    <span class="s2">&quot;evenness&quot;</span><span class="p">:</span> <span class="n">simulate_evenness</span><span class="p">,</span>
+    <span class="s2">&quot;person_permutation&quot;</span><span class="p">:</span> <span class="n">simulate_person_permutation</span><span class="p">,</span>
+    <span class="s2">&quot;geographic_permutation&quot;</span><span class="p">:</span> <span class="n">simulate_geo_permutation</span><span class="p">,</span>
+    <span class="s2">&quot;systematic_permutation&quot;</span><span class="p">:</span> <span class="n">simulate_systematic_geo_permutation</span><span class="p">,</span>
+    <span class="s2">&quot;even_permutation&quot;</span><span class="p">:</span> <span class="n">simulate_evenness_geo_permutation</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.2.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

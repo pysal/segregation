@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>segregation.inference.SingleValueTest &#8212; segregation v2.5.3.dev4+g41250e6 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <script src="../_static/documentation_options.js?v=2e3d20c2"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <link rel="icon" href="../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="segregation.inference.TwoValueTest" href="segregation.inference.TwoValueTest.html" />
+    <link rel="prev" title="segregation.batch.batch_multiscalar_multigroup" href="segregation.batch.batch_multiscalar_multigroup.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          segregation</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.5.3.dev4+g41250e6</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../installation.html">Installation</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="../tutorial.html">Tutorial</a></li>
+                <li><a href="../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">segregation.inference.SingleValueTest</a><ul>
+<li><a class="reference internal" href="#segregation.inference.SingleValueTest"><code class="docutils literal notranslate"><span class="pre">SingleValueTest</span></code></a><ul>
+<li><a class="reference internal" href="#segregation.inference.SingleValueTest.__init__"><code class="docutils literal notranslate"><span class="pre">SingleValueTest.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#segregation.inference.SingleValueTest.plot"><code class="docutils literal notranslate"><span class="pre">SingleValueTest.plot()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="segregation-inference-singlevaluetest">
+<h1>segregation.inference.SingleValueTest<a class="headerlink" href="#segregation-inference-singlevaluetest" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="segregation.inference.SingleValueTest">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">segregation.inference.</span></span><span class="sig-name descname"><span class="pre">SingleValueTest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seg_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iterations_under_null</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">null_approach</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'systematic'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">two_tailed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/segregation/inference/inference_wrappers.html#SingleValueTest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#segregation.inference.SingleValueTest" title="Link to this definition">¶</a></dt>
+<dd><p>Statistical inference for a single segregation measure.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>seg_class</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">segregation.singlegroup</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">segregation.multigroup</span></code> <a class="reference external" href="https://docs.python.org/3.9/library/functions.html#object" title="(in Python v3.9)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">object</span></code></a></span></dt><dd><p>fitted segregation index class</p>
+</dd>
+<dt><strong>iterations_under_null</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#int" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>number of iterations under null hyphothesis</p>
+</dd>
+<dt><strong>null_approach</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>Which counterfactual approach to use when generating null hypothesis distribution. One of the following:.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">bootstrap</span></code>:</p></li>
+</ul>
+<p>Generate bootstrap replications of the units with replacement of the same size of the
+original data to create a distribution of the segregation index. Then the <cite>null_value</cite> argument
+is tested against this distribution. The null_value may be 0, or may be estimated empirically using
+the <cite>simulate_null</cite> function.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">systematic</span></code>:</p></li>
+</ul>
+<p>assumes that every group has the same probability with restricted conditional probabilities
+p_0_j = p_1_j = p_j = n_j/n (multinomial distribution).</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">evenness</span></code>:</p></li>
+</ul>
+<p>Generate a distribution of segregation indices under the assumption of evenness, which
+assumes that each spatial unit has the same global probability of drawing elements from the
+minority group of the fixed total unit population (binomial distribution). Then test the observed
+segregation index against this distribution</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">person_permutation</span></code>:</p></li>
+</ul>
+<p>Generate a distribution of segregation indices under the assumption of individual-level randomization,
+which randomly allocates individuals into units keeping the total population of each
+equal to the original.Then test the observed segregation index against this distribution</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">geographic_permutation</span></code>:</p></li>
+</ul>
+<p>Generate a distribution of segregation indices under the assumption of geographit unit-level randomization,
+which randomly allocates the units over space keeping the original values. Then test the observed segregation
+index against this distribution</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">systematic_permutation</span></code>:</p></li>
+</ul>
+<p>Generate a distribution of segregation indices under the assumption of systemic randomization,
+then randomly allocate units over space. Then test the observed segregation index against this distribution</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">even_permutation</span></code>:</p></li>
+</ul>
+<p>Generate a distribution of segregation indices under the assumption of evenness, then randomly allocating
+the units over space. Then test the observed segregation index against this distribution</p>
+</dd>
+<dt><strong>two_tailed</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.9)"><span class="xref std std-ref">bool</span></a></span></dt><dd><p>If True, p_value is two-tailed. Otherwise, it is right one-tailed. The one-tailed p_value attribute
+might not be appropriate for some measures, as the two-tailed. Therefore, it is better to rely on the
+est_sim attribute.</p>
+</dd>
+<dt><strong>n_jobs: int, optional</strong></dt><dd><p>number of cores to use for estimation. If -1 all available cpus will be used</p>
+</dd>
+<dt><strong>backend: str, optional</strong></dt><dd><p>which backend to use with joblib. Options include “loky”, “multiprocessing”, or “threading”</p>
+</dd>
+<dt><strong>index_kwargs</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">dict</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>additional keyword arguments passed to the index class</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes<span class="colon">:</span></dt>
+<dd class="field-even"><dl>
+<dt><strong>p_value</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>Pseudo One or Two-Tailed p-value estimated from the simulations</p>
+</dd>
+<dt><strong>est_sim</strong><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/index.html#module-numpy" title="(in NumPy v2.2)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">numpy</span></code></a> <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a></span></dt><dd><p>Estimates of the segregation measure under the null hypothesis</p>
+</dd>
+<dt><strong>statistic</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/functions.html#float" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">float</span></code></a></span></dt><dd><p>The value of the segregation index being tested</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>1) The different approaches for the null hypothesis affect directly the results of the inference depending on the
+combination of the index type of seg_class and the null_approach chosen. Therefore, the user needs to be aware of
+how these approaches are affecting the data generation process of the simulations in order to draw meaningful
+conclusions. For example, the Modified Dissimilarity (ModifiedDissim) and  Modified Gini (ModifiedGiniSeg) indexes,
+rely exactly on the distance between evenness through sampling which, therefore, the “evenness” value for null
+approach would not be the most appropriate for these indexes.</p>
+<p class="rubric">Examples</p>
+<p>Several examples can be found here <a class="reference external" href="https://github.com/pysal/segregation/blob/master/notebooks/inference_wrappers_example.ipynb">https://github.com/pysal/segregation/blob/master/notebooks/inference_wrappers_example.ipynb</a>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="segregation.inference.SingleValueTest.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seg_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iterations_under_null</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">null_approach</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'systematic'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">two_tailed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/segregation/inference/inference_wrappers.html#SingleValueTest.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#segregation.inference.SingleValueTest.__init__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#segregation.inference.SingleValueTest.__init__" title="segregation.inference.SingleValueTest.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(seg_class[, iterations_under_null, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#segregation.inference.SingleValueTest.plot" title="segregation.inference.SingleValueTest.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>([color, kde, ax])</p></td>
+<td><p>Plot the distribution of simulated values and the observed index being tested.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="segregation.inference.SingleValueTest.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'darkblue'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kde</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/segregation/inference/inference_wrappers.html#SingleValueTest.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#segregation.inference.SingleValueTest.plot" title="Link to this definition">¶</a></dt>
+<dd><p>Plot the distribution of simulated values and the observed index being tested.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>color</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#str" title="(in Python v3.9)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>color of histogram, by default ‘darkblue’</p>
+</dd>
+<dt><strong>kde</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.9/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.9)"><span class="xref std std-ref">bool</span></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Whether to plot the kernel density estimate along with the histogram, by default True</p>
+</dd>
+<dt><strong>ax</strong><span class="classifier"><a class="reference external" href="https://matplotlib.org/stable/api/axes_api.html#module-matplotlib.axes" title="(in Matplotlib v3.10.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib.axes</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>axes object to plot onto, by default None</p>
+</dd>
+<dt><strong>kwargs</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">seaborn.histplot</span></code> <code class="xref py py-obj docutils literal notranslate"><span class="pre">argument</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>additional keyword arguments passed to seaborn’s histplot function</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://matplotlib.org/stable/api/axes_api.html#module-matplotlib.axes" title="(in Matplotlib v3.10.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib.axes</span></code></a></dt><dd><p>pyplot axes object</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="../_sources/generated/segregation.inference.SingleValueTest.rst.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.2.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

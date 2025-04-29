@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>segregation.network.network &#8212; segregation v2.5.3.dev4+g41250e6 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <script src="../../../_static/documentation_options.js?v=2e3d20c2"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <link rel="icon" href="../../../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../../../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../../../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          segregation</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.5.3.dev4+g41250e6</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../../../installation.html">Installation</a></li>
+                <li><a href="../../../api.html">API</a></li>
+                <li><a href="../../../tutorial.html">Tutorial</a></li>
+                <li><a href="../../../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <h1>Source code for segregation.network.network</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Calculate street network-based segregation measures.&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Elijah Knaap &lt;elijah.knaap@ucr.edu&gt; Renan X. Cortes &lt;renanc@ucr.edu&gt; and Sergio J. Rey &lt;sergio.rey@ucr.edu&gt;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm.auto</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_reproject_osm_nodes</span><span class="p">(</span><span class="n">nodes_df</span><span class="p">,</span> <span class="n">input_crs</span><span class="p">,</span> <span class="n">output_crs</span><span class="p">):</span>
+    <span class="c1">#  take original x,y coordinates and convert into geopandas.Series, then reproject</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">points_from_xy</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">nodes_df</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">nodes_df</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="n">input_crs</span><span class="p">)</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span>
+        <span class="n">output_crs</span>
+    <span class="p">)</span>
+    <span class="c1">#  convert to dataframe and recreate the x and y cols</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">nodes_df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="n">nodes</span><span class="p">)</span>
+    <span class="n">nodes</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">x</span>
+    <span class="n">nodes</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">y</span>
+    <span class="k">return</span> <span class="n">nodes</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">calc_access</span><span class="p">(</span>
+    <span class="n">geodataframe</span><span class="p">,</span>
+    <span class="n">network</span><span class="p">,</span>
+    <span class="n">distance</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
+    <span class="n">decay</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span>
+    <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">precompute</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">return_node_data</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate access to population groups.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geodataframe : geopandas.GeoDataFrame</span>
+<span class="sd">        geodataframe with demographic data</span>
+<span class="sd">    network : pandana.Network</span>
+<span class="sd">        pandana.Network instance. This is likely created with `get_osm_network`</span>
+<span class="sd">        or via helper functions from OSMnet or UrbanAccess.</span>
+<span class="sd">    distance : int</span>
+<span class="sd">        maximum distance to consider `accessible` (the default is 2000).</span>
+<span class="sd">    decay : str</span>
+<span class="sd">        decay type pandana should use &quot;linear&quot;, &quot;exp&quot;, or &quot;flat&quot;</span>
+<span class="sd">        (which means no decay). The default is &quot;linear&quot;.</span>
+<span class="sd">    variables : list</span>
+<span class="sd">        list of variable names present on gdf that should be calculated</span>
+<span class="sd">    precompute: bool (default True)</span>
+<span class="sd">        whether pandana should precompute the distance matrix. It can only be</span>
+<span class="sd">        precomputed once, so If you plan to pass the same network to this</span>
+<span class="sd">        function several times, you should set precompute=False for later runs</span>
+<span class="sd">    return_node_data : bool, default is False</span>
+<span class="sd">        Whether to return nodel-level accessibility data or to trim output to</span>
+<span class="sd">        the same geometries as the input. Default is the latter.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pandas.DataFrame</span>
+<span class="sd">        DataFrame with two columns, `total_population` and `group_population`</span>
+<span class="sd">        which represent the total number of each group that can be reached</span>
+<span class="sd">        within the supplied `distance` parameter. The DataFrame is indexed</span>
+<span class="sd">        on node_ids</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">decay</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;You must pass a decay function such as `linear`&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">precompute</span><span class="p">:</span>
+        <span class="n">network</span><span class="o">.</span><span class="n">precompute</span><span class="p">(</span><span class="n">distance</span><span class="p">)</span>
+
+    <span class="n">geodataframe</span><span class="p">[</span><span class="s2">&quot;node_ids&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">get_node_ids</span><span class="p">(</span>
+        <span class="n">geodataframe</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">geodataframe</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">y</span>
+    <span class="p">)</span>
+    <span class="n">access</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+        <span class="n">network</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+            <span class="n">geodataframe</span><span class="o">.</span><span class="n">node_ids</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="n">geodataframe</span><span class="p">[</span><span class="n">variable</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="n">variable</span>
+        <span class="p">)</span>
+
+        <span class="n">access_pop</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">distance</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span> <span class="n">decay</span><span class="o">=</span><span class="n">decay</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">variable</span><span class="p">)</span>
+
+        <span class="n">access</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">access_pop</span><span class="p">)</span>
+    <span class="n">access</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="n">access</span><span class="p">)))</span>
+    <span class="k">if</span> <span class="n">return_node_data</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">access</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">access</span> <span class="o">=</span> <span class="n">geodataframe</span><span class="p">[[</span><span class="s2">&quot;node_ids&quot;</span><span class="p">,</span> <span class="n">geodataframe</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="p">]]</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+        <span class="n">access</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">left_on</span><span class="o">=</span><span class="s2">&quot;node_ids&quot;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">access</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="compute_travel_cost_matrix">
+<a class="viewcode-back" href="../../../generated/segregation.network.compute_travel_cost_matrix.html#segregation.network.compute_travel_cost_matrix">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_travel_cost_matrix</span><span class="p">(</span><span class="n">origins</span><span class="p">,</span> <span class="n">destinations</span><span class="p">,</span> <span class="n">network</span><span class="p">,</span> <span class="n">reindex_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute a shortest path matrix from a pandana network</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    origins : geopandas.GeoDataFrame</span>
+<span class="sd">        the set of origin geometries. If polygon input, the function will use their centroids</span>
+<span class="sd">    destinations : geopandas.GeoDataFrame</span>
+<span class="sd">        the set of destination geometries. If polygon input, the function will use their centroids</span>
+<span class="sd">    network : pandana.Network</span>
+<span class="sd">        Initialized pandana Network object holding a travel network for a study region</span>
+<span class="sd">    reindex_name : str, optional</span>
+<span class="sd">        Name of column on the origin/destinatation dataframe that holds unique index values</span>
+<span class="sd">        If none (default), the index of the pandana Network node will be used</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pandas.DataFrame</span>
+<span class="sd">        an origin-destination cost matrix. Rows are origin indices, columns are destination indices,</span>
+<span class="sd">        and values are shortest network path cost between the two</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">origins</span> <span class="o">=</span> <span class="n">origins</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">destinations</span> <span class="o">=</span> <span class="n">destinations</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1">#  Note: these are not necessarily &quot;OSM&quot; ids, they&#39;re just the identifiers for each  node.</span>
+    <span class="c1">#  with an integrated ped/transit network, these could be bus stops...</span>
+    <span class="n">origins</span><span class="p">[</span><span class="s2">&quot;osm_ids&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">get_node_ids</span><span class="p">(</span><span class="n">origins</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">origins</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+    <span class="n">destinations</span><span class="p">[</span><span class="s2">&quot;osm_ids&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">get_node_ids</span><span class="p">(</span>
+        <span class="n">destinations</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">destinations</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">y</span>
+    <span class="p">)</span>
+
+    <span class="n">ods</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">origins</span><span class="p">[</span><span class="s2">&quot;osm_ids&quot;</span><span class="p">]))</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">origin</span> <span class="ow">in</span> <span class="n">origins</span><span class="p">[</span><span class="s2">&quot;osm_ids&quot;</span><span class="p">]:</span>
+            <span class="n">ods</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">origin</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">shortest_path_lengths</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">origin</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">origins</span><span class="p">),</span> <span class="n">destinations</span><span class="p">[</span><span class="s2">&quot;osm_ids&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">reindex_name</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">ods</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">origins</span><span class="p">[</span><span class="n">reindex_name</span><span class="p">])</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">ods</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">origins</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<div class="viewcode-block" id="project_network">
+<a class="viewcode-back" href="../../../generated/segregation.network.project_network.html#segregation.network.project_network">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">project_network</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">output_crs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">input_crs</span><span class="o">=</span><span class="mi">4326</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reproject a pandana.Network object into another coordinate system</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    network : pandana.Network</span>
+<span class="sd">        an instantiated pandana Network object</span>
+<span class="sd">    input_crs : int, optional</span>
+<span class="sd">        the coordinate system used in the Network.node_df dataframe. Typically</span>
+<span class="sd">        these data are collected in Lon/Lat, so the default 4326</span>
+<span class="sd">    output_crs : int, str, or pyproj.crs.CRS, required</span>
+<span class="sd">        EPSG code or pyproj.crs.CRS object of the output coordinate system</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pandana.Network</span>
+<span class="sd">        an initialized pandana.Network with &#39;x&#39; and y&#39; values represented</span>
+<span class="sd">        by coordinates in the specified CRS</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">pandana</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pdna</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+            <span class="s2">&quot;You need pandana to work with segregation&#39;s network module</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;You can install them with  `pip install urbanaccess pandana` &quot;</span>
+            <span class="s2">&quot;or `conda install -c udst pandana urbanaccess`&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">output_crs</span><span class="p">,</span> <span class="s2">&quot;You must provide an output CRS&quot;</span>
+
+    <span class="c1">#  take original x,y coordinates and convert into geopandas.Series, then reproject</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">_reproject_osm_nodes</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">nodes_df</span><span class="p">,</span> <span class="n">input_crs</span><span class="p">,</span> <span class="n">output_crs</span><span class="p">)</span>
+
+    <span class="c1">#  reinstantiate the network (needs to rebuild the tree)</span>
+    <span class="n">net</span> <span class="o">=</span> <span class="n">pdna</span><span class="o">.</span><span class="n">Network</span><span class="p">(</span>
+        <span class="n">node_x</span><span class="o">=</span><span class="n">nodes</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span>
+        <span class="n">node_y</span><span class="o">=</span><span class="n">nodes</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">],</span>
+        <span class="n">edge_from</span><span class="o">=</span><span class="n">network</span><span class="o">.</span><span class="n">edges_df</span><span class="p">[</span><span class="s2">&quot;from&quot;</span><span class="p">],</span>
+        <span class="n">edge_to</span><span class="o">=</span><span class="n">network</span><span class="o">.</span><span class="n">edges_df</span><span class="p">[</span><span class="s2">&quot;to&quot;</span><span class="p">],</span>
+        <span class="n">edge_weights</span><span class="o">=</span><span class="n">network</span><span class="o">.</span><span class="n">edges_df</span><span class="p">[</span><span class="n">network</span><span class="o">.</span><span class="n">impedance_names</span><span class="p">],</span>
+        <span class="n">twoway</span><span class="o">=</span><span class="n">network</span><span class="o">.</span><span class="n">_twoway</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">net</span></div>
+
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.2.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

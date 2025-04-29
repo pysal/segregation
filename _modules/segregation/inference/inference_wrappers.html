@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>segregation.inference.inference_wrappers &#8212; segregation v2.5.3.dev4+g41250e6 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <script src="../../../_static/documentation_options.js?v=2e3d20c2"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <link rel="icon" href="../../../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../../../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../../../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../index.html">
+          segregation</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.5.3.dev4+g41250e6</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../../../installation.html">Installation</a></li>
+                <li><a href="../../../api.html">API</a></li>
+                <li><a href="../../../tutorial.html">Tutorial</a></li>
+                <li><a href="../../../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <h1>Source code for segregation.inference.inference_wrappers</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Inference wrapper classes for segregation measures.&quot;&quot;&quot;</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Renan X. Cortes &lt;renanc@ucr.edu&gt; Sergio J. Rey &lt;sergio.rey@ucr.edu&gt; and Elijah Knaap &lt;elijah.knaap@ucr.edu&gt;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">multiprocessing</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">joblib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm.auto</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.._base</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiGroupIndex</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.comparative</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DUAL_SIMULATORS</span><span class="p">,</span>
+    <span class="n">_estimate_counterfac_difference</span><span class="p">,</span>
+    <span class="n">_estimate_random_label_difference</span><span class="p">,</span>
+    <span class="n">_generate_counterfactual</span><span class="p">,</span>
+    <span class="n">_prepare_random_label</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.randomization</span><span class="w"> </span><span class="kn">import</span> <span class="n">SIMULATORS</span><span class="p">,</span> <span class="n">simulate_null</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_infer_segregation</span><span class="p">(</span>
+    <span class="n">seg_class</span><span class="p">,</span>
+    <span class="n">iterations_under_null</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+    <span class="n">null_approach</span><span class="o">=</span><span class="s2">&quot;systematic&quot;</span><span class="p">,</span>
+    <span class="n">two_tailed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">index_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;loky&quot;</span><span class="p">,</span>
+    <span class="n">null_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare segregation statistic against a simulated null distribution.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    seg_class : segregation.singlegroup or segregation.multigroup object</span>
+<span class="sd">        fitted segregation index class</span>
+<span class="sd">    iterations_under_null : int</span>
+<span class="sd">        number of iterations under null hyphothesis</span>
+<span class="sd">    null_approach : str</span>
+<span class="sd">        Which counterfactual approach to use when generating null hypothesis distribution. See Notes.</span>
+
+<span class="sd">        * ``systematic``:</span>
+<span class="sd">        assumes that every group has the same probability with restricted conditional probabilities</span>
+<span class="sd">        p_0_j = p_1_j = p_j = n_j/n (multinomial distribution).</span>
+
+<span class="sd">        * ``bootstrap``:</span>
+<span class="sd">        generates bootstrap replications of the units with replacement of the same size of the</span>
+<span class="sd">        original data. This procedure creates a confidence interval for the index statistic to test</span>
+<span class="sd">        whether the null value lies within.</span>
+
+<span class="sd">        * ``evenness``:</span>
+<span class="sd">        assumes that each spatial unit has the same global probability of drawing elements from the</span>
+<span class="sd">        minority group of the fixed total unit population (binomial distribution).</span>
+
+<span class="sd">        * ``person_permutation``:</span>
+<span class="sd">        randomly allocates individuals into units keeping the total population of each</span>
+<span class="sd">        equal to the original.</span>
+
+<span class="sd">        * ``geographic_permutation``:</span>
+<span class="sd">        randomly allocates the units over space keeping the original values.</span>
+
+<span class="sd">        * ``systematic_permutation``:</span>
+<span class="sd">        assumes absence of systematic segregation and randomly allocates the units over</span>
+<span class="sd">        space.</span>
+
+<span class="sd">        * ``even_permutation``:</span>
+<span class="sd">        Assumes the same global probability of drawning elements from the minority group in</span>
+<span class="sd">        each spatial unit and randomly allocates the units over space.</span>
+
+<span class="sd">    two_tailed : boolean</span>
+<span class="sd">        If True, p_value is two-tailed. Otherwise, it is right one-tailed. The one-tailed p_value attribute</span>
+<span class="sd">        might not be appropriate for some measures, as the two-tailed. Therefore, it is better to rely on the</span>
+<span class="sd">        est_sim attribute.</span>
+<span class="sd">    n_jobs: int, optional</span>
+<span class="sd">        number of cores to use for estimation. If -1 all available cpus will be used</span>
+<span class="sd">    backend: str, optional</span>
+<span class="sd">        which backend to use with joblib. Options include &quot;loky&quot;, &quot;multiprocessing&quot;, or &quot;threading&quot;</span>
+<span class="sd">    index_kwargs : dict, optional</span>
+<span class="sd">        additional keyword arguments passed to the index class</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p_value : float</span>
+<span class="sd">        Pseudo One or Two-Tailed p-value estimated from the simulations</span>
+<span class="sd">    est_sim : numpy array</span>
+<span class="sd">       Estimates of the segregation measure under the null hypothesis</span>
+<span class="sd">    statistic : float</span>
+<span class="sd">        The value of the segregation index being tested</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">null_approach</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SIMULATORS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;null_approach must one of </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">SIMULATORS</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">two_tailed</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;two_tailed is not a boolean object&quot;</span><span class="p">)</span>
+
+    <span class="n">point_estimation</span> <span class="o">=</span> <span class="n">seg_class</span><span class="o">.</span><span class="n">statistic</span>
+
+    <span class="c1"># if using the bootstrap test, we&#39;re testing the null estimate against the index&#39;s distribution</span>
+    <span class="c1"># in all other cases, we test the index value against a null distribution</span>
+    <span class="k">if</span> <span class="n">null_approach</span> <span class="o">==</span> <span class="s2">&quot;bootstrap&quot;</span><span class="p">:</span>
+        <span class="n">point_estimation</span> <span class="o">=</span> <span class="n">null_value</span>
+
+    <span class="n">aux</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">seg_class</span><span class="p">))</span>
+    <span class="n">_class_name</span> <span class="o">=</span> <span class="n">aux</span><span class="p">[</span>
+        <span class="mi">1</span> <span class="o">+</span> <span class="n">aux</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span> <span class="p">:</span> <span class="o">-</span><span class="mi">2</span>
+    <span class="p">]</span>  <span class="c1"># &#39;rfind&#39; finds the last occurence of a pattern in a string</span>
+
+    <span class="n">Estimates_Stars</span> <span class="o">=</span> <span class="n">simulate_null</span><span class="p">(</span>
+        <span class="n">iterations</span><span class="o">=</span><span class="n">iterations_under_null</span><span class="p">,</span>
+        <span class="n">sim_func</span><span class="o">=</span><span class="n">SIMULATORS</span><span class="p">[</span><span class="n">null_approach</span><span class="p">],</span>
+        <span class="n">seg_class</span><span class="o">=</span><span class="n">seg_class</span><span class="p">,</span>
+        <span class="n">index_kwargs</span><span class="o">=</span><span class="n">index_kwargs</span><span class="p">,</span>
+        <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span>
+        <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="c1"># Check and, if the case, remove iterations_under_null that resulted in nan or infinite values</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">Estimates_Stars</span><span class="p">)</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">Estimates_Stars</span><span class="p">))):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;Some estimates resulted in NaN or infinite values for estimations under null hypothesis. &quot;</span>
+            <span class="s2">&quot;These values will be removed for the final results.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">Estimates_Stars</span> <span class="o">=</span> <span class="n">Estimates_Stars</span><span class="p">[</span>
+            <span class="o">~</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">Estimates_Stars</span><span class="p">)</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">Estimates_Stars</span><span class="p">))</span>
+        <span class="p">]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">two_tailed</span><span class="p">:</span>
+        <span class="n">p_value</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">Estimates_Stars</span> <span class="o">&gt;</span> <span class="n">point_estimation</span><span class="p">)</span> <span class="o">/</span> <span class="n">iterations_under_null</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">aux1</span> <span class="o">=</span> <span class="p">(</span><span class="n">point_estimation</span> <span class="o">&lt;</span> <span class="n">Estimates_Stars</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">aux2</span> <span class="o">=</span> <span class="p">(</span><span class="n">point_estimation</span> <span class="o">&gt;</span> <span class="n">Estimates_Stars</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">p_value</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">aux1</span><span class="p">,</span> <span class="n">aux2</span><span class="p">])</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">Estimates_Stars</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">p_value</span><span class="p">,</span> <span class="n">Estimates_Stars</span><span class="p">,</span> <span class="n">point_estimation</span><span class="p">,</span> <span class="n">_class_name</span>
+
+
+<div class="viewcode-block" id="SingleValueTest">
+<a class="viewcode-back" href="../../../generated/segregation.inference.SingleValueTest.html#segregation.inference.SingleValueTest">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SingleValueTest</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Statistical inference for a single segregation measure.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    seg_class : segregation.singlegroup or segregation.multigroup object</span>
+<span class="sd">        fitted segregation index class</span>
+<span class="sd">    iterations_under_null : int</span>
+<span class="sd">        number of iterations under null hyphothesis</span>
+<span class="sd">    null_approach : str</span>
+<span class="sd">        Which counterfactual approach to use when generating null hypothesis distribution. One of the following:.</span>
+
+<span class="sd">        * ``bootstrap``:</span>
+<span class="sd">        Generate bootstrap replications of the units with replacement of the same size of the</span>
+<span class="sd">        original data to create a distribution of the segregation index. Then the `null_value` argument</span>
+<span class="sd">        is tested against this distribution. The null_value may be 0, or may be estimated empirically using</span>
+<span class="sd">        the `simulate_null` function.</span>
+
+<span class="sd">        * ``systematic``:</span>
+<span class="sd">        assumes that every group has the same probability with restricted conditional probabilities</span>
+<span class="sd">        p_0_j = p_1_j = p_j = n_j/n (multinomial distribution).</span>
+
+<span class="sd">        * ``evenness``:</span>
+<span class="sd">        Generate a distribution of segregation indices under the assumption of evenness, which</span>
+<span class="sd">        assumes that each spatial unit has the same global probability of drawing elements from the</span>
+<span class="sd">        minority group of the fixed total unit population (binomial distribution). Then test the observed</span>
+<span class="sd">        segregation index against this distribution</span>
+
+<span class="sd">        * ``person_permutation``:</span>
+<span class="sd">        Generate a distribution of segregation indices under the assumption of individual-level randomization,</span>
+<span class="sd">        which randomly allocates individuals into units keeping the total population of each</span>
+<span class="sd">        equal to the original.Then test the observed segregation index against this distribution</span>
+
+<span class="sd">        * ``geographic_permutation``:</span>
+<span class="sd">        Generate a distribution of segregation indices under the assumption of geographit unit-level randomization,</span>
+<span class="sd">        which randomly allocates the units over space keeping the original values. Then test the observed segregation</span>
+<span class="sd">        index against this distribution</span>
+
+<span class="sd">        * ``systematic_permutation``:</span>
+<span class="sd">        Generate a distribution of segregation indices under the assumption of systemic randomization,</span>
+<span class="sd">        then randomly allocate units over space. Then test the observed segregation index against this distribution</span>
+
+<span class="sd">        * ``even_permutation``:</span>
+<span class="sd">        Generate a distribution of segregation indices under the assumption of evenness, then randomly allocating</span>
+<span class="sd">        the units over space. Then test the observed segregation index against this distribution</span>
+
+<span class="sd">    two_tailed : boolean</span>
+<span class="sd">        If True, p_value is two-tailed. Otherwise, it is right one-tailed. The one-tailed p_value attribute</span>
+<span class="sd">        might not be appropriate for some measures, as the two-tailed. Therefore, it is better to rely on the</span>
+<span class="sd">        est_sim attribute.</span>
+<span class="sd">    n_jobs: int, optional</span>
+<span class="sd">        number of cores to use for estimation. If -1 all available cpus will be used</span>
+<span class="sd">    backend: str, optional</span>
+<span class="sd">        which backend to use with joblib. Options include &quot;loky&quot;, &quot;multiprocessing&quot;, or &quot;threading&quot;</span>
+<span class="sd">    index_kwargs : dict, optional</span>
+<span class="sd">        additional keyword arguments passed to the index class</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p_value : float</span>
+<span class="sd">        Pseudo One or Two-Tailed p-value estimated from the simulations</span>
+<span class="sd">    est_sim : numpy array</span>
+<span class="sd">       Estimates of the segregation measure under the null hypothesis</span>
+<span class="sd">    statistic : float</span>
+<span class="sd">        The value of the segregation index being tested</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    1) The different approaches for the null hypothesis affect directly the results of the inference depending on the</span>
+<span class="sd">    combination of the index type of seg_class and the null_approach chosen. Therefore, the user needs to be aware of</span>
+<span class="sd">    how these approaches are affecting the data generation process of the simulations in order to draw meaningful</span>
+<span class="sd">    conclusions. For example, the Modified Dissimilarity (ModifiedDissim) and  Modified Gini (ModifiedGiniSeg) indexes,</span>
+<span class="sd">    rely exactly on the distance between evenness through sampling which, therefore, the &quot;evenness&quot; value for null</span>
+<span class="sd">    approach would not be the most appropriate for these indexes.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Several examples can be found here https://github.com/pysal/segregation/blob/master/notebooks/inference_wrappers_example.ipynb.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SingleValueTest.__init__">
+<a class="viewcode-back" href="../../../generated/segregation.inference.SingleValueTest.html#segregation.inference.SingleValueTest.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">seg_class</span><span class="p">,</span>
+        <span class="n">iterations_under_null</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+        <span class="n">null_approach</span><span class="o">=</span><span class="s2">&quot;systematic&quot;</span><span class="p">,</span>
+        <span class="n">two_tailed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">aux</span> <span class="o">=</span> <span class="n">_infer_segregation</span><span class="p">(</span>
+            <span class="n">seg_class</span><span class="p">,</span>
+            <span class="n">iterations_under_null</span><span class="p">,</span>
+            <span class="n">null_approach</span><span class="p">,</span>
+            <span class="n">two_tailed</span><span class="p">,</span>
+            <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_value</span> <span class="o">=</span> <span class="n">aux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">est_sim</span> <span class="o">=</span> <span class="n">aux</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistic</span> <span class="o">=</span> <span class="n">aux</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_class_name</span> <span class="o">=</span> <span class="n">aux</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="SingleValueTest.plot">
+<a class="viewcode-back" href="../../../generated/segregation.inference.SingleValueTest.html#segregation.inference.SingleValueTest.plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;darkblue&quot;</span><span class="p">,</span> <span class="n">kde</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot the distribution of simulated values and the observed index being tested.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        color : str, optional</span>
+<span class="sd">            color of histogram, by default &#39;darkblue&#39;</span>
+<span class="sd">        kde : bool, optional</span>
+<span class="sd">            Whether to plot the kernel density estimate along with the histogram, by default True</span>
+<span class="sd">        ax : matplotlib.axes, optional</span>
+<span class="sd">            axes object to plot onto, by default None</span>
+<span class="sd">        kwargs : seaborn.histplot argument, optional</span>
+<span class="sd">            additional keyword arguments passed to seaborn&#39;s histplot function</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        matplotlib.axes</span>
+<span class="sd">            pyplot axes object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;This method relies on importing `matplotlib` and `seaborn`&quot;</span><span class="p">)</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">est_sim</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">kde</span><span class="o">=</span><span class="n">kde</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statistic</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> (Value = </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_class_name</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statistic</span><span class="p">,</span> <span class="mi">3</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">f</span></div>
+</div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_compare_segregation</span><span class="p">(</span>
+    <span class="n">seg_class_1</span><span class="p">,</span>
+    <span class="n">seg_class_2</span><span class="p">,</span>
+    <span class="n">iterations</span><span class="p">,</span>
+    <span class="n">null_approach</span><span class="p">,</span>
+    <span class="n">index_kwargs_1</span><span class="p">,</span>
+    <span class="n">index_kwargs_2</span><span class="p">,</span>
+    <span class="n">n_jobs</span><span class="p">,</span>
+    <span class="n">backend</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform inference comparison for a two segregation measures.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    seg_class_1 : segregation.singlegroup or segregation.multigroup class</span>
+<span class="sd">        a fitted segregation class to be compared to seg_class_2</span>
+<span class="sd">    seg_class_2 : segregation.singlegroup or segregation.multigroup class</span>
+<span class="sd">        a fitted segregation class to be compared to seg_class_1</span>
+<span class="sd">    iterations_under_null : int</span>
+<span class="sd">        number of iterations to simulate observations in a null distribution</span>
+<span class="sd">    null_approach : str</span>
+<span class="sd">        Which type of null hypothesis the inference will iterate. One of the following:</span>
+
+<span class="sd">        * ``random_label``:</span>
+<span class="sd">        Randomly assign each spatial unit to a region then recalculate segregation indices and take the difference</span>
+
+<span class="sd">        * ``bootstrap``:</span>
+<span class="sd">        Use bootstrap resampling to generate distributions of the segregation index for each index in the comparison,</span>
+<span class="sd">        then use a two sample t-test to compare differences in the mean of each distribution</span>
+
+<span class="sd">        * ``composition``:</span>
+<span class="sd">        Generate counterfactual estimates for each region using the sim_composition approach.</span>
+<span class="sd">        On each iteration, generate a synthetic dataset for each region where each unit has a 50% chance</span>
+<span class="sd">        of belonging to the original data or the counterfactual data. Recalculate segregation indices on</span>
+<span class="sd">        the synthetic datasets.</span>
+
+<span class="sd">        * ``share``:</span>
+<span class="sd">        Generate counterfactual estimates for each region using the sim_share approach.</span>
+<span class="sd">        On each iteration, generate a synthetic dataset for each region where each unit has a 50% chance</span>
+<span class="sd">        of belonging to the original data or the counterfactual data. Recalculate segregation indices on</span>
+<span class="sd">        the synthetic datasets.</span>
+
+<span class="sd">        * ``dual_composition``:</span>
+<span class="sd">        Generate counterfactual estimates for each region using the sim_dual_composition</span>
+<span class="sd">        approach. On each iteration, generate a synthetic dataset for each region where each unit has a 50%</span>
+<span class="sd">        chance of belonging to the original data or the counterfactual data. Recalculate segregation</span>
+<span class="sd">        indices on the synthetic datasets.</span>
+
+<span class="sd">        * ``person_permutation``:</span>
+<span class="sd">        Use the simulate_person_permutation approach to randomly reallocate the combined</span>
+<span class="sd">        population across both regions then recalculate segregation indices</span>
+
+<span class="sd">    n_jobs: int, optional</span>
+<span class="sd">        number of cores to use for estimation. If -1 all available cpus will be used</span>
+<span class="sd">    backend: str, optional</span>
+<span class="sd">        which backend to use with joblib. Options include &quot;loky&quot;, &quot;multiprocessing&quot;, or &quot;threading&quot;</span>
+<span class="sd">    index_kwargs_1 : dict, optional</span>
+<span class="sd">        extra parameters to pass to segregation index 1.</span>
+<span class="sd">    index_kwargs_2 : dict, optional</span>
+<span class="sd">        extra parameters to pass to segregation index 2.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p_value : float</span>
+<span class="sd">        Two-Tailed p-value</span>
+<span class="sd">    est_sim : numpy array</span>
+<span class="sd">        Estimates of the segregation measure differences under the null hypothesis</span>
+<span class="sd">    est_point_diff : float</span>
+<span class="sd">        Observed difference between the segregation measures</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This function performs inference to compare two segregation measures. This can be either two measures of the same locations in two different points in time or it can be two different locations at the same point in time.</span>
+<span class="sd">    The null hypothesis is H0: Segregation_1 is not different than Segregation_2.</span>
+
+<span class="sd">    Based on Rey, Sergio J., and Myrna L. Sastré-Gutiérrez. &quot;Interregional inequality dynamics in Mexico.&quot; Spatial Economic Analysis 5.3 (2010): 277-298.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">index_kwargs_1</span><span class="p">:</span>
+        <span class="n">index_kwargs_1</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">index_kwargs_2</span><span class="p">:</span>
+        <span class="n">index_kwargs_2</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">n_jobs</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">n_jobs</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">null_approach</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span>
+        <span class="s2">&quot;random_label&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;composition&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;share&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dual_composition&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;person_permutation&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bootstrap&quot;</span><span class="p">,</span>
+    <span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;null_approach must one of </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">DUAL_SIMULATORS</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">+</span><span class="p">[</span><span class="s1">&#39;random_label&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;person_permutation&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;bootstrap&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">seg_class_1</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">type</span><span class="p">(</span><span class="n">seg_class_2</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;seg_class_1 and seg_class_2 must be the same type/class.&quot;</span><span class="p">)</span>
+
+    <span class="n">point_estimation</span> <span class="o">=</span> <span class="n">seg_class_1</span><span class="o">.</span><span class="n">statistic</span> <span class="o">-</span> <span class="n">seg_class_2</span><span class="o">.</span><span class="n">statistic</span>
+
+    <span class="n">aux</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">seg_class_1</span><span class="p">))</span>
+    <span class="n">_class_name</span> <span class="o">=</span> <span class="n">aux</span><span class="p">[</span>
+        <span class="mi">1</span> <span class="o">+</span> <span class="n">aux</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span> <span class="p">:</span> <span class="o">-</span><span class="mi">2</span>
+    <span class="p">]</span>  <span class="c1"># &#39;rfind&#39; finds the last occurence of a pattern in a string</span>
+
+    <span class="n">data_1</span> <span class="o">=</span> <span class="n">seg_class_1</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">data_2</span> <span class="o">=</span> <span class="n">seg_class_2</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">null_approach</span> <span class="o">==</span> <span class="s2">&quot;bootstrap&quot;</span><span class="p">:</span>
+        <span class="n">boot1</span> <span class="o">=</span> <span class="n">SingleValueTest</span><span class="p">(</span>
+            <span class="n">seg_class_1</span><span class="p">,</span>
+            <span class="n">iterations_under_null</span><span class="o">=</span><span class="n">iterations</span><span class="p">,</span>
+            <span class="n">null_approach</span><span class="o">=</span><span class="s2">&quot;bootstrap&quot;</span><span class="p">,</span>
+            <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span>
+            <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">index_kwargs_1</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">est_sim</span>
+        <span class="n">boot2</span> <span class="o">=</span> <span class="n">SingleValueTest</span><span class="p">(</span>
+            <span class="n">seg_class_2</span><span class="p">,</span>
+            <span class="n">iterations_under_null</span><span class="o">=</span><span class="n">iterations</span><span class="p">,</span>
+            <span class="n">null_approach</span><span class="o">=</span><span class="s2">&quot;bootstrap&quot;</span><span class="p">,</span>
+            <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span>
+            <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">index_kwargs_2</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">est_sim</span>
+        <span class="c1"># test statistic follows from &lt;http://dx.doi.org/10.1016/j.jeconom.2008.11.004&gt;, page 34</span>
+        <span class="n">tt</span> <span class="o">=</span> <span class="p">(</span><span class="n">boot1</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">-</span> <span class="n">boot2</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">boot1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">boot2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c1"># p-value from &lt;https://docs.scipy.org/doc/scipy/reference/tutorial/stats.html&gt;</span>
+        <span class="n">p_value</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">tt</span><span class="p">),</span> <span class="n">iterations</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
+        <span class="n">estimates</span> <span class="o">=</span> <span class="p">(</span><span class="n">boot1</span><span class="p">,</span> <span class="n">boot2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">p_value</span><span class="p">,</span> <span class="n">estimates</span><span class="p">,</span> <span class="n">point_estimation</span><span class="p">,</span> <span class="n">_class_name</span>
+
+    <span class="k">if</span> <span class="n">null_approach</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;random_label&quot;</span><span class="p">,</span> <span class="s2">&quot;person_permutation&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seg_class_1</span><span class="p">,</span> <span class="n">MultiGroupIndex</span><span class="p">):</span>
+            <span class="n">groups</span> <span class="o">=</span> <span class="n">seg_class_1</span><span class="o">.</span><span class="n">groups</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">groups</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">stacked</span> <span class="o">=</span> <span class="n">_prepare_random_label</span><span class="p">(</span><span class="n">seg_class_1</span><span class="p">,</span> <span class="n">seg_class_2</span><span class="p">)</span>
+
+        <span class="n">estimates</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)(</span>
+            <span class="n">delayed</span><span class="p">(</span><span class="n">_estimate_random_label_difference</span><span class="p">)(</span>
+                <span class="p">(</span>
+                    <span class="n">stacked</span><span class="p">,</span>
+                    <span class="n">seg_class_1</span><span class="o">.</span><span class="n">_function</span><span class="p">,</span>
+                    <span class="n">index_kwargs_1</span><span class="p">,</span>
+                    <span class="n">index_kwargs_2</span><span class="p">,</span>
+                    <span class="n">seg_class_1</span><span class="o">.</span><span class="n">index_type</span><span class="p">,</span>
+                    <span class="n">groups</span><span class="p">,</span>
+                    <span class="n">null_approach</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">iterations</span><span class="p">))</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">null_approach</span> <span class="ow">in</span> <span class="p">[</span>
+        <span class="s2">&quot;composition&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;share&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dual_composition&quot;</span><span class="p">,</span>
+    <span class="p">]:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seg_class_1</span><span class="p">,</span> <span class="n">MultiGroupIndex</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Not implemented for MultiGroup indexes.&quot;</span><span class="p">)</span>
+
+        <span class="n">counterfac_df1</span><span class="p">,</span> <span class="n">counterfac_df2</span> <span class="o">=</span> <span class="n">_generate_counterfactual</span><span class="p">(</span>
+            <span class="n">data_1</span><span class="p">,</span>
+            <span class="n">data_2</span><span class="p">,</span>
+            <span class="n">seg_class_1</span><span class="o">.</span><span class="n">group_pop_var</span><span class="p">,</span>
+            <span class="n">seg_class_1</span><span class="o">.</span><span class="n">total_pop_var</span><span class="p">,</span>
+            <span class="n">seg_class_2</span><span class="o">.</span><span class="n">group_pop_var</span><span class="p">,</span>
+            <span class="n">seg_class_2</span><span class="o">.</span><span class="n">total_pop_var</span><span class="p">,</span>
+            <span class="n">null_approach</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">null_approach</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;share&quot;</span><span class="p">,</span> <span class="s2">&quot;dual_composition&quot;</span><span class="p">]:</span>
+            <span class="n">data_1</span><span class="p">[</span><span class="n">seg_class_1</span><span class="o">.</span><span class="n">total_pop_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">counterfac_df1</span><span class="p">[</span>
+                <span class="s2">&quot;counterfactual_total_pop&quot;</span>
+            <span class="p">]</span>
+            <span class="n">data_2</span><span class="p">[</span><span class="n">seg_class_2</span><span class="o">.</span><span class="n">total_pop_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">counterfac_df2</span><span class="p">[</span>
+                <span class="s2">&quot;counterfactual_total_pop&quot;</span>
+            <span class="p">]</span>
+
+        <span class="n">estimates</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)(</span>
+            <span class="n">delayed</span><span class="p">(</span><span class="n">_estimate_counterfac_difference</span><span class="p">)(</span>
+                <span class="p">(</span>
+                    <span class="n">data_1</span><span class="p">,</span>
+                    <span class="n">data_2</span><span class="p">,</span>
+                    <span class="n">seg_class_1</span><span class="o">.</span><span class="n">group_pop_var</span><span class="p">,</span>
+                    <span class="n">seg_class_1</span><span class="o">.</span><span class="n">total_pop_var</span><span class="p">,</span>
+                    <span class="n">seg_class_2</span><span class="o">.</span><span class="n">group_pop_var</span><span class="p">,</span>
+                    <span class="n">seg_class_2</span><span class="o">.</span><span class="n">total_pop_var</span><span class="p">,</span>
+                    <span class="n">index_kwargs_1</span><span class="p">,</span>
+                    <span class="n">index_kwargs_2</span><span class="p">,</span>
+                    <span class="n">null_approach</span><span class="p">,</span>
+                    <span class="n">seg_class_1</span><span class="o">.</span><span class="n">_function</span><span class="p">,</span>
+                    <span class="n">counterfac_df1</span><span class="p">,</span>
+                    <span class="n">counterfac_df2</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">iterations</span><span class="p">))</span>
+        <span class="p">)</span>
+    <span class="n">estimates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">estimates</span><span class="p">)</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">estimates</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">iterations</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Some observations were removed for NA values&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Two-Tailed p-value</span>
+    <span class="c1"># Obs.: the null distribution can be located far from zero. Therefore, this is the the appropriate way to calculate the two tailed p-value.</span>
+    <span class="n">aux1</span> <span class="o">=</span> <span class="p">(</span><span class="n">point_estimation</span> <span class="o">&lt;</span> <span class="n">estimates</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">aux2</span> <span class="o">=</span> <span class="p">(</span><span class="n">point_estimation</span> <span class="o">&gt;</span> <span class="n">estimates</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">p_value</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">aux1</span><span class="p">,</span> <span class="n">aux2</span><span class="p">])</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">estimates</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">p_value</span><span class="p">,</span> <span class="n">estimates</span><span class="p">,</span> <span class="n">point_estimation</span><span class="p">,</span> <span class="n">_class_name</span>
+
+
+<div class="viewcode-block" id="TwoValueTest">
+<a class="viewcode-back" href="../../../generated/segregation.inference.TwoValueTest.html#segregation.inference.TwoValueTest">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TwoValueTest</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform comparative inference for two segregation measures.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    seg_class_1 : segregation.singlegroup or segregation.multigroup class</span>
+<span class="sd">        a fitted segregation class to be compared to seg_class_2</span>
+<span class="sd">    seg_class_2 : segregation.singlegroup or segregation.multigroup class</span>
+<span class="sd">        a fitted segregation class to be compared to seg_class_1</span>
+<span class="sd">    iterations_under_null : int</span>
+<span class="sd">        number of iterations to simulate observations in a null distribution</span>
+<span class="sd">    null_approach : str</span>
+<span class="sd">        Which type of null hypothesis the inference will iterate. One of the following:</span>
+
+<span class="sd">        * ``random_label``:</span>
+<span class="sd">        Randomly assign each spatial unit to a region then recalculate segregation indices and take their</span>
+<span class="sd">        difference. Repeat this process `iterations` times to generate a reference distribution. Then test</span>
+<span class="sd">        the observed difference aginst this distribution.</span>
+
+<span class="sd">        * ``bootstrap``:</span>
+<span class="sd">        Use bootstrap resampling to generate distributions of each segregation index in the</span>
+<span class="sd">        comparison, then use a two sample t-test to compare differences between the distribution means.</span>
+
+<span class="sd">        * ``composition``:</span>
+<span class="sd">        Generate counterfactual estimates for each region using the sim_composition approach.</span>
+<span class="sd">        On each iteration, generate a synthetic dataset for each region where each unit has a 50% chance</span>
+<span class="sd">        of belonging to the original data or the counterfactual data. Recalculate segregation indices on</span>
+<span class="sd">        the synthetic datasets.</span>
+
+<span class="sd">        * ``share``:</span>
+<span class="sd">        Generate counterfactual estimates for each region using the sim_share approach.</span>
+<span class="sd">        On each iteration, generate a synthetic dataset for each region where each unit has a 50% chance</span>
+<span class="sd">        of belonging to the original data or the counterfactual data. Recalculate segregation indices on</span>
+<span class="sd">        the synthetic datasets. Then follow the random labeling method on these synthetic data</span>
+
+<span class="sd">        * ``dual_composition``:</span>
+<span class="sd">        Generate counterfactual estimates for each region using the sim_dual_composition</span>
+<span class="sd">        approach. On each iteration, generate a synthetic dataset for each region where each unit has a 50%</span>
+<span class="sd">        chance of belonging to the original data or the counterfactual data. Then follow the random labeling</span>
+<span class="sd">        method on these synthetic data</span>
+
+<span class="sd">        * ``person_permutation``:</span>
+<span class="sd">        Use the simulate_person_permutation approach to randomly reallocate the combined</span>
+<span class="sd">        population across both regions then recalculate segregation indices</span>
+
+<span class="sd">    n_jobs: int, optional</span>
+<span class="sd">        number of cores to use for estimation. If -1 all available cpus will be used</span>
+<span class="sd">    backend: str, optional</span>
+<span class="sd">        which backend to use with joblib. Options include &quot;loky&quot;, &quot;multiprocessing&quot;, or &quot;threading&quot;</span>
+<span class="sd">    index_kwargs_1 : dict, optional</span>
+<span class="sd">        extra parameters to pass to segregation index 1.</span>
+<span class="sd">    index_kwargs_2 : dict, optional</span>
+<span class="sd">        extra parameters to pass to segregation index 2.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p_value : float</span>
+<span class="sd">        Two-Tailed p-value</span>
+<span class="sd">    est_sim : numpy array</span>
+<span class="sd">        Estimates of the segregation measure differences under the null hypothesis</span>
+<span class="sd">    est_point_diff : float</span>
+<span class="sd">        Observed difference between the segregation measures</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This function performs inference to compare two segregation measures. This can be either</span>
+<span class="sd">    two measures of the same locations in two different points in time or it can be two</span>
+<span class="sd">    different locations at the same point in time. The null hypothesis is H0: Segregation_1</span>
+<span class="sd">    is not different than Segregation_2.</span>
+<span class="sd">    Based on Rey, Sergio J., and Myrna L. Sastré-Gutiérrez. &quot;Interregional inequality dynamics in Mexico.&quot; Spatial Economic Analysis 5.3 (2010): 277-298.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Several examples can be found here https://github.com/pysal/segregation/blob/master/notebooks/inference_wrappers_example.ipynb.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TwoValueTest.__init__">
+<a class="viewcode-back" href="../../../generated/segregation.inference.TwoValueTest.html#segregation.inference.TwoValueTest.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">seg_class_1</span><span class="p">,</span>
+        <span class="n">seg_class_2</span><span class="p">,</span>
+        <span class="n">iterations_under_null</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+        <span class="n">null_approach</span><span class="o">=</span><span class="s2">&quot;random_label&quot;</span><span class="p">,</span>
+        <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;loky&quot;</span><span class="p">,</span>
+        <span class="n">index_kwargs_1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">index_kwargs_2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">aux</span> <span class="o">=</span> <span class="n">_compare_segregation</span><span class="p">(</span>
+            <span class="n">seg_class_1</span><span class="p">,</span>
+            <span class="n">seg_class_2</span><span class="p">,</span>
+            <span class="n">iterations</span><span class="o">=</span><span class="n">iterations_under_null</span><span class="p">,</span>
+            <span class="n">null_approach</span><span class="o">=</span><span class="n">null_approach</span><span class="p">,</span>
+            <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">,</span>
+            <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">,</span>
+            <span class="n">index_kwargs_1</span><span class="o">=</span><span class="n">index_kwargs_1</span><span class="p">,</span>
+            <span class="n">index_kwargs_2</span><span class="o">=</span><span class="n">index_kwargs_2</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_value</span> <span class="o">=</span> <span class="n">aux</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">est_sim</span> <span class="o">=</span> <span class="n">aux</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">est_point_diff</span> <span class="o">=</span> <span class="n">aux</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_class_name</span> <span class="o">=</span> <span class="n">aux</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_null_approach</span> <span class="o">=</span> <span class="n">null_approach</span></div>
+
+
+<div class="viewcode-block" id="TwoValueTest.plot">
+<a class="viewcode-back" href="../../../generated/segregation.inference.TwoValueTest.html#segregation.inference.TwoValueTest.plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;darkblue&quot;</span><span class="p">,</span> <span class="n">color2</span><span class="o">=</span><span class="s2">&quot;darkred&quot;</span><span class="p">,</span> <span class="n">kde</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot the distribution of simulated values and the index value being tested.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        color : str, optional</span>
+<span class="sd">            histogram color, by default &#39;darkblue&#39;</span>
+<span class="sd">        color2: str, optional, by default &quot;darkred&quot;</span>
+<span class="sd">             Color for second histogram. Only relevant for bootstrap test</span>
+<span class="sd">        kde : bool, optional</span>
+<span class="sd">            Whether to plot the kernel density estimate along with the histogram,</span>
+<span class="sd">            by default True</span>
+<span class="sd">        ax : matplotlib.axes, optional</span>
+<span class="sd">            axes object to plot onto, by default None</span>
+<span class="sd">        kwargs : seaborn.histplot argument, optional</span>
+<span class="sd">            additional keyword arguments passed to seaborn&#39;s histplot function</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        matplotlib.axes</span>
+<span class="sd">            pyplot axes object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;This method relies on importing `matplotlib` and `seaborn`&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_null_approach</span> <span class="o">==</span> <span class="s2">&quot;bootstrap&quot;</span><span class="p">:</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">est_sim</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">kde</span><span class="o">=</span><span class="n">kde</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">est_sim</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">color2</span><span class="p">,</span> <span class="n">kde</span><span class="o">=</span><span class="n">kde</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_class_name</span><span class="si">}</span><span class="s2"> (Diff. value = </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">est_point_diff</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">est_sim</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">kde</span><span class="o">=</span><span class="n">kde</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">vlines</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">est_point_diff</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()[</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_class_name</span><span class="si">}</span><span class="s2"> (Diff. value = </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">est_point_diff</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ax</span></div>
+</div>
+
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.2.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

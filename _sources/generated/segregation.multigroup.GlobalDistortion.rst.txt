@@ -1,0 +1,22 @@
+﻿segregation.multigroup.GlobalDistortion
+=======================================
+
+.. currentmodule:: segregation.multigroup
+
+.. autoclass:: GlobalDistortion
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~GlobalDistortion.__init__
+   
+   
+
+   
+   
+   

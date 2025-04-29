@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>API reference &#8212; segregation v2.5.3.dev4+g41250e6 Manual</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
+    <script src="_static/documentation_options.js?v=2e3d20c2"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+    <link rel="icon" href="_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="segregation.singlegroup.AbsoluteCentralization" href="generated/segregation.singlegroup.AbsoluteCentralization.html" />
+    <link rel="prev" title="Installation" href="installation.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          segregation</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.5.3.dev4+g41250e6</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="installation.html">Installation</a></li>
+                <li><a href="#">API</a></li>
+                <li><a href="tutorial.html">Tutorial</a></li>
+                <li><a href="references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">API reference</a><ul>
+<li><a class="reference internal" href="#single-group-indices">Single Group Indices</a></li>
+<li><a class="reference internal" href="#multigroup-indices">Multigroup Indices</a></li>
+<li><a class="reference internal" href="#local-indices">Local Indices</a></li>
+<li><a class="reference internal" href="#dynamics">Dynamics</a></li>
+<li><a class="reference internal" href="#batch-computation">Batch Computation</a></li>
+<li><a class="reference internal" href="#inference">Inference</a></li>
+<li><a class="reference internal" href="#decomposition">Decomposition</a></li>
+<li><a class="reference internal" href="#network">Network</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="api-reference">
+<span id="api-ref"></span><h1>API reference<a class="headerlink" href="#api-reference" title="Link to this heading">¶</a></h1>
+<section id="single-group-indices">
+<h2>Single Group Indices<a class="headerlink" href="#single-group-indices" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.singlegroup.AbsoluteCentralization.html#segregation.singlegroup.AbsoluteCentralization" title="segregation.singlegroup.AbsoluteCentralization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.AbsoluteCentralization</span></code></a>(data, ...)</p></td>
+<td><p>Absolute Centralization Index.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.singlegroup.AbsoluteClustering.html#segregation.singlegroup.AbsoluteClustering" title="segregation.singlegroup.AbsoluteClustering"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.AbsoluteClustering</span></code></a>(data, ...[, ...])</p></td>
+<td><p>Absolute Clustering Index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.singlegroup.AbsoluteConcentration.html#segregation.singlegroup.AbsoluteConcentration" title="segregation.singlegroup.AbsoluteConcentration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.AbsoluteConcentration</span></code></a>(data, ...)</p></td>
+<td><p>Absolute Concentration Index.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.singlegroup.Atkinson.html#segregation.singlegroup.Atkinson" title="segregation.singlegroup.Atkinson"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.Atkinson</span></code></a>(data, group_pop_var, ...)</p></td>
+<td><p>Atkinson Index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.singlegroup.BiasCorrectedDissim.html#segregation.singlegroup.BiasCorrectedDissim" title="segregation.singlegroup.BiasCorrectedDissim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.BiasCorrectedDissim</span></code></a>(data, ...[, ...])</p></td>
+<td><p>Bias Corrected Dissimilarity Index.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.singlegroup.BoundarySpatialDissim.html#segregation.singlegroup.BoundarySpatialDissim" title="segregation.singlegroup.BoundarySpatialDissim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.BoundarySpatialDissim</span></code></a>(data, ...)</p></td>
+<td><p>Boundary-Area Dissimilarity Index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.singlegroup.ConProf.html#segregation.singlegroup.ConProf" title="segregation.singlegroup.ConProf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.ConProf</span></code></a>(data, group_pop_var, ...)</p></td>
+<td><p>ConProf Index.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.singlegroup.CorrelationR.html#segregation.singlegroup.CorrelationR" title="segregation.singlegroup.CorrelationR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.CorrelationR</span></code></a>(data, ...[, w, ...])</p></td>
+<td><p>CorrelationR Index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.singlegroup.Delta.html#segregation.singlegroup.Delta" title="segregation.singlegroup.Delta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.Delta</span></code></a>(data, group_pop_var, ...)</p></td>
+<td><p>Delta Index.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.singlegroup.DensityCorrectedDissim.html#segregation.singlegroup.DensityCorrectedDissim" title="segregation.singlegroup.DensityCorrectedDissim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.DensityCorrectedDissim</span></code></a>(data, ...)</p></td>
+<td><p>Density Corrected Dissimilarity Index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.singlegroup.Dissim.html#segregation.singlegroup.Dissim" title="segregation.singlegroup.Dissim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.Dissim</span></code></a>(data, group_pop_var, ...)</p></td>
+<td><p>Dissimilarity Index.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.singlegroup.DistanceDecayInteraction.html#segregation.singlegroup.DistanceDecayInteraction" title="segregation.singlegroup.DistanceDecayInteraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.DistanceDecayInteraction</span></code></a>(data, ...)</p></td>
+<td><p>Distance-Decay Interaction Index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.singlegroup.DistanceDecayIsolation.html#segregation.singlegroup.DistanceDecayIsolation" title="segregation.singlegroup.DistanceDecayIsolation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.DistanceDecayIsolation</span></code></a>(data, ...)</p></td>
+<td><p>Distance-Decay Isolation Index.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.singlegroup.Entropy.html#segregation.singlegroup.Entropy" title="segregation.singlegroup.Entropy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.Entropy</span></code></a>(data, group_pop_var, ...)</p></td>
+<td><p>Entropy Index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.singlegroup.Gini.html#segregation.singlegroup.Gini" title="segregation.singlegroup.Gini"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.Gini</span></code></a>(data, group_pop_var, ...[, ...])</p></td>
+<td><p>Gini Index.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.singlegroup.Interaction.html#segregation.singlegroup.Interaction" title="segregation.singlegroup.Interaction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.Interaction</span></code></a>(data, group_pop_var, ...)</p></td>
+<td><p>Interaction Index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.singlegroup.Isolation.html#segregation.singlegroup.Isolation" title="segregation.singlegroup.Isolation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.Isolation</span></code></a>(data, group_pop_var, ...)</p></td>
+<td><p>Isolation Index.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.singlegroup.MinMax.html#segregation.singlegroup.MinMax" title="segregation.singlegroup.MinMax"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.MinMax</span></code></a>(data, group_pop_var, ...)</p></td>
+<td><p>Min-Max Index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.singlegroup.ModifiedDissim.html#segregation.singlegroup.ModifiedDissim" title="segregation.singlegroup.ModifiedDissim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.ModifiedDissim</span></code></a>(data, ...[, ...])</p></td>
+<td><p>Modified Dissimilarity Index.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.singlegroup.ModifiedGini.html#segregation.singlegroup.ModifiedGini" title="segregation.singlegroup.ModifiedGini"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.ModifiedGini</span></code></a>(data, ...[, ...])</p></td>
+<td><p>Modified Gini Index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.singlegroup.PARDissim.html#segregation.singlegroup.PARDissim" title="segregation.singlegroup.PARDissim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.PARDissim</span></code></a>(data, group_pop_var, ...)</p></td>
+<td><p>Perimeter-Area Ratio Dissimilarity Index.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.singlegroup.RelativeCentralization.html#segregation.singlegroup.RelativeCentralization" title="segregation.singlegroup.RelativeCentralization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.RelativeCentralization</span></code></a>(data, ...)</p></td>
+<td><p>Relative Centralization Index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.singlegroup.RelativeClustering.html#segregation.singlegroup.RelativeClustering" title="segregation.singlegroup.RelativeClustering"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.RelativeClustering</span></code></a>(data, ...[, ...])</p></td>
+<td><p>Relative Clustering Index.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.singlegroup.RelativeConcentration.html#segregation.singlegroup.RelativeConcentration" title="segregation.singlegroup.RelativeConcentration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.RelativeConcentration</span></code></a>(data, ...)</p></td>
+<td><p>Relative Concentration Index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.singlegroup.SpatialDissim.html#segregation.singlegroup.SpatialDissim" title="segregation.singlegroup.SpatialDissim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.SpatialDissim</span></code></a>(data, ...[, w, ...])</p></td>
+<td><p>Spatial Dissimilarity Index.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.singlegroup.SpatialProximity.html#segregation.singlegroup.SpatialProximity" title="segregation.singlegroup.SpatialProximity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.SpatialProximity</span></code></a>(data, ...[, ...])</p></td>
+<td><p>Spatial Proximity Index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.singlegroup.SpatialProxProf.html#segregation.singlegroup.SpatialProxProf" title="segregation.singlegroup.SpatialProxProf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">singlegroup.SpatialProxProf</span></code></a>(data, ...[, w, m])</p></td>
+<td><p>Spatial Proximity Profile Index.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="multigroup-indices">
+<h2>Multigroup Indices<a class="headerlink" href="#multigroup-indices" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.multigroup.GlobalDistortion.html#segregation.multigroup.GlobalDistortion" title="segregation.multigroup.GlobalDistortion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multigroup.GlobalDistortion</span></code></a>(data[, groups, ...])</p></td>
+<td><p>Multigroup Global Distortion Index.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.multigroup.MultiDissim.html#segregation.multigroup.MultiDissim" title="segregation.multigroup.MultiDissim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multigroup.MultiDissim</span></code></a>(data, groups[, w, ...])</p></td>
+<td><p>Dissimilarity Index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.multigroup.MultiDivergence.html#segregation.multigroup.MultiDivergence" title="segregation.multigroup.MultiDivergence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multigroup.MultiDivergence</span></code></a>(data, groups[, ...])</p></td>
+<td><p>Multi Divergence Index.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.multigroup.MultiDiversity.html#segregation.multigroup.MultiDiversity" title="segregation.multigroup.MultiDiversity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multigroup.MultiDiversity</span></code></a>(data, groups[, w, ...])</p></td>
+<td><p>Multigroup Diversity Index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.multigroup.MultiGini.html#segregation.multigroup.MultiGini" title="segregation.multigroup.MultiGini"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multigroup.MultiGini</span></code></a>(data, groups[, w, ...])</p></td>
+<td><p>Multigroup Gini Index.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.multigroup.MultiInfoTheory.html#segregation.multigroup.MultiInfoTheory" title="segregation.multigroup.MultiInfoTheory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multigroup.MultiInfoTheory</span></code></a>(data, groups[, ...])</p></td>
+<td><p>Multigroup Information Theory Index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.multigroup.MultiNormExposure.html#segregation.multigroup.MultiNormExposure" title="segregation.multigroup.MultiNormExposure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multigroup.MultiNormExposure</span></code></a>(data, groups[, ...])</p></td>
+<td><p>Multigroup INormalized Exposure Index.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.multigroup.MultiRelativeDiversity.html#segregation.multigroup.MultiRelativeDiversity" title="segregation.multigroup.MultiRelativeDiversity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multigroup.MultiRelativeDiversity</span></code></a>(data, groups)</p></td>
+<td><p>Multigroup Relative Diversity Index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.multigroup.MultiSquaredCoefVar.html#segregation.multigroup.MultiSquaredCoefVar" title="segregation.multigroup.MultiSquaredCoefVar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multigroup.MultiSquaredCoefVar</span></code></a>(data, groups)</p></td>
+<td><p>Multigroup Squared Coefficient of Variation Index.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.multigroup.SimpsonsConcentration.html#segregation.multigroup.SimpsonsConcentration" title="segregation.multigroup.SimpsonsConcentration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multigroup.SimpsonsConcentration</span></code></a>(data, groups)</p></td>
+<td><p>Simpsons Concentration Index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.multigroup.SimpsonsInteraction.html#segregation.multigroup.SimpsonsInteraction" title="segregation.multigroup.SimpsonsInteraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multigroup.SimpsonsInteraction</span></code></a>(data, groups)</p></td>
+<td><p>Simpsons Concentration Index.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="local-indices">
+<h2>Local Indices<a class="headerlink" href="#local-indices" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.local.LocalDistortion.html#segregation.local.LocalDistortion" title="segregation.local.LocalDistortion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">local.LocalDistortion</span></code></a>(data[, groups, ...])</p></td>
+<td><p>Multigroup Local Distortion Coefficients.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.local.LocalRelativeCentralization.html#segregation.local.LocalRelativeCentralization" title="segregation.local.LocalRelativeCentralization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">local.LocalRelativeCentralization</span></code></a>(data[, ...])</p></td>
+<td><p>Multigroup Local Simpson's Concentration Index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.local.MultiLocalDiversity.html#segregation.local.MultiLocalDiversity" title="segregation.local.MultiLocalDiversity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">local.MultiLocalDiversity</span></code></a>(data, groups[, w, ...])</p></td>
+<td><p>Multigroup Local Diversity Index.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.local.MultiLocalEntropy.html#segregation.local.MultiLocalEntropy" title="segregation.local.MultiLocalEntropy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">local.MultiLocalEntropy</span></code></a>(data, groups[, w, ...])</p></td>
+<td><p>Multigroup Local Entropy Index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.local.MultiLocationQuotient.html#segregation.local.MultiLocationQuotient" title="segregation.local.MultiLocationQuotient"><code class="xref py py-obj docutils literal notranslate"><span class="pre">local.MultiLocationQuotient</span></code></a>(data, groups[, ...])</p></td>
+<td><p>Multigroup Local Diversity Index.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.local.MultiLocalSimpsonInteraction.html#segregation.local.MultiLocalSimpsonInteraction" title="segregation.local.MultiLocalSimpsonInteraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">local.MultiLocalSimpsonInteraction</span></code></a>(data, groups)</p></td>
+<td><p>Multigroup Local Simpson Interaction Index.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.local.MultiLocalSimpsonConcentration.html#segregation.local.MultiLocalSimpsonConcentration" title="segregation.local.MultiLocalSimpsonConcentration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">local.MultiLocalSimpsonConcentration</span></code></a>(data, ...)</p></td>
+<td><p>Multigroup Local Simpson's Concentration Index.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="dynamics">
+<h2>Dynamics<a class="headerlink" href="#dynamics" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.dynamics.compute_multiscalar_profile.html#segregation.dynamics.compute_multiscalar_profile" title="segregation.dynamics.compute_multiscalar_profile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dynamics.compute_multiscalar_profile</span></code></a>(gdf[, ...])</p></td>
+<td><p>Compute multiscalar segregation profile.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.dynamics.compute_divergence_profiles.html#segregation.dynamics.compute_divergence_profiles" title="segregation.dynamics.compute_divergence_profiles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dynamics.compute_divergence_profiles</span></code></a>(gdf, groups)</p></td>
+<td><p>A segregation metric using Kullback-Leiber (KL) divergence to quantify the difference in the population characteristics between (1) an area and (2) the total population.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="batch-computation">
+<h2>Batch Computation<a class="headerlink" href="#batch-computation" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.batch.batch_compute_singlegroup.html#segregation.batch.batch_compute_singlegroup" title="segregation.batch.batch_compute_singlegroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">batch.batch_compute_singlegroup</span></code></a>(gdf, ...[, ...])</p></td>
+<td><p>Batch compute single-group indices.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.batch.batch_compute_multigroup.html#segregation.batch.batch_compute_multigroup" title="segregation.batch.batch_compute_multigroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">batch.batch_compute_multigroup</span></code></a>(gdf, groups, ...)</p></td>
+<td><p>Batch compute multi-group indices.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.batch.batch_multiscalar_singlegroup.html#segregation.batch.batch_multiscalar_singlegroup" title="segregation.batch.batch_multiscalar_singlegroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">batch.batch_multiscalar_singlegroup</span></code></a>(gdf, ...)</p></td>
+<td><p>Batch compute multiscalar profiles for single-group indices.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.batch.batch_multiscalar_multigroup.html#segregation.batch.batch_multiscalar_multigroup" title="segregation.batch.batch_multiscalar_multigroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">batch.batch_multiscalar_multigroup</span></code></a>(gdf, ...)</p></td>
+<td><p>Batch compute multiscalar profiles for multi-group indices.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inference">
+<h2>Inference<a class="headerlink" href="#inference" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.inference.SingleValueTest.html#segregation.inference.SingleValueTest" title="segregation.inference.SingleValueTest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inference.SingleValueTest</span></code></a>(seg_class[, ...])</p></td>
+<td><p>Statistical inference for a single segregation measure.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.inference.TwoValueTest.html#segregation.inference.TwoValueTest" title="segregation.inference.TwoValueTest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inference.TwoValueTest</span></code></a>(seg_class_1, seg_class_2)</p></td>
+<td><p>Perform comparative inference for two segregation measures.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.inference.simulate_bootstrap_resample.html#segregation.inference.simulate_bootstrap_resample" title="segregation.inference.simulate_bootstrap_resample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inference.simulate_bootstrap_resample</span></code></a>(df, ...)</p></td>
+<td><p>Generate bootstrap replications of the units with replacement of the same size of the original data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.inference.sim_composition.html#segregation.inference.sim_composition" title="segregation.inference.sim_composition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inference.sim_composition</span></code></a>(df1, df2, ...)</p></td>
+<td><p>Simulate the spatial distribution of a population group in a region using the CDF of a comparison region.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.inference.sim_dual_composition.html#segregation.inference.sim_dual_composition" title="segregation.inference.sim_dual_composition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inference.sim_dual_composition</span></code></a>(df1, df2, ...)</p></td>
+<td><p>Apply the 'composition' for both minority and complementary groups.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.inference.simulate_evenness.html#segregation.inference.simulate_evenness" title="segregation.inference.simulate_evenness"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inference.simulate_evenness</span></code></a>(df[, group, ...])</p></td>
+<td><p>Simulate even redistribution of population groups across spatial units.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.inference.simulate_evenness_geo_permutation.html#segregation.inference.simulate_evenness_geo_permutation" title="segregation.inference.simulate_evenness_geo_permutation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inference.simulate_evenness_geo_permutation</span></code></a>(df)</p></td>
+<td><p>Simulate evenness followed by random permutation of geographic units.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.inference.simulate_geo_permutation.html#segregation.inference.simulate_geo_permutation" title="segregation.inference.simulate_geo_permutation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inference.simulate_geo_permutation</span></code></a>(df, **kwargs)</p></td>
+<td><p>Simulate a synthetic dataset by random permutation of geographic units.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.inference.simulate_null.html#segregation.inference.simulate_null" title="segregation.inference.simulate_null"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inference.simulate_null</span></code></a>([iterations, ...])</p></td>
+<td><p>Simulate a series of index values in parallel to serve as a null distribution.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.inference.simulate_person_permutation.html#segregation.inference.simulate_person_permutation" title="segregation.inference.simulate_person_permutation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inference.simulate_person_permutation</span></code></a>(df[, ...])</p></td>
+<td><p>Simulate the permutation of individuals across spatial units.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.inference.sim_share.html#segregation.inference.sim_share" title="segregation.inference.sim_share"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inference.sim_share</span></code></a>(df1, df2, ...)</p></td>
+<td><p>Simulate the spatial population distribution of a region using the CDF of a comparison region.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.inference.simulate_systematic_randomization.html#segregation.inference.simulate_systematic_randomization" title="segregation.inference.simulate_systematic_randomization"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inference.simulate_systematic_randomization</span></code></a>(df)</p></td>
+<td><p>Simulate systematic redistribution of population groups across spatial units.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.inference.simulate_systematic_geo_permutation.html#segregation.inference.simulate_systematic_geo_permutation" title="segregation.inference.simulate_systematic_geo_permutation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inference.simulate_systematic_geo_permutation</span></code></a>(df)</p></td>
+<td><p>Simulate systematic redistribution followed by random permutation of geographic units.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="decomposition">
+<h2>Decomposition<a class="headerlink" href="#decomposition" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.decomposition.DecomposeSegregation.html#segregation.decomposition.DecomposeSegregation" title="segregation.decomposition.DecomposeSegregation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decomposition.DecomposeSegregation</span></code></a>(index1, ...)</p></td>
+<td><p>Decompose segregation differences into spatial and attribute components.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="network">
+<h2>Network<a class="headerlink" href="#network" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/segregation.network.compute_travel_cost_matrix.html#segregation.network.compute_travel_cost_matrix" title="segregation.network.compute_travel_cost_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">network.compute_travel_cost_matrix</span></code></a>(origins, ...)</p></td>
+<td><p>Compute a shortest path matrix from a pandana network</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/segregation.network.project_network.html#segregation.network.project_network" title="segregation.network.project_network"><code class="xref py py-obj docutils literal notranslate"><span class="pre">network.project_network</span></code></a>(network[, ...])</p></td>
+<td><p>Reproject a pandana.Network object into another coordinate system</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="_sources/api.rst.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.2.3.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
