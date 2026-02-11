@@ -333,28 +333,34 @@ def _prepare_random_label(seg_class_1, seg_class_2):
         )
 
         # random permutation needs the columns to have the same names
-        data_1 = data_1[
-            [
-                seg_class_1.group_pop_var,
-                seg_class_1.total_pop_var,
-                "grouping_variable",
-            ]
-        ]
-        data_1.columns = ["group", "total", "grouping_variable"]
+        
+        if hasattr(data_1, "geometry"):
+            data_1 = data_1[[seg_class_1.group_pop_var, seg_class_1.total_pop_var, "grouping_variable", data_1.geometry.name]]
+        else:
+            data_1 = data_1[[seg_class_1.group_pop_var, seg_class_1.total_pop_var, "grouping_variable"]]
+        
+        if hasattr(data_1, "geometry"):
+          data_1.columns = ["group", "total", "grouping_variable", data_1.geometry.name]
+        else:
+          data_1.columns = ["group", "total", "grouping_variable"]
 
         data_2.loc[:, (seg_class_2.group_pop_var, seg_class_2.total_pop_var)] = (
             data_2.loc[:, (seg_class_2.group_pop_var, seg_class_2.total_pop_var)]
             .round(0)
             .astype(float)
         )
-        data_2 = data_2[
-            [
-                seg_class_2.group_pop_var,
-                seg_class_2.total_pop_var,
-                "grouping_variable",
-            ]
-        ]
-        data_2.columns = ["group", "total", "grouping_variable"]
+        
+        
+        if hasattr(data_2, "geometry"):
+            data_2 = data_2[[seg_class_1.group_pop_var, seg_class_1.total_pop_var, "grouping_variable", data_2.geometry.name]]
+        else:
+            data_2 = data_2[[seg_class_1.group_pop_var, seg_class_1.total_pop_var, "grouping_variable"]]
+        
+        
+        if hasattr(data_2, "geometry"):
+          data_2.columns = ["group", "total", "grouping_variable", data_2.geometry.name]
+        else:
+          data_2.columns = ["group", "total", "grouping_variable"]
 
         stacked_data = pd.concat([data_1, data_2], axis=0)
 
