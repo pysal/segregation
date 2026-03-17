@@ -2,7 +2,7 @@ name: test
 channels:
   - conda-forge
 dependencies:
-  - python=3.11
+  - python=3.14
   - deprecation
   - geopandas>=0.9
   - joblib
@@ -10,7 +10,7 @@ dependencies:
   - mapclassify
   - matplotlib
   - numpy
-  - pandana
+  - pandarm
   - pandas
   - pip
   - quilt3

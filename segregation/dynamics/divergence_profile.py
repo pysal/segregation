@@ -25,8 +25,8 @@ def compute_divergence_profiles(
         Distance metric for calculating pairwise distances,
         Accepts any inputs to `scipy.spatial.distance.pdist`.
         Ignored if passing a network or distance matrix
-    network: pandana.Network object (optional, None by default)
-        A pandana Network object used to compute distance between observations
+    network: pandarm.Network object (optional, None by default)
+        A pandarm Network object used to compute distance between observations
     distance_matrix: numpy.array (optional; None by default)
         numpy array of distances between observations in the dataset
 
@@ -53,11 +53,11 @@ def compute_divergence_profiles(
 
     coordinates = np.column_stack((centroids.x, centroids.y))
 
-    # If given a pandana network, use shortest network distance, otherwise use scikit
+    # If given a pandarm network, use shortest network distance, otherwise use scikit
     if network:
         if metric != "network":
             warn(
-                f"metric set to {metric} but a pandana.Network object was passed. Using network distances instead"
+                f"metric set to {metric} but a pandarm.Network object was passed. Using network distances instead"
                 "If you wish to use a scipy distance matrix, do not include a `network` argument`"
             )
         dist_matrix = compute_travel_cost_matrix(gdf, gdf, network).values

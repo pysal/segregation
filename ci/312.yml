@@ -10,7 +10,7 @@ dependencies:
   - mapclassify
   - matplotlib
   - numpy
-  - pandana
+  - pandarm
   - pandas
   - pip
   - quilt3
@@ -34,7 +34,6 @@ dependencies:
   - ipywidgets
   - nbsphinx
   - numpydoc
-  - pandana
   - quilt3
   - sphinx
   - sphinxcontrib-napoleon

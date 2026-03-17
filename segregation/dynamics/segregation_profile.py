@@ -46,17 +46,17 @@ def compute_multiscalar_profile(
     distances : list
         list of floats representing bandwidth distances that define a local
         environment.
-    network : pandana.Network (optional)
-        A pandana.Network likely created with
+    network : pandarm.Network (optional)
+        A pandarm.Network likely created with
         `segregation.network.get_osm_network`.
     decay : str (optional)
-        decay type to be used in pandana accessibility calculation
+        decay type to be used in pandarm accessibility calculation
         options are {'linear', 'exp', 'flat'}. The default is 'linear'.
     function: 'str' (optional)
         which weighting function should be passed to libpysal.weights.Kernel
         must be one of: 'triangular','uniform','quadratic','quartic','gaussian'
     precompute: bool
-        Whether the pandana.Network instance should precompute the range
+        Whether the pandarm.Network instance should precompute the range
         queries. This is True by default
     check_crs:
         warn if geodataframe is not stored in WGS coordinates. Can help debug

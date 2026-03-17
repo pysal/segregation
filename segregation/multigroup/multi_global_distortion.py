@@ -25,8 +25,8 @@ def _global_distortion(
         Distance metric for calculating pairwise distances,
         Accepts any inputs to `scipy.spatial.distance.pdist`.
         Ignored if passing a network or distance matrix
-    network: pandana.Network object (optional)
-        A pandana Network object used to compute distance between observations
+    network: pandarm.Network object (optional)
+        A pandarm Network object used to compute distance between observations
     distance_matrix: numpy.array
         numpy array of distances between observations in the dataset
     normalization:
@@ -90,8 +90,8 @@ class GlobalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         Distance metric for calculating pairwise distances,
         Accepts any inputs to `scipy.spatial.distance.pdist`.
         Ignored if passing a network or distance matrix
-    network: pandana.Network object (optional, None by default)
-        A pandana Network object used to compute distance between observations
+    network: pandarm.Network object (optional, None by default)
+        A pandarm Network object used to compute distance between observations
     distance_matrix: numpy.array (optional; None by default)
         numpy array of distances between observations in the dataset
     normalization: bool

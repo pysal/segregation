@@ -76,14 +76,14 @@ class Atkinson(SingleGroupIndex, SpatialImplicitIndex):
         name of column on dataframe holding total overall population
     w : libpysal.weights.KernelW, optional
         lipysal spatial kernel weights object used to define an egohood
-    network : pandana.Network
-        pandana Network object representing the study area
+    network : pandarm.Network
+        pandarm Network object representing the study area
     distance : int
         Maximum distance (in units of geodataframe CRS) to consider the extent of the egohood
     decay : str
         type of decay function to apply. Options include
     precompute : bool
-        Whether to precompute the pandana Network object
+        Whether to precompute the pandarm Network object
 
     Attributes
     ----------

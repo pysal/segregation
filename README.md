@@ -109,7 +109,7 @@ from segregation.spatial import SpatialDissim
 spatial_index = SpatialDissim(gdf, "hi_income", "total_population")
 ```
 
-Some spatial indices can also accept either a [PySAL](http://pysal.org) `W` object, or a [pandana](https://github.com/UDST/pandana) `Network` object,
+Some spatial indices can also accept either a [PySAL](http://pysal.org) `W` object, or a [pandarm](https://github.com/UDST/pandarm) `Network` object,
 which allows the user full control over how to parameterize spatial effects.
 The network functions can be particularly useful for teasing out differences in
 segregation measures caused by two cities that have two very different spatial structures,

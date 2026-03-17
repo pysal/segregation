@@ -194,18 +194,18 @@ class SpatialImplicitIndex:
         ----------
         w : libpysal.weights object
             lipysal spatial kernel weights object used to define an egohood
-        network : pandana.Network
-            pandana Network object representing the study area
+        network : pandarm.Network
+            pandarm Network object representing the study area
         distance : int
             Maximum distance (in units of geodataframe CRS) to consider the extent of the egohood
         decay : str
-            type of decay function to apply (passed to `pandana`). Options include
+            type of decay function to apply (passed to `pandarm`). Options include
             {'linear', 'exponential', or 'flat'}
         function : str
             decay function to use in spatial weights object (passed to libpysal.weights.Kernel)
             options = {'triangular','uniform','quadratic','quartic','gaussian'}
         precompute : bool
-            Whether to precompute the pandana Network object
+            Whether to precompute the pandarm Network object
         """
         self.spatial_type = "implicit"
         if self.index_type == "multigroup":
@@ -215,7 +215,7 @@ class SpatialImplicitIndex:
 
         if w and network:
             raise AttributeError(
-                "must pass either a pandana network or a pysal weights object, but not both"
+                "must pass either a pandarm network or a pysal weights object, but not both"
             )
         if network:
             access = calc_access(

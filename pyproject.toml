@@ -70,7 +70,7 @@ tests = [
     "matplotlib",
     "matplotlib-scalebar",
     "watermark",
-    "pandana",
+    "pandarm",
     "quilt3",
     "ipywidgets"
 ]

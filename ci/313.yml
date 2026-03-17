@@ -10,7 +10,7 @@ dependencies:
   - mapclassify
   - matplotlib
   - numpy
-  - pandana
+  - pandarm
   - pandas
   - pip
   - quilt3
