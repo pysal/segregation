@@ -30,11 +30,11 @@
             ci/314.yml,
          ]
          include:
-           - environment-file: ci/313.yml
+           - environment-file: ci/314.yml
              os: macos-15-intel # Intel
-           - environment-file: ci/313.yml
+           - environment-file: ci/314.yml
              os: macos-latest # Apple Silicon
-           - environment-file: ci/313.yml
+           - environment-file: ci/314.yml
              os: windows-latest
        fail-fast: false
 
@@ -78,7 +78,7 @@
            --cov-report xml
 
        - name: codecov
-         uses: codecov/codecov-action@v3
+         uses: codecov/codecov-action@v5
          with:
            token: ${{ secrets.CODECOV_TOKEN }}
            file: ./coverage.xml
