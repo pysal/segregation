@@ -82,8 +82,8 @@ def _generate_counterfactual(
         df2["counterfactual_group_pop"] / df2["counterfactual_total_pop"]
     ).fillna(0)
 
-    df1 = df1.drop(columns=[group_pop_var1, total_pop_var1], axis=1)
-    df2 = df2.drop(columns=[group_pop_var2, total_pop_var2], axis=1)
+    df1 = df1.drop(columns=[group_pop_var1, total_pop_var1])
+    df2 = df2.drop(columns=[group_pop_var2, total_pop_var2])
 
     return df1, df2
 

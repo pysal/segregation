@@ -34,18 +34,18 @@ def calc_access(
     ----------
     geodataframe : geopandas.GeoDataFrame
         geodataframe with demographic data
-    network : pandana.Network
-        pandana.Network instance. This is likely created with `get_osm_network`
+    network : pandarm.Network
+        pandarm.Network instance. This is likely created with `get_osm_network`
         or via helper functions from OSMnet or UrbanAccess.
     distance : int
         maximum distance to consider `accessible` (the default is 2000).
     decay : str
-        decay type pandana should use "linear", "exp", or "flat"
+        decay type pandarm should use "linear", "exp", or "flat"
         (which means no decay). The default is "linear".
     variables : list
         list of variable names present on gdf that should be calculated
     precompute: bool (default True)
-        whether pandana should precompute the distance matrix. It can only be
+        whether pandarm should precompute the distance matrix. It can only be
         precomputed once, so If you plan to pass the same network to this
         function several times, you should set precompute=False for later runs
     return_node_data : bool, default is False
@@ -89,7 +89,7 @@ def calc_access(
 
 
 def compute_travel_cost_matrix(origins, destinations, network, reindex_name=None):
-    """Compute a shortest path matrix from a pandana network
+    """Compute a shortest path matrix from a pandarm network
 
     Parameters
     ----------
@@ -97,11 +97,11 @@ def compute_travel_cost_matrix(origins, destinations, network, reindex_name=None
         the set of origin geometries. If polygon input, the function will use their centroids
     destinations : geopandas.GeoDataFrame
         the set of destination geometries. If polygon input, the function will use their centroids
-    network : pandana.Network
-        Initialized pandana Network object holding a travel network for a study region
+    network : pandarm.Network
+        Initialized pandarm Network object holding a travel network for a study region
     reindex_name : str, optional
         Name of column on the origin/destinatation dataframe that holds unique index values
-        If none (default), the index of the pandana Network node will be used
+        If none (default), the index of the pandarm Network node will be used
 
     Returns
     -------
@@ -139,12 +139,12 @@ def compute_travel_cost_matrix(origins, destinations, network, reindex_name=None
 
 
 def project_network(network, output_crs=None, input_crs=4326):
-    """Reproject a pandana.Network object into another coordinate system
+    """Reproject a pandarm.Network object into another coordinate system
 
     Parameters
     ----------
-    network : pandana.Network
-        an instantiated pandana Network object
+    network : pandarm.Network
+        an instantiated pandarm Network object
     input_crs : int, optional
         the coordinate system used in the Network.node_df dataframe. Typically
         these data are collected in Lon/Lat, so the default 4326
@@ -153,17 +153,17 @@ def project_network(network, output_crs=None, input_crs=4326):
 
     Returns
     -------
-    pandana.Network
-        an initialized pandana.Network with 'x' and y' values represented
+    pandarm.Network
+        an initialized pandarm.Network with 'x' and y' values represented
         by coordinates in the specified CRS
     """
     try:
-        import pandana as pdna
+        import pandarm as pdna
     except ImportError:
         raise ImportError(
-            "You need pandana to work with segregation's network module\n"
-            "You can install them with  `pip install urbanaccess pandana` "
-            "or `conda install -c udst pandana urbanaccess`"
+            "You need pandarm to work with segregation's network module\n"
+            "You can install them with  `pip install urbanaccess pandarm` "
+            "or `conda install -c udst pandarm urbanaccess`"
         )
 
     assert output_crs, "You must provide an output CRS"

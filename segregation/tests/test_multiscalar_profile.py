@@ -4,7 +4,7 @@ import numpy as np
 from segregation.multigroup import MultiDissim
 from segregation.dynamics import compute_multiscalar_profile
 import quilt3
-import pandana as pdna
+import pandarm as pdna
 
 
 def test_multiscalar():

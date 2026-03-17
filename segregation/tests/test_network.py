@@ -1,6 +1,6 @@
 from libpysal.examples import load_example
 import geopandas as gpd
-import pandana as pdna
+import pandarm as pdna
 from segregation.network import calc_access
 
 

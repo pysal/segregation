@@ -11,7 +11,7 @@ dependencies:
   - mapclassify
   - matplotlib
   - numpy
-  - pandana
+  - pandarm
   - pandas
   - pip
   - scikit-learn

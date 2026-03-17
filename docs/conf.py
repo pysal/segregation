@@ -273,7 +273,7 @@ intersphinx_mapping = {
     "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
     "python": ("https://docs.python.org/3.9/", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/reference/", None),
-    "pandana": ("http://udst.github.io/pandana/", None),
+    "pandarm": ("http://oturns.github.io/pandarm/", None),
 }
 
 autodoc_default_options = {"members": True, "undoc-members": True}

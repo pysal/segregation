@@ -90,14 +90,14 @@ class LocalRelativeCentralization(MultiGroupIndex, SpatialExplicitIndex):
     w : libpysal.W, optional
         lipysal spatial weights object used to define a local neighborhood. If none is passed,
         a KNN ojbect with k=5 will be used
-    network : pandana.Network
-        pandana Network object representing the study area
+    network : pandarm.Network
+        pandarm Network object representing the study area
     distance : int
         Maximum distance (in units of geodataframe CRS) to consider the extent of the egohood
     decay : str
         type of decay function to apply. Options include
     precompute : bool
-        Whether to precompute the pandana Network object
+        Whether to precompute the pandarm Network object
 
     Attributes
     ----------
