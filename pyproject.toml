@@ -29,7 +29,6 @@ classifiers = [
 ]
 requires-python = ">=3.12"
 dependencies = [
-    "deprecation",
     "geopandas>=0.9",
     "joblib",
     "libpysal",
