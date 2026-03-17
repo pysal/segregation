@@ -1,10 +1,8 @@
 name: segregation
 channels:
   - conda-forge
-  - defaults
 dependencies:
   - python>=3.12
-  - deprecation
   - geopandas>=0.9
   - joblib
   - libpysal

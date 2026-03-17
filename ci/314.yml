@@ -3,7 +3,6 @@ channels:
   - conda-forge
 dependencies:
   - python=3.14
-  - deprecation
   - geopandas>=0.9
   - joblib
   - libpysal
