@@ -18,7 +18,6 @@ dependencies:
   - scipy
   - seaborn
   - tqdm
-  - urbanaccess
   - numba
   - pyproj >=3
 
