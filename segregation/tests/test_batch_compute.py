@@ -22,8 +22,6 @@ def test_batch_single():
         center="mean",
         function="triangular",
         seed=1234,
-        backend='loky'
-        # loky is slower but more robust in testing
 
     )
     np.testing.assert_array_almost_equal(
@@ -104,7 +102,6 @@ def test_batch_multiscalar_single():
         group_pop_var="HISP",
         total_pop_var="TOT_POP",
         seed=1234,
-        backend='loky'
         # loky is slower but more robust in testing
     )
     assert mfit.shape == (3, 13)

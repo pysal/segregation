@@ -70,7 +70,6 @@
            pytest segregation \
            -v \
            -r a \
-           -n auto \
            --color yes \
            --cov segregation \
            --cov-append \

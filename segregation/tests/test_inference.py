@@ -10,17 +10,15 @@ from segregation.singlegroup import Dissim
 
 class Inference_Tester(unittest.TestCase):
     def test_Inference(self):
+        groups_list = ["WHITE", "BLACK", "ASIAN", "HISP"]
         s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
+        s_map[groups_list] = s_map[groups_list].astype(int)
         # note need to recast as datafrme
-        s_map_no_geom = pd.DataFrame(
-            gpd.read_file(
-                load_example("Sacramento1").get_path("sacramentot2.shp")
-            ).drop(columns=["geometry"])
-        )
+        s_map_no_geom = s_map.drop(columns=['geometry'])
+
         index1 = Dissim(s_map, "HISP", "TOT_POP")
         index2 = Dissim(s_map, "BLACK", "TOT_POP")
 
-        groups_list = ["WHITE", "BLACK", "ASIAN", "HISP"]
         m_index = MultiDissim(s_map, groups_list)
 
         m_index_1 = MultiDissim(s_map[0:200], groups_list)
