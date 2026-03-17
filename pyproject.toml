@@ -27,22 +27,22 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering :: GIS",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.12"
 dependencies = [
-"deprecation",
-"geopandas>=0.9",
-"joblib",
-"libpysal",
-"mapclassify",
-"matplotlib",
-"numpy",
-"pandas",
-"scikit-learn>=0.21.3",
-"scipy",
-"seaborn",
-"tqdm",
-"numba",
-"pyproj>=3"
+    "deprecation",
+    "geopandas>=0.9",
+    "joblib",
+    "libpysal",
+    "mapclassify",
+    "matplotlib",
+    "numpy",
+    "pandas",
+    "scikit-learn>=0.21.3",
+    "scipy",
+    "seaborn",
+    "tqdm",
+    "numba",
+    "pyproj>=3"
 ]
 
 [project.urls]
@@ -78,13 +78,9 @@ tests = [
 [tool.setuptools.packages.find]
 include = ["segregation", "segregation.*"]
 
-[tool.black]
-line-length = 88
-
 [tool.ruff]
 line-length = 88
 select = ["E", "F", "W", "I", "UP", "N", "B", "A", "C4", "SIM", "ARG"]
-target-version = "py38"
 ignore = [
     "B006",
     "B008",
