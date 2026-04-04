@@ -2,19 +2,19 @@ name: segregation
 channels:
   - conda-forge
 dependencies:
-  - python>=3.12
-  - geopandas>=0.9
+  - python
+  - geopandas
   - joblib
   - libpysal
   - mapclassify
   - matplotlib
+  - numba
   - numpy
   - pandarm
   - pandas
   - pip
+  - pyproj >=3
   - scikit-learn
   - scipy
   - seaborn
   - tqdm
-  - numba
-  - pyproj >=3

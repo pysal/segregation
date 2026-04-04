@@ -1,0 +1,29 @@
+name: test
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - geopandas=1.1.0
+  - joblib=1.5.0
+  - libpysal=4.12.1
+  - mapclassify=2.8
+  - matplotlib=3.10
+  - numba=0.60
+  - numpy=2.0.0
+  - pandarm
+  - pandas=2.3.0
+  - pip
+  - pyproj
+  - quilt3
+  - scikit-learn=1.5.0
+  - scipy=1.14.0
+  - seaborn
+  - tqdm
+
+  # testing, etc
+  - codecov
+  - pytest
+  - pytest-mpl
+  - pytest-cov
+  - pytest-xdist
+  - twine

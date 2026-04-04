@@ -2,23 +2,23 @@ name: test
 channels:
   - conda-forge
 dependencies:
-  - python=3.13
-  - geopandas>=0.9
+  - python=3.14
+  - geopandas
   - joblib
   - libpysal
   - mapclassify
   - matplotlib
+  - numba
   - numpy
   - pandarm
   - pandas
   - pip
+  - pyproj
   - quilt3
   - scikit-learn
   - scipy
   - seaborn
   - tqdm
-  - numba
-  - pyproj >=3
 
   # testing, etc
   - codecov
@@ -27,3 +27,15 @@ dependencies:
   - pytest-cov
   - pytest-xdist
   - twine
+
+  # docs
+  - ipywidgets
+  - nbsphinx
+  - numpydoc
+  - quilt3
+  - sphinx
+  - sphinxcontrib-napoleon
+  - sphinx-gallery
+  - sphinxcontrib-bibtex
+  - sphinx_bootstrap_theme
+  - watermark
