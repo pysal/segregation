@@ -167,17 +167,16 @@ All core functions in `tobler` operate directly on GeoPandas GeoDataFrames, mini
 A typical workflow in `segregation` can be implemented as follows:
 
 ```python
-from tobler.area_weighted import area_interpolate
+from segregation.singlegroup import Dissim
 
-result = area_interpolate(
-    source_df,
-    target_df,
-    extensive_variables=["population"],
-    intensive_variables=["income"]
+result = Dissim(
+    df_or_gdf
+    group_pop_var='group_A',
+    total_pop_var='total_population'
 )
 ```
 
-This operation transfers population counts and income measures from the source geometries to the target geometries, handling each variable type (extensive/intensive) appropriately.
+This snippet estimates the Dissimilariy index of a specific sub-population (`group with characteristic A`) of your dataset and can accessed through the `statistic` attribute.
 
 When additional information about within-zone heterogeneity is available, dasymetric interpolation can be used to refine estimates. For example, population counts may be redistributed using a land cover raster to exclude uninhabited areas:
 
