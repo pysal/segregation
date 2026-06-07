@@ -1,0 +1,772 @@
+@book{barryjames2023,
+  title={Probabilidade: um curso em nível intermediário},
+  author={Barry R. James},
+  publisher={IMPA},
+  year={2023},
+  isbn={978-85-244-0455-9},
+  edition={5}
+}
+
+@article{curtiss1942note,
+  title={A note on the theory of moment generating functions},
+  author={Curtiss, J. H.},
+  journal={Ann. Math. Stat.},
+  volume={13},
+  number={4},
+  pages={430--433},
+  year={1942}
+}
+
+@book{magalhaes2006probabilidade,
+  title={Probabilidade e Vari{\'a}veis Aleat{\'o}rias},
+  author={Magalh{\~a}es, M.N.},
+  publisher={Edusp},
+  year={2006},
+  isbn={9788531409455},
+  edition={3}
+}
+
+@book{degroot2012probability,
+  title={Probability and Statistics},
+  author={DeGroot, M.H. and Schervish, M.J.},
+  isbn={9780321500465},
+  lccn={2010001486},
+  year={2012},
+  publisher={Addison-Wesley}
+}
+
+@book{johnson2007applied,
+  title = {Applied Multivariate Statistical Analysis},
+  author = {Richard A. Johnson and Dean W. Wichern},
+  publisher = {Pearson Education Inc},
+  edition={6},
+  year = {2007},
+  isbn = {978-0-13-187715-3}
+}
+
+@book{Kolmogorov1933,
+	author = {Andrei Nikolaevich Kolmogorov},
+	editor = {},
+	title = {Foundations of the Theory of Probability},
+	year = {1933}
+}
+
+@book{axler2020measure,
+  title={Measure, Integration & Real Analysis},
+  author={Axler, Sheldon},
+  year={2020},
+  publisher={Springer},
+  series={Graduate Texts in Mathematics},
+  volume={282},
+  doi={10.1007/978-3-030-33143-6}
+}
+
+
+@book{mood1974introduction,
+  title={Introduction to the Theory of Statistics},
+  author={Mood, A.M.F. and Graybill, F.A. and Boes, D.C.},
+  isbn={9780070854659},
+  lccn={73000292},
+  series={McGraw-Hill international editions: Statistics series},
+  year={1974},
+  publisher={McGraw-Hill}
+}
+
+@book{morettin1999estatística,
+  title={Estat{\'\i}stica b{\'a}sica: Probabilidade, 7.ed},
+  author={Morettin, L.G.},
+  isbn={9788534610629},
+  series={Estat{\'\i}stica b{\'a}sica},
+  year={1999},
+  publisher={Pearson Makron Books}
+}
+
+
+@article{curtiss1942note,
+  title={A note on the theory of moment generating functions},
+  author={Curtiss, J. H.},
+  journal={Ann. Math. Stat.},
+  volume={13},
+  number={4},
+  pages={430--433},
+  year={1942}
+}
+
+@book{rolla2021intprob,
+  title={Introdução à Probabilidade — Notas de Aula},
+  author={Rolla, L.T.},
+  year={2021},
+  url={https://www.ime.usp.br/~leorolla/papers/intro-probab.pdf}
+}
+
+@book{rollalima2025prob,
+  title={Probabilidade},
+  author={Leonardo T. Rolla and Bernardo N.B. de Lima},
+  publisher={Coleção Projeto Euclides, IMPA},
+  year={2025},
+  url={https://www.ime.usp.br/~leorolla/probabilidade/index.html}
+}
+
+
+@article{rolla2022measureprob,
+  author = {Leonardo T. Rolla},
+  title = {Measure Theory for Probability},
+  url = {https://www.ime.usp.br/~leorolla/papers/ST342-2021.pdf},
+  year = {2022}
+}
+
+@book{dantas2013probabilidade,
+  title={Probabilidade: Um Curso Introdut{\'o}rio Vol. 10},
+  author={Dantas, C.A.B.},
+  isbn={9788531403996},
+  year={2013},
+  publisher={EDUSP}
+}
+
+
+@book{meyer2006probabilidade,
+  title={Probabilidade: aplica{\c{c}}{\~o}es {\`a} estat{\'\i}stica},
+  author={Meyer, P.L. and de Carvalho Bergstr{\"o}m Louren{\c{c}}o Filho, R.},
+  isbn={9788521602941},
+  year={2006},
+  publisher={LTC}
+}
+
+% Segregation Papers
+
+@article{cortes2020open,
+  title={An open-source framework for non-spatial and spatial segregation measures: the PySAL segregation module},
+  author={Cortes, Renan Xavier and Rey, Sergio and Knaap, Elijah and Wolf, Levi John},
+  journal={Journal of Computational Social Science},
+  volume={3},
+  number={1},
+  pages={135--166},
+  year={2020},
+  publisher={Springer},
+  doi={10.1007/s42001-019-00059-3}
+}
+
+
+
+@article{hong2014implementing,
+  title={Implementing spatial segregation measures in R},
+  author={Hong, Seong-Yun and O'Sullivan, David and Sadahiro, Yukio},
+  journal={PloS one},
+  volume={9},
+  number={11},
+  pages={e113767},
+  year={2014},
+  publisher={Public Library of Science}
+}
+
+@article{park1926urban,
+  title={The urban community as a spatial pattern and a moral order},
+  author={Park, Robert E},
+  journal={Urban social segregation},
+  pages={21--31},
+  year={1926},
+  publisher={Longman}
+}
+
+@article{duncan1955methodological,
+  title={A methodological analysis of segregation indexes},
+  author={Duncan, Otis Dudley and Duncan, Beverly},
+  journal={American sociological review},
+  volume={20},
+  number={2},
+  pages={210--217},
+  year={1955},
+  publisher={JSTOR}
+}
+
+@techreport{royuela2010residential,
+  title={Residential segregation: A literature review},
+  author={Royuela, Vicente and Vargas, Miguel and others},
+  year={2010}
+}
+
+@article{massey1988dimensions,
+  title={The dimensions of residential segregation},
+  author={Massey, Douglas S and Denton, Nancy A},
+  journal={Social forces},
+  volume={67},
+  number={2},
+  pages={281--315},
+  year={1988},
+  publisher={Oxford University Press}
+}
+
+@article{massey1989hypersegregation,
+  title={Hypersegregation in US metropolitan areas: Black and Hispanic segregation along five dimensions},
+  author={Massey, Douglas S and Denton, Nancy A},
+  journal={Demography},
+  volume={26},
+  number={3},
+  pages={373--391},
+  year={1989},
+  publisher={Springer}
+}
+
+@article{apparicio2014open,
+  title={An open-source software for calculating indices of urban residential segregation},
+  author={Apparicio, Philippe and Martori, Joan Carles and Pearson, Amber L and Fournier, {\'E}ric and Apparicio, Denis},
+  journal={Social Science Computer Review},
+  volume={32},
+  number={1},
+  pages={117--128},
+  year={2014},
+  publisher={Sage Publications Sage CA: Los Angeles, CA}
+}
+
+@incollection{rey2010pysal,
+  title={Py{SAL}: A {P}ython library of spatial analytical methods},
+  author={Rey, Sergio J and Anselin, Luc},
+  booktitle={Handbook of applied spatial analysis},
+  pages={175--193},
+  year={2010},
+  publisher={Springer}
+}
+
+@article{carrington1997measuring,
+  title={On measuring segregation in samples with small units},
+  author={Carrington, William J and Troske, Kenneth R},
+  journal={Journal of Business \& Economic Statistics},
+  volume={15},
+  number={4},
+  pages={402--409},
+  year={1997},
+  publisher={Taylor \& Francis}
+}
+
+@article{rathelot2012measuring,
+  title={Measuring segregation when units are small: a parametric approach},
+  author={Rathelot, Roland},
+  journal={Journal of Business \& Economic Statistics},
+  volume={30},
+  number={4},
+  pages={546--553},
+  year={2012},
+  publisher={Taylor \& Francis Group}
+}
+
+@article{allen2015more,
+  title={More reliable inference for the dissimilarity index of segregation},
+  author={Allen, Rebecca and Burgess, Simon and Davidson, Russell and Windmeijer, Frank},
+  journal={The econometrics journal},
+  volume={18},
+  number={1},
+  pages={40--66},
+  year={2015},
+  publisher={Wiley Online Library}
+}
+
+@article{ransom2000sampling,
+  title={Sampling distributions of segregation indexes},
+  author={Ransom, Michael R},
+  journal={Sociological Methods \& Research},
+  volume={28},
+  number={4},
+  pages={454--475},
+  year={2000},
+  publisher={Sage Publications, Inc.}
+}
+
+@inproceedings{morrill1991measure,
+  title={On the measure of geographic segregation},
+  author={Morrill, Richard L},
+  booktitle={Geography research forum},
+  volume={11},
+  pages={25--36},
+  year={1991}
+}
+
+@article{wong1993spatial,
+  title={Spatial indices of segregation},
+  author={Wong, David WS},
+  journal={Urban studies},
+  volume={30},
+  number={3},
+  pages={559--572},
+  year={1993},
+  publisher={Sage Publications Sage UK: London, England}
+}
+
+@article{soderstrom2010school,
+  title={School choice and segregation: evidence from an admission reform},
+  author={S{\"o}derstr{\"o}m, Martin and Uusitalo, Roope},
+  journal={Scandinavian Journal of Economics},
+  volume={112},
+  number={1},
+  pages={55--76},
+  year={2010},
+  publisher={Wiley Online Library}
+}
+
+@article{hellerstein2008workplace,
+  title={Workplace segregation in the United States: Race, ethnicity, and skill},
+  author={Hellerstein, Judith K and Neumark, David},
+  journal={The review of economics and statistics},
+  volume={90},
+  number={3},
+  pages={459--477},
+  year={2008},
+  publisher={MIT Press}
+}
+
+@article{massey2015research,
+  title={A research note on trends in black hypersegregation},
+  author={Massey, Douglas S and Tannen, Jonathan},
+  journal={Demography},
+  volume={52},
+  number={3},
+  pages={1025--1034},
+  year={2015},
+  publisher={Springer}
+}
+
+@book{massey1993american,
+  title={American apartheid: Segregation and the making of the underclass},
+  author={Massey, Douglas S and Denton, Nancy A},
+  year={1993},
+  publisher={Harvard University Press}
+}
+
+@article{carrington1998interfirm,
+  title={Interfirm segregation and the black/white wage gap},
+  author={Carrington, William J and Troske, Kenneth R},
+  journal={Journal of Labor Economics},
+  volume={16},
+  number={2},
+  pages={231--260},
+  year={1998},
+  publisher={The University of Chicago Press}
+}
+
+@article{hong2014measuring,
+  title={Measuring geographic segregation: a graph-based approach},
+  author={Hong, Seong-Yun and Sadahiro, Yukio},
+  journal={Journal of Geographical Systems},
+  volume={16},
+  number={2},
+  pages={211--231},
+  year={2014},
+  publisher={Springer}
+}
+
+@Manual{softwareR,
+title = {R: A Language and Environment for Statistical Computing},
+author = {{R Development Core Team}},
+organization = {R Foundation for Statistical Computing},
+address = {Vienna, Austria},
+year = {2008},
+note = {{ISBN} 3-900051-07-0},
+url = {http://www.R-project.org},
+}
+
+@article{d2017measuring,
+  title={Measuring segregation on small units: A partial identification analysis},
+  author={d'Haultfoeuille, Xavier and Rathelot, Roland},
+  journal={Quantitative Economics},
+  volume={8},
+  number={1},
+  pages={39--73},
+  year={2017},
+  publisher={Wiley Online Library}
+}
+
+@article{wong2003implementing,
+  title={Implementing spatial segregation measures in GIS},
+  author={Wong, David WS},
+  journal={Computers, Environment and Urban Systems},
+  volume={27},
+  number={1},
+  pages={53--70},
+  year={2003},
+  publisher={Elsevier}
+}
+
+@article{reardon2002seg,
+  title={SEG: Stata module to compute multiple-group diversity and segregation indices},
+  author={Reardon, Sean F},
+  year={2002},
+  publisher={Boston College Department of Economics}
+}
+
+@techreport{Rossum:1995:PRM:869369,
+ author = {Rossum, Guido},
+ title = {Python Reference Manual},
+ year = {1995},
+ source = {http://www.ncstrl.org:8900/ncstrl/servlet/search?formname=detail\&id=oai%3Ancstrlh%3Aercim_cwi%3Aercim.cwi%2F%2FCS-R9525},
+ publisher = {CWI (Centre for Mathematics and Computer Science)},
+ address = {Amsterdam, The Netherlands, The Netherlands},
+} 
+
+@article{boisso1994occupational,
+  title={Occupational segregation in the multidimensional case: decomposition and tests of significance},
+  author={Boisso, Dale and Hayes, Kathy and Hirschberg, Joseph and Silber, Jacques},
+  journal={Journal of Econometrics},
+  volume={61},
+  number={1},
+  pages={161--171},
+  year={1994},
+  publisher={North-Holland}
+}
+
+@article{rey2010interregional,
+  title={Interregional inequality dynamics in Mexico},
+  author={Rey, Sergio J and Sastr{\'e}-Guti{\'e}rrez, Myrna L},
+  journal={Spatial Economic Analysis},
+  volume={5},
+  number={3},
+  pages={277--298},
+  year={2010},
+  publisher={Taylor \& Francis}
+}
+
+@article{mckinney2011pandas,
+  title={pandas: a foundational Python library for data analysis and statistics},
+  author={McKinney, Wes},
+  journal={Python for High Performance and Scientific Computing},
+  pages={1--9},
+  year={2011}
+}
+
+@article{jordahl2014geopandas,
+  title={GeoPandas: Python tools for geographic data},
+  author={Jordahl, K},
+  journal={URL: https://github. com/geopandas/geopandas},
+  year={2014}
+}
+
+@article{morgan1983distance,
+  title={A distance-decay based interaction index to measure residential segregation},
+  author={Morgan, Barrie S},
+  journal={Area},
+  pages={211--217},
+  year={1983},
+  publisher={JSTOR}
+}
+
+@article{rey2004spatial,
+  title={Spatial analysis of regional income inequality},
+  author={Rey, Sergio J},
+  journal={Spatially integrated social science},
+  volume={1},
+  pages={280--299},
+  year={2004}
+}
+
+@Article{Hunter:2007,
+  Author    = {Hunter, J. D.},
+  Title     = {Matplotlib: A 2D graphics environment},
+  Journal   = {Computing In Science \& Engineering},
+  Volume    = {9},
+  Number    = {3},
+  Pages     = {90--95},
+  abstract  = {Matplotlib is a 2D graphics package used for Python
+  for application development, interactive scripting, and
+  publication-quality image generation across user
+  interfaces and operating systems.},
+  publisher = {IEEE COMPUTER SOC},
+  doi       = {10.1109/MCSE.2007.55},
+  year      = 2007
+}
+
+@misc{michael_waskom_2017_883859,
+  author       = {Michael Waskom and
+                  Olga Botvinnik and
+                  Drew O'Kane and
+                  Paul Hobson and
+                  Saulius Lukauskas and
+                  David C Gemperline and
+                  Tom Augspurger and
+                  Yaroslav Halchenko and
+                  John B. Cole and
+                  Jordi Warmenhoven and
+                  Julian de Ruiter and
+                  Cameron Pye and
+                  Stephan Hoyer and
+                  Jake Vanderplas and
+                  Santi Villalba and
+                  Gero Kunter and
+                  Eric Quintero and
+                  Pete Bachant and
+                  Marcel Martin and
+                  Kyle Meyer and
+                  Alistair Miles and
+                  Yoav Ram and
+                  Tal Yarkoni and
+                  Mike Lee Williams and
+                  Constantine Evans and
+                  Clark Fitzgerald and
+                  Brian and
+                  Chris Fonnesbeck and
+                  Antony Lee and
+                  Adel Qalieh},
+  title        = {mwaskom/seaborn: v0.8.1 (September 2017)},
+  month        = sep,
+  year         = 2017,
+  doi          = {10.5281/zenodo.883859},
+  url          = {https://doi.org/10.5281/zenodo.883859}
+}
+
+@article{napierala2017measuring,
+  title={Measuring residential segregation with the ACS: How the margin of error affects the dissimilarity index},
+  author={Napierala, Jeffrey and Denton, Nancy},
+  journal={Demography},
+  volume={54},
+  number={1},
+  pages={285--309},
+  year={2017},
+  publisher={Springer}
+}
+
+@article{allen2012black,
+  title={Black--white and Hispanic--white segregation in {US} counties},
+  author={Allen, James P and Turner, Eugene},
+  journal={The Professional Geographer},
+  volume={64},
+  number={4},
+  pages={503--520},
+  year={2012},
+  publisher={Taylor \& Francis}
+}
+
+@article{massey2015research,
+  title={A research note on trends in black hypersegregation},
+  author={Massey, Douglas S and Tannen, Jonathan},
+  journal={Demography},
+  volume={52},
+  number={3},
+  pages={1025--1034},
+  year={2015},
+  publisher={Springer}
+}
+
+@article{clark2018measuring,
+  title={Measuring isolation across space and over time with new tools: Evidence from Californian metropolitan regions},
+  author={Clark, William AV and {\"O}sth, John},
+  journal={Environment and Planning B: Urban Analytics and City Science},
+  pages={2399808318756642},
+  year={2018},
+  publisher={SAGE Publications Sage UK: London, England}
+}
+
+@article{carrillo2016counterfactual,
+  title={Counterfactual spatial distributions},
+  author={Carrillo, Paul E and Rothbaum, Jonathan L},
+  journal={Journal of Regional Science},
+  volume={56},
+  number={5},
+  pages={868--894},
+  year={2016},
+  publisher={Wiley Online Library}
+}
+
+@inproceedings{kluyver2016jupyter,
+  title={Jupyter Notebooks-a publishing format for reproducible computational workflows.},
+  author={Kluyver, Thomas and Ragan-Kelley, Benjamin and P{\'e}rez, Fernando and Granger, Brian E and Bussonnier, Matthias and Frederic, Jonathan and Kelley, Kyle and Hamrick, Jessica B and Grout, Jason and Corlay, Sylvain and others},
+  booktitle={ELPUB},
+  pages={87--90},
+  year={2016}
+}
+
+@inproceedings{devroye1986sample,
+  title={Sample-based non-uniform random variate generation},
+  author={Devroye, Luc},
+  booktitle={Proceedings of the 18th conference on Winter simulation},
+  pages={260--265},
+  year={1986},
+  organization={ACM}
+}
+
+@article{tivadar2019oasisr,
+  title={OasisR: An {R} Package to Bring Some Order to the World of Segregation Measurement},
+  author={Tivadar, Mihai},
+  journal={Journal of Statistical Software},
+  volume={89},
+  number={1},
+  pages={1--39},
+  year={2019}
+}
+
+@article{reardon2002measures,
+  title={Measures of multigroup segregation},
+  author={Reardon, Sean F and Firebaugh, Glenn},
+  journal={Sociological methodology},
+  volume={32},
+  number={1},
+  pages={33--67},
+  year={2002},
+  publisher={Wiley Online Library}
+}
+
+@article{shapley1953value,
+  title={A value for n-person games},
+  author={Shapley, Lloyd S},
+  journal={Contributions to the Theory of Games},
+  volume={2},
+  number={28},
+  pages={307--317},
+  year={1953}
+}
+
+@article{roberto2018spatial,
+  title={The Spatial Proximity and Connectivity Method for Measuring and Analyzing Residential Segregation},
+  author={Roberto, Elizabeth},
+  journal={Sociological Methodology},
+  volume={48},
+  number={1},
+  pages={182--224},
+  year={2018},
+  publisher={SAGE Publications Sage CA: Los Angeles, CA}
+}
+
+
+@article{rey2021comparative,
+author = {Rey, Sergio and Cortes, Renan and Knaap, Elijah},
+year = {2021},
+month = {01},
+pages = {1-26},
+title = {Comparative Spatial Segregation Analytics},
+volume = {9},
+journal = {Spatial Demography},
+doi = {10.1007/s40980-021-00075-w}
+}
+
+@article{sousa2023nacional, 
+title={Segregação racial e econômica no Brasil: uma análise nacional das desigualdades socioeconômicas e socioespaciais}, 
+volume={40}, 
+url={https://rebep.org.br/revista/article/view/2166}, 
+DOI={10.20947/S0102-3098a0247}, 
+journal={Revista Brasileira de Estudos de População}, 
+author={Sousa Filho, José Firmino de and Pedeira, Sara Costa and Santos, Gervásio F. dos and Guimarães, Joanna M. N. and Ferreira, Andrêa J. F. and Alves, Flávia Jôse O. and Nascimento, Gabrielle R. and Paiva, Aureliano S. S. and Andrade, Roberto F. S. and Góes, Emanuelle F. and Barreto, Maurício L. and Aquino, Estela M. L.}, 
+year={2023}, 
+month={out.}, 
+pages={1–24}
+}
+
+@article{barber2018cardioelsa,
+title = {At the intersection of place, race, and health in Brazil: Residential segregation and cardio-metabolic risk factors in the Brazilian Longitudinal Study of Adult Health (ELSA-Brasil)},
+journal = {Social Science \& Medicine},
+volume = {199},
+pages = {67-76},
+year = {2018},
+note = {The role of Racism in Health Inequalities: Integrating Approaches from Across Disciplines},
+issn = {0277-9536},
+doi = {https://doi.org/10.1016/j.socscimed.2017.05.047},
+url = {https://www.sciencedirect.com/science/article/pii/S0277953617303489},
+author = {Sharrelle Barber and Ana V. {Diez Roux} and Letícia Cardoso and Simone Santos and Veronica Toste and Sherman James and Sandhi Barreto and Maria Schmidt and Luana Giatti and Dora Chor},
+keywords = {Racial health inequalities, Residential segregation, Hypertension, Diabetes, Brazil}
+}
+
+@article{barros2018unevengeographies,
+author = {Joana Barros and Flavia F Feitosa},
+title ={Uneven geographies: Exploring the sensitivity of spatial indices of residential segregation},
+journal = {Environment and Planning B: Urban Analytics and City Science},
+volume = {45},
+number = {6},
+pages = {1073-1089},
+year = {2018},
+doi = {10.1177/2399808318760572},
+URL = {https://doi.org/10.1177/2399808318760572},
+eprint = {https://doi.org/10.1177/2399808318760572}
+}
+
+
+@article{barros2024saopaulolondres, 
+title={A segregação étnico-racial nas regiões metropolitanas de São Paulo e Londres: reflexões sobre um estudo comparativo}, 
+volume={41}, 
+url={https://rebep.org.br/revista/article/view/2362}, 
+DOI={10.20947/S0102-3098a0262}, 
+journal={Revista Brasileira de Estudos de População}, 
+author={Barros, Joana and Feitosa, Flavia da Fonseca}, 
+year={2024}, 
+month={8}, 
+pages={1–28}
+}
+
+
+
+@article{strauch2026bh20102022, 
+title={Segregação racial em Belo Horizonte: o que mudou em mais de uma década?}, 
+volume={28}, 
+url={https://revistas.pucsp.br/index.php/metropole/article/view/71128}, 
+number={65}, 
+journal={Cadernos Metrópole}, 
+author={Gonçalves, Ana Paula Vasconcelos and Mercedes Strauch, Julia Celia}, 
+year={2026}, 
+month={2}
+}
+
+
+@article{danilofranca2022fortaleza, 
+title={Segregação residencial por raça e classe em Fortaleza, Salvador e São Paulo}, 
+volume={35}, 
+url={https://periodicos.ufba.br/index.php/crh/article/view/42018}, DOI={10.9771/ccrh.v35i0.42018}, 
+journal={Caderno CRH}, 
+author={França, Danilo}, 
+year={2022}, 
+month={12}, 
+pages={e022045}
+}
+
+
+@article{deSousaFilho2022nationwide,
+  author  = {de Sousa Filho, José Firmino and dos Santos, Gervásio F. and Andrade, Roberto F. Silva and Paiva, Aureliano S. and Freitas, Anderson and Castro, Caio Porto and de Lima Friche, Amélia A. and Barber, Sharrelle and Caiaffa, Waleska T. and Barreto, Maurício L.},
+  title   = {Inequality and income segregation in Brazilian cities: a nationwide analysis},
+  journal = {SN Social Sciences},
+  year    = {2022},
+  volume  = {2},
+  number  = {9},
+  pages   = {191},
+  doi     = {10.1007/s43545-022-00491-9},
+  url     = {https://doi.org/10.1007/s43545-022-00491-9},
+  issn    = {2662-9283},
+}
+
+
+@book{telles2004race,
+  title={Race in Another America: The Significance of Skin Color in Brazil},
+  author={Telles, Edward E},
+  year={2004},
+  publisher={Princeton University Press},
+  address={Princeton, NJ},
+  isbn={978-0-691-11866-6}
+}
+
+
+@article{deSouza2023nationwide_english, 
+title={Racial and economic segregation in Brazil: a nationwide analysis of socioeconomic and socio-spatial inequalities}, 
+volume={40}, 
+url={https://rebep.org.br/revista/article/view/2166}, 
+DOI={10.20947/S0102-3098a0247}, 
+journal={Brazilian Journal of Population Studies}, 
+author={Sousa Filho, José Firmino de and Pedeira, Sara Costa and Santos, Gervásio F. dos and Guimarães, Joanna M. N. and Ferreira, Andrêa J. F. and Alves, Flávia Jôse O. and Nascimento, Gabrielle R. and Paiva, Aureliano S. S. and Andrade, Roberto F. S. and Góes, Emanuelle F. and Barreto, Maurício L. and Aquino, Estela M. L.}, 
+year={2023}, 
+month={8}, 
+pages={1–24} 
+}
+
+@article{cortese1976further,
+  title={Further considerations on the methodological analysis of segregation indices},
+  author={Cortese, Charles F and Falk, R Frank and Cohen, Jack K},
+  journal={American sociological review},
+  pages={630--637},
+  year={1976},
+  publisher={JSTOR}
+}
+
+@article{lee2015bayesianinference,
+title = {Bayesian inference for the dissimilarity index in the presence of spatial autocorrelation},
+journal = {Spatial Statistics},
+volume = {11},
+pages = {81-95},
+year = {2015},
+issn = {2211-6753},
+doi = {https://doi.org/10.1016/j.spasta.2014.12.001},
+url = {https://www.sciencedirect.com/science/article/pii/S2211675314000633},
+author = {Duncan Lee and Jon Minton and Gwilym Pryce},
+keywords = {Bayesian hierarchical modelling, Conditional autoregressive models, Dissimilarity index, Spatial autocorrelation},
+abstract = {The degree of segregation between two or more sub-populations has been studied since the 1950s, and examples include segregation along racial and religious lines. The Dissimilarity index is a commonly used measure to numerically quantify segregation, using population level data for a set of areal units that comprise a city or country. However, the construction of this index usually ignores the spatial autocorrelation present in the data, and it is also typically presented without a measure of uncertainty. Therefore we propose a Bayesian hierarchical modelling approach for estimating the Dissimilarity index and quantifying its uncertainty, which utilises a conditional autoregressive model to account for the spatial autocorrelation in the data. This modelling approach is motivated by a study of religious segregation in Northern Ireland, and allows us to quantify whether the dissimilarity index has exhibited a substantial change between 2001 and 2011.}
+}
