@@ -102,25 +102,19 @@ Compared to desktop GIS platforms, `segregation` offers several advantages:
 * **Extensibility**: Users can modify or extend algorithms for research purposes
 * **Integration**: Interpolation can be embedded within larger data science pipelines, including machine learning and statistical modeling
 
-Segregation phenomenon is also possible to be assessed with other softwares like the R packages `OasisR` [@tivadar2019oasisr] or `seg` [@segrhong2011]. However, PySAL's `segregation` module distinguishes itself in several critical ways: supports over 40 distinct segregation indices out-of-the-box, it allows simultaneous computation of multiple indices across multi-scalar geographical frameworks with fewer software dependencies, it integrates spatial networks using topological relationships. This allows users to measure social separation based on real-world street networks rather than assuming straight-line (Euclidean), it also has a set of function for evaluating statistical significance using simulations, and it also allows users to decompose segregation scores—identifying exactly how much segregation occurs due to spatial context.
+Segregation phenomenon is also possible to be assessed with other softwares like the R packages `OasisR` [@tivadar2019oasisr] or `seg` [@segrhong2011]. However, PySAL's `segregation` module distinguishes itself in several critical ways: supports over 40 distinct segregation indices out-of-the-box, it allows simultaneous computation of multiple indices across multi-scalar geographical frameworks with fewer software dependencies, it integrates spatial networks using topological relationships allowing users to measure social separation based on real-world street networks rather than assuming straight-line (Euclidean), it also has a set of function for evaluating statistical significance using simulations, and it also allows users to decompose segregation scores—identifying exactly how much segregation occurs due to spatial context.
 
 In addition, `segregation` provides a native solution for Python users, aligning with the growing adoption of Python in geospatial and data science communities.
 
 # Software design
 
-Originally, @cortes2020open presented segregation but since then many new implementations were developed and the API suffered a major revision.
+`segregation` is designed with attention to both flexibility, usability, and inter-operability between its core functions. Segregation measures are built using Python classes which can be integrated in subsequent steps, such as inference or decomposition. The library is structured toward two kinds of segregation indices: 'spatially-explicit' and 'spatially-implicit'. The former includes space as part of its original formula. The latter uses the @reardonsullivan2004 approach to state that any segregation index is a spatial index if you transform the data properly.
 
-`segregation` is designed with attention to both flexibility, usability, and inter-operability between its core functions. Segregation measures, which are central to areal interpolation, can be computationally intensive for large datasets. The package leverages vectorized operations and efficient geometric libraries (via GeoPandas and Shapely) to handle these tasks.
-
-
-'spatially-explicit' and 'spatially-implicit follows @reardonsullivan2004
-
-
-The API design emphasizes clarity and consistency, with function signatures that explicitly distinguish between extensive and intensive variables. This reduces the likelihood of common errors in interpolation workflows and encourages best practices in spatial data handling.
+The library is organized between different sub parts such as `singlegroup`, `multigroup`, `local`, `inference`, `decomposition`, `batch`, `network`, and `dynamics`. Originally, @cortes2020open presented segregation but many new implementations were developed recently and the API suffered a major revision.
 
 Additionally, `segregation` is developed with testing and documentation standards consistent with the Scientific Python ecosystem, ensuring reliability and maintainability.
 
-scikit-learn like API
+"scikit-learn" like API?
 
 ## Core Functionality
 
