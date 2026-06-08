@@ -62,7 +62,8 @@ Segregation analysis is a central topic in urban studies, geography, sociology, 
 
 Beyond point estimation, `segregation` provides a robust inferential framework for evaluating the statistical significance of segregation measures. Users can perform single-value and comparative hypothesis tests using simulation-based approaches, facilitating rigorous assessments of whether observed segregation patterns differ from those expected under specified null models. The package also includes decomposition methods that separate differences in segregation levels into components attributable to demographic composition and spatial structure, offering deeper insight into the processes underlying segregation dynamics.
 
-Designed to operate natively with Pandas and GeoPandas data structures, `segregation` integrates seamlessly into contemporary Python-based spatial data science workflows. As a component of the Python Spatial Analysis Library (PySAL) ecosystem [@pysal2007; @rey2022pysalecosystem], it follows shared principles of interoperability, transparency, reproducibility, and methodological rigor. By providing accessible, well-documented, and extensible implementations of state-of-the-art segregation measures, `segregation` serves both applied researchers investigating social inequality and methodological developers advancing quantitative approaches to segregation analysis.
+Designed to operate natively with Pandas and GeoPandas data structures, `segregation` integrates seamlessly into contemporary Python-based spatial data science libraries and, therefore, minimizing friction in typical workflows. As a component of the Python Spatial Analysis Library (PySAL) ecosystem [@pysal2007; @rey2022pysalecosystem], it follows shared principles of interoperability, transparency, reproducibility, and methodological rigor. By providing accessible, well-documented, and extensible implementations of state-of-the-art segregation measures, `segregation` serves both applied researchers investigating social inequality and methodological developers advancing quantitative approaches to segregation analysis.
+
 
 # Statement of need
 
@@ -133,38 +134,16 @@ Unlike global indices that summarize an entire metropolitan area into a single v
 
 ### Multiscalar
 
+The multiscalar profile [@reardon2008geographic] is a tool for measuring spatial segregation dynamics--the way that a segregation index changes values as the concept of a neighborhood changes, and what that tells us about macro versus micro patterns of segregation. The core idea is to calculate a segregation statistic, then expand the spatial scope of a neighborhood, recalculate the statistic, and repeat.
+
+The package has a wrapper named `compute_multiscalar_profile` which can be used in a workflow to build these profiles.
+
 ### Simulation based Inference 
 
 ### Decomposition
 
 Cite @rey2021comparative
 
-
-
-### Area-weighted interpolation
-
-Area-weighted interpolation is the most basic and widely used method for transferring data between polygon layers. It assumes that variables are uniformly distributed within each source zone and allocates values to target zones in proportion to the area of overlap.
-
-`tobler` provides efficient implementations for both **extensive variables** (e.g., population counts) and **intensive variables** (e.g., rates or densities), ensuring appropriate handling of each type [@goodchild1980areal]. The library also supports pycnophylactic adjustments to preserve totals where required [@tobler1979SmoothPycnophylactic].
-
-### Dasymetric interpolation
-
-Dasymetric interpolation refines area-weighted approaches by incorporating ancillary data—such as land use, land cover, or remotely sensed information—to model the internal heterogeneity of source zones. For example, population may be redistributed only to residential areas rather than uniformly across all land [@mennis2006IntelligentDasymetric; @Eicher2001dasy; @Reibel2007].
-
-`tobler` supports both vector- and raster-based dasymetric workflows, allowing users to integrate a wide range of auxiliary datasets. This is particularly useful in urban and environmental applications where fine-scale heterogeneity is important.
-
-### Model-based interpolation
-
-Beyond deterministic approaches, `tobler` includes model-based methods that use statistical or machine learning techniques to estimate spatial distributions. These approaches can incorporate covariates and capture more complex spatial patterns, providing improved accuracy in many contexts [@flowerdew1992DevelopmentsAreal; @flowerdewMethodFittingGravity1982].
-
-The design of `tobler` allows these methods to be extended and customized, making the package a useful platform for methodological research in spatial interpolation.
-
-
-
-
-## Integration with GeoPandas
-
-All core functions in `tobler` operate directly on GeoPandas GeoDataFrames, minimizing friction in typical workflows. Users can pass source and target datasets as GeoDataFrames, specify variables of interest, and obtain interpolated results as new GeoDataFrames. This design leverages the broader geospatial Python stack, including Shapely for geometry operations and pandas for tabular data handling.
 
 ## Example workflow
 
@@ -180,7 +159,7 @@ result = Dissim(
 )
 ```
 
-This snippet estimates the Dissimilariy index of a specific sub-population (`group with characteristic A`) of your dataset and can accessed through the `statistic` attribute.
+This snippet estimates the Dissimilariy index of a specific sub-population (`group with characteristic A`) of your dataframe (`pandas` or `geopandas` DataFrames) and can accessed through the `statistic` attribute.
 
 When additional information about within-zone heterogeneity is available, dasymetric interpolation can be used to refine estimates. For example, population counts may be redistributed using a land cover raster to exclude uninhabited areas:
 
