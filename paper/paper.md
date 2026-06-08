@@ -147,8 +147,9 @@ The correct specification of a null hyphothesis is a crucial part of this framew
 
 ### Decomposition
 
-Cite @rey2021comparative
+The decomposition approach implemented in the PySAL segregation module provides a framework for comparative segregation analysis that disentangles observed differences in segregation levels into two fundamental components: population composition and spatial structure. Building on the framework proposed by @rey2021comparative, the method uses spatially explicit counterfactual distributions combined with a Shapley value decomposition to determine how much of the difference between two segregation measures—whether across cities, time periods, or spatiotemporal contexts—is attributable to differences in demographic composition versus differences in the spatial arrangement of populations and areal units. 
 
+The method can be applied to a variety of segregation indices and comparison settings, including cross-sectional, temporal, and spatiotemporal analyses. By moving beyond simple comparisons of index values, the decomposition provides a richer interpretation of segregation dynamics and helps identify whether differences arise primarily from changes in population composition or from the spatial organization of neighborhoods. In the module, this functionality is available in the `DecomposeSegregation` class of the `decomposition` sub part.
 
 ## Example workflow
 
@@ -158,7 +159,7 @@ A typical workflow in `segregation` can be implemented as follows:
 from segregation.singlegroup import Dissim
 
 result = Dissim(
-    df_or_gdf
+    df_or_gdf,
     group_pop_var='group_A',
     total_pop_var='total_population'
 )
