@@ -138,7 +138,12 @@ The multiscalar profile [@reardon2008geographic] is a tool for measuring spatial
 
 The package has a wrapper named `compute_multiscalar_profile` which can be used in a workflow to build these profiles.
 
-### Simulation based Inference 
+### Simulation based Inference
+
+PySAL's `segregation` module also addresses whether segregation index values are statistically significant under different specifications of a null hyphothesis using Monte Carlo simulations. Currently, for single value inference the module can generate approaches like generate bootstrap replications of the units with replacement (`bootstrap`), multinomial with restricted conditional probabilities (`systematic`), binomial with fixed parameters (`evenness`), geographic unit-level randomization (`geographic_permutation`), among others. For two-value inference, the user can specify resampling to generate distributions of the segregation index for each index (`bootstrap`), generate a synthetic dataset for each region through counterfactual estimates (`composition`), among others.
+
+The correct specification of a null hyphothesis is a crucial part of this framework as different null hypotheses can lead to markedly different inferences, and also different segregation indexes, which can assess different segregation dimensions (i.e. evenness, exposure, concentration, centralization, and clustering) may not be appropriate for some specifications, specially for comparative inference.
+
 
 ### Decomposition
 
