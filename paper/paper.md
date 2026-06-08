@@ -204,7 +204,7 @@ gini_profile =  compute_multiscalar_profile(
 )
 ```
 
-In terms of comparative segregation indexes, it possible to assess statistical significance between two measures using the `TwoValueTest` of the `inference` module as well as decompose the comparison using `DecomposeSegregation` from `decomposition`. Assume the user would like to compare the segregation of `group_A` between `data_1` and another spatial context `data_2`, therefore:
+In terms of comparative segregation indexes, it possible to assess statistical significance between two measures using the `TwoValueTest` of the `inference` module as well as decompose the comparison using `DecomposeSegregation` from `decomposition`. Assume the user would like to compare the segregation of `group_A` between `data_1` and another spatial context `data_2`, therefore, the code
 
 
 ```python
@@ -222,11 +222,19 @@ two_value_result = TwoValueTest(
     seg_index_2, 
     null_approach='bootstrap'
 )
+
+decomposition_result = DecomposeSegregation(seg_index_1, seg_index_2)
 ```
 
-\autoref{fig:emp_male_maps} illustrates an example comparing interpolated values derived from different spatial configurations, highlighting how results may vary depending on the underlying geometry and interpolation approach.
+\autoref{fig:poa_bh} depicts the black + brown share in total population in each census tract of 2022 in two major Brazilian cities: Belo Horizonte and Porto Alegre. Clear visual synthesis reveals a consistent pattern of socio-spatial segregation, characterized by a "center-periphery" racial gradient in both cities.
 
-![Example of `tobler` usage for an extensive variable (male employment population) in Charleston, SC, comparing census tracts and ZCTAs.\label{fig:emp_male_maps}](figs/emp_male_maps.png)
+![Belo Horizonte (left) and Porto Alegre (right) black + brown share in total population in each census tract of 2022.\label{fig:poa_bh}](figs/seg_profile_merged_poa_bh.png)
+
+\autoref{fig:poa_bh_boot} presents an example of comparative analysis of selected segregation indices via Monte Carlo bootstrap simulations using the PySAL segregation module that reveals significant structural differences in the racial landscapes of Porto Alegre and Belo Horizonte. For global indices such as Dissimilarity (Dissim), Spatial Dissimilarity, and the Gini index, the non-overlapping distributions indicate that Porto Alegre exhibits statistically higher levels of unevenness in population distribution compared to Belo Horizonte. Conversely, the Isolation and Distance Decay Isolation metrics show a dramatic reversal; Belo Horizonte (red) displays significantly higher isolation values (concentrated above 0.60) than Porto Alegre (blue, approximately 0.37), suggesting that despite lower overall dissimilarity, Black and Brown residents in Belo Horizonte are much more likely to live in tracts with high intra-group exposure. Furthermore, the stark divergence in Relative Clustering where Porto Alegre’s distribution is shifted significantly to the right suggests a more intense spatial aggregation of minority groups into contiguous clusters in the southern capital. In contrast, measures like Entropy and Relative Concentration show considerable distributional overlap, indicating that for these specific dimensions of segregation, the differences between the two cities may not reach statistical significance.
+
+![Example of `segregation` usage for comparative 2022 census tracts: Porto Alegre (blue) vs. Belo Horizonte (red) distributions under bootstrap simulation\label{fig:poa_bh_boot}](figs/grid_plot_4314902_vs_3106200_bootstrap.png)
+
+
 
 # Research impact statement
 
