@@ -94,7 +94,7 @@ These capabilities make `segregation` particularly valuable for researchers and 
 * `Model`: Estimation of spatial relationships in data with a variety of linear, generalized-linear, generalized-additive, and nonlinear models (`spreg`, `spopt`, `tobler`, `spglm`, etc.)
 * `Viz`: Visualize patterns in spatial data to detect clusters, outliers, and hot-spots (`mapclassify`, `splot`, etc.)
 
-`segregation` is present in the *Explore* set of libraries and addresses the specific problem of residential segregation.
+`segregation` is present in the **Explore** set of libraries and addresses the specific problem of residential segregation.
 
 Compared to desktop GIS platforms, `segregation` offers several advantages:
 
