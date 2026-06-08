@@ -147,41 +147,82 @@ The correct specification of a null hyphothesis is a crucial part of this framew
 
 ### Decomposition
 
-The decomposition approach implemented in the PySAL segregation module provides a framework for comparative segregation analysis that disentangles observed differences in segregation levels into two fundamental components: population composition and spatial structure. Building on the framework proposed by @rey2021comparative, the method uses spatially explicit counterfactual distributions combined with a Shapley value decomposition to determine how much of the difference between two segregation measures—whether across cities, time periods, or spatiotemporal contexts—is attributable to differences in demographic composition versus differences in the spatial arrangement of populations and areal units. 
+The decomposition approach implemented in the PySAL segregation module provides a framework for comparative segregation analysis that disentangles observed differences in segregation levels into two fundamental components: population composition and spatial structure. Building on the framework proposed by @rey2021comparative, the method uses spatially explicit counterfactual distributions combined with a Shapley value decomposition to determine how much of the difference between two segregation measures (whether across cities, time periods, or spatiotemporal contexts) is attributable to differences in demographic composition versus differences in the spatial arrangement of populations and areal units. 
 
 The method can be applied to a variety of segregation indices and comparison settings, including cross-sectional, temporal, and spatiotemporal analyses. By moving beyond simple comparisons of index values, the decomposition provides a richer interpretation of segregation dynamics and helps identify whether differences arise primarily from changes in population composition or from the spatial organization of neighborhoods. In the module, this functionality is available in the `DecomposeSegregation` class of the `decomposition` sub part.
 
 ## Example workflow
 
-A typical workflow in `segregation` can be implemented as follows:
+Assume you have a dataset (`pandas` or `geopandas` DataFrames) named `data_1`, a typical workflow in `segregation` can be implemented as follows:
 
 ```python
 from segregation.singlegroup import Dissim
 
-result = Dissim(
-    df_or_gdf,
+seg_index_1 = Dissim(
+    data_1,
     group_pop_var='group_A',
     total_pop_var='total_population'
 )
 ```
 
-This snippet estimates the Dissimilariy index of a specific sub-population (`group with characteristic A`) of your dataframe (`pandas` or `geopandas` DataFrames) and can accessed through the `statistic` attribute.
-
-When additional information about within-zone heterogeneity is available, dasymetric interpolation can be used to refine estimates. For example, population counts may be redistributed using a land cover raster to exclude uninhabited areas:
+This snippet estimates the Dissimilariy index of a specific sub-population (`group with characteristic A`) of your dataframe and can accessed through the `statistic` attribute. If the user is interested in assessing statistical significance of the index, it can simple be implemented as:
 
 ```python
-from tobler.dasymetric import masked_area_interpolate
+from segregation.inference import SingleValueTest
 
-result = masked_area_interpolate(
-    raster="raster_file_name.tif",
-    source_df,
-    target_df,
-    pixel_values = [21,22,23,24],
-    extensive_variables=["population"]
+inference_result = SingleValueTest(
+    seg_index_1, 
+    null_approach='bootstrap'
 )
 ```
 
-This approach assumes the user have a raster data of his own that can be read by rasterio^[A common example is the ones available at the [National Land Cover Database](https://www.mrlc.gov/national-land-cover-database-nlcd-2016).]. In this example, `tobler` allows a flexible approach where the user can pass which pixels are to be assumed inhabited through `pixel_values` resulting in a more realistic spatial distribution. Similarly, the user can execute a model-based approach using the `tobler.model.glm` function.
+This approach assumes the `bootstrap` approach for the generation of the Monte Carlo iterations, and the user can access the pseudo p-value estimated from the simulations through the `p_value` attribute.
+
+To compute all single group indices in one go, the package provides a wrapper function in the `batch` module:
+
+```python
+from segregation.batch import batch_compute_singlegroup
+
+all_singlegroup = batch_compute_singlegroup(
+    data_1,
+    group_pop_var='group_A',
+    total_pop_var='total_population'
+) 
+```
+
+To compute multiscalar profiles of, for example, a Gini index, the user can rely on the `dynamics` module and specify:
+
+```python
+from segregation.dynamics import compute_multiscalar_profile
+
+gini_profile =  compute_multiscalar_profile(
+    data_1,
+    segregation_index=Gini,
+    group_pop_var='group_A',
+    total_pop_var='total_population',
+    distances=range(500,5500,500)
+)
+```
+
+In terms of comparative segregation indexes, it possible to assess statistical significance between two measures using the `TwoValueTest` of the `inference` module as well as decompose the comparison using `DecomposeSegregation` from `decomposition`. Assume the user would like to compare the segregation of `group_A` between `data_1` and another spatial context `data_2`, therefore:
+
+
+```python
+from segregation.inference import TwoValueTest
+from segregation.decomposition import DecomposeSegregation
+
+seg_index_2 = Dissim(
+    data_2,
+    group_pop_var='group_A',
+    total_pop_var='total_population'
+)
+
+two_value_result = TwoValueTest(
+    seg_index_1,
+    seg_index_2, 
+    null_approach='bootstrap'
+)
+```
 
 \autoref{fig:emp_male_maps} illustrates an example comparing interpolated values derived from different spatial configurations, highlighting how results may vary depending on the underlying geometry and interpolation approach.
 
