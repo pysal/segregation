@@ -108,24 +108,28 @@ In addition, `segregation` provides a native solution for Python users, aligning
 
 # Software design
 
-`segregation` is designed with attention to both flexibility, usability, and inter-operability between its core functions. Segregation measures are built using Python classes which can be integrated in subsequent steps, such as inference or decomposition. The library is structured toward two kinds of segregation indices: 'spatially-explicit' and 'spatially-implicit'. The former includes space as part of its original formula. The latter uses the @reardonsullivan2004 approach to state that any segregation index is a spatial index if you transform the data properly.
+`segregation` is designed with attention to both flexibility, usability, and inter-operability between its core functions. The library is organized between different sub parts such as `singlegroup`, `multigroup`, `local`, `inference`, `decomposition`, `batch`, `network`, and `dynamics`.[^1] Segregation measures are built using Python classes which can be integrated in subsequent steps, such as inference or decomposition. The module is structured toward two kinds of segregation indices: 'spatially-explicit' and 'spatially-implicit'. The former includes space as part of its original formula. The latter uses the @reardonsullivan2004 approach to state that any segregation index is a spatial index if you transform the data properly.
 
-The library is organized between different sub parts such as `singlegroup`, `multigroup`, `local`, `inference`, `decomposition`, `batch`, `network`, and `dynamics`. Originally, @cortes2020open presented segregation but many new implementations were developed recently and the API suffered a major revision.
+[^1]: @cortes2020open introduced `segregation` but many new implementations were developed recently and the API suffered a major revision.
 
 Additionally, `segregation` is developed with testing and documentation standards consistent with the Scientific Python ecosystem, ensuring reliability and maintainability.
 
-"scikit-learn" like API?
+<!-- "scikit-learn" like API? -->
 
 ## Core Functionality
 
-`tobler` organizes its functionality around several key interpolation paradigms, each corresponding to different assumptions about how variables are distributed within source zones.
+`segregation` organizes its functionality around which type of segregation analysis is interested and each sub-part is explained as follows.
 
 
 ### Single and Multigroup Indices
 
-Mention batch compute
+Single group measures assess segregation between two different groups in a given location (i.e., one group vs. everyone else), Multi group segregation evaluates the simultaneous separation of all groups in a population (e.g., the distribution of White, Black, Asian, and Hispanic residents) across areas. 
+
+Currently, `segregation` has over 40 indices available which represents, from our knowledge, the broader range of indices available for a user in any software. Also, the user can fit many indices at once with a wrapper function in the `batch` module.
 
 ### Local Indices
+
+Unlike global indices that summarize an entire metropolitan area into a single value, local indices decompose segregation to the individual geographic unit level. Using these disaggregated measures helps identify precise spatial clusters where social isolation is most acute, uncovering micro-level dynamics that global metrics often mask. Currently, `segregation` has seven local indexes. 
 
 ### Multiscalar
 
