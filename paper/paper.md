@@ -240,7 +240,7 @@ decomposition_result = DecomposeSegregation(seg_index_1, seg_index_2)
 
 The package is actively used by the research community to assess segregation in many different contexts. @cortes2020open compared Los Angeles and New York racial segregation structures. @knaap2024segregated uses it to compute the spatial information theory index \(\tilde{H}\) for 380 U.S. metropolitan areas, @rey2024MeasuringSpatial relies on PySAL's `segregation` to measure multigroup dissimilarity in the school‑neighborhood nexus, and @wei2022ReducingRacial employs its dissimilarity index within an optimization model to minimize racial segregation in school districts. The module also underpins comparative segregation analytics [@rey2021comparative] and analyses of historical redlining legacies [@rey2022LegacyRedlining], demonstrating its role as a core computational engine across urban science, education policy, and spatial demography.
 
-In spatial data science education, `segregation` has become part of many curricula. It is included in pedagogical resources including textbooks [@knaapUrbanAnalysis2026], and, also is often taught in global conferences like SciPy.[^2]
+In spatial data science education, `segregation` has become part of many curricula. It is included in pedagogical resources including textbooks [@knaapUrbanAnalysis2026], and is often taught in global conferences like SciPy.[^2]
 
 [^2]: https://www.youtube.com/watch?v=4AHJVMs7iH4
 
@@ -266,7 +266,7 @@ In the public sector, the `tobler` package is used as part of a processing pipel
 -->
 # AI usage disclosure
 
-No generative AI or LLMs were used for code production for `segregation` or the writing of this paper.
+No generative AI or LLMs were used for code development in `segregation`; however, they were used for grammar and spelling corrections during the writing of this paper.
 
 # Acknowledgements
 
