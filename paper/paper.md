@@ -149,11 +149,11 @@ The correct specification of a null hypothesis is a crucial part of this framewo
 
 The decomposition approach implemented in the PySAL segregation module provides a framework for comparative segregation analysis that disentangles observed differences in segregation levels into two fundamental components: population composition and spatial structure. Building on the framework proposed by @rey2021comparative, the method uses spatially explicit counterfactual distributions combined with a Shapley value decomposition to determine how much of the difference between two segregation measures (whether across cities, time periods, or spatiotemporal contexts) is attributable to differences in demographic composition versus differences in the spatial arrangement of populations and areal units. 
 
-The method can be applied to a variety of segregation indices and comparison settings, including cross-sectional, temporal, and spatiotemporal analyses. By moving beyond simple comparisons of index values, the decomposition provides a richer interpretation of segregation dynamics and helps identify whether differences arise primarily from changes in population composition or from the spatial organization of neighborhoods. In the module, this functionality is available in the `DecomposeSegregation` class of the `decomposition` sub part.
+The method can be applied to a variety of segregation indices and comparison settings, including cross-sectional, temporal, and spatiotemporal analyses. By moving beyond simple comparisons of index values, the decomposition provides a richer interpretation of segregation dynamics and helps identify whether differences arise primarily from changes in population composition or from the spatial organization of neighborhoods. In the module, this functionality is available in the `DecomposeSegregation` class of the `decomposition` subpart.
 
 ## Example workflow
 
-Assume you have a dataset (`pandas` or `geopandas` DataFrames) named `data_1`, a typical workflow in `segregation` can be implemented as follows:
+Assuming you have a dataset (`pandas` or `geopandas` DataFrames) named `data_1`, a typical workflow in `segregation` can be implemented as follows:
 
 ```python
 from segregation.singlegroup import Dissim
@@ -165,7 +165,7 @@ seg_index_1 = Dissim(
 )
 ```
 
-This snippet estimates the Dissimilariy index of a specific sub-population (`group with characteristic A`) of your dataframe and can accessed through the `statistic` attribute. If the user is interested in assessing statistical significance of the index, it can simple be implemented as:
+This snippet estimates the Dissimilarity index of a specific sub-population (`group with characteristic A`) of your dataframe and can be accessed through the `statistic` attribute. If the user is interested in assessing statistical significance of the index, it can simply be implemented as:
 
 ```python
 from segregation.inference import SingleValueTest
@@ -204,7 +204,7 @@ gini_profile =  compute_multiscalar_profile(
 )
 ```
 
-In terms of comparative segregation indexes, it possible to assess statistical significance between two measures using the `TwoValueTest` of the `inference` module as well as decompose the comparison using `DecomposeSegregation` from `decomposition`. Assume the user would like to compare the segregation of `group_A` between `data_1` and another spatial context `data_2`, therefore, the code
+In terms of comparative segregation indexes, it is possible to assess statistical significance between two measures using the `TwoValueTest` of the `inference` module as well as decompose the comparison using `DecomposeSegregation` from `decomposition`. Assume the user would like to compare the segregation of `group_A` between `data_1` and another spatial context `data_2`. Therefore, the code below depicts both analysis.
 
 
 ```python
@@ -230,7 +230,7 @@ decomposition_result = DecomposeSegregation(seg_index_1, seg_index_2)
 
 ![Belo Horizonte (left) and Porto Alegre (right) black + brown share in total population in each census tract of 2022.\label{fig:poa_bh}](figs/seg_profile_merged_poa_bh.png)
 
-\autoref{fig:poa_bh_boot} presents an example of comparative analysis of selected segregation indices via Monte Carlo bootstrap simulations using the PySAL segregation module that reveals significant structural differences in the racial landscapes of Porto Alegre and Belo Horizonte. For global indices such as Dissimilarity (Dissim), Spatial Dissimilarity, and the Gini index, the non-overlapping distributions indicate that Porto Alegre exhibits statistically higher levels of unevenness in population distribution compared to Belo Horizonte. Conversely, the Isolation and Distance Decay Isolation metrics show a dramatic reversal; Belo Horizonte (red) displays significantly higher isolation values (concentrated above 0.60) than Porto Alegre (blue, approximately 0.37), suggesting that despite lower overall dissimilarity, Black and Brown residents in Belo Horizonte are much more likely to live in tracts with high intra-group exposure. Furthermore, the stark divergence in Relative Clustering where Porto Alegre’s distribution is shifted significantly to the right suggests a more intense spatial aggregation of minority groups into contiguous clusters in the southern capital. In contrast, measures like Entropy and Relative Concentration show considerable distributional overlap, indicating that for these specific dimensions of segregation, the differences between the two cities may not reach statistical significance.
+\autoref{fig:poa_bh_boot} presents an example of comparative analysis of selected segregation indices via Monte Carlo bootstrap simulations using the PySAL segregation module that reveals significant structural differences in the racial landscapes of Porto Alegre and Belo Horizonte. For global indices such as Dissimilarity (Dissim), Spatial Dissimilarity, and the Gini index, the non-overlapping distributions indicate that Porto Alegre exhibits statistically higher levels of unevenness in population distribution compared to Belo Horizonte. Conversely, the Isolation and Distance Decay Isolation metrics show a dramatic reversal; Belo Horizonte (red) displays significantly higher isolation values (concentrated above 0.60) than Porto Alegre (blue, approximately 0.37), suggesting that despite lower overall dissimilarity, Black and Brown residents in Belo Horizonte are much more likely to live in tracts with high intra-group exposure. Furthermore, the stark divergence in Relative Clustering, where Porto Alegre’s distribution is shifted significantly to the right suggests a more intense spatial aggregation of minority groups into contiguous clusters in the southern capital. In contrast, measures like Entropy and Relative Concentration show considerable distributional overlap, indicating that for these specific dimensions of segregation, the differences between the two cities may not reach statistical significance.
 
 ![Example of `segregation` usage for comparative 2022 census tracts: Porto Alegre (blue) vs. Belo Horizonte (red) distributions under bootstrap simulation\label{fig:poa_bh_boot}](figs/grid_plot_4314902_vs_3106200_bootstrap.png)
 
@@ -238,7 +238,7 @@ decomposition_result = DecomposeSegregation(seg_index_1, seg_index_2)
 
 # Research impact statement
 
-The package is actively used by the research community to assess segregation in many different contexts. @cortes2020open compared Los Angeles and New-York racial segregation structures. @knaap2024segregated use it to compute the spatial information theory index \(\tilde{H}\) for 380 U.S. metropolitan areas, @rey2024MeasuringSpatial rely on PySAL's `segregation` to measure multigroup dissimilarity in the school‑neighborhood nexus, and @wei2022ReducingRacial employ its dissimilarity index within an optimization model to minimize racial segregation in school districts. The module also underpins comparative segregation analytics [@rey2021comparative] and analyses of historical redlining legacies [@rey2022LegacyRedlining], demonstrating its role as a core computational engine across urban science, education policy, and spatial demography.
+The package is actively used by the research community to assess segregation in many different contexts. @cortes2020open compared Los Angeles and New York racial segregation structures. @knaap2024segregated uses it to compute the spatial information theory index \(\tilde{H}\) for 380 U.S. metropolitan areas, @rey2024MeasuringSpatial relies on PySAL's `segregation` to measure multigroup dissimilarity in the school‑neighborhood nexus, and @wei2022ReducingRacial employs its dissimilarity index within an optimization model to minimize racial segregation in school districts. The module also underpins comparative segregation analytics [@rey2021comparative] and analyses of historical redlining legacies [@rey2022LegacyRedlining], demonstrating its role as a core computational engine across urban science, education policy, and spatial demography.
 
 In spatial data science education, `segregation` has become part of many curricula. It is included in pedagogical resources including textbooks [@knaapUrbanAnalysis2026], and, also is often taught in global conferences like SciPy.[^2]
 
