@@ -103,15 +103,15 @@ Compared to desktop GIS platforms, `segregation` offers several advantages:
 * **Extensibility**: Users can modify or extend algorithms for research purposes
 * **Integration**: Segregation analysis can be embedded within larger data science pipelines, including machine learning and statistical modeling
 
-Segregation phenomenon is also possible to be assessed with other softwares like the R packages `OasisR` [@tivadar2019oasisr], `seg` [@segrhong2011] or `segregation` [@Elbers2021]. However, PySAL's `segregation` module distinguishes itself in several critical ways: supports over 40 distinct segregation indices out-of-the-box, it allows simultaneous computation of multiple indices across multi-scalar geographical frameworks with fewer software dependencies, it integrates spatial networks using topological relationships allowing users to measure social separation based on real-world street networks rather than assuming straight-line (Euclidean), it also has a set of function for evaluating statistical significance using simulations, and it also allows users to decompose segregation scores—identifying exactly how much segregation occurs due to spatial context.
+Segregation can also be assessed with other software, such as the R packages `OasisR` [@tivadar2019oasisr], `seg` [@segrhong2011] or `segregation` [@Elbers2021]. However, PySAL's `segregation` module distinguishes itself in several critical ways: supports over 40 distinct segregation indices out-of-the-box, it allows simultaneous computation of multiple indices across multi-scalar geographical frameworks with fewer software dependencies, it integrates spatial networks using topological relationships allowing users to measure social separation based on real-world street networks rather than assuming straight-line distances (Euclidean), it also has a set of function for evaluating statistical significance using simulations, and it also allows users to decompose segregation scores—identifying exactly how much segregation occurs due to spatial context.
 
 In addition, `segregation` provides a native solution for Python users, aligning with the growing adoption of Python in geospatial and data science communities.
 
 # Software design
 
-`segregation` is designed with attention to both flexibility, usability, and inter-operability between its core functions. The library is organized between different sub parts such as `singlegroup`, `multigroup`, `local`, `inference`, `decomposition`, `batch`, `network`, and `dynamics`.[^1] Segregation measures are built using Python classes which can be integrated in subsequent steps, such as inference or decomposition. The module is structured toward two kinds of segregation indices: 'spatially-explicit' and 'spatially-implicit'. The former includes space as part of its original formula. The latter uses the @reardonsullivan2004 approach to state that any segregation index is a spatial index if you transform the data properly.
+`segregation` is designed with attention to flexibility, usability, and interoperability between its core functions. The library is organized into different subparts such as `singlegroup`, `multigroup`, `local`, `inference`, `decomposition`, `batch`, `network`, and `dynamics`.[^1] Segregation measures are built using Python classes which can be integrated in subsequent steps, such as inference or decomposition. The module is structured toward two kinds of segregation indices: 'spatially-explicit' and 'spatially-implicit'. The former includes space as part of its original formula. The latter uses the @reardonsullivan2004 approach to state that any segregation index is a spatial index if you transform the data properly.
 
-[^1]: @cortes2020open introduced `segregation` but many new implementations were developed recently and the API suffered a major revision.
+[^1]: @cortes2020open introduced `segregation` but many new implementations were developed recently and the API underwent a major revision.
 
 Additionally, `segregation` is developed with testing and documentation standards consistent with the Scientific Python ecosystem, ensuring reliability and maintainability.
 
@@ -119,14 +119,14 @@ Additionally, `segregation` is developed with testing and documentation standard
 
 ## Core Functionality
 
-`segregation` organizes its functionality around which type of segregation analysis is interested and each sub-part is explained as follows.
+`segregation` organizes its functionality around the type of segregation analysis the user is interested in, and each subpart is explained as follows.
 
 
 ### Single and Multigroup Indices
 
-Single group measures assess segregation between two different groups in a given location (i.e., one group vs. everyone else), Multi group segregation evaluates the simultaneous separation of all groups in a population (e.g., the distribution of White, Black, Asian, and Hispanic residents) across areas. 
+Single-group measures assess segregation between two different groups in a given location (i.e., one group vs. everyone else). Multigroup segregation evaluates the simultaneous separation of all groups in a population (e.g., the distribution of White, Black, Asian, and Hispanic residents) across areas. 
 
-Currently, `segregation` has over 40 indices available which represents, from our knowledge, the broader range of indices available for a user in any software. Also, the user can fit many indices at once with a wrapper function in the `batch` module.
+Currently, `segregation` has over 40 indices available which represents, to our knowledge, the broadest range of indices available for a user in any software. Also, the user can fit many indices at once with a wrapper function in the `batch` module.
 
 ### Local Indices
 
@@ -140,9 +140,9 @@ The package has a wrapper named `compute_multiscalar_profile` which can be used 
 
 ### Simulation based Inference
 
-PySAL's `segregation` module also addresses whether segregation index values are statistically significant under different specifications of a null hyphothesis using Monte Carlo simulations. Currently, for single value inference the module can generate approaches like generate bootstrap replications of the units with replacement (`bootstrap`), multinomial with restricted conditional probabilities (`systematic`), binomial with fixed parameters (`evenness`), geographic unit-level randomization (`geographic_permutation`), among others. For two-value inference, the user can specify resampling to generate distributions of the segregation index for each index (`bootstrap`), generate a synthetic dataset for each region through counterfactual estimates (`composition`), among others.
+PySAL's `segregation` module also addresses whether segregation index values are statistically significant under different specifications of a null hypothesis using Monte Carlo simulations. Currently, for single value inference the module can generate bootstrap replications of the units with replacement (`bootstrap`), multinomial with restricted conditional probabilities (`systematic`), binomial with fixed parameters (`evenness`), geographic unit-level randomization (`geographic_permutation`), among others. For two-value inference, the user can specify resampling to generate distributions of the segregation index for each index (`bootstrap`), generate a synthetic dataset for each region through counterfactual estimates (`composition`), among others.
 
-The correct specification of a null hyphothesis is a crucial part of this framework as different null hypotheses can lead to markedly different inferences, and also different segregation indexes, which can assess different segregation dimensions (i.e. evenness, exposure, concentration, centralization, and clustering) may not be appropriate for some specifications, specially for comparative inference.
+The correct specification of a null hypothesis is a crucial part of this framework as different null hypotheses can lead to markedly different inferences, and also different segregation indexes, which can assess different segregation dimensions (i.e. evenness, exposure, concentration, centralization, and clustering) may not be appropriate for some specifications, especially for comparative inference.
 
 
 ### Decomposition
