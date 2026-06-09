@@ -5,7 +5,7 @@ tags:
 - geographic information science
 - segregation
 - spatial analysis
-date: "05 June 2026"
+date: "09 June 2026"
 output: pdf_document
 authors:
 - name: Renan X. Cortes
@@ -238,7 +238,7 @@ decomposition_result = DecomposeSegregation(seg_index_1, seg_index_2)
 
 # Research impact statement
 
-The package is actively used by the research community to assess segregation in many different contexts. @cortes2020open compared Los Angeles and New York racial segregation structures. @knaap2024segregated uses it to compute the spatial information theory index \(\tilde{H}\) for 380 U.S. metropolitan areas, @rey2024MeasuringSpatial relies on PySAL's `segregation` to measure multigroup dissimilarity in the school‑neighborhood nexus, and @wei2022ReducingRacial employs its dissimilarity index within an optimization model to minimize racial segregation in school districts. The module also underpins comparative segregation analytics [@rey2021comparative] and analyses of historical redlining legacies [@rey2022LegacyRedlining], demonstrating its role as a core computational engine across urban science, education policy, and spatial demography.
+The package is actively used by the research community to assess segregation in many different contexts. @cortes2020open compared Los Angeles and New York racial segregation structures. @knaap2024segregated uses it to compute the spatial information theory index ($\tilde{H}$) for 380 U.S. metropolitan areas, @rey2024MeasuringSpatial relies on PySAL's `segregation` to measure multigroup dissimilarity in the school‑neighborhood nexus, and @wei2022ReducingRacial employs its dissimilarity index within an optimization model to minimize racial segregation in school districts. The module also underpins comparative segregation analytics [@rey2021comparative] and analyses of historical redlining legacies [@rey2022LegacyRedlining], demonstrating its role as a core computational engine across urban science, education policy, and spatial demography.
 
 In spatial data science education, `segregation` has become part of many curricula. It is included in pedagogical resources including textbooks [@knaapUrbanAnalysis2026], and is often taught in global conferences like SciPy.[^2]
 
