@@ -125,86 +125,35 @@ The PySAL `segregation` module implements a decomposition framework for comparat
 
 ## Example workflow
 
-Assuming you have a dataset (`pandas` or `geopandas` DataFrames) named `data_1`, a typical workflow in `segregation` can be implemented with:
+Assuming a `pandas` or `geopandas` DataFrame named `data_1`, a segregation index can be computed as:
 
 ```python
 from segregation.singlegroup import Dissim
 
-seg_index_1 = Dissim(
+seg_index = Dissim(
     data_1,
-    group_pop_var='group_A',
-    total_pop_var='total_population'
+    group_pop_var="group_A",
+    total_pop_var="total_population",
 )
 ```
 
-This snippet estimates the Dissimilarity index of a specific sub-population (`group with characteristic A`) of your dataframe and can be accessed through the `statistic` attribute. If the user is interested in assessing statistical significance of the index, it can simply be implemented as:
+The estimated value is available through the `statistic` attribute. Statistical significance can be evaluated using Monte Carlo inference:
 
 ```python
 from segregation.inference import SingleValueTest
 
-inference_result = SingleValueTest(
-    seg_index_1, 
-    null_approach='bootstrap'
-)
+result = SingleValueTest(seg_index, null_approach="bootstrap")
 ```
 
-This approach assumes the `bootstrap` approach for the generation of the Monte Carlo iterations, and the user can access the pseudo p-value estimated from the simulations through the `p_value` attribute.
-
-To compute all single group indices in one go, the package provides a wrapper function in the `batch` module:
-
-```python
-from segregation.batch import batch_compute_singlegroup
-
-all_singlegroup = batch_compute_singlegroup(
-    data_1,
-    group_pop_var='group_A',
-    total_pop_var='total_population'
-) 
-```
-
-To compute multiscalar profiles of, for example, a Gini index, the user can rely on the `dynamics` module and specify:
-
-```python
-from segregation.dynamics import compute_multiscalar_profile
-
-gini_profile =  compute_multiscalar_profile(
-    data_1,
-    segregation_index=Gini,
-    group_pop_var='group_A',
-    total_pop_var='total_population',
-    distances=range(500,5500,500)
-)
-```
-
-In terms of comparative segregation indexes, it is possible to assess statistical significance between two measures using the `TwoValueTest` of the `inference` module as well as decompose the comparison using `DecomposeSegregation` from `decomposition`. Assume the user would like to compare the segregation of `group_A` between `data_1` and another spatial context `data_2`. Therefore, the code below depicts both analysis.
-
-
-```python
-from segregation.inference import TwoValueTest
-from segregation.decomposition import DecomposeSegregation
-
-seg_index_2 = Dissim(
-    data_2,
-    group_pop_var='group_A',
-    total_pop_var='total_population'
-)
-
-two_value_result = TwoValueTest(
-    seg_index_1,
-    seg_index_2, 
-    null_approach='bootstrap'
-)
-
-decomposition_result = DecomposeSegregation(seg_index_1, seg_index_2)
-```
+The package also provides wrappers for computing all single-group indices (`batch_compute_singlegroup`), generating multiscalar profiles (`compute_multiscalar_profile`), comparing segregation measures (`TwoValueTest`), and decomposing differences into demographic and spatial components (`DecomposeSegregation`).
 
 
 
 # Research impact statement
 
-The package is actively used by the research community to assess segregation in many different contexts. @cortes2020open compared Los Angeles and New York racial segregation structures. @knaap2024segregated uses it to compute the spatial information theory index ($\tilde{H}$) for 380 U.S. metropolitan areas, @rey2024MeasuringSpatial relies on PySAL's `segregation` to measure multigroup dissimilarity in the school‑neighborhood nexus, and @wei2022ReducingRacial employs its dissimilarity index within an optimization model to minimize racial segregation in school districts. The module also underpins comparative segregation analytics [@rey2021comparative] and analyses of historical redlining legacies [@rey2022LegacyRedlining], demonstrating its role as a core computational engine across urban science, education policy, and spatial demography.
+`segregation` is actively used in research on urban inequality, spatial demography, and education policy. Applications include comparative analyses of racial segregation [@cortes2020open], measurement of spatial information theory indices across U.S. metropolitan areas [@knaap2024segregated], studies of school-neighborhood segregation [@rey2024MeasuringSpatial], optimization approaches for reducing school segregation [@wei2022ReducingRacial], comparative segregation analytics [@rey2021comparative], and analyses of historical redlining legacies [@rey2022LegacyRedlining].
 
-In spatial data science education, `segregation` has become part of many curricula. It is included in pedagogical resources including textbooks [@knaapUrbanAnalysis2026], and is often taught in global conferences like SciPy.[^2]
+The package is also used in spatial data science education, including textbooks [@knaapUrbanAnalysis2026] and instructional materials presented at conferences such as SciPy.[^2]
 
 [^2]: https://www.youtube.com/watch?v=4AHJVMs7iH4
 
