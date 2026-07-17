@@ -211,7 +211,7 @@ In spatial data science education, `segregation` has become part of many curricu
 
 # AI usage disclosure
 
-No generative AI or LLMs were used for code development in `segregation`; however, they were used for grammar and spelling corrections during the writing of this paper.
+No generative AI or LLMs were used for code development in `segregation`; however, they were used for grammar, spelling corrections and consistency during the writing of this paper.
 
 # Acknowledgements
 
