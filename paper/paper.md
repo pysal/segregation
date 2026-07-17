@@ -226,14 +226,6 @@ two_value_result = TwoValueTest(
 decomposition_result = DecomposeSegregation(seg_index_1, seg_index_2)
 ```
 
-\autoref{fig:poa_bh} depicts the black + brown share in total population in each census tract of 2022 in two major Brazilian cities: Belo Horizonte and Porto Alegre. Clear visual synthesis reveals a consistent pattern of socio-spatial segregation, characterized by a "center-periphery" racial gradient in both cities.
-
-![Belo Horizonte (left) and Porto Alegre (right) black + brown share in total population in each census tract of 2022.\label{fig:poa_bh}](figs/seg_profile_merged_poa_bh.png)
-
-\autoref{fig:poa_bh_boot} presents an example of comparative analysis of selected segregation indices via Monte Carlo bootstrap simulations using the PySAL segregation module that reveals significant structural differences in the racial landscapes of Porto Alegre and Belo Horizonte. For global indices such as Dissimilarity (Dissim), Spatial Dissimilarity, and the Gini index, the non-overlapping distributions indicate that Porto Alegre exhibits statistically higher levels of unevenness in population distribution compared to Belo Horizonte. Conversely, the Isolation and Distance Decay Isolation metrics show a dramatic reversal; Belo Horizonte (red) displays significantly higher isolation values (concentrated above 0.60) than Porto Alegre (blue, approximately 0.37), suggesting that despite lower overall dissimilarity, Black and Brown residents in Belo Horizonte are much more likely to live in tracts with high intra-group exposure. Furthermore, the stark divergence in Relative Clustering, where Porto Alegre’s distribution is shifted significantly to the right suggests a more intense spatial aggregation of minority groups into contiguous clusters in the southern capital. In contrast, measures like Entropy and Relative Concentration show considerable distributional overlap, indicating that for these specific dimensions of segregation, the differences between the two cities may not reach statistical significance.
-
-![Example of `segregation` usage for comparative 2022 census tracts: Porto Alegre (blue) vs. Belo Horizonte (red) distributions under bootstrap simulation\label{fig:poa_bh_boot}](figs/grid_plot_4314902_vs_3106200_bootstrap.png)
-
 
 
 # Research impact statement
@@ -244,26 +236,7 @@ In spatial data science education, `segregation` has become part of many curricu
 
 [^2]: https://www.youtube.com/watch?v=4AHJVMs7iH4
 
-<!--@rey2021comparative
-@cortes2020open
-housing policy [@rey2022LegacyRedlining]
-@knaap2024segregated
-education policy [@rey2024MeasuringSpatial]
-@wei2022ReducingRacial
 
-
-
-The package is actively used by the research community to transfer the data between various types of geographic boundaries. This is not limited to specific applications but covers use cases from continental analysis of emissions and health [@laporta2024Urban], analysis of urban form and function [@fleischmann2022Geographical], redistribution of census data to school districts for assessment of the Clean School Bus Rebate Program [@osia2025Infrastructure], quantification of radon exposure [@lee2026Quantifyinga], or harmonization of vector and raster data for computer vision tasks [@fleischmann2024Decoding].
-
-Moreover, the package is relied on in downstream software as `atlasbr` for harmonization of Brazilian urban data [@oliveira_paiva_neto_atlasbr], and is referred to in the `pygridmap` package by Eurostat [@grazzini_gaffuri_pygridmap] as a reference implementation.
-The `tobler` package has made tangible contributions to spatial science, pedagogy, and applications in government and industry. In academia, the package is used as part of a data-processing pipeline for research that examines the spatial-contextual influence on a variety of outcomes, including segregation [@wei2022ReducingRacial], housing policy [@rey2022LegacyRedlining], education policy [@rey2024MeasuringSpatial; @osia2025InfrastructureEnvironmental], and pollution exposure [@lee2026QuantifyingMean; @laporta2024UrbanScaling]. It is also used in environmental science [@hu2023MethodologicalChallenges] and regionalization research [@feng2022MaxpcompactregionsProblem].
-
-In spatial data science education, `tobler` has become an integral part of many many curricula. It is included in popular pedagogical resources including two textbooks [@reyGeographicDataScience2023; @knaapUrbanAnalysis2026], and is taught in graduate and undergraduate courses in univresities across the globe, including the University of California (Berkeley, Irvine, and Riverside campuses), San Diego State University, Charles University, University of Liverpool, Bristol University, the University of Chicago, Northern Arizona University, and Temple University.
-
-**I took some liberty with a couple of these...we might want to check with Luc and Levi**
-
-In the public sector, the `tobler` package is used as part of a processing pipeline that powers urban planning and policymaking, including two highly visible projects from the Turing Institute, [DemoLand](https://www.turing.ac.uk/research/research-projects/demoland) and [UrbanGrammar](https://www.turing.ac.uk/research/research-projects/urban-grammar). **Martin/Dani could you confirm and add a sentence or two?**?
--->
 # AI usage disclosure
 
 No generative AI or LLMs were used for code development in `segregation`; however, they were used for grammar and spelling corrections during the writing of this paper.
