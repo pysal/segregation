@@ -79,25 +79,9 @@ These capabilities establish `segregation` as a unified, open-source framework f
 
 # State of the field
 
-`segregation` is a component of the PySAL ecosystem, which provides a comprehensive suite of tools for spatial analysis in Python. Within this ecosystem, the packages are divided into four types (example libraries in parentheses):
+`segregation` is part of the PySAL ecosystem, where it provides tools for residential segregation analysis within the **Explore** family of spatial analysis libraries. Unlike desktop GIS software, it supports reproducible, scriptable workflows that integrate naturally with broader Python data science pipelines.
 
-* `Lib`: Core spatial data structures, file IO. Construction and interactive editing of spatial weights matrices & graphs. Alpha shapes, spatial indices, and spatial-topological relationships (`libpysal`)
-* `Explore`: Modules to conduct exploratory analysis of spatial and spatio-temporal data (`esda`, `giddy`, `inequality`, etc.)
-* `Model`: Estimation of spatial relationships in data with a variety of linear, generalized-linear, generalized-additive, and nonlinear models (`spreg`, `spopt`, `tobler`, `spglm`, etc.)
-* `Viz`: Visualize patterns in spatial data to detect clusters, outliers, and hot-spots (`mapclassify`, `splot`, etc.)
-
-`segregation` is present in the **Explore** set of libraries and addresses the specific problem of residential segregation.
-
-Compared to desktop GIS platforms, `segregation` offers several advantages:
-
-* **Reproducibility**: Workflows can be scripted and version-controlled
-* **Transparency**: Methods and assumptions are explicit and inspectable
-* **Extensibility**: Users can modify or extend algorithms for research purposes
-* **Integration**: Segregation analysis can be embedded within larger data science pipelines, including machine learning and statistical modeling
-
-Segregation can also be assessed with other software, such as the R packages `OasisR` [@tivadar2019oasisr], `seg` [@segrhong2011] or `segregation` [@Elbers2021]. However, PySAL's `segregation` module distinguishes itself in several critical ways: supports over 40 distinct segregation indices out-of-the-box, it allows simultaneous computation of multiple indices across multi-scalar geographical frameworks with fewer software dependencies, it integrates spatial networks using topological relationships allowing users to measure social separation based on real-world street networks rather than assuming straight-line distances (Euclidean), it also has a set of function for evaluating statistical significance using simulations, and it also allows users to decompose segregation scores—identifying exactly how much segregation occurs due to spatial context.
-
-In addition, `segregation` provides a native solution for Python users, aligning with the growing adoption of Python in geospatial and data science communities.
+Although segregation analysis is also available in R packages such as `OasisR` [@tivadar2019oasisr], `seg` [@segrhong2011], and `segregation` [@Elbers2021], PySAL's `segregation` module provides a broader and more integrated framework. It includes over 40 segregation indices, supports multiscalar and network-based analyses, Monte Carlo inference, and decomposition methods, while enabling simultaneous computation of multiple indices with minimal software dependencies. As a native Python library, it integrates seamlessly with the PySAL ecosystem and modern geospatial data science workflows.
 
 # Software design
 
