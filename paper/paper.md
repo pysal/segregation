@@ -56,34 +56,26 @@ https://joss.readthedocs.io/en/latest/paper.html#:~:text=Your%20paper%20must-,in
 # Summary
 
 
-`segregation` is an open-source Python library for the measurement, analysis, inference, and decomposition of social and spatial segregation patterns. Developed as part of the PySAL ecosystem, the package provides a comprehensive framework for quantifying segregation across a wide range of demographic, socioeconomic, and geographic contexts. It supports both traditional aspatial measures and advanced spatially explicit approaches, enabling researchers to investigate how population groups are distributed across space and how these patterns evolve over time.
+`segregation` is an open-source Python library for measuring, analyzing, inferring, and decomposing social and spatial segregation. Developed within the PySAL ecosystem, it provides a comprehensive framework for quantifying segregation across demographic, socioeconomic, and geographic contexts using both aspatial and spatially explicit measures. The package implements over 40 single-group, multigroup, local, and spatial segregation indices, capturing dimensions such as evenness, exposure, concentration, clustering, centralization, and spatial proximity. It supports multiple spatial representations, including adjacency, distance-based, and network-based relationships.
 
-Segregation analysis is a central topic in urban studies, geography, sociology, demography, and public policy. The `segregation` package implements a large collection of segregation indices, including single-group, multigroup, local, and spatial measures. These methods capture different dimensions of segregation such as evenness, exposure, concentration, clustering, centralization, and spatial proximity. The package accommodates a variety of spatial representations, including adjacency relationships, distance-based interactions, and network-based structures, allowing users to select measures that align with the theoretical and empirical characteristics of their study area.
-
-Beyond point estimation, `segregation` provides a robust inferential framework for evaluating the statistical significance of segregation measures. Users can perform single-value and comparative hypothesis tests using simulation-based approaches, facilitating rigorous assessments of whether observed segregation patterns differ from those expected under specified null models. The package also includes decomposition methods that separate differences in segregation levels into components attributable to demographic composition and spatial structure, offering deeper insight into the processes underlying segregation dynamics.
-
-Designed to operate natively with Pandas and GeoPandas data structures, `segregation` integrates seamlessly into contemporary Python-based spatial data science libraries and therefore minimizes friction in typical workflows. As a component of the Python Spatial Analysis Library (PySAL) ecosystem [@pysal2007; @rey2022pysalecosystem], it follows shared principles of interoperability, transparency, reproducibility, and methodological rigor. By providing accessible, well-documented, and extensible implementations of state-of-the-art segregation measures, `segregation` serves both applied researchers investigating social inequality and methodological developers advancing quantitative approaches to segregation analysis.
+Beyond point estimation, `segregation` provides Monte Carlo inference for single-value and comparative hypothesis testing under alternative null models, as well as decomposition methods that separate differences in segregation into demographic composition and spatial structure. Built for Pandas and GeoPandas, `segregation` integrates seamlessly with the PySAL ecosystem [@pysal2007; @rey2022pysalecosystem], providing transparent, reproducible, and extensible tools for segregation research and spatial data science.
 
 
 # Statement of need
 
-Residential segregation, inequality, and spatial separation of population groups remain central concerns in urban studies, sociology, demography, geography, and public policy. Researchers and practitioners frequently seek to quantify the extent to which social groups are unevenly distributed across neighborhoods, cities, and regions, as well as to understand how segregation patterns vary across space and time. The increasing availability of demographic and socioeconomic data has expanded opportunities for segregation analysis, but it has also highlighted the need for accessible, transparent, and reproducible computational tools capable of implementing a wide range of segregation measures and inferential procedures.
+Residential segregation is a central topic in urban studies, sociology, demography, geography, and public policy. Although demographic and spatial data are increasingly available, existing software often provides a limited set of segregation measures, relies on proprietary platforms, or lacks support for modern inference and decomposition methods. Within Python, segregation analysis has historically depended on custom implementations despite the widespread adoption of Pandas and GeoPandas.
 
-Traditional software environments for segregation analysis often provide only a limited set of indices, rely on proprietary platforms, or require researchers to implement methods manually. These limitations can hinder reproducibility, reduce methodological transparency, and create barriers for comparing results across studies. Furthermore, advances in segregation research have introduced numerous spatially explicit measures, local indicators, decomposition techniques, and simulation-based inference methods that are not consistently available within existing analytical software.
+`segregation` addresses these limitations by providing:
 
-Within the Python ecosystem, support for segregation analysis was historically fragmented. While libraries such as Pandas and GeoPandas provide essential data structures for handling tabular and spatial data, they do not natively implement segregation measures or associated inferential frameworks. Consequently, researchers often relied on custom scripts, isolated software implementations, or statistical packages in other programming languages, resulting in inconsistent workflows and difficulties in reproducing analyses.
+* A comprehensive, well-documented API for segregation analysis
+* Native integration with Pandas, GeoPandas, and the PySAL ecosystem
+* Over 40 aspatial, spatial, local, and multigroup segregation indices
+* Multiscalar segregation profiles
+* Simulation-based inference for hypothesis testing
+* Decomposition of segregation into demographic and spatial components
+* Transparent, reproducible, and extensible implementations
 
-`segregation` addresses these challenges by providing:
-
-* A comprehensive and well-documented API for segregation measurement and analysis
-* Native integration with Pandas, GeoPandas, and the broader PySAL ecosystem
-* Support for a large collection of aspatial, spatial, local, and multigroup segregation indices
-* Functions for measuring and visualizing multiscalar segregation profiles
-* Simulation-based inference procedures for evaluating the statistical significance of segregation measures
-* Decomposition methods that facilitate the investigation of demographic and spatial sources of segregation
-* A strong emphasis on transparency, reproducibility, and methodological extensibility
-
-These capabilities make `segregation` particularly valuable for researchers and practitioners in fields such as urban studies, sociology, demography, geography, public policy, public health, and regional science, where understanding patterns of spatial inequality and social separation is a fundamental analytical objective.
+These capabilities establish `segregation` as a unified, open-source framework for reproducible segregation analysis in Python.
 
 # State of the field
 
