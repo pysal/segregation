@@ -80,9 +80,7 @@ def _build_knn_graph(gdf, metric, network, distance_matrix, k=30):
                 row = dm.getrow(i).tocoo()
                 if len(row.data) == 0:
                     continue
-                knn_idx = np.argpartition(row.data, min(k, len(row.data) - 1))[
-                    :k
-                ]
+                knn_idx = np.argpartition(row.data, min(k, len(row.data) - 1))[:k]
                 for j in knn_idx:
                     rows.append(i)
                     cols.append(row.col[j])

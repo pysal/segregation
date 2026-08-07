@@ -95,7 +95,8 @@ class GlobalDistortion(MultiGroupIndex, SpatialExplicitIndex):
     distance_matrix: numpy.array (optional; None by default)
         numpy array of distances between observations in the dataset
     normalization: bool
-        NOT YET IMPLEMENTED
+        If True, standardize the measure by the theoretical maximum segregation value
+        for this dataset
 
     Attributes
     ----------
@@ -121,7 +122,7 @@ class GlobalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         network=None,
         distance_matrix=None,
         normalize=False,
-        **kwargs
+        **kwargs,
     ):
         """Init."""
 
