@@ -18,12 +18,11 @@ automatically on the same scale as the observed distortions.
 import geopandas as gpd
 import numpy as np
 import pandas as pd
+from libpysal.graph import Graph as lpsGraph
 from scipy.sparse import coo_matrix
 from scipy.sparse.csgraph import depth_first_order, minimum_spanning_tree
-from scipy.spatial import cKDTree
 
 from ..dynamics.divergence_profile import compute_divergence_profiles
-from ..network import compute_travel_cost_matrix
 
 
 def _build_knn_graph(gdf, metric, network, distance_matrix, k=30):
@@ -47,7 +46,7 @@ def _build_knn_graph(gdf, metric, network, distance_matrix, k=30):
 
     Returns
     -------
-    scipy.sparse.coo_matrix
+    scipy.sparse.csr_array
         Sparse symmetric adjacency matrix of shape (n, n).
     """
     n = len(gdf)
@@ -55,11 +54,9 @@ def _build_knn_graph(gdf, metric, network, distance_matrix, k=30):
     if k < 1:
         raise ValueError("Need at least 2 observations to build a k-NN graph")
 
-    centroids = gdf.geometry.centroid
-    coords = np.column_stack((centroids.x, centroids.y))
-
     if network is not None:
         # Network: use pandarm.k_nearest_nodes
+        centroids = gdf.geometry.centroid
         node_ids = network.get_node_ids(centroids.x, centroids.y)
         result = network.k_nearest_nodes(node_ids, k=k, max_radius=0)
         imp_name = result.columns[-1]
@@ -70,10 +67,15 @@ def _build_knn_graph(gdf, metric, network, distance_matrix, k=30):
         id_to_pos = pd.Series(np.arange(n), index=gdf.index)
         src_pos = id_to_pos.loc[rows].values
         dst_pos = id_to_pos.loc[cols].values
-    elif distance_matrix is not None:
+        # Build symmetric sparse graph
+        all_rows = np.concatenate([src_pos, dst_pos])
+        all_cols = np.concatenate([dst_pos, src_pos])
+        all_vals = np.concatenate([vals, vals])
+        return coo_matrix((all_vals, (all_rows, all_cols)), shape=(n, n)).tocsr()
+
+    if distance_matrix is not None:
         # Precomputed (dense or sparse): take k smallest per row
         if hasattr(distance_matrix, "tocoo"):
-            # Sparse input
             dm = distance_matrix.tocsr()
             rows, cols, vals = [], [], []
             for i in range(n):
@@ -86,7 +88,6 @@ def _build_knn_graph(gdf, metric, network, distance_matrix, k=30):
                     cols.append(row.col[j])
                     vals.append(row.data[j])
             rows, cols, vals = np.array(rows), np.array(cols), np.array(vals)
-            src_pos, dst_pos = rows, cols
         else:
             # Dense
             src_pos = np.repeat(np.arange(n), k)
@@ -98,27 +99,19 @@ def _build_knn_graph(gdf, metric, network, distance_matrix, k=30):
                 idx = np.argpartition(row, k - 1)[:k]
                 dst_pos[i * k : (i + 1) * k] = idx
                 vals[i * k : (i + 1) * k] = row[idx]
-    else:
-        # Euclidean via cKDTree
-        tree = cKDTree(coords)
-        for i in range(n):
-            dists, idx = tree.query(coords[i], k=k + 1)
-            # First result is self (distance 0); skip it
-            if i == 0:
-                src_pos = np.empty(n * k, dtype=int)
-                dst_pos = np.empty(n * k, dtype=int)
-                vals = np.empty(n * k, dtype=float)
-            src_pos[i * k : (i + 1) * k] = i
-            dst_pos[i * k : (i + 1) * k] = idx[1:]
-            vals[i * k : (i + 1) * k] = dists[1:]
+            rows, cols = src_pos, dst_pos
+        all_rows = np.concatenate([rows, cols])
+        all_cols = np.concatenate([cols, rows])
+        all_vals = np.concatenate([vals, vals])
+        return coo_matrix((all_vals, (all_rows, all_cols)), shape=(n, n)).tocsr()
 
-    # Build symmetric sparse graph (undirected)
-    all_rows = np.concatenate([src_pos, dst_pos])
-    all_cols = np.concatenate([dst_pos, src_pos])
-    all_vals = np.concatenate([vals, vals])
-    graph = coo_matrix((all_vals, (all_rows, all_cols)), shape=(n, n))
-
-    return graph
+    # Euclidean: use libpysal.Graph.build_knn on centroids
+    centroids = gdf.geometry.centroid
+    graph = lpsGraph.build_knn(centroids, k=k)
+    # Symmetrize for MST (build_knn is directed)
+    sp = graph.sparse
+    sym = sp.maximum(sp.T)
+    return sym.tocsr()
 
 
 def _ordering_for_normalization(gdf, metric, network, distance_matrix, k=30):
