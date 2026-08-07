@@ -1,5 +1,6 @@
 import geopandas as gpd
 import numpy as np
+import pytest
 from libpysal.examples import load_example
 from segregation.local import LocalDistortion
 
@@ -419,3 +420,121 @@ def test_LocalDiversity():
             ]
         ),
     )
+
+
+@pytest.fixture
+def s_map():
+    m = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
+    return m.to_crs(m.estimate_utm_crs())
+
+
+def test_normalization_no_raise(s_map):
+    """normalize=True should not raise."""
+    groups_list = ["WHITE", "BLACK", "ASIAN", "HISP"]
+    index = LocalDistortion(s_map, groups=groups_list, normalize=True)
+    assert index.statistics is not None
+
+
+def test_normalization_values_in_unit_interval(s_map):
+    """Normalized distortion coefficients should lie in [0, 1]."""
+    groups_list = ["WHITE", "BLACK", "ASIAN", "HISP"]
+    index = LocalDistortion(s_map, groups=groups_list, normalize=True)
+    assert index.statistics.min() >= 0.0
+    assert index.statistics.max() <= 1.0 + 1e-10  # allow tiny float error
+
+
+def test_normalization_constant_exposed(s_map):
+    """The normalization constant should be a positive finite float."""
+    groups_list = ["WHITE", "BLACK", "ASIAN", "HISP"]
+    index = LocalDistortion(s_map, groups=groups_list, normalize=True)
+    N = index.normalization_constant
+    assert N is not None
+    assert np.isfinite(N)
+    assert N > 0
+
+
+def test_normalization_constant_none_when_not_normalized(s_map):
+    """normalization_constant should be None when normalize=False."""
+    groups_list = ["WHITE", "BLACK", "ASIAN", "HISP"]
+    index = LocalDistortion(s_map, groups=groups_list, normalize=False)
+    assert index.normalization_constant is None
+
+
+def test_normalization_two_groups(s_map):
+    """Normalization should work with only 2 groups."""
+    groups_list = ["WHITE", "BLACK"]
+    index = LocalDistortion(s_map, groups=groups_list, normalize=True)
+    assert index.statistics.min() >= 0.0
+    assert index.statistics.max() <= 1.0 + 1e-10
+
+
+def test_normalization_max_is_one(s_map):
+    """Feeding a maximally-segregated landscape should yield max normalized == 1.0."""
+    from segregation.util.normalization import _maximal_segregation_distortion
+    from segregation.dynamics.divergence_profile import compute_divergence_profiles
+    import geopandas as gpd
+
+    groups_list = ["WHITE", "BLACK", "ASIAN", "HISP"]
+    N = _maximal_segregation_distortion(s_map, groups_list)
+    # Build the synthetic landscape and compute its distortion
+    # The max raw distortion should equal N (by construction)
+    df = s_map[groups_list].values.astype(float)
+    group_totals = df.sum(axis=0)
+    group_order = np.argsort(group_totals)
+    n = len(s_map)
+
+    from segregation.util.normalization import _ordering_for_normalization
+    unit_order = _ordering_for_normalization(s_map, "euclidean", None, None)
+
+    block_sizes = np.zeros(len(groups_list), dtype=int)
+    grand_total = group_totals.sum()
+    for g_idx, g_pos in enumerate(group_order):
+        share = group_totals[g_pos] / grand_total
+        block_sizes[g_pos] = max(1, int(round(n * share)))
+    diff = n - block_sizes.sum()
+    largest = int(np.argmax(group_totals))
+    block_sizes[largest] += diff
+
+    synth = np.zeros_like(df)
+    unit_idx = 0
+    for g_pos in group_order:
+        block_size = block_sizes[g_pos]
+        block_units = unit_order[unit_idx : unit_idx + block_size]
+        unit_idx += block_size
+        block_original_totals = df[block_units].sum(axis=1)
+        total_in_block = block_original_totals.sum()
+        if total_in_block > 0:
+            shares = block_original_totals / total_in_block
+        else:
+            shares = np.ones(block_size) / block_size
+        synth[block_units, g_pos] = group_totals[g_pos] * shares
+
+    synth_gdf = s_map.copy()
+    for g_idx, g_name in enumerate(groups_list):
+        synth_gdf[g_name] = synth[:, g_idx]
+
+    aux = compute_divergence_profiles(gdf=synth_gdf, groups=groups_list)
+    distortion = aux.groupby("observation").sum()["divergence"]
+    np.testing.assert_allclose(distortion.max(), N, rtol=1e-5)
+
+
+def test_ckdtree_regression(s_map):
+    """cKDTree path should produce identical results to the old dense-matrix path."""
+    groups_list = ["WHITE", "BLACK", "ASIAN", "HISP"]
+    index = LocalDistortion(s_map, groups=groups_list)
+    # The hardcoded expected values from the original test
+    expected = np.array(
+        [
+            25.39661811,
+            24.30782048,
+            24.60991437,
+            24.36648691,
+            27.83680606,
+            24.65638555,
+            24.88922494,
+            24.92836492,
+            25.14415759,
+            24.01771598,
+        ]
+    )
+    np.testing.assert_almost_equal(index.statistics.values[:10], expected, decimal=6)

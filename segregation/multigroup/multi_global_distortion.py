@@ -2,6 +2,7 @@ import geopandas as gpd
 
 from .._base import MultiGroupIndex, SpatialExplicitIndex
 from ..dynamics import compute_divergence_profiles
+from ..util.normalization import _maximal_segregation_distortion
 
 
 def _global_distortion(
@@ -59,13 +60,10 @@ def _global_distortion(
     aux = aux.groupby("observation").sum()[["divergence"]]
 
     if normalize:
-        raise Exception("Not yet implemented")
-        # Need to write a routine to determine the scaling factor... From the paper:
-
-        # the maximum distortion coefficient in a theoretical extreme case of segregation.
-        # Theoretically, the maximal-segregation distortion coefficient is achieved when sorting
-        # the k groups into k ghettos, ordered by sizes, and then computing the coefficient for
-        # the most isolated person in the smallest group
+        N = _maximal_segregation_distortion(
+            gdf, groups, metric=metric, network=network, distance_matrix=distance_matrix
+        )
+        aux["divergence"] = aux["divergence"] / N
 
     # the global multiplies the population at each location by the distortion coefficient they experience
     aux["coefs"] = aux["divergence"] * df.sum(axis=1)
@@ -74,6 +72,8 @@ def _global_distortion(
     out = gpd.GeoDataFrame(gdf, columns=groups, geometry=geoms, crs=geoms.crs)
     out["weighted_distortion"] = aux["coefs"]
 
+    if normalize:
+        return stat, out, N
     return stat, out
 
 
@@ -140,3 +140,4 @@ class GlobalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         self.statistic = aux[0]
         self.data = aux[1]
         self._function = _global_distortion
+        self.normalization_constant = aux[2] if len(aux) > 2 else None

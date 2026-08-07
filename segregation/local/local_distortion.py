@@ -2,6 +2,7 @@ import geopandas as gpd
 
 from .._base import MultiGroupIndex, SpatialExplicitIndex
 from ..dynamics import compute_divergence_profiles
+from ..util.normalization import _maximal_segregation_distortion
 
 
 def _local_distortion(
@@ -30,7 +31,7 @@ def _local_distortion(
     distance_matrix: numpy.array (optional; None by default)
         numpy array of distances between observations in the dataset
     normalize: bool
-        NOT YET IMPLEMENTED
+        If True, normalize coefficients by the maximum theoretical segregation value
 
 
     Returns
@@ -55,13 +56,11 @@ def _local_distortion(
         aux.groupby("observation").sum()[["divergence"]], geometry=geoms
     ).rename(columns={"divergence": "distortion"})
     if normalize:
-        raise Exception("Not yet implemented")
-        # Need to write a routine to determine the scaling factor... From the paper:
-
-        # the maximum distortion coefficient in a theoretical extreme case of segregation.
-        # Theoretically, the maximal-segregation distortion coefficient is achieved when sorting
-        # the k groups into k ghettos, ordered by sizes, and then computing the coefficient for
-        # the most isolated person in the smallest group
+        N = _maximal_segregation_distortion(
+            gdf, groups, metric=metric, network=network, distance_matrix=distance_matrix
+        )
+        aux["distortion"] = aux["distortion"] / N
+        aux.attrs["normalization_constant"] = N
 
     return aux
 
@@ -107,7 +106,7 @@ class LocalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         network=None,
         distance_matrix=None,
         normalize=False,
-        **kwargs
+        **kwargs,
     ):
         """Init."""
 
@@ -126,3 +125,4 @@ class LocalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         self.statistics = aux["distortion"]
         self.data = aux
         self._function = _local_distortion
+        self.normalization_constant = aux.attrs.get("normalization_constant", None)
