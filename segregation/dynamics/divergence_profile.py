@@ -13,11 +13,35 @@ try:
 except ImportError:
     _HAS_NUMBA = False
 
+try:
+    import psutil
+
+    _HAS_PSUTIL = True
+except ImportError:
+    _HAS_PSUTIL = False
+
 from ..network import compute_travel_cost_matrix
 
+
+def _get_distance_matrix_limit():
+    """Determine the memory threshold for switching to the streaming path.
+
+    Uses 50% of available system RAM when ``psutil`` is available, falling
+    back to a default of 8 GB.
+    """
+    if _HAS_PSUTIL:
+        try:
+            avail = psutil.virtual_memory().available
+            return max(avail // 2, 1 * 1024**3)  # at least 1 GB
+        except Exception:
+            pass
+    return 8 * 1024**3
+
+
 # Threshold (in bytes) above which the euclidean path falls back from a dense
-# distance matrix to streaming cKDTree queries.  Default: 8 GB.
-_DISTANCE_MATRIX_LIMIT = 8 * 1024**3
+# distance matrix to streaming cKDTree queries.  Defaults to 25% of available
+# RAM (via psutil), or 8 GB if psutil is not installed.
+_DISTANCE_MATRIX_LIMIT = _get_distance_matrix_limit()
 
 
 # ---------------------------------------------------------------------------
@@ -253,8 +277,10 @@ def compute_divergence_profiles(
     matrix via ``scipy.spatial.distance.pdist`` (fast, vectorized C) when the
     matrix fits comfortably in memory.  For very large datasets where the dense
     matrix would be impractical, it falls back to a streaming ``cKDTree`` path
-    that keeps peak memory at *O(n)* per iteration.  The threshold is
-    controlled by the ``_DISTANCE_MATRIX_LIMIT`` constant (default 8 GB).
+    that keeps peak memory at *O(n)* per iteration.  The threshold defaults to
+    25% of available system RAM (via ``psutil``), or 8 GB if ``psutil`` is not
+    installed.  It can be overridden by setting
+    ``segregation.dynamics.divergence_profile._DISTANCE_MATRIX_LIMIT``.
 
     """
     # Store the observation index to return with the results
