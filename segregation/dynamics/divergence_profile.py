@@ -299,15 +299,28 @@ def compute_divergence_profiles(
         if metric != "network":
             warn(
                 f"metric set to {metric} but a pandarm.Network object was passed. Using network distances instead"
-                "If you wish to use a scipy distance matrix, do not include a `network` argument`"
+                "If you wish to use a scipy distance matrix, do not include a `network` argument`",
+                stacklevel=2,
             )
         dist_matrix = compute_travel_cost_matrix(gdf, gdf, network).values
         results = _compute_all_profiles(dist_matrix, df, indices)
     elif distance_matrix is not None:
         # --- Precomputed matrix path ---
+        if hasattr(distance_matrix, "tocsr"):
+            # A divergence profile aggregates outward from each origin until it
+            # covers the *total* population, so it needs a distance from every
+            # origin to every unit. A sparse matrix leaves some pairs
+            # undefined, which truncates the profile at a different point for
+            # each origin and makes the resulting coefficients incomparable.
+            raise TypeError(
+                "sparse distance matrices are not supported: a divergence "
+                "profile requires a distance from every origin to every "
+                "observation. Pass a dense numpy array as `distance_matrix`"
+            )
         if metric != "precomputed":
             warn(
-                f"metric set to {metric} but a distance_matrix argument was passed. Using precomputed distances instead"
+                f"metric set to {metric} but a distance_matrix argument was passed. Using precomputed distances instead",
+                stacklevel=2,
             )
         results = _compute_all_profiles(distance_matrix, df, indices)
     elif metric == "euclidean":
