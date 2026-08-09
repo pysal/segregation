@@ -6,7 +6,13 @@ from ..util.normalization import _maximal_segregation_distortion
 
 
 def _local_distortion(
-    gdf, groups, metric="euclidean", network=None, distance_matrix=None, normalize=False
+    gdf,
+    groups,
+    metric="euclidean",
+    network=None,
+    distance_matrix=None,
+    normalize=False,
+    n_seeds=4,
 ):
     """
     A segregation metric, using Kullback-Leiber (KL) divergence to quantify the
@@ -32,6 +38,12 @@ def _local_distortion(
         numpy array of distances between observations in the dataset
     normalize: bool
         If True, normalize coefficients by the maximum theoretical segregation value
+    n_seeds: int (optional; 4 by default)
+        Number of corner positions used to build the maximally-segregated
+        reference landscape. The normalization constant is the maximum over all
+        of them, so raising this yields a tighter estimate of the theoretical
+        maximum at the cost of one extra divergence profile per seed.
+        Ignored when ``normalize`` is False.
 
 
     Returns
@@ -42,7 +54,6 @@ def _local_distortion(
     """
     # Store the observation index to return with the results
     geoms = gdf[gdf.geometry.name]
-    centroids = gdf.geometry.centroid
 
     aux = compute_divergence_profiles(
         gdf=gdf,
@@ -57,7 +68,12 @@ def _local_distortion(
     ).rename(columns={"divergence": "distortion"})
     if normalize:
         N = _maximal_segregation_distortion(
-            gdf, groups, metric=metric, network=network, distance_matrix=distance_matrix
+            gdf,
+            groups,
+            metric=metric,
+            network=network,
+            distance_matrix=distance_matrix,
+            n_seeds=n_seeds,
         )
         aux["distortion"] = aux["distortion"] / N
         aux.attrs["normalization_constant"] = N
@@ -82,8 +98,14 @@ class LocalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         A pandarm Network object used to compute distance between observations
     distance_matrix:
         numpy array of distances between observations in the dataset
-    normalization:
-        NOT YET IMPLEMENTED
+    normalize: bool (optional; False by default)
+        If True, normalize coefficients by the maximum theoretical segregation
+        value for this dataset
+    n_seeds: int (optional; 4 by default)
+        Number of corner positions used to build the maximally-segregated
+        reference landscape. Raising this tightens the normalization constant
+        at the cost of one extra divergence profile per seed. Ignored when
+        ``normalize`` is False.
 
     Attributes
     ----------
@@ -91,6 +113,9 @@ class LocalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         KL Divergence coefficients
     core_data : a pandas DataFrame
         DataFrame that contains the columns used to perform the estimate.
+    normalization_constant : float or None
+        The maximal-segregation distortion coefficient used to normalize the
+        coefficients, or None when ``normalize`` is False.
 
     Notes
     -----
@@ -106,6 +131,7 @@ class LocalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         network=None,
         distance_matrix=None,
         normalize=False,
+        n_seeds=4,
         **kwargs,
     ):
         """Init."""
@@ -120,6 +146,7 @@ class LocalDistortion(MultiGroupIndex, SpatialExplicitIndex):
             metric=metric,
             normalize=normalize,
             distance_matrix=distance_matrix,
+            n_seeds=n_seeds,
         )
 
         self.statistics = aux["distortion"]

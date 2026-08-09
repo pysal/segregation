@@ -6,160 +6,265 @@ Olteanu et al. (2019), "Segregation through the multiscalar lens"
 
     ̃Δ_i = Δ_i / N
 
-where *N* is the distortion coefficient of the most isolated person in the
-smallest group under a theoretical extreme of complete segregation (k groups
-sorted into k contiguous ghettos, ordered by group size).
+where *N* is the largest distortion coefficient arising under a theoretical
+extreme of complete segregation: the k groups sorted into k contiguous
+"ghettos" ordered by size, with the smallest group in the most isolated
+position.
 
 The synthetic landscape is built by reallocating the *real* population totals
 into the *real* areal units (same geometry, same distance metric), so *N* is
 automatically on the same scale as the observed distortions.
+
+A landscape is laid out by sweeping outward from a *seed* unit: units are
+ordered by their distance from the seed, so every prefix of the ordering is the
+set of units nearest the seed, and each ghetto is therefore a contiguous
+concentric region.  Because *N* is defined as a maximum, several corner seeds
+are tried and the largest resulting coefficient is returned; adding seeds can
+only raise *N*, never lower it.  The seeds are derived deterministically from
+the geometry, so *N* is a function of the data alone.
 """
 
-import geopandas as gpd
 import numpy as np
-import pandas as pd
-from libpysal.graph import Graph as lpsGraph
-from scipy.sparse import coo_matrix
-from scipy.sparse.csgraph import depth_first_order, minimum_spanning_tree
+from scipy.spatial import ConvexHull, QhullError
+from scipy.spatial.distance import cdist
 
 from ..dynamics.divergence_profile import compute_divergence_profiles
 
 
-def _build_knn_graph(gdf, metric, network, distance_matrix, k=30):
-    """Build a sparse k-nearest-neighbor graph as a sparse adjacency matrix.
+def _candidate_seeds(coordinates, n_seeds=4):
+    """Positional indices of the units to sweep outward from.
 
-    The graph respects the same distance metric used by the distortion
-    computation (euclidean, network, or precomputed), so units adjacent in the
-    graph are genuinely close in the metric of interest.
+    Corners of the study region are the candidate "most isolated" positions, so
+    the seeds are drawn from the convex hull of the centroids, spread evenly
+    around it.  Degenerate geometries with no proper hull (a single point, or
+    perfectly collinear centroids) fall back to the unit farthest from the mean
+    center.
+
+    Parameters
+    ----------
+    coordinates : np.ndarray
+        (n, 2) array of centroid coordinates.
+    n_seeds : int, default 4
+        Maximum number of seeds to return.
+
+    Returns
+    -------
+    np.ndarray
+        Sorted, unique positional indices of the seed units.
+    """
+    if n_seeds < 1:
+        raise ValueError(f"n_seeds must be at least 1 (got {n_seeds})")
+
+    center = coordinates.mean(axis=0)
+    most_peripheral = int(np.argmax(((coordinates - center) ** 2).sum(axis=1)))
+
+    if n_seeds == 1:
+        return np.array([most_peripheral])
+
+    try:
+        hull = ConvexHull(coordinates).vertices
+    except (QhullError, ValueError):
+        # degenerate geometry: no area to take a hull of
+        return np.array([most_peripheral])
+
+    if len(hull) > n_seeds:
+        hull = hull[np.linspace(0, len(hull), n_seeds, endpoint=False).astype(int)]
+
+    return np.unique(hull)
+
+
+def _distances_from_seed(
+    gdf, seed, metric="euclidean", network=None, distance_matrix=None
+):
+    """Distance from ``seed`` to every unit, in the metric of interest.
+
+    Using the same metric as the distortion computation keeps the sweep
+    contiguous in the metric that the coefficients are measured in.
 
     Parameters
     ----------
     gdf : geopandas.GeoDataFrame
         Input data with geometry and group columns.
-    metric : str
-        Distance metric label.
-    network : pandarm.Network or None
-    distance_matrix : np.ndarray or None
-        Precomputed distance matrix.
-    k : int, default 30
-        Number of nearest neighbors per unit.
-
-    Returns
-    -------
-    scipy.sparse.csr_array
-        Sparse symmetric adjacency matrix of shape (n, n).
-    """
-    n = len(gdf)
-    k = min(k, n - 1)
-    if k < 1:
-        raise ValueError("Need at least 2 observations to build a k-NN graph")
-
-    if network is not None:
-        # Network: use pandarm.k_nearest_nodes
-        centroids = gdf.geometry.centroid
-        node_ids = network.get_node_ids(centroids.x, centroids.y)
-        result = network.k_nearest_nodes(node_ids, k=k, max_radius=0)
-        imp_name = result.columns[-1]
-        rows = result["source"].values
-        cols = result["destination"].values
-        vals = result[imp_name].values
-        # Map node IDs back to positional indices
-        id_to_pos = pd.Series(np.arange(n), index=gdf.index)
-        src_pos = id_to_pos.loc[rows].values
-        dst_pos = id_to_pos.loc[cols].values
-        # Build symmetric sparse graph
-        all_rows = np.concatenate([src_pos, dst_pos])
-        all_cols = np.concatenate([dst_pos, src_pos])
-        all_vals = np.concatenate([vals, vals])
-        return coo_matrix((all_vals, (all_rows, all_cols)), shape=(n, n)).tocsr()
-
-    if distance_matrix is not None:
-        # Precomputed (dense or sparse): take k smallest per row
-        if hasattr(distance_matrix, "tocoo"):
-            dm = distance_matrix.tocsr()
-            rows, cols, vals = [], [], []
-            for i in range(n):
-                row = dm.getrow(i).tocoo()
-                if len(row.data) == 0:
-                    continue
-                knn_idx = np.argpartition(row.data, min(k, len(row.data) - 1))[:k]
-                for j in knn_idx:
-                    rows.append(i)
-                    cols.append(row.col[j])
-                    vals.append(row.data[j])
-            rows, cols, vals = np.array(rows), np.array(cols), np.array(vals)
-        else:
-            # Dense
-            src_pos = np.repeat(np.arange(n), k)
-            dst_pos = np.empty(n * k, dtype=int)
-            vals = np.empty(n * k, dtype=float)
-            for i in range(n):
-                row = distance_matrix[i].copy()
-                row[i] = np.inf  # exclude self
-                idx = np.argpartition(row, k - 1)[:k]
-                dst_pos[i * k : (i + 1) * k] = idx
-                vals[i * k : (i + 1) * k] = row[idx]
-            rows, cols = src_pos, dst_pos
-        all_rows = np.concatenate([rows, cols])
-        all_cols = np.concatenate([cols, rows])
-        all_vals = np.concatenate([vals, vals])
-        return coo_matrix((all_vals, (all_rows, all_cols)), shape=(n, n)).tocsr()
-
-    # Euclidean: use libpysal.Graph.build_knn on centroids
-    centroids = gdf.geometry.centroid
-    graph = lpsGraph.build_knn(centroids, k=k)
-    # Symmetrize for MST (build_knn is directed)
-    sp = graph.sparse
-    sym = sp.maximum(sp.T)
-    return sym.tocsr()
-
-
-def _ordering_for_normalization(gdf, metric, network, distance_matrix, k=30):
-    """Return an ordering of unit indices contiguous in the distance metric.
-
-    Builds a k-NN graph, computes its MST, and returns a DFS traversal
-    that visits spatially adjacent units consecutively.  The smallest group
-    will be placed at the leaf end (most isolated position).
-
-    Parameters
-    ----------
-    gdf : geopandas.GeoDataFrame
-    metric : str
-    network : pandarm.Network or None
-    distance_matrix : np.ndarray or None
-    k : int, default 30
+    seed : int
+        Positional index of the unit to measure from.
+    metric : str, default "euclidean"
+        Any metric accepted by ``scipy.spatial.distance.cdist``.  Ignored if
+        ``network`` or ``distance_matrix`` is passed.
+    network : pandarm.Network, optional
+        Network used to measure shortest-path distance from the seed.
+    distance_matrix : np.ndarray, optional
+        Precomputed dense distance matrix.
 
     Returns
     -------
     np.ndarray
-        Permutation of unit indices (positional) forming a contiguous path.
+        (n,) distances from the seed.
+    """
+    centroids = gdf.geometry.centroid
+    n = len(gdf)
+
+    if network is not None:
+        node_ids = network.get_node_ids(centroids.x, centroids.y)
+        distances = network.shortest_path_lengths(
+            [node_ids.iloc[seed]] * n, list(node_ids)
+        )
+        return np.asarray(distances, dtype=float)
+
+    if distance_matrix is not None:
+        if hasattr(distance_matrix, "tocsr"):
+            raise TypeError(
+                "sparse distance matrices are not supported; pass a dense "
+                "numpy array as `distance_matrix`"
+            )
+        return np.asarray(distance_matrix, dtype=float)[seed]
+
+    coordinates = np.column_stack((centroids.x, centroids.y))
+    return cdist(coordinates[seed][None, :], coordinates, metric=metric).ravel()
+
+
+def _ordering_for_normalization(
+    gdf, seed=None, metric="euclidean", network=None, distance_matrix=None
+):
+    """Order unit indices outward from ``seed``.
+
+    Sorting by distance from the seed yields concentric rings, so any prefix of
+    the ordering is exactly the set of units nearest the seed.  Slicing the
+    ordering into consecutive blocks therefore produces contiguous ghettos.
+
+    Parameters
+    ----------
+    gdf : geopandas.GeoDataFrame
+    seed : int, optional
+        Positional index to sweep from.  Defaults to the most peripheral unit.
+    metric : str, default "euclidean"
+    network : pandarm.Network, optional
+    distance_matrix : np.ndarray, optional
+
+    Returns
+    -------
+    np.ndarray
+        Permutation of positional unit indices, starting at the seed.
     """
     n = len(gdf)
     if n < 2:
         return np.arange(n)
 
-    graph = _build_knn_graph(gdf, metric, network, distance_matrix, k=k)
-    mst = minimum_spanning_tree(graph.tocsr())
-    mst = mst.tocsr()
+    if seed is None:
+        centroids = gdf.geometry.centroid
+        coordinates = np.column_stack((centroids.x, centroids.y))
+        seed = int(_candidate_seeds(coordinates, n_seeds=1)[0])
 
-    # Find the most peripheral node as the DFS root (largest mean distance)
-    # Use the graph's edge weights as a proxy for distance
-    row_sums = np.array(mst.sum(axis=1)).ravel()
-    root = int(np.argmax(row_sums)) if row_sums.size > 0 else 0
+    distances = _distances_from_seed(
+        gdf,
+        seed,
+        metric=metric,
+        network=network,
+        distance_matrix=distance_matrix,
+    )
+    return np.argsort(distances, kind="stable")
 
-    order, _ = depth_first_order(mst, i_start=root, directed=False)
-    return order
+
+def _block_boundaries(unit_pop, group_totals):
+    """End index of each group's block along the ordered units.
+
+    Cuts the sweep where cumulative population reaches each group's running
+    total, so every ghetto holds its group's population at roughly the local
+    density of the real landscape.  Blocks are then nudged so each holds at
+    least one unit, which keeps every group's population in the synthetic
+    landscape.
+
+    Parameters
+    ----------
+    unit_pop : np.ndarray
+        (n,) total population of each unit, in sweep order.
+    group_totals : np.ndarray
+        (k,) group population totals, ordered smallest group first.
+
+    Returns
+    -------
+    np.ndarray
+        (k,) exclusive end index of each block; strictly increasing, last == n.
+    """
+    n = unit_pop.size
+    k = group_totals.size
+
+    edges = np.searchsorted(np.cumsum(unit_pop), np.cumsum(group_totals), side="left")
+    edges = np.asarray(edges, dtype=int) + 1
+    edges[-1] = n
+
+    # Each block needs at least one unit and the blocks must stay ordered.  The
+    # forward pass gives block i room for the i blocks before it; the backward
+    # pass leaves room for the blocks after it.  Both invariants can hold at
+    # once because n >= k.
+    for i in range(k):
+        edges[i] = max(edges[i], i + 1)
+    for i in range(k - 2, -1, -1):
+        edges[i] = min(edges[i], edges[i + 1] - 1)
+
+    return edges
+
+
+def _segregated_landscape(gdf, groups, unit_order):
+    """Reallocate the real population into fully segregated contiguous blocks.
+
+    Each group occupies one contiguous run of ``unit_order``, smallest group
+    first (the seed end), with its total spread across the block in proportion
+    to each unit's original total population.  Group totals are preserved
+    exactly.
+
+    Parameters
+    ----------
+    gdf : geopandas.GeoDataFrame
+    groups : list of str
+    unit_order : np.ndarray
+        Sweep ordering of positional unit indices.
+
+    Returns
+    -------
+    geopandas.GeoDataFrame
+        Copy of ``gdf`` with the group columns replaced by the synthetic
+        population.
+    """
+    df = gdf[groups].values.astype(float)
+    group_totals = df.sum(axis=0)
+    unit_totals = df.sum(axis=1)
+
+    # Smallest group first, so it lands in the seed (most isolated) block
+    group_order = np.argsort(group_totals, kind="stable")
+    edges = _block_boundaries(unit_totals[unit_order], group_totals[group_order])
+
+    synth = np.zeros_like(df)
+    start = 0
+    for i, g_pos in enumerate(group_order):
+        block_units = unit_order[start : edges[i]]
+        start = edges[i]
+
+        block_original_totals = unit_totals[block_units]
+        total_in_block = block_original_totals.sum()
+        if total_in_block > 0:
+            shares = block_original_totals / total_in_block
+        else:
+            shares = np.full(block_units.size, 1 / block_units.size)
+
+        synth[block_units, g_pos] = group_totals[g_pos] * shares
+
+    synth_gdf = gdf.copy()
+    for g_idx, g_name in enumerate(groups):
+        synth_gdf[g_name] = synth[:, g_idx]
+
+    return synth_gdf
 
 
 def _maximal_segregation_distortion(
-    gdf, groups, metric="euclidean", network=None, distance_matrix=None, k=30
+    gdf, groups, metric="euclidean", network=None, distance_matrix=None, n_seeds=4
 ):
     """Compute the maximal-segregation distortion coefficient N.
 
-    Builds a synthetic landscape of complete segregation by reallocating the
+    Builds synthetic landscapes of complete segregation by reallocating the
     real population totals into the real areal units (same geometry), arranged
-    so each group occupies a contiguous spatial block.  Returns the maximum
-    distortion coefficient, which is used to normalize observed distortions::
+    so each group occupies a contiguous concentric block with the smallest
+    group in the most isolated position.  Returns the largest distortion
+    coefficient found, which is used to normalize observed distortions::
 
         ̃Δ_i = Δ_i / N
 
@@ -173,98 +278,69 @@ def _maximal_segregation_distortion(
         Distance metric (passed through to ``compute_divergence_profiles``).
     network : pandarm.Network, optional
     distance_matrix : np.ndarray, optional
-    k : int, default 30
-        Number of nearest neighbors for the ordering graph.
+    n_seeds : int, default 4
+        Number of corner positions to build a segregated landscape from.  N is
+        the maximum over all of them, so raising this can only increase N (a
+        tighter estimate of the theoretical maximum) at the cost of one more
+        divergence profile per seed.
 
     Returns
     -------
     float
         The normalization constant N.
+
+    Notes
+    -----
+    Each seed costs a full divergence profile over the synthetic landscape, so
+    normalization multiplies the cost of the distortion computation by roughly
+    ``n_seeds + 1``.
     """
     df = gdf[groups].values.astype(float)
     n = len(gdf)
+    n_groups = len(groups)
 
     if n < 2:
         raise ValueError("Need at least 2 observations to compute normalization")
 
-    # Group totals (control totals we must preserve)
-    group_totals = df.sum(axis=0)
-    grand_total = group_totals.sum()
-
-    if grand_total == 0:
-        raise ValueError("Total population is zero; cannot compute normalization")
-
-    n_groups = len(groups)
     if n_groups < 2:
         raise ValueError(
             "Normalization requires at least 2 groups; with 1 group there is no segregation"
         )
 
-    # Sort groups ascending by total (smallest group → most isolated position)
-    group_order = np.argsort(group_totals)
+    if n < n_groups:
+        raise ValueError(
+            f"Normalization requires at least as many observations as groups, "
+            f"so each group can occupy its own block (got {n} observations "
+            f"and {n_groups} groups)"
+        )
 
-    # Get spatial ordering
-    unit_order = _ordering_for_normalization(gdf, metric, network, distance_matrix, k=k)
+    if df.sum() == 0:
+        raise ValueError("Total population is zero; cannot compute normalization")
 
-    # Partition units into k contiguous blocks, sizes proportional to group shares
-    # Smallest group gets the last block (leaf end = most isolated)
-    block_sizes = np.zeros(n_groups, dtype=int)
-    for g_idx, g_pos in enumerate(group_order):
-        share = group_totals[g_pos] / grand_total
-        block_sizes[g_pos] = max(1, int(round(n * share)))
+    centroids = gdf.geometry.centroid
+    coordinates = np.column_stack((centroids.x, centroids.y))
+    seeds = _candidate_seeds(coordinates, n_seeds=n_seeds)
 
-    # Adjust so blocks sum to n
-    diff = n - block_sizes.sum()
-    if diff != 0:
-        # Add/remove from the largest group's block
-        largest = int(np.argmax(group_totals))
-        block_sizes[largest] += diff
-        if block_sizes[largest] < 1:
-            # Fallback: distribute the correction across all groups
-            block_sizes[largest] = 1
-            remaining = n - n_groups + 1
-            for g_pos in group_order[:-1]:
-                share = group_totals[g_pos] / grand_total
-                block_sizes[g_pos] = max(1, int(round(remaining * share)))
-            diff = n - block_sizes.sum()
-            largest = int(np.argmax(group_totals))
-            block_sizes[largest] += diff
+    N = -np.inf
+    for seed in seeds:
+        unit_order = _ordering_for_normalization(
+            gdf,
+            seed=int(seed),
+            metric=metric,
+            network=network,
+            distance_matrix=distance_matrix,
+        )
+        synth_gdf = _segregated_landscape(gdf, groups, unit_order)
 
-    # Build synthetic population matrix
-    synth = np.zeros_like(df)
-    unit_idx = 0
-    for g_pos in group_order:
-        block_size = block_sizes[g_pos]
-        block_units = unit_order[unit_idx : unit_idx + block_size]
-        unit_idx += block_size
-
-        # Each unit in this block is 100% this group
-        # Distribute the group total proportional to each unit's original total population
-        block_original_totals = df[block_units].sum(axis=1)
-        total_in_block = block_original_totals.sum()
-        if total_in_block > 0:
-            shares = block_original_totals / total_in_block
-        else:
-            shares = np.ones(block_size) / block_size
-
-        synth[block_units, g_pos] = group_totals[g_pos] * shares
-
-    # Build synthetic GeoDataFrame (real geometry + synthetic population)
-    synth_gdf = gdf.copy()
-    for g_idx, g_name in enumerate(groups):
-        synth_gdf[g_name] = synth[:, g_idx]
-
-    # Compute distortion on synthetic landscape using the same distance params
-    aux = compute_divergence_profiles(
-        gdf=synth_gdf,
-        groups=groups,
-        metric=metric,
-        network=network,
-        distance_matrix=distance_matrix,
-    )
-
-    # Sum divergence per observation → distortion coefficients
-    distortion = aux.groupby("observation").sum()["divergence"]
-    N = float(distortion.max())
+        aux = compute_divergence_profiles(
+            gdf=synth_gdf,
+            groups=groups,
+            metric=metric,
+            network=network,
+            distance_matrix=distance_matrix,
+        )
+        # divergence --> distortion by summing at each location
+        distortion = aux.groupby("observation").sum()["divergence"]
+        N = max(N, float(distortion.max()))
 
     return N
