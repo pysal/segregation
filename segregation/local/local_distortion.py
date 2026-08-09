@@ -130,7 +130,7 @@ class LocalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         metric="euclidean",
         network=None,
         distance_matrix=None,
-        normalize=False,
+        normalize=True,
         n_seeds=4,
         **kwargs,
     ):

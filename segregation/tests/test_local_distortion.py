@@ -9,7 +9,7 @@ def test_LocalDiversity():
     s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
     s_map = s_map.to_crs(s_map.estimate_utm_crs())
     groups_list = ["WHITE", "BLACK", "ASIAN", "HISP"]
-    index = LocalDistortion(s_map, groups=groups_list)
+    index = LocalDistortion(s_map, groups=groups_list, normalize=False)
     np.testing.assert_almost_equal(
         index.statistics.values,
         np.array(
@@ -501,7 +501,7 @@ def test_normalization_constant_matches_own_landscape(segregated_strip):
 
     groups_list = ["a", "b", "c"]
     N = _maximal_segregation_distortion(segregated_strip, groups_list)
-    raw = LocalDistortion(segregated_strip, groups=groups_list).statistics
+    raw = LocalDistortion(segregated_strip, groups=groups_list, normalize=False).statistics
     np.testing.assert_allclose(raw.max(), N, rtol=1e-10)
 
 
@@ -662,7 +662,7 @@ def test_normalization_with_precomputed_matrix(s_map):
 def test_ckdtree_regression(s_map):
     """cKDTree path should produce identical results to the old dense-matrix path."""
     groups_list = ["WHITE", "BLACK", "ASIAN", "HISP"]
-    index = LocalDistortion(s_map, groups=groups_list)
+    index = LocalDistortion(s_map, groups=groups_list, normalize=False)
     # The hardcoded expected values from the original test
     expected = np.array(
         [

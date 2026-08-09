@@ -30,7 +30,7 @@ def segregated_strip():
 
 def test_GlobalDistortion(s_map):
     """Regression value for the unnormalized global index."""
-    index = GlobalDistortion(s_map, groups=GROUPS)
+    index = GlobalDistortion(s_map, groups=GROUPS, normalize=False)
     np.testing.assert_almost_equal(index.statistic, 15.28564652573017, decimal=7)
 
 
@@ -41,7 +41,7 @@ def test_returns_three_tuple_regardless_of_normalize(s_map):
 
 
 def test_normalization_constant_none_when_not_normalized(s_map):
-    index = GlobalDistortion(s_map, groups=GROUPS)
+    index = GlobalDistortion(s_map, groups=GROUPS, normalize=False)
     assert index.normalization_constant is None
 
 

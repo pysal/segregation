@@ -113,7 +113,7 @@ class GlobalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         A pandarm Network object used to compute distance between observations
     distance_matrix: numpy.array (optional; None by default)
         numpy array of distances between observations in the dataset
-    normalize: bool (optional; False by default)
+    normalize: bool (optional; True by default)
         If True, divide by the theoretical maximum Distortion: the largest
         *local* coefficient in the most segregated configuration possible given
         the study region's group totals. Note that 1.0 is not reachable for the
@@ -172,7 +172,7 @@ class GlobalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         metric="euclidean",
         network=None,
         distance_matrix=None,
-        normalize=False,
+        normalize=True,
         n_seeds=4,
         **kwargs,
     ):
