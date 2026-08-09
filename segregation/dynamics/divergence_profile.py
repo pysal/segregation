@@ -278,7 +278,7 @@ def compute_divergence_profiles(
     matrix fits comfortably in memory.  For very large datasets where the dense
     matrix would be impractical, it falls back to a streaming ``cKDTree`` path
     that keeps peak memory at *O(n)* per iteration.  The threshold defaults to
-    25% of available system RAM (via ``psutil``), or 8 GB if ``psutil`` is not
+    50% of available system RAM (via ``psutil``), or 8 GB if ``psutil`` is not
     installed.  It can be overridden by setting
     ``segregation.dynamics.divergence_profile._DISTANCE_MATRIX_LIMIT``.
 

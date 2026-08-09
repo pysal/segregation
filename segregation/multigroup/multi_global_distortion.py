@@ -11,7 +11,7 @@ def _global_distortion(
     network=None,
     metric="euclidean",
     distance_matrix=None,
-    normalize=False,
+    normalize=True,
     n_seeds=4,
 ):
     """

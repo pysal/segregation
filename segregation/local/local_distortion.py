@@ -11,7 +11,7 @@ def _local_distortion(
     metric="euclidean",
     network=None,
     distance_matrix=None,
-    normalize=False,
+    normalize=True,
     n_seeds=4,
 ):
     """
