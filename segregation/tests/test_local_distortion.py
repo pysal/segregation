@@ -468,54 +468,195 @@ def test_normalization_two_groups(s_map):
     assert index.statistics.max() <= 1.0 + 1e-10
 
 
-def test_normalization_max_is_one(s_map):
-    """Feeding a maximally-segregated landscape should yield max normalized == 1.0."""
+@pytest.fixture
+def segregated_strip():
+    """A hand-built maximally-segregated landscape.
+
+    Twelve equally-populated units in a line, with three groups occupying
+    contiguous blocks ordered smallest-to-largest from one end.  This is
+    exactly the configuration the normalization constant is defined against,
+    so its largest normalized coefficient must be 1.0.
+    """
+    from shapely.geometry import Point
+
+    n, per_unit = 12, 10.0
+    pops = {"a": np.zeros(n), "b": np.zeros(n), "c": np.zeros(n)}
+    pops["a"][0:2] = per_unit  # total  20
+    pops["b"][2:6] = per_unit  # total  40
+    pops["c"][6:12] = per_unit  # total  60
+    return gpd.GeoDataFrame(
+        pops, geometry=[Point(i, 0) for i in range(n)], crs=3857
+    )
+
+
+def test_normalization_max_is_one(segregated_strip):
+    """A maximally-segregated landscape should normalize to exactly 1.0."""
+    index = LocalDistortion(segregated_strip, groups=["a", "b", "c"], normalize=True)
+    np.testing.assert_allclose(index.statistics.max(), 1.0, rtol=1e-10)
+
+
+def test_normalization_constant_matches_own_landscape(segregated_strip):
+    """N must equal the raw max distortion of the landscape it is built from."""
     from segregation.util.normalization import _maximal_segregation_distortion
-    from segregation.dynamics.divergence_profile import compute_divergence_profiles
-    import geopandas as gpd
+
+    groups_list = ["a", "b", "c"]
+    N = _maximal_segregation_distortion(segregated_strip, groups_list)
+    raw = LocalDistortion(segregated_strip, groups=groups_list).statistics
+    np.testing.assert_allclose(raw.max(), N, rtol=1e-10)
+
+
+def test_normalization_is_deterministic(s_map):
+    """N is a function of the data alone — no randomness, no hidden state."""
+    from segregation.util.normalization import _maximal_segregation_distortion
 
     groups_list = ["WHITE", "BLACK", "ASIAN", "HISP"]
-    N = _maximal_segregation_distortion(s_map, groups_list)
-    # Build the synthetic landscape and compute its distortion
-    # The max raw distortion should equal N (by construction)
-    df = s_map[groups_list].values.astype(float)
-    group_totals = df.sum(axis=0)
-    group_order = np.argsort(group_totals)
-    n = len(s_map)
+    first = _maximal_segregation_distortion(s_map, groups_list)
+    second = _maximal_segregation_distortion(s_map, groups_list)
+    assert first == second
 
+
+def test_more_seeds_never_lowers_n(s_map):
+    """N is a maximum over seeds, so adding seeds can only raise it."""
+    from segregation.util.normalization import _maximal_segregation_distortion
+
+    groups_list = ["WHITE", "BLACK", "ASIAN", "HISP"]
+    Ns = [
+        _maximal_segregation_distortion(s_map, groups_list, n_seeds=k)
+        for k in (1, 2, 4, 8)
+    ]
+    assert np.all(np.diff(Ns) >= -1e-9), f"N decreased with more seeds: {Ns}"
+
+
+def test_n_seeds_reaches_the_index(s_map):
+    """n_seeds must be reachable from the public class, not hardcoded inside."""
+    groups_list = ["WHITE", "BLACK", "ASIAN", "HISP"]
+    one = LocalDistortion(s_map, groups=groups_list, normalize=True, n_seeds=1)
+    many = LocalDistortion(s_map, groups=groups_list, normalize=True, n_seeds=8)
+    assert many.normalization_constant >= one.normalization_constant
+    # a larger constant means uniformly smaller normalized coefficients
+    assert many.statistics.max() <= one.statistics.max() + 1e-12
+
+
+def test_ordering_keeps_positional_argument_order(s_map):
+    """Positional args stay (gdf, metric, network, distance_matrix).
+
+    `seed` is keyword-only precisely so that adding it could not silently
+    displace `metric` for any caller passing positionally.
+    """
     from segregation.util.normalization import _ordering_for_normalization
-    unit_order = _ordering_for_normalization(s_map, "euclidean", None, None)
 
-    block_sizes = np.zeros(len(groups_list), dtype=int)
-    grand_total = group_totals.sum()
-    for g_idx, g_pos in enumerate(group_order):
-        share = group_totals[g_pos] / grand_total
-        block_sizes[g_pos] = max(1, int(round(n * share)))
-    diff = n - block_sizes.sum()
-    largest = int(np.argmax(group_totals))
-    block_sizes[largest] += diff
+    positional = _ordering_for_normalization(s_map, "euclidean", None, None)
+    keyword = _ordering_for_normalization(s_map, metric="euclidean")
+    np.testing.assert_array_equal(positional, keyword)
 
-    synth = np.zeros_like(df)
-    unit_idx = 0
-    for g_pos in group_order:
-        block_size = block_sizes[g_pos]
-        block_units = unit_order[unit_idx : unit_idx + block_size]
-        unit_idx += block_size
-        block_original_totals = df[block_units].sum(axis=1)
-        total_in_block = block_original_totals.sum()
-        if total_in_block > 0:
-            shares = block_original_totals / total_in_block
-        else:
-            shares = np.ones(block_size) / block_size
-        synth[block_units, g_pos] = group_totals[g_pos] * shares
 
-    synth_gdf = s_map.copy()
-    for g_idx, g_name in enumerate(groups_list):
-        synth_gdf[g_name] = synth[:, g_idx]
+def test_ordering_rejects_non_integer_seed(s_map):
+    """A bad seed must say so, not raise a cryptic numpy IndexError."""
+    from segregation.util.normalization import _ordering_for_normalization
 
-    aux = compute_divergence_profiles(gdf=synth_gdf, groups=groups_list)
-    distortion = aux.groupby("observation").sum()["divergence"]
-    np.testing.assert_allclose(distortion.max(), N, rtol=1e-5)
+    with pytest.raises(TypeError, match="seed must be an integer"):
+        _ordering_for_normalization(s_map, seed="euclidean")
+    with pytest.raises(IndexError, match="out of range"):
+        _ordering_for_normalization(s_map, seed=10**6)
+
+
+def test_candidate_seeds_handles_collinear_geometry(segregated_strip):
+    """Collinear centroids have no convex hull; fall back rather than raise."""
+    from segregation.util.normalization import _candidate_seeds
+
+    coords = np.column_stack(
+        (segregated_strip.geometry.x, segregated_strip.geometry.y)
+    )
+    seeds = _candidate_seeds(coords, n_seeds=4)
+    assert len(seeds) >= 1
+    assert np.all((seeds >= 0) & (seeds < len(coords)))
+
+
+def test_normalization_requires_units_for_every_group():
+    """Fewer units than groups must raise, not silently drop a group."""
+    from shapely.geometry import Point
+    from segregation.util.normalization import _maximal_segregation_distortion
+
+    gdf = gpd.GeoDataFrame(
+        {"a": [10.0, 0, 0], "b": [0.0, 10, 0], "c": [0.0, 0, 10], "d": [1.0, 1, 1]},
+        geometry=[Point(0, 0), Point(1, 0), Point(2, 0)],
+        crs=3857,
+    )
+    with pytest.raises(ValueError, match="at least as many observations as groups"):
+        _maximal_segregation_distortion(gdf, ["a", "b", "c", "d"])
+
+
+def test_block_boundaries_never_empty():
+    """Every group gets at least one unit, so no population is ever dropped."""
+    from segregation.util.normalization import _block_boundaries
+
+    cases = [
+        (np.full(12, 10.0), np.array([20.0, 40.0, 60.0])),  # exact cuts
+        (np.full(4, 1.0), np.array([1.0, 1.0, 1.0, 1.0])),  # n == k
+        (np.full(5, 1.0), np.array([0.0, 0.001, 4.999])),  # near-empty groups
+        (np.full(5, 1.0), np.array([4.999, 0.001, 0.0])),  # ... at the far end
+        (np.arange(1.0, 11.0), np.array([1.0, 54.0])),  # lopsided
+    ]
+    for unit_pop, group_totals in cases:
+        edges = _block_boundaries(unit_pop, group_totals)
+        assert edges[-1] == unit_pop.size
+        assert np.all(np.diff(edges) >= 1), f"empty block for {group_totals}"
+        assert edges[0] >= 1
+
+
+def test_ordering_covers_disconnected_geography():
+    """A disconnected study region must still order every unit exactly once."""
+    from shapely.geometry import Point
+    from segregation.util.normalization import _ordering_for_normalization
+
+    pts = [Point(x, y) for x in range(4) for y in range(4)]
+    pts += [Point(1e6 + x, 1e6 + y) for x in range(3) for y in range(3)]
+    rng = np.random.default_rng(0)
+    gdf = gpd.GeoDataFrame(
+        {
+            "a": rng.integers(1, 50, len(pts)).astype(float),
+            "b": rng.integers(1, 50, len(pts)).astype(float),
+        },
+        geometry=pts,
+        crs=3857,
+    )
+    order = _ordering_for_normalization(gdf)
+    np.testing.assert_array_equal(np.sort(order), np.arange(len(pts)))
+
+    index = LocalDistortion(gdf, groups=["a", "b"], normalize=True)
+    assert index.statistics.min() >= 0.0
+    assert index.statistics.max() <= 1.0 + 1e-10
+
+
+def test_sparse_distance_matrix_raises(segregated_strip):
+    """Sparse distance matrices are unsupported and must say so clearly."""
+    from scipy.sparse import csr_array
+    from scipy.spatial.distance import pdist, squareform
+    from segregation.util.normalization import _maximal_segregation_distortion
+
+    coords = np.column_stack(
+        (segregated_strip.geometry.x, segregated_strip.geometry.y)
+    )
+    dm = csr_array(squareform(pdist(coords)))
+    with pytest.raises(TypeError, match="sparse distance matrices"):
+        _maximal_segregation_distortion(
+            segregated_strip, ["a", "b", "c"], metric="precomputed", distance_matrix=dm
+        )
+
+
+def test_normalization_with_precomputed_matrix(s_map):
+    """A precomputed euclidean matrix should reproduce the euclidean result."""
+    from scipy.spatial.distance import pdist, squareform
+    from segregation.util.normalization import _maximal_segregation_distortion
+
+    groups_list = ["WHITE", "BLACK", "ASIAN", "HISP"]
+    centroids = s_map.geometry.centroid
+    dm = squareform(pdist(np.column_stack((centroids.x, centroids.y))))
+    N_matrix = _maximal_segregation_distortion(
+        s_map, groups_list, metric="precomputed", distance_matrix=dm
+    )
+    N_euclidean = _maximal_segregation_distortion(s_map, groups_list)
+    np.testing.assert_allclose(N_matrix, N_euclidean, rtol=1e-10)
 
 
 def test_ckdtree_regression(s_map):
@@ -538,3 +679,23 @@ def test_ckdtree_regression(s_map):
         ]
     )
     np.testing.assert_almost_equal(index.statistics.values[:10], expected, decimal=6)
+
+
+def test_divergence_profile_rejects_sparse_matrix(segregated_strip):
+    """The rejection belongs upstream, so every caller gets a clear error."""
+    from scipy.sparse import csr_array, csr_matrix
+    from scipy.spatial.distance import pdist, squareform
+    from segregation.dynamics.divergence_profile import compute_divergence_profiles
+
+    coords = np.column_stack(
+        (segregated_strip.geometry.x, segregated_strip.geometry.y)
+    )
+    dense = squareform(pdist(coords))
+    for sparse in (csr_matrix(dense), csr_array(dense)):
+        with pytest.raises(TypeError, match="sparse distance matrices"):
+            compute_divergence_profiles(
+                gdf=segregated_strip,
+                groups=["a", "b", "c"],
+                metric="precomputed",
+                distance_matrix=sparse,
+            )

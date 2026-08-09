@@ -6,14 +6,18 @@ Olteanu et al. (2019), "Segregation through the multiscalar lens"
 
     ̃Δ_i = Δ_i / N
 
-where *N* is the largest distortion coefficient arising under a theoretical
-extreme of complete segregation: the k groups sorted into k contiguous
-"ghettos" ordered by size, with the smallest group in the most isolated
-position.
+where *N* is "the maximum local distortion in the most segregated
+configuration possible given the global distribution of the population"
+(de Bézenac et al. 2022, Note 4) -- equivalently, "the Distortion calculated
+for the most isolated unit of the most segregated configuration possible, given
+the global figures of the city" (ibid., Sec. 3.1).  The source describes that
+configuration as **an ethnically concentric city**, which is why the layout
+below sweeps outward in concentric rings.
 
 The synthetic landscape is built by reallocating the *real* population totals
-into the *real* areal units (same geometry, same distance metric), so *N* is
-automatically on the same scale as the observed distortions.
+into the *real* areal units (same geometry, same distance metric), which
+supplies the "given the global figures" constraint and puts *N* on the same
+scale as the observed distortions.
 
 A landscape is laid out by sweeping outward from a *seed* unit: units are
 ordered by their distance from the seed, so every prefix of the ordering is the
@@ -103,6 +107,15 @@ def _distances_from_seed(
     centroids = gdf.geometry.centroid
     n = len(gdf)
 
+    if not isinstance(seed, (int, np.integer)) or isinstance(seed, bool):
+        raise TypeError(
+            f"seed must be an integer positional index, got {seed!r}. Note that "
+            f"`seed` is keyword-only; the positional arguments are "
+            f"(gdf, metric, network, distance_matrix)"
+        )
+    if not -n <= seed < n:
+        raise IndexError(f"seed {seed} is out of range for {n} observations")
+
     if network is not None:
         node_ids = network.get_node_ids(centroids.x, centroids.y)
         distances = network.shortest_path_lengths(
@@ -123,7 +136,7 @@ def _distances_from_seed(
 
 
 def _ordering_for_normalization(
-    gdf, seed=None, metric="euclidean", network=None, distance_matrix=None
+    gdf, metric="euclidean", network=None, distance_matrix=None, *, seed=None
 ):
     """Order unit indices outward from ``seed``.
 
@@ -134,11 +147,14 @@ def _ordering_for_normalization(
     Parameters
     ----------
     gdf : geopandas.GeoDataFrame
-    seed : int, optional
-        Positional index to sweep from.  Defaults to the most peripheral unit.
     metric : str, default "euclidean"
     network : pandarm.Network, optional
     distance_matrix : np.ndarray, optional
+    seed : int, optional
+        Positional index to sweep from.  Defaults to the most peripheral unit.
+        Keyword-only, so that the leading positional arguments keep the
+        ``(gdf, metric, network, distance_matrix)`` order used everywhere else
+        in this package.
 
     Returns
     -------
