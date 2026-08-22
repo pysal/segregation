@@ -2,10 +2,17 @@ import geopandas as gpd
 
 from .._base import MultiGroupIndex, SpatialExplicitIndex
 from ..dynamics import compute_divergence_profiles
+from ..util.normalization import _maximal_segregation_distortion
 
 
 def _global_distortion(
-    gdf, groups, network=None, metric="euclidean", distance_matrix=None, normalize=False
+    gdf,
+    groups,
+    network=None,
+    metric="euclidean",
+    distance_matrix=None,
+    normalize=True,
+    n_seeds=4,
 ):
     """
     A segregation metric, using Kullback-Leiber (KL) divergence to quantify the
@@ -29,16 +36,25 @@ def _global_distortion(
         A pandarm Network object used to compute distance between observations
     distance_matrix: numpy.array
         numpy array of distances between observations in the dataset
-    normalization:
-        NOT YET IMPLEMENTED
+    normalize: bool
+        If True, standardize the measure by the theoretical maximum segregation
+        value for this dataset
+    n_seeds: int (optional; 4 by default)
+        Number of corner positions used to build the maximally-segregated
+        reference landscape. The normalization constant is the maximum over all
+        of them, so raising this yields a tighter estimate of the theoretical
+        maximum at the cost of one extra divergence profile per seed.
+        Ignored when ``normalize`` is False.
 
 
     Returns
     ----------
-    gdf: geopands.GeoDataFrame
-        a geodataframe of input data used to compute the statistic
     statistic : float
         the global distortion index
+    gdf: geopands.GeoDataFrame
+        a geodataframe of input data used to compute the statistic
+    N : float or None
+        the normalization constant, or None when ``normalize`` is False
 
     """
     # Store the observation index to return with the results
@@ -58,14 +74,17 @@ def _global_distortion(
     #  this yeilds distortion coefficients
     aux = aux.groupby("observation").sum()[["divergence"]]
 
+    N = None
     if normalize:
-        raise Exception("Not yet implemented")
-        # Need to write a routine to determine the scaling factor... From the paper:
-
-        # the maximum distortion coefficient in a theoretical extreme case of segregation.
-        # Theoretically, the maximal-segregation distortion coefficient is achieved when sorting
-        # the k groups into k ghettos, ordered by sizes, and then computing the coefficient for
-        # the most isolated person in the smallest group
+        N = _maximal_segregation_distortion(
+            gdf,
+            groups,
+            metric=metric,
+            network=network,
+            distance_matrix=distance_matrix,
+            n_seeds=n_seeds,
+        )
+        aux["divergence"] = aux["divergence"] / N
 
     # the global multiplies the population at each location by the distortion coefficient they experience
     aux["coefs"] = aux["divergence"] * df.sum(axis=1)
@@ -74,7 +93,7 @@ def _global_distortion(
     out = gpd.GeoDataFrame(gdf, columns=groups, geometry=geoms, crs=geoms.crs)
     out["weighted_distortion"] = aux["coefs"]
 
-    return stat, out
+    return stat, out, N
 
 
 class GlobalDistortion(MultiGroupIndex, SpatialExplicitIndex):
@@ -94,8 +113,16 @@ class GlobalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         A pandarm Network object used to compute distance between observations
     distance_matrix: numpy.array (optional; None by default)
         numpy array of distances between observations in the dataset
-    normalization: bool
-        NOT YET IMPLEMENTED
+    normalize: bool (optional; True by default)
+        If True, divide by the theoretical maximum Distortion: the largest
+        *local* coefficient in the most segregated configuration possible given
+        the study region's group totals. Note that 1.0 is not reachable for the
+        global index -- see Notes.
+    n_seeds: int (optional; 4 by default)
+        Number of corner positions used to build the maximally-segregated
+        reference landscape. Raising this tightens the normalization constant
+        at the cost of one extra divergence profile per seed. Ignored when
+        ``normalize`` is False.
 
     Attributes
     ----------
@@ -103,9 +130,34 @@ class GlobalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         KL Divergence coefficients
     core_data : a pandas DataFrame
         DataFrame that contains the columns used to perform the estimate.
+    normalization_constant : float or None
+        The maximal-segregation distortion coefficient used to normalize the
+        index, or None when ``normalize`` is False.
 
     Notes
     -----
+    The index is the population-weighted mean of the local Distortion
+    coefficients (de Bézenac et al. 2022, Eq. 4).
+
+    When ``normalize`` is True, the divisor is the theoretical maximum
+    Distortion, which the source defines for a *local unit*: "the maximum local
+    distortion in the most segregated configuration possible given the global
+    distribution of the population" (Note 4). Dividing a population-weighted
+    mean by that local maximum means the normalized global index does **not**
+    reach 1.0 even for a maximally segregated landscape. This is intended, not a
+    defect -- the authors state plainly that "the Global Distortion upper bound
+    is comparably out of reach" because "the normalization process is in fact
+    formulated for the local unit ... and does not refer to a set of possible
+    global configurations (unlike the two others) but to the most segregated
+    unit of an ethnically concentric city" (p. 10).
+
+    Consequently the normalized global value is not comparable to Dissimilarity
+    or the H-index on a shared 0-1 scale. To compare across cities or over time,
+    the source compares *relative variation* between measurements (the gradient
+    of each measure) rather than effective values. Do not "fix" this by
+    normalizing with the global index of the extreme configuration -- that would
+    depart from the published definition.
+
     Based on Bézenac, C., Clark, W. A. V., Olteanu, M., & Randon‐Furling, J. (2022). Measuring and Visualizing Patterns
     of Ethnic Concentration: The Role of Distortion Coefficients. Geographical Analysis, 54(1), 173–196.
     https://doi.org/10.1111/gean.12271
@@ -120,23 +172,26 @@ class GlobalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         metric="euclidean",
         network=None,
         distance_matrix=None,
-        normalize=False,
-        **kwargs
+        normalize=True,
+        n_seeds=4,
+        **kwargs,
     ):
         """Init."""
 
         MultiGroupIndex.__init__(self, data, groups)
         SpatialExplicitIndex.__init__(self)
 
-        aux = _global_distortion(
+        stat, data, N = _global_distortion(
             self.data,
             self.groups,
             network=network,
             metric=metric,
             normalize=normalize,
             distance_matrix=distance_matrix,
+            n_seeds=n_seeds,
         )
 
-        self.statistic = aux[0]
-        self.data = aux[1]
+        self.statistic = stat
+        self.data = data
         self._function = _global_distortion
+        self.normalization_constant = N

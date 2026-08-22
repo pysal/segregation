@@ -2,10 +2,17 @@ import geopandas as gpd
 
 from .._base import MultiGroupIndex, SpatialExplicitIndex
 from ..dynamics import compute_divergence_profiles
+from ..util.normalization import _maximal_segregation_distortion
 
 
 def _local_distortion(
-    gdf, groups, metric="euclidean", network=None, distance_matrix=None, normalize=False
+    gdf,
+    groups,
+    metric="euclidean",
+    network=None,
+    distance_matrix=None,
+    normalize=True,
+    n_seeds=4,
 ):
     """
     A segregation metric, using Kullback-Leiber (KL) divergence to quantify the
@@ -30,7 +37,13 @@ def _local_distortion(
     distance_matrix: numpy.array (optional; None by default)
         numpy array of distances between observations in the dataset
     normalize: bool
-        NOT YET IMPLEMENTED
+        If True, normalize coefficients by the maximum theoretical segregation value
+    n_seeds: int (optional; 4 by default)
+        Number of corner positions used to build the maximally-segregated
+        reference landscape. The normalization constant is the maximum over all
+        of them, so raising this yields a tighter estimate of the theoretical
+        maximum at the cost of one extra divergence profile per seed.
+        Ignored when ``normalize`` is False.
 
 
     Returns
@@ -41,7 +54,6 @@ def _local_distortion(
     """
     # Store the observation index to return with the results
     geoms = gdf[gdf.geometry.name]
-    centroids = gdf.geometry.centroid
 
     aux = compute_divergence_profiles(
         gdf=gdf,
@@ -55,13 +67,16 @@ def _local_distortion(
         aux.groupby("observation").sum()[["divergence"]], geometry=geoms
     ).rename(columns={"divergence": "distortion"})
     if normalize:
-        raise Exception("Not yet implemented")
-        # Need to write a routine to determine the scaling factor... From the paper:
-
-        # the maximum distortion coefficient in a theoretical extreme case of segregation.
-        # Theoretically, the maximal-segregation distortion coefficient is achieved when sorting
-        # the k groups into k ghettos, ordered by sizes, and then computing the coefficient for
-        # the most isolated person in the smallest group
+        N = _maximal_segregation_distortion(
+            gdf,
+            groups,
+            metric=metric,
+            network=network,
+            distance_matrix=distance_matrix,
+            n_seeds=n_seeds,
+        )
+        aux["distortion"] = aux["distortion"] / N
+        aux.attrs["normalization_constant"] = N
 
     return aux
 
@@ -83,8 +98,14 @@ class LocalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         A pandarm Network object used to compute distance between observations
     distance_matrix:
         numpy array of distances between observations in the dataset
-    normalization:
-        NOT YET IMPLEMENTED
+    normalize: bool (optional; False by default)
+        If True, normalize coefficients by the maximum theoretical segregation
+        value for this dataset
+    n_seeds: int (optional; 4 by default)
+        Number of corner positions used to build the maximally-segregated
+        reference landscape. Raising this tightens the normalization constant
+        at the cost of one extra divergence profile per seed. Ignored when
+        ``normalize`` is False.
 
     Attributes
     ----------
@@ -92,6 +113,9 @@ class LocalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         KL Divergence coefficients
     core_data : a pandas DataFrame
         DataFrame that contains the columns used to perform the estimate.
+    normalization_constant : float or None
+        The maximal-segregation distortion coefficient used to normalize the
+        coefficients, or None when ``normalize`` is False.
 
     Notes
     -----
@@ -106,8 +130,9 @@ class LocalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         metric="euclidean",
         network=None,
         distance_matrix=None,
-        normalize=False,
-        **kwargs
+        normalize=True,
+        n_seeds=4,
+        **kwargs,
     ):
         """Init."""
 
@@ -121,8 +146,10 @@ class LocalDistortion(MultiGroupIndex, SpatialExplicitIndex):
             metric=metric,
             normalize=normalize,
             distance_matrix=distance_matrix,
+            n_seeds=n_seeds,
         )
 
         self.statistics = aux["distortion"]
         self.data = aux
         self._function = _local_distortion
+        self.normalization_constant = aux.attrs.get("normalization_constant", None)

@@ -54,8 +54,8 @@ def _relative_concentration(data, group_pop_var, total_pop_var):
     asc_ind = area.argsort()
 
     # A discussion about the extraction of n1 and n2 can be found in https://github.com/pysal/segregation/issues/43
-    n1 = np.where(((np.cumsum(t[asc_ind]) / T) < X / T) == False)[0][0] + 1
-    n2_aux = np.where(((np.cumsum(t[des_ind]) / T) < X / T) == False)[0][0] + 1
+    n1 = np.where(~((np.cumsum(t[asc_ind]) / T) < X / T))[0][0] + 1
+    n2_aux = np.where(~((np.cumsum(t[des_ind]) / T) < X / T))[0][0] + 1
     n2 = len(data) - n2_aux
 
     n = data.shape[0]
@@ -110,13 +110,21 @@ class RelativeConcentration(SingleGroupIndex, SpatialExplicitIndex):
     """
 
     def __init__(
-        self, data, group_pop_var, total_pop_var, **kwargs,
+        self,
+        data,
+        group_pop_var,
+        total_pop_var,
+        **kwargs,
     ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
-        SpatialExplicitIndex.__init__(self,)
+        SpatialExplicitIndex.__init__(
+            self,
+        )
         aux = _relative_concentration(
-            self.data, self.group_pop_var, self.total_pop_var,
+            self.data,
+            self.group_pop_var,
+            self.total_pop_var,
         )
 
         self.statistic = aux[0]
