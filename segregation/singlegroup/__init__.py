@@ -13,6 +13,7 @@ from .dx_interaction import DistanceDecayInteraction
 from .dx_isolation import DistanceDecayIsolation
 from .entropy import Entropy
 from .gini import Gini
+from .hutchens_sqrt import HutchensSqrt
 from .interaction import Interaction
 from .isolation import Isolation
 from .minmax import MinMax

@@ -28,6 +28,7 @@ Single Group Indices
       singlegroup.DistanceDecayIsolation
       singlegroup.Entropy
       singlegroup.Gini
+      singlegroup.HutchensSqrt
       singlegroup.Interaction
       singlegroup.Isolation
       singlegroup.MinMax
@@ -60,7 +61,19 @@ Multigroup Indices
       multigroup.MultiSquaredCoefVar
       multigroup.SimpsonsConcentration
       multigroup.SimpsonsInteraction
-	  
+
+Rank-Order Indices
+---------------------
+
+.. currentmodule:: segregation
+
+.. autosummary::
+   :toctree: generated/
+
+      rankorder.RankOrderInfoTheory
+      rankorder.RankOrderSqrt
+      rankorder.RankOrderVarianceRatio
+
 Local Indices
 ---------------------
 
