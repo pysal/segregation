@@ -151,7 +151,7 @@ def batch_multiscalar_singlegroup(
                     distances=distances,
                     group_pop_var=group_pop_var,
                     total_pop_var=total_pop_var,
-                    **kwargs
+                    **kwargs,
                 )
                 profs.append(prof)
                 pbar.update(1)
@@ -163,7 +163,7 @@ def batch_multiscalar_singlegroup(
                     distances=distances,
                     group_pop_var=group_pop_var,
                     total_pop_var=total_pop_var,
-                    **kwargs
+                    **kwargs,
                 )
                 profs.append(prof)
         df = pd.concat(profs, axis=1)
@@ -206,7 +206,7 @@ def batch_multiscalar_multigroup(gdf, distances, groups, progress_bar=True, **kw
                     segregation_index=implicit_multi_indices[idx],
                     distances=distances,
                     groups=groups,
-                    **kwargs
+                    **kwargs,
                 )
                 profs.append(prof)
                 pbar.update(1)
@@ -218,7 +218,7 @@ def batch_multiscalar_multigroup(gdf, distances, groups, progress_bar=True, **kw
                     segregation_index=implicit_multi_indices[idx],
                     distances=distances,
                     groups=groups,
-                    **kwargs
+                    **kwargs,
                 )
                 profs.append(prof)
         df = pd.concat(profs, axis=1)

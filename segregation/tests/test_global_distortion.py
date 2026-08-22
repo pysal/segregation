@@ -47,7 +47,7 @@ def test_normalization_constant_none_when_not_normalized(s_map):
 
 def test_normalized_is_raw_over_n(s_map):
     """Normalizing must rescale the index by exactly 1/N."""
-    raw = GlobalDistortion(s_map, groups=GROUPS)
+    raw = GlobalDistortion(s_map, groups=GROUPS, normalize=False)
     norm = GlobalDistortion(s_map, groups=GROUPS, normalize=True)
     assert norm.normalization_constant > 0
     np.testing.assert_allclose(
