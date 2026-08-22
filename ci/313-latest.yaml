@@ -17,6 +17,7 @@ dependencies:
   - quilt3
   - scikit-learn
   - scipy
+  - statsmodels
   - seaborn
   - tqdm
 

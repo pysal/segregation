@@ -16,5 +16,6 @@ dependencies:
   - pyproj >=3
   - scikit-learn
   - scipy
+  - statsmodels
   - seaborn
   - tqdm
