@@ -6,7 +6,17 @@
 import contextlib
 from importlib.metadata import PackageNotFoundError, version
 
-from . import batch, decomposition, dynamics, inference, local, multigroup, singlegroup, util
+from . import (
+    batch,
+    decomposition,
+    dynamics,
+    inference,
+    local,
+    multigroup,
+    rankorder,
+    singlegroup,
+    util,
+)
 
 with contextlib.suppress(PackageNotFoundError):
     __version__ = version("segregation")

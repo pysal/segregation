@@ -158,6 +158,64 @@ class MultiGroupIndex:
         self.groups = groups
 
 
+class RankOrderIndex(MultiGroupIndex):
+    """Class for estimating rank-order (ordinal) segregation indices.
+
+    Rank-order indices summarize segregation across the full distribution of an
+    ordered variable (e.g. income brackets) rather than at a single threshold.
+    Subclassing MultiGroupIndex keeps these indices compatible with the
+    machinery that dispatches on `isinstance(obj, MultiGroupIndex)`, while
+    `index_type` distinguishes them for anything that dispatches on the string.
+    """
+
+    def __init__(self, data, groups):
+        """Initialize rank-order index.
+
+        Parameters
+        ----------
+        data : pandas.DataFrame or geopandas.GeoDataFrame
+            dataframe or geodataframe if spatial index holding data for location of interest
+        groups : list-like
+            names of columns on `data` holding population counts for each
+            category of an ordered variable, listed from lowest to highest.
+            The categories must partition the population: the total for each
+            unit is taken as the sum across these columns.
+        """
+        if isinstance(groups, str) or not hasattr(groups, "__iter__"):
+            raise TypeError(
+                "`groups` must be an ordered list of column names, ordered from "
+                "the lowest category to the highest"
+            )
+        groups = list(groups)
+
+        if any(not isinstance(group, str) for group in groups):
+            raise TypeError("every entry of `groups` must be a string")
+
+        if len(groups) < 3:
+            raise ValueError(
+                "rank-order indices require at least 3 ordered categories "
+                f"(got {len(groups)})"
+            )
+
+        missing = [group for group in groups if group not in data.columns]
+        if missing:
+            raise ValueError(f"columns not present on the dataframe: {missing}")
+
+        if isinstance(data, gpd.GeoDataFrame):
+            cols = groups + [data.geometry.name]
+        else:
+            cols = groups
+
+        data = _nan_handle(data[cols])
+        data = data[cols]
+
+        if (data[groups].to_numpy() < 0).any():
+            raise ValueError("population counts must be non-negative")
+
+        MultiGroupIndex.__init__(self, data, groups)
+        self.index_type = "rankorder"
+
+
 class SpatialExplicitIndex:
     """Class for estimating segregation indices that are explicitly spatial (have no aspatial version)."""
 
@@ -208,7 +266,7 @@ class SpatialImplicitIndex:
             Whether to precompute the pandarm Network object
         """
         self.spatial_type = "implicit"
-        if self.index_type == "multigroup":
+        if self.index_type in ("multigroup", "rankorder"):
             self._groups = self.groups
         elif self.index_type == "singlegroup":
             self._groups = [self.group_pop_var, self.total_pop_var, "group_2_pop_var"]
