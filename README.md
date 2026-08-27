@@ -50,16 +50,21 @@ pip install segregation
 conda install -c conda-forge segregation
 ```
 
-You can also install the current development version from this repository 
+You can also install the current development version from this repository (requires Python >= 3.12). Clone the
+repository, `cd` into the directory, and run an editable install:
 
- download [anaconda](https://www.anaconda.com/download/):
+```bash
+git clone https://github.com/pysal/segregation.git
+cd segregation
+pip install -e .
+```
 
-`cd` into the directory and run the following commands
+Optionally, create the bundled conda environment first:
 
 ```bash
 conda env create -f environment.yml
 conda activate segregation
-python setup.py develop
+pip install -e .
 ```
 
 ## Getting started
