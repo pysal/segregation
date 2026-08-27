@@ -5,8 +5,6 @@ on:
     paths:
       - paper/paper.md
       - paper/paper.bib
-      - paper/figs/seg_profile_merged_poa_bh.png
-      - paper/figs/grid_plot_4314902_vs_3106200_bootstrap.png
       - .github/workflows/draft-pdf.yml
 
 jobs:
