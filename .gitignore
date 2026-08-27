@@ -9,6 +9,12 @@ notebooks/.ipynb_checkpoints/
 .eggs/
 *.egg-info/
 
+# RStudio (paper/)
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+
 # Packages
 *.egg
 *.egg-info

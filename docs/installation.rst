@@ -3,23 +3,28 @@
 Installation
 ===============
 
-Note: segregation supports python 3.5 and 3.6 only. Please make sure that you are operating in a python 3 environment.
+``segregation`` requires Python >= 3.12.
 
-i) `pip` directly running in the prompt::
+i) ``pip`` directly running in the prompt::
 
 	pip install segregation
 
-ii) Using the `conda-forge` channel as described in https://github.com/conda-forge/segregation-feedstock::
+ii) Using the ``conda-forge`` channel as described in https://github.com/conda-forge/segregation-feedstock::
 
-	conda config --add channels conda-forge
-	conda install segregation
+	conda install -c conda-forge segregation
 
-iii) Another recommended method for installing segregation is with anaconda (https://www.anaconda.com/download/). Clone this repository or download it manually then `cd` into the directory and run the following commands (this will install the development version)::
+iii) Install the development version from a local clone of this repository (this is an editable install)::
+
+	git clone https://github.com/pysal/segregation.git
+	cd segregation
+	pip install -e .
+
+iv) To use the bundled conda environment for the development install, create it first and then install into it::
 
 	conda env create -f environment.yml
-	source activate segregation
-	python setup.py develop
+	conda activate segregation
+	pip install -e .
 
-iv) `pip` directly from this repository running in the prompt (if you experience an issue trying to install this way, take a look at this discussion: https://github.com/pysal/segregation/issues/15)::
+v) ``pip`` directly from this repository running in the prompt::
 
 	pip install git+https://github.com/pysal/segregation
