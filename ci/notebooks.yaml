@@ -1,0 +1,25 @@
+name: test
+channels:
+  - conda-forge
+dependencies:
+  - python=3.13
+  - geopandas
+  - joblib
+  - libpysal
+  - mapclassify
+  - matplotlib
+  - numba
+  - numpy
+  - pandas
+  - pyproj
+  - scikit-learn
+  - scipy
+  - seaborn
+  - tqdm
+
+  # notebook execution
+  - ipykernel
+  - watermark
+  - nbmake
+  - pytest
+  - pip
