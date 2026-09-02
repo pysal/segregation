@@ -17,3 +17,12 @@ dependencies:
   - scipy
   - seaborn
   - tqdm
+  # docs (building the docs also executes the example notebooks)
+  - sphinx
+  - myst-nb
+  - jupyter-cache
+  - ipykernel
+  - ipywidgets
+  - numpydoc
+  - sphinxcontrib-bibtex
+  - sphinx_bootstrap_theme

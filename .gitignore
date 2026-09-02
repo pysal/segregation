@@ -2,12 +2,14 @@
 *.pyc
 .rope*
 .idea/
-notebooks/.ipynb_checkpoints/
 .DS_Store
 .ipynb_checkpoints/
 *.bak
 .eggs/
 *.egg-info/
+
+# Sphinx build (also holds the myst-nb jupyter-cache)
+docs/_build/
 
 # RStudio (paper/)
 .Rproj.user/

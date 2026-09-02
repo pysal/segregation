@@ -16,19 +16,19 @@ With only a few lines of code, **segregation** users can
 
 Calculate over 40 segregation measures from simple to state-of-the art, including:
 
-- [single-group segregation indices](https://github.com/pysal/segregation/blob/master/notebooks/10_singlegroup_indices.ipynb)
-- [multi-group segregation indices](https://github.com/pysal/segregation/blob/master/notebooks/02_multigroup_indices.ipynb)
+- [single-group segregation indices](https://github.com/pysal/segregation/blob/master/docs/notebooks/01_singlegroup_indices.ipynb)
+- [multi-group segregation indices](https://github.com/pysal/segregation/blob/master/docs/notebooks/02_multigroup_indices.ipynb)
 - spatial segregation indices
-  - [using spatial weights matrices, euclidian distances, or topological relationships](https://github.com/pysal/segregation/blob/master/notebooks/10_singlegroup_indices.ipynb)
-  - [using multiscalar definitions](https://github.com/pysal/segregation/blob/master/notebooks/04_multiscalar_example.ipynb)
-  - [Kullback-Leiber divergence index](https://github.com/pysal/segregation/blob/master/notebooks/kl_divergence_profile_walkthrough.ipynb)
-- [local segregation indices](https://github.com/pysal/segregation/blob/master/notebooks/03_local_indices.ipynb)
+  - [using spatial weights matrices, euclidian distances, or topological relationships](https://github.com/pysal/segregation/blob/master/docs/notebooks/01_singlegroup_indices.ipynb)
+  - [using multiscalar definitions](https://github.com/pysal/segregation/blob/master/docs/notebooks/04_multiscalar_example.ipynb)
+  - [Kullback-Leiber divergence index](https://github.com/pysal/segregation/blob/master/docs/notebooks/kl_divergence_profile_walkthrough.ipynb)
+- [local segregation indices](https://github.com/pysal/segregation/blob/master/docs/notebooks/03_local_indices.ipynb)
 
 Test whether segregation estimates are statistically significant:
 
-- [single value and comparative inference](https://github.com/pysal/segregation/blob/master/notebooks/06_inference.ipynb)
+- [single value and comparative inference](https://github.com/pysal/segregation/blob/master/docs/notebooks/06_inference.ipynb)
 
-[Decompose](https://github.com/pysal/segregation/blob/master/notebooks/07_decomposition_example.ipynb)
+[Decompose](https://github.com/pysal/segregation/blob/master/docs/notebooks/07_decomposition_example.ipynb)
 segregation comparisons into
 
 - differences arising from spatial structure 
@@ -73,7 +73,7 @@ For a complete guide to the `segregation` API, see the online
 [documentation](https://pysal.org/segregation/). 
 
 For code walkthroughs and sample analyses, see the
-[example notebooks](https://github.com/pysal/segregation/tree/master/notebooks)
+[example notebooks](https://github.com/pysal/segregation/tree/master/docs/notebooks)
 
 ## Calculating Segregation Measures
 
@@ -217,15 +217,15 @@ The summary of the inference framework is presented in the table below:
 | Single Value       | SingleValueTest    |  seg_class, iterations_under_null, null_approach, two_tailed   |   p_value, est_sim, statistic    |
 | Two Values         | TwoValueTest       | seg_class_1, seg_class_2, iterations_under_null, null_approach | p_value, est_sim, est_point_diff |
 
-### [Single Value Inference](https://github.com/pysal/segregation/blob/master/notebooks/inference_wrappers_example.ipynb)
+### [Single Value Inference](https://github.com/pysal/segregation/blob/master/docs/notebooks/06_inference.ipynb)
 
 ![](doc/_static/images/singleval_inference.png)
 
-### [Two-Value Inference](https://github.com/pysal/segregation/blob/master/notebooks/inference_wrappers_example.ipynb)
+### [Two-Value Inference](https://github.com/pysal/segregation/blob/master/docs/notebooks/06_inference.ipynb)
 
 ![](doc/_static/images/twoval_inference.png)
 
-### [Decomposition](https://github.com/pysal/segregation/blob/master/notebooks/decomposition_wrapper_example.ipynb)
+### [Decomposition](https://github.com/pysal/segregation/blob/master/docs/notebooks/07_decomposition_example.ipynb)
 
 Another useful analysis that can be performed with the **segregation** module is a
 decompositional approach where two different indexes can be broken down into their spatial

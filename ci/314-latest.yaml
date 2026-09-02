@@ -29,8 +29,10 @@ dependencies:
   - twine
 
   # docs
+  - ipykernel
   - ipywidgets
-  - nbsphinx
+  - jupyter-cache
+  - myst-nb
   - numpydoc
   - quilt3
   - sphinx
