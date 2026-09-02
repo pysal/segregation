@@ -9,7 +9,7 @@
 [![Documentation](https://img.shields.io/static/v1.svg?label=docs&message=current&color=9cf)](http://pysal.org/segregation/)
 
 
-![](doc/_static/images/heatmaps.png)
+![](docs/_static/images/heatmaps.png)
 
 The PySAL **segregation** package is a tool for analyzing patterns of urban segregation.
 With only a few lines of code, **segregation** users can
@@ -120,7 +120,7 @@ The network functions can be particularly useful for teasing out differences in
 segregation measures caused by two cities that have two very different spatial structures,
 like for example Detroit MI (left) and Monroe LA (right):
 
-![](doc/_static/images/networks.png)
+![](docs/_static/images/networks.png)
 
 For point estimation, all single-group indices available are summarized in the following
 table:
@@ -219,11 +219,11 @@ The summary of the inference framework is presented in the table below:
 
 ### [Single Value Inference](https://github.com/pysal/segregation/blob/master/docs/notebooks/06_inference.ipynb)
 
-![](doc/_static/images/singleval_inference.png)
+![](docs/_static/images/singleval_inference.png)
 
 ### [Two-Value Inference](https://github.com/pysal/segregation/blob/master/docs/notebooks/06_inference.ipynb)
 
-![](doc/_static/images/twoval_inference.png)
+![](docs/_static/images/twoval_inference.png)
 
 ### [Decomposition](https://github.com/pysal/segregation/blob/master/docs/notebooks/07_decomposition_example.ipynb)
 
@@ -236,7 +236,7 @@ below:
 |:--------------|:---------------------|:---------------------------------------:|:--------------------:|
 | Decomposition | DecomposeSegregation | index1, index2, counterfactual_approach |       c_a, c_s       |
 
-![](doc/_static/images/decomp_example.png)
+![](docs/_static/images/decomp_example.png)
 
 In this case, the difference in measured D statistics between Detroit and Monroe is
 attributable primarily to their demographic makeup, rather than the spatial structure of
