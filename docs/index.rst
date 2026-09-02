@@ -11,7 +11,7 @@ The PySAL `segregation` package provides a suite of tools for measuring segregat
     <div class="container-fluid">
       <div class="row equal-height">
         <div class="col-md-6 col-xs-12">
-            <a href="https://github.com/pysal/segregation/blob/master/docs/notebooks/01_singlegroup_indices.ipynb" class="thumbnail">
+            <a href="https://github.com/pysal/segregation/blob/main/docs/notebooks/01_singlegroup_indices.ipynb" class="thumbnail">
                 <img src="_static/images/la_nhblk_2010_profile_wrapper_example.png" class="img-responsive center-block">
                 <div class="caption text-center">
                 <h6>Fit multiple indexes at once</h6>
@@ -19,7 +19,7 @@ The PySAL `segregation` package provides a suite of tools for measuring segregat
             </a>
         </div>
         <div class="col-sm-6 col-xs-12">
-            <a href="https://github.com/pysal/segregation/blob/master/docs/notebooks/06_inference.ipynb" class="thumbnail">
+            <a href="https://github.com/pysal/segregation/blob/main/docs/notebooks/06_inference.ipynb" class="thumbnail">
                 <img src="_static/images/comparative_inference_example.png" class="img-responsive center-block">
                 <div class="caption text-center">
                 <h6>Single Value and Comparative Inference</h6>
@@ -27,7 +27,7 @@ The PySAL `segregation` package provides a suite of tools for measuring segregat
             </a>
         </div>
         <div class="col-sm-6 col-xs-12">
-            <a href="https://github.com/pysal/segregation/blob/master/docs/notebooks/07_decomposition_example.ipynb" class="thumbnail">
+            <a href="https://github.com/pysal/segregation/blob/main/docs/notebooks/07_decomposition_example.ipynb" class="thumbnail">
                 <img src="_static/images/decomposition_example.png"
                 class="img-responsive center-block">
                 <div class="caption text-center">
@@ -36,7 +36,7 @@ The PySAL `segregation` package provides a suite of tools for measuring segregat
             </a>
         </div>
 		<div class="col-sm-6 col-xs-12">
-            <a href="https://github.com/pysal/segregation/blob/master/docs/notebooks/02_multigroup_indices.ipynb" class="thumbnail">
+            <a href="https://github.com/pysal/segregation/blob/main/docs/notebooks/02_multigroup_indices.ipynb" class="thumbnail">
                 <img src="_static/images/multigroup_example.png"
                 class="img-responsive center-block">
                 <div class="caption text-center">
@@ -45,7 +45,7 @@ The PySAL `segregation` package provides a suite of tools for measuring segregat
             </a>
         </div>
 		<div class="col-sm-6 col-xs-12">
-			<a href="https://github.com/pysal/segregation/blob/master/docs/notebooks/04_multiscalar_example.ipynb" class="thumbnail">
+			<a href="https://github.com/pysal/segregation/blob/main/docs/notebooks/04_multiscalar_example.ipynb" class="thumbnail">
 				<img src="_static/images/network_example.png"
 				class="img-responsive center-block">
 				<div class="caption text-center">
@@ -54,7 +54,7 @@ The PySAL `segregation` package provides a suite of tools for measuring segregat
 			</a>
         </div>
 		<div class="col-sm-6 col-xs-12">
-            <a href="https://github.com/pysal/segregation/blob/master/docs/notebooks/03_local_indices.ipynb" class="thumbnail">
+            <a href="https://github.com/pysal/segregation/blob/main/docs/notebooks/03_local_indices.ipynb" class="thumbnail">
                 <img src="_static/images/local_example.png"
                 class="img-responsive center-block">
                 <div class="caption text-center">
