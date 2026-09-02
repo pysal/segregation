@@ -216,7 +216,7 @@ class SingleValueTest:
 
     Examples
     --------
-    Several examples can be found here https://github.com/pysal/segregation/blob/master/notebooks/inference_wrappers_example.ipynb.
+    Several examples can be found here https://github.com/pysal/segregation/blob/master/docs/notebooks/06_inference.ipynb.
     """
 
     def __init__(
@@ -562,7 +562,7 @@ class TwoValueTest:
 
     Examples
     --------
-    Several examples can be found here https://github.com/pysal/segregation/blob/master/notebooks/inference_wrappers_example.ipynb.
+    Several examples can be found here https://github.com/pysal/segregation/blob/master/docs/notebooks/06_inference.ipynb.
     """
 
     def __init__(

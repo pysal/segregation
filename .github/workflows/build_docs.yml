@@ -3,6 +3,10 @@
    push:
      branches:
      - main
+   pull_request:
+     branches:
+     - main
+     - joss_paper
 
  jobs:
    docs:
@@ -37,6 +41,7 @@
          run: cd docs; make html
 
        - name: Commit Docs
+         if: github.event_name == 'push'
          run: |
            git clone https://github.com/ammaraskar/sphinx-action-test.git --branch gh-pages --single-branch gh-pages
            cp -r docs/_build/html/* gh-pages/
@@ -49,6 +54,7 @@
            # so we ignore the return code.
 
        - name: Push to gh-pages
+         if: github.event_name == 'push'
          uses: ad-m/github-push-action@master
          with:
             branch: gh-pages
