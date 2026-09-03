@@ -81,32 +81,30 @@ These capabilities establish `segregation` as a unified, open-source framework f
 
 `segregation` is part of the PySAL ecosystem, where it provides tools for residential segregation analysis within the **Explore** family of spatial analysis libraries. Unlike desktop GIS software, it supports reproducible, scriptable workflows that integrate naturally with broader Python data science pipelines.
 
-Although segregation analysis is also available in R packages such as `OasisR` [@tivadar2019oasisr], `seg` [@segrhong2011], and `segregation` [@Elbers2021], PySAL's `segregation` module provides a broader and more integrated framework. It includes over 40 segregation indices, supports multiscalar and network-based analyses, Monte Carlo inference, and decomposition methods, while enabling simultaneous computation of multiple indices with minimal software dependencies. As a native Python library, it integrates seamlessly with the PySAL ecosystem and modern geospatial data science workflows.
+The most closely related tools are the R packages `OasisR` [@tivadar2019oasisr], `seg` [@segrhong2011], and `segregation` [@Elbers2021]. `OasisR` provides a broad catalog of aspatial and spatial evenness indices with simulation-based inference; `seg` targets spatial evenness and exposure measures; and the R `segregation` package focuses on the entropy family (the Mutual Information index and Theil's *H*) with within/between and temporal decomposition and Bayesian bias correction. PySAL's `segregation` is distinguished less by any single index than by combining, in one class-based API, index families that these packages cover separately. These include single-group, multigroup, local, and explicitly spatial measures of evenness, exposure, concentration, clustering, and centralization, together with Monte Carlo inference under several null models, Shapley decomposition of differences into demographic and spatial components, multiscalar profiles, and batch computation. It depends only on the scientific-Python and PySAL stack (NumPy, pandas, GeoPandas, scikit-learn), with no proprietary or desktop-GIS requirements. A native Python implementation, rather than a wrapper around the R packages, keeps these workflows within the PySAL ecosystem and lets them share a common index interface.
 
 # Software design
 
-`segregation` is designed with attention to flexibility, usability, and interoperability between its core functions. The library is organized into different subparts such as `singlegroup`, `multigroup`, `local`, `inference`, `decomposition`, `batch`, `network`, and `dynamics`.[^1] Segregation measures are built using Python classes which can be integrated in subsequent steps, such as inference or decomposition. The module is structured toward two kinds of segregation indices: 'spatially-explicit' and 'spatially-implicit'. The former includes space as part of its original formula. The latter uses the @reardonsullivan2004 approach to state that any segregation index is a spatial index if you transform the data properly.
+`segregation` is organized into subpackages by analysis task (`singlegroup`, `multigroup`, `local`, `inference`, `decomposition`, `batch`, `network`, and `dynamics`[^1]), so that the large collection of indices stays navigable and users import only what they need. Each index is implemented as a Python class rather than a bare function: fitting a class stores the input data, parameters, and result on one object, which `inference` and `decomposition` then consume directly. This estimator-style pattern follows a convention familiar from scikit-learn and avoids threading many arguments through a functional API. The design also distinguishes two kinds of indices. *Spatially-explicit* indices include space in their formula. *Spatially-implicit* indices instead accept spatial weights or a network and transform the data before estimation, following @reardonsullivan2004; one class therefore serves both aspatial and spatial use, at the cost of expressing spatial behavior through parameters rather than through distinct types.
 
 [^1]: @cortes2020open introduced `segregation` but many new implementations were developed recently and the API underwent a major revision.
 
 Additionally, `segregation` is developed with testing and documentation standards consistent with the Scientific Python ecosystem, ensuring reliability and maintainability.
 
-<!-- "scikit-learn" like API? -->
-
 ## Core Functionality
 
-`segregation` organizes its functionality around the type of segregation analysis the user is interested in, and each subpart is explained as follows.
+`segregation` organizes its functionality around the type of segregation analysis the user is interested in, and each subpackage is explained as follows.
 
 
 ### Single and Multigroup Indices
 
 Single-group measures assess segregation between two different groups in a given location (i.e., one group vs. everyone else). Multigroup segregation evaluates the simultaneous separation of all groups in a population (e.g., the distribution of White, Black, Asian, and Hispanic residents) across areas. 
 
-Currently, `segregation` has over 40 indices available which represents, to our knowledge, the broadest range of indices available for a user in any software. Also, the user can fit many indices at once with a wrapper function in the `batch` module.
+Currently, `segregation` provides over 40 indices, which to our knowledge is among the most extensive selections in any segregation software, and the `batch` subpackage can fit many of them at once.
 
 ### Local Indices
 
-Unlike global indices that summarize an entire metropolitan area into a single value, local indices decompose segregation to the individual geographic unit level. Using these disaggregated measures helps identify precise spatial clusters where social isolation is most acute, uncovering micro-level dynamics that global metrics often mask. Currently, `segregation` has seven local indexes. 
+Unlike global indices that summarize an entire metropolitan area into a single value, local indices decompose segregation to the individual geographic unit level. Using these disaggregated measures helps identify precise spatial clusters where social isolation is most acute, uncovering micro-level dynamics that global metrics often mask. Currently, `segregation` has seven local indices. 
 
 ### Multiscalar
 
@@ -114,14 +112,14 @@ The multiscalar profile [@reardon2008geographic] is a tool for measuring spatial
 
 The package has a wrapper named `compute_multiscalar_profile` which can be used in a workflow to build these profiles.
 
-### Simulation based Inference
+### Simulation-based Inference
 
 PySAL's `segregation` module provides Monte Carlo inference for evaluating the statistical significance of segregation indices under different null hypotheses. For single-value inference, it supports resampling approaches such as `bootstrap`, `systematic`, `evenness`, and `geographic_permutation`. For comparative inference, it includes methods such as `bootstrap` and `composition`, which generate synthetic distributions through counterfactual estimates. Because different null hypotheses test distinct assumptions, their specification is critical and can lead to substantially different conclusions. Likewise, not all segregation indices are appropriate for every null hypothesis, particularly in comparative analyses, making careful selection of both the index and inference procedure essential.
 
 
 ### Decomposition
 
-The PySAL `segregation` module implements a decomposition framework for comparative segregation analysis that partitions differences in segregation into population composition and spatial structure. Building on @rey2021comparative, it combines spatially explicit counterfactual distributions with Shapley value decomposition to quantify each component's contribution to differences in segregation across cities, time periods, and spatiotemporal contexts. Applicable to multiple segregation indices, the framework provides a richer interpretation than direct index comparisons by identifying whether observed differences primarily reflect demographic composition or neighborhood spatial organization. This functionality is available through the `DecomposeSegregation` class in the `decomposition` subpart.
+The PySAL `segregation` module implements a decomposition framework for comparative segregation analysis that partitions differences in segregation into population composition and spatial structure. Building on @rey2021comparative, it combines spatially explicit counterfactual distributions with Shapley value decomposition to quantify each component's contribution to differences in segregation across cities, time periods, and spatiotemporal contexts. Applicable to multiple segregation indices, the framework provides a richer interpretation than direct index comparisons by identifying whether observed differences primarily reflect demographic composition or neighborhood spatial organization. This functionality is available through the `DecomposeSegregation` class in the `decomposition` subpackage.
 
 ## Example workflow
 
