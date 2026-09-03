@@ -51,7 +51,9 @@ Repository = "https://github.com/pysal/segregation"
 [project.optional-dependencies]
 dev = ["pre-commit"]
 docs = [
-    "nbsphinx",
+    "myst-nb",
+    "jupyter-cache",
+    "ipykernel",
     "numpydoc",
     "pandoc",
     "sphinx",

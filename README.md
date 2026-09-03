@@ -1,6 +1,6 @@
 # Segregation Analysis, Inference, and Decomposition with PySAL
 
-[![codecov](https://codecov.io/gh/pysal/segregation/branch/master/graph/badge.svg?token=1ujvZCI9Ce)](https://codecov.io/gh/pysal/segregation)
+[![codecov](https://codecov.io/gh/pysal/segregation/branch/main/graph/badge.svg?token=1ujvZCI9Ce)](https://codecov.io/gh/pysal/segregation)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/segregation)
 ![PyPI](https://img.shields.io/pypi/v/segregation)
 ![Conda (channel only)](https://img.shields.io/conda/vn/conda-forge/segregation)
@@ -9,26 +9,26 @@
 [![Documentation](https://img.shields.io/static/v1.svg?label=docs&message=current&color=9cf)](http://pysal.org/segregation/)
 
 
-![](doc/_static/images/heatmaps.png)
+![](docs/_static/images/heatmaps.png)
 
 The PySAL **segregation** package is a tool for analyzing patterns of urban segregation.
 With only a few lines of code, **segregation** users can
 
 Calculate over 40 segregation measures from simple to state-of-the art, including:
 
-- [single-group segregation indices](https://github.com/pysal/segregation/blob/master/notebooks/10_singlegroup_indices.ipynb)
-- [multi-group segregation indices](https://github.com/pysal/segregation/blob/master/notebooks/02_multigroup_indices.ipynb)
+- [single-group segregation indices](https://github.com/pysal/segregation/blob/main/docs/notebooks/01_singlegroup_indices.ipynb)
+- [multi-group segregation indices](https://github.com/pysal/segregation/blob/main/docs/notebooks/02_multigroup_indices.ipynb)
 - spatial segregation indices
-  - [using spatial weights matrices, euclidian distances, or topological relationships](https://github.com/pysal/segregation/blob/master/notebooks/10_singlegroup_indices.ipynb)
-  - [using multiscalar definitions](https://github.com/pysal/segregation/blob/master/notebooks/04_multiscalar_example.ipynb)
-  - [Kullback-Leiber divergence index](https://github.com/pysal/segregation/blob/master/notebooks/kl_divergence_profile_walkthrough.ipynb)
-- [local segregation indices](https://github.com/pysal/segregation/blob/master/notebooks/03_local_indices.ipynb)
+  - [using spatial weights matrices, euclidian distances, or topological relationships](https://github.com/pysal/segregation/blob/main/docs/notebooks/01_singlegroup_indices.ipynb)
+  - [using multiscalar definitions](https://github.com/pysal/segregation/blob/main/docs/notebooks/04_multiscalar_example.ipynb)
+  - [Kullback-Leiber divergence index](https://github.com/pysal/segregation/blob/main/docs/notebooks/kl_divergence_profile_walkthrough.ipynb)
+- [local segregation indices](https://github.com/pysal/segregation/blob/main/docs/notebooks/03_local_indices.ipynb)
 
 Test whether segregation estimates are statistically significant:
 
-- [single value and comparative inference](https://github.com/pysal/segregation/blob/master/notebooks/06_inference.ipynb)
+- [single value and comparative inference](https://github.com/pysal/segregation/blob/main/docs/notebooks/06_inference.ipynb)
 
-[Decompose](https://github.com/pysal/segregation/blob/master/notebooks/07_decomposition_example.ipynb)
+[Decompose](https://github.com/pysal/segregation/blob/main/docs/notebooks/07_decomposition_example.ipynb)
 segregation comparisons into
 
 - differences arising from spatial structure 
@@ -73,7 +73,7 @@ For a complete guide to the `segregation` API, see the online
 [documentation](https://pysal.org/segregation/). 
 
 For code walkthroughs and sample analyses, see the
-[example notebooks](https://github.com/pysal/segregation/tree/master/notebooks)
+[example notebooks](https://github.com/pysal/segregation/tree/main/docs/notebooks)
 
 ## Calculating Segregation Measures
 
@@ -99,7 +99,7 @@ a specific group with columns like `"hi_income"`, `"med_income"` and `"low_incom
 bracket, and a total column called `"total_population"`. A typical call would be something like this:
 
 ```python
-from segregation.aspatial import Dissim
+from segregation.singlegroup import Dissim
 d_index = Dissim(df, "hi_income", "total_population")
 ```
 
@@ -110,7 +110,7 @@ If a user would want to fit a *spatial* dissimilarity index (SD), the call would
 identical, save for the fact that the `DataFrame` now needs to be a `GeoDataFrame` with an appropriate `geometry` column
 
 ```python
-from segregation.spatial import SpatialDissim
+from segregation.singlegroup import SpatialDissim
 spatial_index = SpatialDissim(gdf, "hi_income", "total_population")
 ```
 
@@ -120,7 +120,7 @@ The network functions can be particularly useful for teasing out differences in
 segregation measures caused by two cities that have two very different spatial structures,
 like for example Detroit MI (left) and Monroe LA (right):
 
-![](doc/_static/images/networks.png)
+![](docs/_static/images/networks.png)
 
 For point estimation, all single-group indices available are summarized in the following
 table:
@@ -166,7 +166,7 @@ column names rather than a single string;
 reprising the income segregation example above, an example call might look like this  
 
 ```python
-from segregation.aspatial import MultiDissim
+from segregation.multigroup import MultiDissim
 index = MultiDissim(df, ['hi_income', 'med_income', 'low_income'])
 ```
 
@@ -217,15 +217,15 @@ The summary of the inference framework is presented in the table below:
 | Single Value       | SingleValueTest    |  seg_class, iterations_under_null, null_approach, two_tailed   |   p_value, est_sim, statistic    |
 | Two Values         | TwoValueTest       | seg_class_1, seg_class_2, iterations_under_null, null_approach | p_value, est_sim, est_point_diff |
 
-### [Single Value Inference](https://github.com/pysal/segregation/blob/master/notebooks/inference_wrappers_example.ipynb)
+### [Single Value Inference](https://github.com/pysal/segregation/blob/main/docs/notebooks/06_inference.ipynb)
 
-![](doc/_static/images/singleval_inference.png)
+![](docs/_static/images/singleval_inference.png)
 
-### [Two-Value Inference](https://github.com/pysal/segregation/blob/master/notebooks/inference_wrappers_example.ipynb)
+### [Two-Value Inference](https://github.com/pysal/segregation/blob/main/docs/notebooks/06_inference.ipynb)
 
-![](doc/_static/images/twoval_inference.png)
+![](docs/_static/images/twoval_inference.png)
 
-### [Decomposition](https://github.com/pysal/segregation/blob/master/notebooks/decomposition_wrapper_example.ipynb)
+### [Decomposition](https://github.com/pysal/segregation/blob/main/docs/notebooks/07_decomposition_example.ipynb)
 
 Another useful analysis that can be performed with the **segregation** module is a
 decompositional approach where two different indexes can be broken down into their spatial
@@ -236,7 +236,7 @@ below:
 |:--------------|:---------------------|:---------------------------------------:|:--------------------:|
 | Decomposition | DecomposeSegregation | index1, index2, counterfactual_approach |       c_a, c_s       |
 
-![](doc/_static/images/decomp_example.png)
+![](docs/_static/images/decomp_example.png)
 
 In this case, the difference in measured D statistics between Detroit and Monroe is
 attributable primarily to their demographic makeup, rather than the spatial structure of
@@ -263,7 +263,7 @@ If you are having issues, please talk to us in the
 ## License
 
 The project is licensed under the
-[BSD license](https://github.com/pysal/pysal/blob/master/LICENSE.txt).
+[BSD license](https://github.com/pysal/pysal/blob/main/LICENSE.txt).
 
 ## Funding
 

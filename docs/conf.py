@@ -40,7 +40,7 @@ extensions = [  #'sphinx_gallery.gen_gallery',
     # 'recommonmark',
     #'sphinx.ext.napoleon',
     "matplotlib.sphinxext.plot_directive",
-    "nbsphinx",
+    "myst_nb",
 ]
 
 bibtex_bibfiles = ["_static/references.bib"]
@@ -60,7 +60,33 @@ templates_path = ["_templates"]
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
-source_suffix = [".rst", ".md"]
+source_suffix = {
+    ".rst": "restructuredtext",
+    ".md": "myst-nb",
+    ".ipynb": "myst-nb",
+}
+
+# -- MyST / myst-nb configuration --------------------------------------
+
+myst_enable_extensions = [
+    "amsmath",
+    "colon_fence",
+    "deflist",
+    "dollarmath",
+    "html_image",
+]
+
+# Execute notebooks on build; re-run only when their content changes.
+nb_execution_mode = "cache"
+# Fail the build if any notebook raises.
+nb_execution_raise_on_error = True
+# No per-cell timeout (the CI job has its own overall timeout).
+nb_execution_timeout = -1
+nb_execution_show_tb = True
+nb_merge_streams = True
+# Map any kernelspec name to the environment's python3 kernel.
+nb_kernel_rgx_aliases = {".*": "python3"}
+
 # The master toctree document.
 master_doc = "index"
 
