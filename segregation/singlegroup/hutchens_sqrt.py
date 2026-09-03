@@ -40,11 +40,6 @@ def _hutchens_sqrt(data, group_pop_var, total_pop_var):
     the corresponding totals. It takes values in [0, 1], where 0 is complete
     integration and 1 is complete segregation.
 
-    Unlike Dissim, this index satisfies the neighborhood division property (a
-    Pigou-Dalton style transfer principle), placing it in the same axiomatic
-    class as Gini. It is also symmetric in types: swapping the labels of the
-    two groups leaves the statistic unchanged.
-
     Rewriting in terms of unit shares :math:`p_j = x_{1j}/t_j` and the global
     share :math:`P` shows this is identical to the "square root index" that
     Reardon integrates to form the rank-order index
