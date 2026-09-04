@@ -81,7 +81,7 @@ These capabilities establish `segregation` as a unified, open-source framework f
 
 `segregation` is part of the PySAL ecosystem, where it provides tools for residential segregation analysis within the **Explore** family of spatial analysis libraries. Unlike desktop GIS software, it supports reproducible, scriptable workflows that integrate naturally with broader Python data science pipelines.
 
-The most closely related tools are the R packages `OasisR` [@tivadar2019oasisr], `seg` [@segrhong2011], and `segregation` [@Elbers2021]. `OasisR` provides a broad catalog of aspatial and spatial evenness indices with simulation-based inference; `seg` targets spatial evenness and exposure measures; and the R `segregation` package focuses on the entropy family (the Mutual Information index and Theil's *H*) with within/between and temporal decomposition and Bayesian bias correction. PySAL's `segregation` is distinguished less by any single index than by combining, in one class-based API, index families that these packages cover separately. These include single-group, multigroup, local, and explicitly spatial measures of evenness, exposure, concentration, clustering, and centralization, together with Monte Carlo inference under several null models, Shapley decomposition of differences into demographic and spatial components, multiscalar profiles, and batch computation. It depends only on the scientific-Python and PySAL stack (NumPy, pandas, GeoPandas, scikit-learn), with no proprietary or desktop-GIS requirements. A native Python implementation, rather than a wrapper around the R packages, keeps these workflows within the PySAL ecosystem and lets them share a common index interface.
+The most closely related tools are the R packages `OasisR` [@tivadar2019oasisr], `seg` [@segrhong2011], and `segregation` [@Elbers2021]. `OasisR` provides a broad catalog of aspatial and spatial evenness indices with simulation-based inference; `seg` targets spatial evenness and exposure measures; and the R `segregation` package focuses on the entropy family (the Mutual Information index and Theil's *H*) with within/between and temporal decomposition and Bayesian bias correction. PySAL's `segregation` is distinguished less by any single index than by combining, in one class-based API, index families that these packages cover separately. These include single-group, multigroup, local, and explicitly spatial measures of evenness, exposure, concentration, clustering, and centralization, together with Monte Carlo inference under several null models, Shapley decomposition of differences into demographic and spatial components, multiscalar profiles, and batch computation. It builds on the open-source Scientific Python and PySAL ecosystems, with no proprietary or desktop-GIS requirements. A native Python implementation, rather than a wrapper around the R packages, keeps these workflows within the PySAL ecosystem and lets them share a common index interface.
 
 # Software design
 
@@ -158,7 +158,7 @@ The package is also used in spatial data science education, including textbooks 
 
 # AI usage disclosure
 
-No generative AI or LLMs were used for code development in `segregation`; however, they were used for grammar, spelling corrections and consistency during the writing of this paper.
+No generative AI or LLMs were used for code development in `segregation`. They were used for grammar, spelling, and consistency edits during preparation of this paper.
 
 # Acknowledgements
 
