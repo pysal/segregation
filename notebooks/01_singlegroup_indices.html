@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Single-group Segregation Indices &#8212; segregation v2.5.6.dev83+g2e095ced1 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <script src="../_static/documentation_options.js?v=91d1e54c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script type="application/vnd.jupyter.widget-state+json">{"state": {"22035a607998458eb1fb5a2bc9783451": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "fc578f5147424bc39b42065e6c0eaddb": {"model_name": "ProgressStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "bar_color": null, "description_width": ""}}, "53ecc46eb814487f8d76b135133a2fa6": {"model_name": "FloatProgressModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "ProgressView", "bar_style": "", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_22035a607998458eb1fb5a2bc9783451", "max": 28.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_fc578f5147424bc39b42065e6c0eaddb", "tabbable": null, "tooltip": null, "value": 28.0}}, "efaf0a0fdb6a42eba0715e41109cd282": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "56d802085102419399acad2fb35336d9": {"model_name": "HTMLStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "1d68c42972ed433ba34fc4324299fd13": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_efaf0a0fdb6a42eba0715e41109cd282", "placeholder": "\u200b", "style": "IPY_MODEL_56d802085102419399acad2fb35336d9", "tabbable": null, "tooltip": null, "value": "SpatialProximity:\u2007100%"}}, "92daadfeabbb40e0b5a9181d8e514553": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "1ea818d838ce4a93bbfb9ae8d8424d65": {"model_name": "HTMLStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "background": null, "description_width": "", "font_size": null, "text_color": null}}, "b094d3c720c9470095bec606e7b43e6f": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HTMLView", "description": "", "description_allow_html": false, "layout": "IPY_MODEL_92daadfeabbb40e0b5a9181d8e514553", "placeholder": "\u200b", "style": "IPY_MODEL_1ea818d838ce4a93bbfb9ae8d8424d65", "tabbable": null, "tooltip": null, "value": "\u200728/28\u2007[00:09&lt;00:00,\u2007\u20072.26it/s]"}}, "8c5b4a0b5bbc469eaed1246120f9d079": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "5d657bac670f45809a913b23af5b91c9": {"model_name": "HBoxModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "2.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "2.0.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "2.0.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_1d68c42972ed433ba34fc4324299fd13", "IPY_MODEL_53ecc46eb814487f8d76b135133a2fa6", "IPY_MODEL_b094d3c720c9470095bec606e7b43e6f"], "layout": "IPY_MODEL_8c5b4a0b5bbc469eaed1246120f9d079", "tabbable": null, "tooltip": null}}}, "version_major": 2, "version_minor": 0}</script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script crossorigin="anonymous" data-jupyter-widgets-cdn="https://cdn.jsdelivr.net/npm/" src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@1.0.6/dist/embed-amd.js"></script>
+    <link rel="icon" href="../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          segregation</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.5.6.dev83+g2e095ced1</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../installation.html">Installation</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="../tutorial.html">Tutorial</a></li>
+                <li><a href="../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html#building-the-documentation">Building the documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Single-group Segregation Indices</a><ul>
+<li><a class="reference internal" href="#data-prep">Data Prep</a></li>
+<li><a class="reference internal" href="#aspatial-segregation-indices">Aspatial Segregation Indices</a></li>
+<li><a class="reference internal" href="#spatial-segregation-indices">Spatial Segregation Indices</a><ul>
+<li><a class="reference internal" href="#euclidian-distance-based-measures">Euclidian distance based measures</a></li>
+<li><a class="reference internal" href="#network-distance-based-measures">Network distance based measures</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#batch-computing-single-group-measures">Batch-Computing Single-Group Measures</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section class="tex2jax_ignore mathjax_ignore" id="single-group-segregation-indices">
+<h1>Single-group Segregation Indices<a class="headerlink" href="#single-group-segregation-indices" title="Link to this heading">¶</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> watermark
+<span class="o">%</span><span class="k">watermark</span> -a 'eli knaap' -v -d -u -p segregation,geopandas,libpysal
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Author: eli knaap
+
+Last updated: 2026-09-04
+
+Python implementation: CPython
+Python version       : 3.14.7
+IPython version      : 9.17.1
+
+segregation: 2.5.6.dev83+g2e095ced1
+geopandas  : 1.1.4
+libpysal   : 4.15.0
+</pre></div>
+</div>
+</div>
+</div>
+<p>Single-group indices are calculated using the <code class="docutils literal notranslate"><span class="pre">singlegroup</span></code> module</p>
+<section id="data-prep">
+<h2>Data Prep<a class="headerlink" href="#data-prep" title="Link to this heading">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">libpysal.examples</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_example</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># read in sacramento data from libpysal and reproject into an appropriate CRS</span>
+<span class="n">sacramento</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">load_example</span><span class="p">(</span><span class="s2">"Sacramento1"</span><span class="p">)</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s2">"sacramentot2.shp"</span><span class="p">))</span>
+<span class="n">sacramento</span> <span class="o">=</span> <span class="n">sacramento</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">sacramento</span><span class="o">.</span><span class="n">estimate_utm_crs</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading Sacramento1 to /home/runner/.local/share/pysal/Sacramento1
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sacramento</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>FIPS</th>
+      <th>MSA</th>
+      <th>TOT_POP</th>
+      <th>POP_16</th>
+      <th>POP_65</th>
+      <th>WHITE</th>
+      <th>BLACK</th>
+      <th>ASIAN</th>
+      <th>HISP</th>
+      <th>MULTI_RA</th>
+      <th>...</th>
+      <th>EMP_FEM</th>
+      <th>OCC_MAN</th>
+      <th>OCC_OFF1</th>
+      <th>OCC_INFO</th>
+      <th>HH_INC</th>
+      <th>POV_POP</th>
+      <th>POV_TOT</th>
+      <th>HSG_VAL</th>
+      <th>POLYID</th>
+      <th>geometry</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>06061022001</td>
+      <td>Sacramento</td>
+      <td>5501</td>
+      <td>1077</td>
+      <td>518</td>
+      <td>4961</td>
+      <td>29</td>
+      <td>82</td>
+      <td>336</td>
+      <td>31</td>
+      <td>...</td>
+      <td>1187</td>
+      <td>117</td>
+      <td>663.0</td>
+      <td>42</td>
+      <td>52941</td>
+      <td>5461</td>
+      <td>470</td>
+      <td>225900</td>
+      <td>1</td>
+      <td>POLYGON ((740409.853 4338451.728, 740199.864 4...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>06061020106</td>
+      <td>Sacramento</td>
+      <td>2072</td>
+      <td>396</td>
+      <td>109</td>
+      <td>1603</td>
+      <td>0</td>
+      <td>28</td>
+      <td>391</td>
+      <td>41</td>
+      <td>...</td>
+      <td>522</td>
+      <td>38</td>
+      <td>229.0</td>
+      <td>19</td>
+      <td>51958</td>
+      <td>2052</td>
+      <td>160</td>
+      <td>249300</td>
+      <td>2</td>
+      <td>POLYGON ((753400.378 4347151.08, 753395.816 43...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>06061020107</td>
+      <td>Sacramento</td>
+      <td>3633</td>
+      <td>911</td>
+      <td>126</td>
+      <td>1624</td>
+      <td>9</td>
+      <td>0</td>
+      <td>1918</td>
+      <td>41</td>
+      <td>...</td>
+      <td>698</td>
+      <td>86</td>
+      <td>197.0</td>
+      <td>0</td>
+      <td>32992</td>
+      <td>3604</td>
+      <td>668</td>
+      <td>175900</td>
+      <td>3</td>
+      <td>POLYGON ((758318.262 4352123.456, 758319.774 4...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>06061020105</td>
+      <td>Sacramento</td>
+      <td>1683</td>
+      <td>281</td>
+      <td>154</td>
+      <td>1564</td>
+      <td>0</td>
+      <td>55</td>
+      <td>60</td>
+      <td>4</td>
+      <td>...</td>
+      <td>519</td>
+      <td>5</td>
+      <td>256.0</td>
+      <td>6</td>
+      <td>54556</td>
+      <td>1683</td>
+      <td>116</td>
+      <td>302300</td>
+      <td>4</td>
+      <td>POLYGON ((750839.595 4342678.807, 750805.84 43...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>06061020200</td>
+      <td>Sacramento</td>
+      <td>5794</td>
+      <td>1278</td>
+      <td>830</td>
+      <td>5185</td>
+      <td>17</td>
+      <td>13</td>
+      <td>251</td>
+      <td>229</td>
+      <td>...</td>
+      <td>1260</td>
+      <td>155</td>
+      <td>506.0</td>
+      <td>59</td>
+      <td>50815</td>
+      <td>5771</td>
+      <td>342</td>
+      <td>167300</td>
+      <td>5</td>
+      <td>POLYGON ((670062.02 4311030.409, 670133.819 43...</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 31 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sacramento</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">'BLACK'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: &gt;
+</pre></div>
+</div>
+<img alt="../_images/8da91020f65d0ed03923077671a8ef41b03a00c6e2db1f2211e4e3089ee8d962.png" src="../_images/8da91020f65d0ed03923077671a8ef41b03a00c6e2db1f2211e4e3089ee8d962.png" />
+</div>
+</div>
+</section>
+<section id="aspatial-segregation-indices">
+<h2>Aspatial Segregation Indices<a class="headerlink" href="#aspatial-segregation-indices" title="Link to this heading">¶</a></h2>
+<p>To compute an aspatial segregation index, pass a dataframe, a group population variable, and total population variable to the index’s class</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">segregation.singlegroup</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dissim</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dissim</span> <span class="o">=</span> <span class="n">Dissim</span><span class="p">(</span><span class="n">sacramento</span><span class="p">,</span> <span class="n">group_pop_var</span><span class="o">=</span><span class="s1">'BLACK'</span><span class="p">,</span> 
+                <span class="n">total_pop_var</span><span class="o">=</span><span class="s1">'TOT_POP'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">statistic</span></code> attribute holds the value of the segregation index, and the <code class="docutils literal notranslate"><span class="pre">data</span></code> attribute holds the data used to calculate the index</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dissim</span><span class="o">.</span><span class="n">statistic</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(0.4883394024705785)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dissim</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>BLACK</th>
+      <th>TOT_POP</th>
+      <th>geometry</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>29</td>
+      <td>5501</td>
+      <td>POLYGON ((740409.853 4338451.728, 740199.864 4...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>2072</td>
+      <td>POLYGON ((753400.378 4347151.08, 753395.816 43...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>9</td>
+      <td>3633</td>
+      <td>POLYGON ((758318.262 4352123.456, 758319.774 4...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0</td>
+      <td>1683</td>
+      <td>POLYGON ((750839.595 4342678.807, 750805.84 43...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>17</td>
+      <td>5794</td>
+      <td>POLYGON ((670062.02 4311030.409, 670133.819 43...</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+</section>
+<section id="spatial-segregation-indices">
+<h2>Spatial Segregation Indices<a class="headerlink" href="#spatial-segregation-indices" title="Link to this heading">¶</a></h2>
+<p>For calculating spatial segregation indices, the package implements two classes of indices: spatially-explicit and spatially-implicit.</p>
+<p>Spatially-explicit indices are those for which space was a formal consideration in the index’s original formulation, whereas spatially-implicit indices are developed using the logic of <a class="reference external" href="http://doi.wiley.com/10.1111/j.0081-1750.2004.00150.x">Reardon and O’Sulivan</a>.</p>
+<p>For the latter,(otherwise called <em>generalized</em> spatial segregation indices) the package can incorporate spatial relationships represented by either a <a class="reference external" href="https://pysal.org/libpysal/api.html"><code class="docutils literal notranslate"><span class="pre">libpysal.W</span></code></a> weights object or a <a class="reference external" href="http://udst.github.io/pandana/network.html"><code class="docutils literal notranslate"><span class="pre">pandana.Network</span></code></a> network object, which means generalized spatial segregation indices can be computed according to many different spatial relationships which could include contiguity, distance, or network connectivity. This flexibility is particularly useful for specifying appropriate “neighborhood” definitions for different types of input data (which could be, e.g. housing units, census tracts, or counties)</p>
+<p>For spatially-explicit indices, they can be called like any other, though some may have additional arguments:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">segregation.singlegroup</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbsoluteCentralization</span><span class="p">,</span> <span class="n">Gini</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cent</span> <span class="o">=</span> <span class="n">AbsoluteCentralization</span><span class="p">(</span><span class="n">sacramento</span><span class="p">,</span> <span class="n">group_pop_var</span><span class="o">=</span><span class="s1">'BLACK'</span><span class="p">,</span> 
+                              <span class="n">total_pop_var</span><span class="o">=</span><span class="s1">'TOT_POP'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cent</span><span class="o">.</span><span class="n">statistic</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(0.8491771822066596)
+</pre></div>
+</div>
+</div>
+</div>
+<section id="euclidian-distance-based-measures">
+<h3>Euclidian distance based measures<a class="headerlink" href="#euclidian-distance-based-measures" title="Link to this heading">¶</a></h3>
+<p>For generalized spatial indices, a <code class="docutils literal notranslate"><span class="pre">distance</span></code> parameter can be passed to the index of choice. Under the hood, the input data will be passed through a kernel function with the distance parameter as the kernel bandwidth.</p>
+<p>(note in this case because the CRS of the sacramento dataframe is UTM, the units are in meters)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># aspatial gini index</span>
+<span class="n">aspatial_gini</span> <span class="o">=</span> <span class="n">Gini</span><span class="p">(</span><span class="n">sacramento</span><span class="p">,</span> <span class="n">group_pop_var</span><span class="o">=</span><span class="s1">'BLACK'</span><span class="p">,</span> 
+                     <span class="n">total_pop_var</span><span class="o">=</span><span class="s1">'TOT_POP'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># generalized spatial gini index</span>
+<span class="n">gen_spatialgini</span> <span class="o">=</span> <span class="n">Gini</span><span class="p">(</span><span class="n">sacramento</span><span class="p">,</span> <span class="n">group_pop_var</span><span class="o">=</span><span class="s1">'BLACK'</span><span class="p">,</span> 
+                       <span class="n">total_pop_var</span><span class="o">=</span><span class="s1">'TOT_POP'</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gen_spatialgini</span><span class="o">.</span><span class="n">statistic</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.5368015908262396
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">aspatial_gini</span><span class="o">.</span><span class="n">statistic</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.6361755332635235
+</pre></div>
+</div>
+</div>
+</div>
+<p>Examining the <code class="docutils literal notranslate"><span class="pre">data</span></code> attribute of the fitted index shows how the input data are transformed</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># kernelized data</span>
+<span class="n">gen_spatialgini</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">'BLACK'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: &gt;
+</pre></div>
+</div>
+<img alt="../_images/324ff5980de5bc8aacda4f07da1a2265d355d264b3aadd4dd16fe49caca3a7b1.png" src="../_images/324ff5980de5bc8aacda4f07da1a2265d355d264b3aadd4dd16fe49caca3a7b1.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># original data</span>
+<span class="n">sacramento</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">'BLACK'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: &gt;
+</pre></div>
+</div>
+<img alt="../_images/8da91020f65d0ed03923077671a8ef41b03a00c6e2db1f2211e4e3089ee8d962.png" src="../_images/8da91020f65d0ed03923077671a8ef41b03a00c6e2db1f2211e4e3089ee8d962.png" />
+</div>
+</div>
+</section>
+<section id="network-distance-based-measures">
+<h3>Network distance based measures<a class="headerlink" href="#network-distance-based-measures" title="Link to this heading">¶</a></h3>
+<p>Instead of a euclidian distance-based kernel, each generalized spatial segregation index can be calculated using accssibility analysis on a transportation network instead. Since people can’t fly, using a travel network to measure spatial distances is more conceptually pure to the spirit of segregation indices</p>
+<blockquote>
+<div><p><strong>Note:</strong> the network-distance workflow below relies on the optional <a class="reference external" href="https://github.com/oturns/pandarm"><code class="docutils literal notranslate"><span class="pre">pandarm</span></code></a> package and a pre-built network file, so those cells are tagged <code class="docutils literal notranslate"><span class="pre">skip-execution</span></code> and are not run during automated testing.</p>
+</div></blockquote>
+<div class="cell tag_skip-execution docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandana</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pdna</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>A network can be created using the <a class="reference external" href="https://github.com/UDST/urbanaccess">urbanaccess</a> package, or the built-in <code class="docutils literal notranslate"><span class="pre">get_osm_network</span></code> function from the <code class="docutils literal notranslate"><span class="pre">segregation.util</span></code> module. Alternatively, metropolitan-scale networks from OpenStreetMap are also available in the <a class="reference external" href="https://open.quiltdata.com/b/spatial-ucr/tree/osm/">CGS quilt bucket</a> (named by CBSA FIPS code)</p>
+<div class="cell tag_skip-execution docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">pdna</span><span class="o">.</span><span class="n">Network</span><span class="o">.</span><span class="n">from_hdf5</span><span class="p">(</span><span class="s1">'../40900.h5'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_skip-execution docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">network_spatialgini</span> <span class="o">=</span> <span class="n">Gini</span><span class="p">(</span><span class="n">sacramento</span><span class="p">,</span> <span class="n">group_pop_var</span><span class="o">=</span><span class="s1">'BLACK'</span><span class="p">,</span> 
+                           <span class="n">total_pop_var</span><span class="o">=</span><span class="s1">'TOT_POP'</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> 
+                           <span class="n">network</span><span class="o">=</span><span class="n">net</span><span class="p">,</span> <span class="n">decay</span><span class="o">=</span><span class="s1">'linear'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Comparing spatial gini indices based on straight-line distance versus network distance:</p>
+<div class="cell tag_skip-execution docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">network_spatialgini</span><span class="o">.</span><span class="n">statistic</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.5848616778202473
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gen_spatialgini</span><span class="o">.</span><span class="n">statistic</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.5368015908262396
+</pre></div>
+</div>
+</div>
+</div>
+<p>The segregation statistic using network distance to construct neighborhoods is higher than using the one using unrestricted euclidian distance</p>
+</section>
+</section>
+<section id="batch-computing-single-group-measures">
+<h2>Batch-Computing Single-Group Measures<a class="headerlink" href="#batch-computing-single-group-measures" title="Link to this heading">¶</a></h2>
+<p>To compute all single group indices in one go, the package provides a wrapper function in the <code class="docutils literal notranslate"><span class="pre">batch</span></code> module</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">segregation.batch</span><span class="w"> </span><span class="kn">import</span> <span class="n">batch_compute_singlegroup</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">all_singlegroup</span> <span class="o">=</span> <span class="n">batch_compute_singlegroup</span><span class="p">(</span><span class="n">sacramento</span><span class="p">,</span> <span class="n">group_pop_var</span><span class="o">=</span><span class="s1">'BLACK'</span><span class="p">,</span> <span class="n">total_pop_var</span><span class="o">=</span><span class="s1">'TOT_POP'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "5d657bac670f45809a913b23af5b91c9"}</script></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">all_singlegroup</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Statistic</th>
+    </tr>
+    <tr>
+      <th>Name</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>AbsoluteCentralization</th>
+      <td>0.8492</td>
+    </tr>
+    <tr>
+      <th>AbsoluteClustering</th>
+      <td>0.0610</td>
+    </tr>
+    <tr>
+      <th>AbsoluteConcentration</th>
+      <td>0.9814</td>
+    </tr>
+    <tr>
+      <th>Atkinson</th>
+      <td>0.3659</td>
+    </tr>
+    <tr>
+      <th>BiasCorrectedDissim</th>
+      <td>0.4878</td>
+    </tr>
+    <tr>
+      <th>BoundarySpatialDissim</th>
+      <td>0.4501</td>
+    </tr>
+    <tr>
+      <th>ConProf</th>
+      <td>0.1128</td>
+    </tr>
+    <tr>
+      <th>CorrelationR</th>
+      <td>0.1010</td>
+    </tr>
+    <tr>
+      <th>Delta</th>
+      <td>0.9073</td>
+    </tr>
+    <tr>
+      <th>DensityCorrectedDissim</th>
+      <td>0.3352</td>
+    </tr>
+    <tr>
+      <th>Dissim</th>
+      <td>0.4883</td>
+    </tr>
+    <tr>
+      <th>DistanceDecayInteraction</th>
+      <td>0.8524</td>
+    </tr>
+    <tr>
+      <th>DistanceDecayIsolation</th>
+      <td>0.1233</td>
+    </tr>
+    <tr>
+      <th>Entropy</th>
+      <td>0.1815</td>
+    </tr>
+    <tr>
+      <th>Gini</th>
+      <td>0.6362</td>
+    </tr>
+    <tr>
+      <th>HutchensSqrt</th>
+      <td>0.2037</td>
+    </tr>
+    <tr>
+      <th>Interaction</th>
+      <td>0.8379</td>
+    </tr>
+    <tr>
+      <th>Isolation</th>
+      <td>0.1621</td>
+    </tr>
+    <tr>
+      <th>MinMax</th>
+      <td>0.6562</td>
+    </tr>
+    <tr>
+      <th>ModifiedDissim</th>
+      <td>0.4762</td>
+    </tr>
+    <tr>
+      <th>ModifiedGini</th>
+      <td>0.6239</td>
+    </tr>
+    <tr>
+      <th>PARDissim</th>
+      <td>0.4818</td>
+    </tr>
+    <tr>
+      <th>RelativeCentralization</th>
+      <td>0.0769</td>
+    </tr>
+    <tr>
+      <th>RelativeClustering</th>
+      <td>1.6101</td>
+    </tr>
+    <tr>
+      <th>RelativeConcentration</th>
+      <td>0.7788</td>
+    </tr>
+    <tr>
+      <th>SpatialDissim</th>
+      <td>0.4463</td>
+    </tr>
+    <tr>
+      <th>SpatialProxProf</th>
+      <td>0.1160</td>
+    </tr>
+    <tr>
+      <th>SpatialProximity</th>
+      <td>1.0552</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+</section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="../_sources/notebooks/01_singlegroup_indices.ipynb.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 9.1.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

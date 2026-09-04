@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Multi-group Segregation Indices &#8212; segregation v2.5.6.dev83+g2e095ced1 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <script src="../_static/documentation_options.js?v=91d1e54c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="icon" href="../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          segregation</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.5.6.dev83+g2e095ced1</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../installation.html">Installation</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="../tutorial.html">Tutorial</a></li>
+                <li><a href="../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html#building-the-documentation">Building the documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Multi-group Segregation Indices</a><ul>
+<li><a class="reference internal" href="#aspatial-segregation-indices">Aspatial Segregation Indices</a></li>
+<li><a class="reference internal" href="#spatial-segregation-indices">Spatial Segregation Indices</a></li>
+<li><a class="reference internal" href="#batch-computing-multi-group-measures">Batch-Computing Multi-Group Measures</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section class="tex2jax_ignore mathjax_ignore" id="multi-group-segregation-indices">
+<h1>Multi-group Segregation Indices<a class="headerlink" href="#multi-group-segregation-indices" title="Link to this heading">¶</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> watermark
+<span class="o">%</span><span class="k">watermark</span> -a 'eli knaap' -v -d -u -p segregation,geopandas,libpysal
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Author: eli knaap
+
+Last updated: 2026-09-04
+
+Python implementation: CPython
+Python version       : 3.14.7
+IPython version      : 9.17.1
+
+segregation: 2.5.6.dev83+g2e095ced1
+geopandas  : 1.1.4
+libpysal   : 4.15.0
+</pre></div>
+</div>
+</div>
+</div>
+<p>Classes for computing multigroup segregation indices are in the <code class="docutils literal notranslate"><span class="pre">multigroup</span></code> module</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">libpysal.examples</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_example</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">segregation.multigroup</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiDissim</span><span class="p">,</span> <span class="n">MultiInfoTheory</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sacramento</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">load_example</span><span class="p">(</span><span class="s2">"Sacramento1"</span><span class="p">)</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s2">"sacramentot2.shp"</span><span class="p">))</span>
+<span class="n">sacramento</span> <span class="o">=</span> <span class="n">sacramento</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">sacramento</span><span class="o">.</span><span class="n">estimate_utm_crs</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="aspatial-segregation-indices">
+<h2>Aspatial Segregation Indices<a class="headerlink" href="#aspatial-segregation-indices" title="Link to this heading">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">multi_dissim</span> <span class="o">=</span> <span class="n">MultiDissim</span><span class="p">(</span><span class="n">sacramento</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="p">[</span><span class="s1">'WHITE'</span><span class="p">,</span> <span class="s1">'BLACK'</span><span class="p">,</span> <span class="s1">'HISP'</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">multi_dissim</span><span class="o">.</span><span class="n">statistic</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(0.42469982288295693)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">multi_info</span> <span class="o">=</span> <span class="n">MultiInfoTheory</span><span class="p">(</span><span class="n">sacramento</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="p">[</span><span class="s1">'WHITE'</span><span class="p">,</span> <span class="s1">'BLACK'</span><span class="p">,</span> <span class="s1">'HISP'</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">multi_info</span><span class="o">.</span><span class="n">statistic</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(0.1800803002655424)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="spatial-segregation-indices">
+<h2>Spatial Segregation Indices<a class="headerlink" href="#spatial-segregation-indices" title="Link to this heading">¶</a></h2>
+<p>As with single group measures, generalized spatial versions of multigroup indices can be created by passing a distance parameter or a <code class="docutils literal notranslate"><span class="pre">W</span></code>/<code class="docutils literal notranslate"><span class="pre">Network</span></code> object.</p>
+<blockquote>
+<div><p><strong>Note:</strong> the network-distance workflow below relies on the optional <a class="reference external" href="https://github.com/oturns/pandarm"><code class="docutils literal notranslate"><span class="pre">pandarm</span></code></a> package and a pre-built network file, so those cells are tagged <code class="docutils literal notranslate"><span class="pre">skip-execution</span></code> and are not run during automated testing.</p>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">spatial_multi_dissim</span> <span class="o">=</span> <span class="n">MultiDissim</span><span class="p">(</span><span class="n">sacramento</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="p">[</span><span class="s1">'WHITE'</span><span class="p">,</span> <span class="s1">'BLACK'</span><span class="p">,</span> <span class="s1">'HISP'</span><span class="p">],</span> <span class="n">distance</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">spatial_multi_dissim</span><span class="o">.</span><span class="n">statistic</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(0.37767566088850035)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_skip-execution docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pandana</span><span class="w"> </span><span class="kn">import</span> <span class="n">Network</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_skip-execution docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">Network</span><span class="o">.</span><span class="n">from_hdf5</span><span class="p">(</span><span class="s2">"../40900.h5"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_skip-execution docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net_multi_dissim</span>  <span class="o">=</span> <span class="n">MultiDissim</span><span class="p">(</span><span class="n">sacramento</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="p">[</span><span class="s1">'WHITE'</span><span class="p">,</span> <span class="s1">'BLACK'</span><span class="p">,</span> <span class="s1">'HISP'</span><span class="p">],</span> <span class="n">distance</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">network</span><span class="o">=</span><span class="n">net</span><span class="p">,</span> <span class="n">decay</span><span class="o">=</span><span class="s1">'linear'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_skip-execution docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net_multi_dissim</span><span class="o">.</span><span class="n">statistic</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.3997196467720179
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="batch-computing-multi-group-measures">
+<h2>Batch-Computing Multi-Group Measures<a class="headerlink" href="#batch-computing-multi-group-measures" title="Link to this heading">¶</a></h2>
+<p>To compute all single group indices in one go, the package provides a wrapper function in the <code class="docutils literal notranslate"><span class="pre">batch</span></code> module similar to single-group indices</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">segregation.batch</span><span class="w"> </span><span class="kn">import</span> <span class="n">batch_compute_multigroup</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">all_multigroup</span> <span class="o">=</span> <span class="n">batch_compute_multigroup</span><span class="p">(</span><span class="n">sacramento</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="p">[</span><span class="s1">'WHITE'</span><span class="p">,</span> <span class="s1">'BLACK'</span><span class="p">,</span> <span class="s1">'HISP'</span><span class="p">],)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">all_multigroup</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Statistic</th>
+    </tr>
+    <tr>
+      <th>Name</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>GlobalDistortion</th>
+      <td>0.0444</td>
+    </tr>
+    <tr>
+      <th>MultiDissim</th>
+      <td>0.4247</td>
+    </tr>
+    <tr>
+      <th>MultiDivergence</th>
+      <td>0.1317</td>
+    </tr>
+    <tr>
+      <th>MultiDiversity</th>
+      <td>0.7314</td>
+    </tr>
+    <tr>
+      <th>MultiGini</th>
+      <td>0.5565</td>
+    </tr>
+    <tr>
+      <th>MultiInfoTheory</th>
+      <td>0.1801</td>
+    </tr>
+    <tr>
+      <th>MultiNormExposure</th>
+      <td>0.1914</td>
+    </tr>
+    <tr>
+      <th>MultiRelativeDiversity</th>
+      <td>0.1686</td>
+    </tr>
+    <tr>
+      <th>MultiSquaredCoefVar</th>
+      <td>0.1453</td>
+    </tr>
+    <tr>
+      <th>SimpsonsConcentration</th>
+      <td>0.5877</td>
+    </tr>
+    <tr>
+      <th>SimpsonsInteraction</th>
+      <td>0.4123</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+</section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="../_sources/notebooks/02_multigroup_indices.ipynb.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 9.1.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

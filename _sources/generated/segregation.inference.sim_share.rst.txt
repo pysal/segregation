@@ -1,0 +1,6 @@
+﻿segregation.inference.sim\_share
+================================
+
+.. currentmodule:: segregation.inference
+
+.. autofunction:: sim_share

@@ -1,0 +1,2065 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>kl_divergence_profile function walkthrough &#8212; segregation v2.5.6.dev83+g2e095ced1 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <script src="../_static/documentation_options.js?v=91d1e54c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <link rel="icon" href="../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          segregation</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.5.6.dev83+g2e095ced1</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../installation.html">Installation</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="../tutorial.html">Tutorial</a></li>
+                <li><a href="../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html#building-the-documentation">Building the documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">kl_divergence_profile</span></code> function walkthrough</a><ul>
+<li><a class="reference internal" href="#contents">Contents</a></li>
+<li><a class="reference internal" href="#the-function">The function</a></li>
+<li><a class="reference internal" href="#cincinnati-cincin-example-dataset">Cincinnati (cincin) example dataset</a></li>
+<li><a class="reference internal" href="#making-the-function-work">Making the function work</a><ul>
+<li><a class="reference internal" href="#kl-divergence-profile-populations-geodataframe">1. <code class="docutils literal notranslate"><span class="pre">kl_divergence_profile(populations</span> <span class="pre">=</span> <span class="pre">geodataframe)</span></code></a></li>
+<li><a class="reference internal" href="#kl-divergence-profile-populations-geodataframe-groups-coordinates-geodataframe-geometry-centroid">2. <code class="docutils literal notranslate"><span class="pre">kl_divergence_profile(populations</span> <span class="pre">=</span> <span class="pre">geodataframe[groups],</span> <span class="pre">coordinates</span> <span class="pre">=</span> <span class="pre">geodataframe.geometry.centroid)</span></code></a></li>
+<li><a class="reference internal" href="#kl-divergence-profile-populations-dataframe-coordinates-geoseries">3. <code class="docutils literal notranslate"><span class="pre">kl_divergence_profile(populations</span> <span class="pre">=</span> <span class="pre">dataframe,</span> <span class="pre">coordinates</span> <span class="pre">=</span> <span class="pre">geoseries)</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#using-the-outputs">Using the outputs</a></li>
+<li><a class="reference internal" href="#how-the-function-works">How the function works</a><ul>
+<li><a class="reference internal" href="#the-bigger-picture">The bigger picture</a></li>
+<li><a class="reference internal" href="#managing-inputs">Managing inputs</a><ul>
+<li><a class="reference internal" href="#storing-indices">Storing indices</a></li>
+<li><a class="reference internal" href="#creating-coordinates-from-a-geodataframe-input-to-populations">Creating <em>coordinates</em> from a geodataframe input to <em>populations</em></a></li>
+<li><a class="reference internal" href="#ensuring-coordinates-is-centroid-s-coordinates">Ensuring <em>coordinates</em> is centroid’s coordinates</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#creating-a-distance-matrix">Creating a distance matrix</a></li>
+<li><a class="reference internal" href="#creating-a-list-for-the-results">Creating a list for the results</a></li>
+<li><a class="reference internal" href="#undertaking-the-loop">Undertaking the loop</a><ul>
+<li><a class="reference internal" href="#part-a-sorting-the-population-information-by-the-distance-matrix">Part A - Sorting the population information by the distance matrix</a></li>
+<li><a class="reference internal" href="#part-b-preparing-the-inputs-to-calculate-the-kl-divergence">Part B - Preparing the inputs to calculate the KL divergence</a></li>
+<li><a class="reference internal" href="#part-c-calculating-the-kl-divergence">Part C - Calculating the KL divergence</a></li>
+<li><a class="reference internal" href="#part-d-placing-the-outputs-into-a-dataframe">Part D - Placing the outputs into a dataframe</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bringing-all-the-dataframes-together">Bringing all the dataframes together</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section class="tex2jax_ignore mathjax_ignore" id="kl-divergence-profile-function-walkthrough">
+<h1><code class="docutils literal notranslate"><span class="pre">kl_divergence_profile</span></code> function walkthrough<a class="headerlink" href="#kl-divergence-profile-function-walkthrough" title="Link to this heading">¶</a></h1>
+<p>This function calculates the Kullback-Leiber (KL) divergence of different areas and the total population, in order to create a divergence profile across the whole area. This provides a multi-scalar measurement of the segregation, understanding how each area of a population interacts with those areas in close and distant proximity to it.</p>
+<p>For theoretical background to this methodology, please see the <a class="reference external" href="https://doi.org/10.1073/pnas.1900192116">Olteanu et al. (2019)</a> article that inspired the creation of this function within PySAL’s library.</p>
+<p>Many thanks to the work of <a class="reference external" href="https://github.com/ceciledebezenac/segregation_index">Cécile de Bézenac</a>, who’s primary iteration of a wrapped code to compute this metric was incredibly helpful in directing this function’s interpretation.</p>
+<section id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Link to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p><strong><a class="reference internal" href="#The-function"><span class="xref myst">The function</span></a></strong> - the full function from the PySAL library</p></li>
+<li><p><strong><a class="reference internal" href="#Cincinnati-(cincin)-example-dataset"><span class="xref myst">Cincinnati example dataset</span></a></strong> - an overview of the example dataset used in the walkthrough, and creating the different forms of input acceptable for the data</p></li>
+<li><p><strong><a class="reference internal" href="#Making-the-function-work"><span class="xref myst">Making the function work</span></a></strong> - providing the functions with the correct inputs to ensure that this will run successfully</p></li>
+<li><p><strong><a class="reference internal" href="#Using-the-outputs"><span class="xref myst">Using the outputs</span></a></strong> - how the outputs can be deconstructed to create useful visualisations</p></li>
+<li><p><strong><a class="reference internal" href="#How-the-function-works"><span class="xref myst">How the function works</span></a></strong> - taking a step-by-step work through of the inner workings of the function to understand exactly what it is doing</p></li>
+</ol>
+</section>
+<section id="the-function">
+<h2>The function<a class="headerlink" href="#the-function" title="Link to this heading">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial.distance</span><span class="w"> </span><span class="kn">import</span> <span class="n">pdist</span><span class="p">,</span> <span class="n">squareform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">rel_entr</span> <span class="k">as</span> <span class="n">relative_entropy</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">kl_divergence_profile</span><span class="p">(</span><span class="n">populations</span><span class="p">,</span> <span class="n">coordinates</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">metric</span> <span class="o">=</span> <span class="s1">'euclidean'</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    A segregation metric, using Kullback-Leiber (KL) divergence to quantify the</span>
+<span class="sd">    difference in the population characteristics between (1) an area and (2) the total population.</span>
+
+<span class="sd">    This function utilises the methodology proposed in</span>
+<span class="sd">    Olteanu et al. (2019): 'Segregation through the multiscalar lens'. Which can be</span>
+<span class="sd">    found here: https://doi.org/10.1073/pnas.1900192116</span>
+
+<span class="sd">    Arguments</span>
+<span class="sd">    ----------</span>
+<span class="sd">    populations : GeoPandas GeoDataFrame object</span>
+<span class="sd">                  Pandas DataFrame object</span>
+<span class="sd">                  NumPy Array object</span>
+<span class="sd">                  Population information of raw group numbers (not percentages) to be</span>
+<span class="sd">                  included in the analysis.</span>
+<span class="sd">    coordinates : GeoPandas GeoSeries object</span>
+<span class="sd">                  NumPy Array object</span>
+<span class="sd">                  Spatial information relating to the areas to be included in the analysis.</span>
+<span class="sd">    metric : Acceptable inputs to `scipy.spatial.distance.pdist` - including:</span>
+<span class="sd">             ‘braycurtis’, ‘canberra’, ‘chebyshev’, ‘cityblock’, ‘correlation’,</span>
+<span class="sd">             ‘cosine’, ‘dice’, ‘euclidean’, ‘hamming’, ‘jaccard’, ‘jensenshannon’,</span>
+<span class="sd">             ‘kulsinski’, ‘mahalanobis’, ‘matching’, ‘minkowski’, ‘rogerstanimoto’,</span>
+<span class="sd">             ‘russellrao’, ‘seuclidean’, ‘sokalmichener’, ‘sokalsneath’, ‘sqeuclidean’, ‘yule’.</span>
+<span class="sd">             Distance metric for calculating pairwise distances,</span>
+<span class="sd">             using `scipy.spatial.distance.pdist` - 'euclidean' by default.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ----------</span>
+<span class="sd">    observation : an identifier of the area that forms the centre of the aggregation</span>
+<span class="sd">                  of population, from which the divergence is calculated.</span>
+<span class="sd">    distance : how far the most recently aggregated area is from the 'observation'</span>
+<span class="sd">               area, starting at zero for each observation to represent that only the</span>
+<span class="sd">               'observation' area being aggregated.</span>
+<span class="sd">    divergence : the KL divergence measure, between the aggregated population and the</span>
+<span class="sd">                 total population, will converge to zero for the final row of each</span>
+<span class="sd">                 observation to represent that the total population is covered.</span>
+<span class="sd">    population_covered : the population count within the aggregated population.</span>
+<span class="sd">    Returns a concatenated object of Pandas dataframes. Each dataframe contains a</span>
+<span class="sd">    set of divergence levels between an area and the total population. These areas</span>
+<span class="sd">    become consecutively larger, starting from a single location and aggregating</span>
+<span class="sd">    outward from this location, until the area represents the total population.</span>
+<span class="sd">    Thus, together the divergence levels within a dataframe represent a profile</span>
+<span class="sd">    of divergence from an area. The concatenated object is the collection of these</span>
+<span class="sd">    divergence profiles for every areas within the total population.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    ----------</span>
+<span class="sd">    from libpysal.examples import get_path</span>
+<span class="sd">    from libpysal.examples import load_example</span>
+<span class="sd">    cincin = load_example('Cincinnati')</span>
+<span class="sd">    cincin.get_file_list()</span>
+<span class="sd">    cincin_df = gpd.read_file(cincin.get_path('cincinnati.shp'))</span>
+<span class="sd">    cincin_ethnicity = cincin_df[["WHITE", "BLACK", "AMINDIAN", "ASIAN", "HAWAIIAN", "OTHER_RACE", "geometry"]]</span>
+<span class="sd">    cincin_ethnicity.head()</span>
+<span class="sd">    kl_divergence_profile(cincin_ethnicity)</span>
+<span class="sd">    """</span>
+    <span class="c1"># Store the observation index to return with the results</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">populations</span><span class="p">,</span> <span class="s1">'index'</span><span class="p">):</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">populations</span><span class="o">.</span><span class="n">index</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">populations</span><span class="p">))</span>
+
+    <span class="c1"># Check for geometry present in populations argument</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">populations</span><span class="p">,</span> <span class="s1">'geometry'</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">coordinates</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">coordinates</span> <span class="o">=</span> <span class="n">populations</span><span class="o">.</span><span class="n">geometry</span>
+        <span class="n">populations</span> <span class="o">=</span> <span class="n">populations</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">populations</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">populations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">populations</span><span class="p">)</span>
+
+    <span class="c1">#  Creating consistent coordinates - GeoSeries input</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span><span class="s1">'geometry'</span><span class="p">):</span>
+        <span class="n">centroids</span> <span class="o">=</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">centroid</span>
+        <span class="n">coordinates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">centroids</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">centroids</span><span class="o">.</span><span class="n">y</span><span class="p">))</span>
+    <span class="c1">#  Creating consistent coordinates - Array input</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">coordinates</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">populations</span><span class="p">),</span> <span class="s2">"Length of coordinates input needs to be of the same length as populations input"</span>
+
+    <span class="c1"># Creating distance matrix using defined metric (default euclidean distance)</span>
+    <span class="n">dist_matrix</span> <span class="o">=</span> <span class="n">squareform</span><span class="p">(</span><span class="n">pdist</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">metric</span> <span class="o">=</span> <span class="n">metric</span><span class="p">))</span>
+
+    <span class="c1"># Preparing list for results</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Loop to calculate KL divergence profile</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">distances</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dist_matrix</span><span class="p">):</span>
+
+        <span class="c1"># Creating the q and r objects</span>
+        <span class="n">sorted_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
+        <span class="n">cumul_pop_by_group</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">populations</span><span class="p">[</span><span class="n">sorted_indices</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">obs_cumul_pop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">cumul_pop_by_group</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="n">q_cumul_proportions</span> <span class="o">=</span> <span class="n">cumul_pop_by_group</span> <span class="o">/</span> <span class="n">obs_cumul_pop</span>
+        <span class="n">total_pop_by_group</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">populations</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">total_pop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">populations</span><span class="p">)</span>
+        <span class="n">r_total_proportions</span> <span class="o">=</span> <span class="n">total_pop_by_group</span> <span class="o">/</span> <span class="n">total_pop</span>
+
+        <span class="c1"># Input q and r objects into relative entropy (KL divergence) function</span>
+        <span class="n">kl_divergence</span> <span class="o">=</span> <span class="n">relative_entropy</span><span class="p">(</span><span class="n">q_cumul_proportions</span><span class="p">,</span>
+                                         <span class="n">r_total_proportions</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Creating an output dataframe</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
+            <span class="n">observation</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+            <span class="n">distance</span> <span class="o">=</span> <span class="n">distances</span><span class="p">[</span><span class="n">sorted_indices</span><span class="p">],</span>
+            <span class="n">divergence</span> <span class="o">=</span> <span class="n">kl_divergence</span><span class="p">,</span>
+            <span class="n">population_covered</span> <span class="o">=</span> <span class="n">obs_cumul_pop</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">))</span>
+
+        <span class="c1"># Append (bring together) all outputs into results list</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+    <span class="k">return</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">results</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="cincinnati-cincin-example-dataset">
+<h2>Cincinnati (cincin) example dataset<a class="headerlink" href="#cincinnati-cincin-example-dataset" title="Link to this heading">¶</a></h2>
+<p>For this example, we will be using an example dataset that is available via the <a class="reference external" href="https://pysal.org/notebooks/lib/libpysal/Example_Datasets.html"><code class="docutils literal notranslate"><span class="pre">examples</span></code></a> package of <strong><code class="docutils literal notranslate"><span class="pre">libpysal</span></code></strong> - it is a remote dataset, originating from the GeoDa program, an output of the <a class="reference external" href="https://spatial.uchicago.edu">Center for Spatial Data Science at the Unversity of Chicago</a>.</p>
+<p>This dataset is entitled ‘<a class="reference external" href="https://geodacenter.github.io/data-and-lab/walnut_hills/"><strong>2008 Cincinnati Crime + Socio-Demographics</strong></a>’, and contains “<em>Crime and socio-demographic data for the Clifton, Walnut Hills, Evanston, and Avondale neighborhoods in Cincinnati, OH for the last 6 months of 2008</em>”.</p>
+<p>Throughout this workbook, we will only be inputting the socio-demographic information it possesses. The total population of Cincinnati can be broken down within the data by six different ethnic groups: <em>AMINDIAN</em> (American-Indian), <em>ASIAN</em>, <em>BLACK</em>, <em>HAWAIIAN</em>, <em>WHITE</em>, and <em>OTHER_RACE</em>.</p>
+<p>This data will be referred to it as <em><strong>cincin</strong></em> throughout.</p>
+<p>You can read in this example dataset, and then repeat all the code in this notebook, by doing the following:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">libpysal.examples</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">libpysal.examples</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_example</span>
+
+<span class="n">cincin</span> <span class="o">=</span> <span class="n">load_example</span><span class="p">(</span><span class="s1">'Cincinnati'</span><span class="p">)</span>
+<span class="n">cincin</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">cincin</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s1">'cincinnati.shp'</span><span class="p">))</span>
+<span class="n">cincin</span> <span class="o">=</span> <span class="n">cincin</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'ID'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading Cincinnati to /home/runner/.local/share/pysal/Cincinnati
+</pre></div>
+</div>
+</div>
+</div>
+<p>Having read in this shapefile - as <em><strong>cincin</strong></em> - the data required for this analysis can be collected using either a <em>geodataframe</em> (gdf) or a combination of a <em>dataframe</em> (df) and <em>geoseries</em> data.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cincin_gdf</span> <span class="o">=</span> <span class="n">cincin</span><span class="p">[[</span><span class="s2">"WHITE"</span><span class="p">,</span> <span class="s2">"BLACK"</span><span class="p">,</span> <span class="s2">"AMINDIAN"</span><span class="p">,</span> <span class="s2">"ASIAN"</span><span class="p">,</span> <span class="s2">"HAWAIIAN"</span><span class="p">,</span> <span class="s2">"OTHER_RACE"</span><span class="p">,</span> <span class="s2">"geometry"</span><span class="p">]]</span>
+<span class="n">cincin_gdf</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>WHITE</th>
+      <th>BLACK</th>
+      <th>AMINDIAN</th>
+      <th>ASIAN</th>
+      <th>HAWAIIAN</th>
+      <th>OTHER_RACE</th>
+      <th>geometry</th>
+    </tr>
+    <tr>
+      <th>ID</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>726907.0</th>
+      <td>433.0</td>
+      <td>32.0</td>
+      <td>0.0</td>
+      <td>5.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>POLYGON ((1407302.966 415693.734, 1407473.141 ...</td>
+    </tr>
+    <tr>
+      <th>695744.0</th>
+      <td>16.0</td>
+      <td>66.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>POLYGON ((1398841.243 416718.444, 1399605.382 ...</td>
+    </tr>
+    <tr>
+      <th>695762.0</th>
+      <td>15.0</td>
+      <td>12.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>POLYGON ((1398733.468 416975.853, 1398794.24 4...</td>
+    </tr>
+    <tr>
+      <th>695780.0</th>
+      <td>12.0</td>
+      <td>103.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+      <td>POLYGON ((1399564.078 416046.633, 1399605.382 ...</td>
+    </tr>
+    <tr>
+      <th>695798.0</th>
+      <td>52.0</td>
+      <td>39.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>POLYGON ((1398841.243 416718.444, 1398733.468 ...</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>703629.0</th>
+      <td>5.0</td>
+      <td>102.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>2.0</td>
+      <td>POLYGON ((1401900.256 422880.13, 1401964.217 4...</td>
+    </tr>
+    <tr>
+      <th>703648.0</th>
+      <td>0.0</td>
+      <td>85.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>POLYGON ((1402856.266 422494.69, 1403591.085 4...</td>
+    </tr>
+    <tr>
+      <th>703666.0</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>POLYGON ((1402861.897 422749.576, 1402925.846 ...</td>
+    </tr>
+    <tr>
+      <th>703686.0</th>
+      <td>0.0</td>
+      <td>270.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>POLYGON ((1402709.472 423554.407, 1403020.559 ...</td>
+    </tr>
+    <tr>
+      <th>703708.0</th>
+      <td>10.0</td>
+      <td>43.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>POLYGON ((1402421.734 424653.671, 1402817.865 ...</td>
+    </tr>
+  </tbody>
+</table>
+<p>457 rows × 7 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cincin_df</span> <span class="o">=</span> <span class="n">cincin</span><span class="p">[[</span><span class="s2">"WHITE"</span><span class="p">,</span> <span class="s2">"BLACK"</span><span class="p">,</span> <span class="s2">"AMINDIAN"</span><span class="p">,</span> <span class="s2">"ASIAN"</span><span class="p">,</span> <span class="s2">"HAWAIIAN"</span><span class="p">,</span> <span class="s2">"OTHER_RACE"</span><span class="p">]]</span>
+<span class="n">cincin_df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>WHITE</th>
+      <th>BLACK</th>
+      <th>AMINDIAN</th>
+      <th>ASIAN</th>
+      <th>HAWAIIAN</th>
+      <th>OTHER_RACE</th>
+    </tr>
+    <tr>
+      <th>ID</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>726907.0</th>
+      <td>433.0</td>
+      <td>32.0</td>
+      <td>0.0</td>
+      <td>5.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>695744.0</th>
+      <td>16.0</td>
+      <td>66.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>695762.0</th>
+      <td>15.0</td>
+      <td>12.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>695780.0</th>
+      <td>12.0</td>
+      <td>103.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>695798.0</th>
+      <td>52.0</td>
+      <td>39.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>703629.0</th>
+      <td>5.0</td>
+      <td>102.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>703648.0</th>
+      <td>0.0</td>
+      <td>85.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>703666.0</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>703686.0</th>
+      <td>0.0</td>
+      <td>270.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>703708.0</th>
+      <td>10.0</td>
+      <td>43.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>457 rows × 6 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cincin_geoseries</span> <span class="o">=</span> <span class="n">cincin</span><span class="p">[[</span><span class="s1">'geometry'</span><span class="p">]]</span>
+<span class="n">cincin_geoseries</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>geometry</th>
+    </tr>
+    <tr>
+      <th>ID</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>726907.0</th>
+      <td>POLYGON ((1407302.966 415693.734, 1407473.141 ...</td>
+    </tr>
+    <tr>
+      <th>695744.0</th>
+      <td>POLYGON ((1398841.243 416718.444, 1399605.382 ...</td>
+    </tr>
+    <tr>
+      <th>695762.0</th>
+      <td>POLYGON ((1398733.468 416975.853, 1398794.24 4...</td>
+    </tr>
+    <tr>
+      <th>695780.0</th>
+      <td>POLYGON ((1399564.078 416046.633, 1399605.382 ...</td>
+    </tr>
+    <tr>
+      <th>695798.0</th>
+      <td>POLYGON ((1398841.243 416718.444, 1398733.468 ...</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>703629.0</th>
+      <td>POLYGON ((1401900.256 422880.13, 1401964.217 4...</td>
+    </tr>
+    <tr>
+      <th>703648.0</th>
+      <td>POLYGON ((1402856.266 422494.69, 1403591.085 4...</td>
+    </tr>
+    <tr>
+      <th>703666.0</th>
+      <td>POLYGON ((1402861.897 422749.576, 1402925.846 ...</td>
+    </tr>
+    <tr>
+      <th>703686.0</th>
+      <td>POLYGON ((1402709.472 423554.407, 1403020.559 ...</td>
+    </tr>
+    <tr>
+      <th>703708.0</th>
+      <td>POLYGON ((1402421.734 424653.671, 1402817.865 ...</td>
+    </tr>
+  </tbody>
+</table>
+<p>457 rows × 1 columns</p>
+</div></div></div>
+</div>
+</section>
+<section id="making-the-function-work">
+<h2>Making the function work<a class="headerlink" href="#making-the-function-work" title="Link to this heading">¶</a></h2>
+<p>The function is designed for you to input data in one of three ways - that are outlined below:</p>
+<section id="kl-divergence-profile-populations-geodataframe">
+<h3>1. <code class="docutils literal notranslate"><span class="pre">kl_divergence_profile(populations</span> <span class="pre">=</span> <span class="pre">geodataframe)</span></code><a class="headerlink" href="#kl-divergence-profile-populations-geodataframe" title="Link to this heading">¶</a></h3>
+<p>A geodataframe can be used as the sole input to the function. However, for this to work as desired, it <strong>must only contain</strong> columns of the raw data for group counts (for <em><strong>cincin</strong></em> this is the ethnic groups) along with the geometry column. This geometry must be in polygon form or point form (of the centroid of each area.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kl_divergence_profile</span><span class="p">(</span><span class="n">cincin_gdf</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>observation</th>
+      <th>distance</th>
+      <th>divergence</th>
+      <th>population_covered</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>726907.0</td>
+      <td>0.000000</td>
+      <td>8.964293e-01</td>
+      <td>472.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>726907.0</td>
+      <td>674.319177</td>
+      <td>3.970494e-01</td>
+      <td>654.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>726907.0</td>
+      <td>755.315782</td>
+      <td>3.966244e-01</td>
+      <td>728.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>726907.0</td>
+      <td>830.744890</td>
+      <td>3.082997e-01</td>
+      <td>872.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>726907.0</td>
+      <td>1067.478163</td>
+      <td>3.110239e-01</td>
+      <td>981.0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>452</th>
+      <td>703708.0</td>
+      <td>13063.729732</td>
+      <td>1.881053e-06</td>
+      <td>37805.0</td>
+    </tr>
+    <tr>
+      <th>453</th>
+      <td>703708.0</td>
+      <td>13099.457827</td>
+      <td>1.377660e-06</td>
+      <td>37874.0</td>
+    </tr>
+    <tr>
+      <th>454</th>
+      <td>703708.0</td>
+      <td>13163.435867</td>
+      <td>1.492472e-06</td>
+      <td>37919.0</td>
+    </tr>
+    <tr>
+      <th>455</th>
+      <td>703708.0</td>
+      <td>13170.741000</td>
+      <td>1.595123e-07</td>
+      <td>37963.0</td>
+    </tr>
+    <tr>
+      <th>456</th>
+      <td>703708.0</td>
+      <td>13223.508518</td>
+      <td>0.000000e+00</td>
+      <td>38012.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>208849 rows × 4 columns</p>
+</div></div></div>
+</div>
+<p>Here we have our first look at the output for the KL divergence profile function. This is four columns, containing:</p>
+<ul class="simple">
+<li><p><strong>observation</strong> - an identifier of the area that forms the centre of the aggregation of population, from which the divergence is calculated.</p></li>
+<li><p><strong>distance</strong> - how far the most recently aggregated area is from the ‘observation’ area, starting at zero for each observation to represent that the ‘observation’ area is the only one being aggregated.</p></li>
+<li><p><strong>divergence</strong> - the KL divergence measure, between the aggregated population and the total population, will converge to zero for the final row of each observation to represent that the total population is covered.</p></li>
+<li><p><strong>nearby_population</strong> - the population count within the aggregated population.</p></li>
+</ul>
+</section>
+<section id="kl-divergence-profile-populations-geodataframe-groups-coordinates-geodataframe-geometry-centroid">
+<h3>2. <code class="docutils literal notranslate"><span class="pre">kl_divergence_profile(populations</span> <span class="pre">=</span> <span class="pre">geodataframe[groups],</span> <span class="pre">coordinates</span> <span class="pre">=</span> <span class="pre">geodataframe.geometry.centroid)</span></code><a class="headerlink" href="#kl-divergence-profile-populations-geodataframe-groups-coordinates-geodataframe-geometry-centroid" title="Link to this heading">¶</a></h3>
+<p>If a geodataframe contains other columns, that are not desired to be used in the analysis - such as the original <em><strong>cincin</strong></em> dataset - this can be included as the input by subsetting only the columns that are desired.</p>
+<p>In order for this to work, the coordinates input must then be used to specify the spatial location of each observation. While point or polygon geoseries format can be passed, output from the geopandas <code class="docutils literal notranslate"><span class="pre">centroid</span></code> command will pass smoothly.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kl_divergence_profile</span><span class="p">(</span><span class="n">populations</span> <span class="o">=</span> <span class="n">cincin_gdf</span><span class="p">[[</span><span class="s2">"WHITE"</span><span class="p">,</span> <span class="s2">"BLACK"</span><span class="p">,</span> <span class="s2">"AMINDIAN"</span><span class="p">,</span> <span class="s2">"ASIAN"</span><span class="p">,</span> <span class="s2">"HAWAIIAN"</span><span class="p">,</span> <span class="s2">"OTHER_RACE"</span><span class="p">]],</span>
+                     <span class="n">coordinates</span> <span class="o">=</span> <span class="n">cincin_gdf</span><span class="p">[[</span><span class="s2">"geometry"</span><span class="p">]]</span><span class="o">.</span><span class="n">centroid</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>observation</th>
+      <th>distance</th>
+      <th>divergence</th>
+      <th>population_covered</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>726907.0</td>
+      <td>0.000000</td>
+      <td>8.964293e-01</td>
+      <td>472.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>726907.0</td>
+      <td>674.319177</td>
+      <td>3.970494e-01</td>
+      <td>654.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>726907.0</td>
+      <td>755.315782</td>
+      <td>3.966244e-01</td>
+      <td>728.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>726907.0</td>
+      <td>830.744890</td>
+      <td>3.082997e-01</td>
+      <td>872.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>726907.0</td>
+      <td>1067.478163</td>
+      <td>3.110239e-01</td>
+      <td>981.0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>452</th>
+      <td>703708.0</td>
+      <td>13063.729732</td>
+      <td>1.881053e-06</td>
+      <td>37805.0</td>
+    </tr>
+    <tr>
+      <th>453</th>
+      <td>703708.0</td>
+      <td>13099.457827</td>
+      <td>1.377660e-06</td>
+      <td>37874.0</td>
+    </tr>
+    <tr>
+      <th>454</th>
+      <td>703708.0</td>
+      <td>13163.435867</td>
+      <td>1.492472e-06</td>
+      <td>37919.0</td>
+    </tr>
+    <tr>
+      <th>455</th>
+      <td>703708.0</td>
+      <td>13170.741000</td>
+      <td>1.595123e-07</td>
+      <td>37963.0</td>
+    </tr>
+    <tr>
+      <th>456</th>
+      <td>703708.0</td>
+      <td>13223.508518</td>
+      <td>0.000000e+00</td>
+      <td>38012.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>208849 rows × 4 columns</p>
+</div></div></div>
+</div>
+<p>The function will also run if the geometry polygon information is inputted into the <em>coordinates</em> argument - without being converted into centroid points. If this is done, the <code class="docutils literal notranslate"><span class="pre">centroid</span></code> command is ran as part of the function to distinguish a point against which distance is calculated.</p>
+<p>i.e: an alternative input is</p>
+<p><code class="docutils literal notranslate"><span class="pre">kl_divergence_profile(populations</span> <span class="pre">=</span> <span class="pre">cincin_gdf[[&quot;WHITE&quot;,</span> <span class="pre">&quot;BLACK&quot;,</span> <span class="pre">&quot;AMINDIAN&quot;,</span> <span class="pre">&quot;ASIAN&quot;,</span> <span class="pre">&quot;HAWAIIAN&quot;,</span> <span class="pre">&quot;OTHER_RACE&quot;]],</span> <span class="pre">coordinates</span> <span class="pre">=</span> <span class="pre">cincin_gdf[[&quot;geometry&quot;]])</span></code></p>
+</section>
+<section id="kl-divergence-profile-populations-dataframe-coordinates-geoseries">
+<h3>3. <code class="docutils literal notranslate"><span class="pre">kl_divergence_profile(populations</span> <span class="pre">=</span> <span class="pre">dataframe,</span> <span class="pre">coordinates</span> <span class="pre">=</span> <span class="pre">geoseries)</span></code><a class="headerlink" href="#kl-divergence-profile-populations-dataframe-coordinates-geoseries" title="Link to this heading">¶</a></h3>
+<p>If the population data is contained in a separate object to the spatial, geoseries information - as long as the indexing (order) of both datasets is consistent - they can be inputted separately into the function.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">kl_divergence_profile</span><span class="p">(</span><span class="n">populations</span> <span class="o">=</span> <span class="n">cincin_df</span><span class="p">,</span> <span class="n">coordinates</span> <span class="o">=</span> <span class="n">cincin_geoseries</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>observation</th>
+      <th>distance</th>
+      <th>divergence</th>
+      <th>population_covered</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>726907.0</td>
+      <td>0.000000</td>
+      <td>8.964293e-01</td>
+      <td>472.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>726907.0</td>
+      <td>674.319177</td>
+      <td>3.970494e-01</td>
+      <td>654.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>726907.0</td>
+      <td>755.315782</td>
+      <td>3.966244e-01</td>
+      <td>728.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>726907.0</td>
+      <td>830.744890</td>
+      <td>3.082997e-01</td>
+      <td>872.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>726907.0</td>
+      <td>1067.478163</td>
+      <td>3.110239e-01</td>
+      <td>981.0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>452</th>
+      <td>703708.0</td>
+      <td>13063.729732</td>
+      <td>1.881053e-06</td>
+      <td>37805.0</td>
+    </tr>
+    <tr>
+      <th>453</th>
+      <td>703708.0</td>
+      <td>13099.457827</td>
+      <td>1.377660e-06</td>
+      <td>37874.0</td>
+    </tr>
+    <tr>
+      <th>454</th>
+      <td>703708.0</td>
+      <td>13163.435867</td>
+      <td>1.492472e-06</td>
+      <td>37919.0</td>
+    </tr>
+    <tr>
+      <th>455</th>
+      <td>703708.0</td>
+      <td>13170.741000</td>
+      <td>1.595123e-07</td>
+      <td>37963.0</td>
+    </tr>
+    <tr>
+      <th>456</th>
+      <td>703708.0</td>
+      <td>13223.508518</td>
+      <td>0.000000e+00</td>
+      <td>38012.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>208849 rows × 4 columns</p>
+</div></div></div>
+</div>
+<p>For those of you on-the-ball, you may notice that this input is rather similar to that suggested as an alternative input to step 2 - the data inputted is exactly the same in this case.</p>
+<p>However, due to the available format of your own data, or purely due to personal preference, you may prefer to input two separate objects to the <em>populations</em> and <em>coordinates</em> arguments.</p>
+</section>
+</section>
+<section id="using-the-outputs">
+<h2>Using the outputs<a class="headerlink" href="#using-the-outputs" title="Link to this heading">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cincin_kl_divergence</span> <span class="o">=</span> <span class="n">kl_divergence_profile</span><span class="p">(</span><span class="n">cincin_gdf</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+/tmp/ipykernel_4564/3188713354.py:100: RuntimeWarning: invalid value encountered in divide
+  q_cumul_proportions = cumul_pop_by_group / obs_cumul_pop
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cincin_kl_divergence</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">"distance"</span><span class="p">,</span> <span class="s2">"divergence"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: xlabel='distance'&gt;
+</pre></div>
+</div>
+<img alt="../_images/1c4d5a2b588b2f12371de5e6c13b78474cf479491536015f3be86b6c74b2cf33.png" src="../_images/1c4d5a2b588b2f12371de5e6c13b78474cf479491536015f3be86b6c74b2cf33.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cincin_kl_divergence</span> <span class="o">=</span> <span class="n">cincin_kl_divergence</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'observation'</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cincin_kl_divergence</span> <span class="o">=</span> <span class="n">cincin_kl_divergence</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">cincin_geoseries</span><span class="p">,</span> <span class="n">left_on</span> <span class="o">=</span> <span class="s1">'observation'</span><span class="p">,</span> <span class="n">right_on</span> <span class="o">=</span> <span class="s1">'ID'</span><span class="p">)</span>
+<span class="n">cincin_kl_divergence</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>observation</th>
+      <th>distance</th>
+      <th>divergence</th>
+      <th>population_covered</th>
+      <th>geometry</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>654795.0</td>
+      <td>0.0</td>
+      <td>0.142210</td>
+      <td>69.0</td>
+      <td>POLYGON ((1398269.926 411448.786, 1398333.955 ...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>654816.0</td>
+      <td>0.0</td>
+      <td>0.060205</td>
+      <td>49.0</td>
+      <td>POLYGON ((1397564.804 411646.644, 1397600.475 ...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>654853.0</td>
+      <td>0.0</td>
+      <td>0.210239</td>
+      <td>0.0</td>
+      <td>POLYGON ((1397634.522 412227.972, 1397580.224 ...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>654869.0</td>
+      <td>0.0</td>
+      <td>0.189339</td>
+      <td>44.0</td>
+      <td>POLYGON ((1397788.495 411495.938, 1397826.597 ...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>654889.0</td>
+      <td>0.0</td>
+      <td>0.210239</td>
+      <td>142.0</td>
+      <td>POLYGON ((1397634.522 412227.972, 1397695.312 ...</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>452</th>
+      <td>739686.0</td>
+      <td>0.0</td>
+      <td>1.244836</td>
+      <td>45.0</td>
+      <td>POLYGON ((1410127.237 417672.072, 1410268.46 4...</td>
+    </tr>
+    <tr>
+      <th>453</th>
+      <td>741823.0</td>
+      <td>0.0</td>
+      <td>0.934698</td>
+      <td>29.0</td>
+      <td>POLYGON ((1410140.124 416441.192, 1410495.72 4...</td>
+    </tr>
+    <tr>
+      <th>454</th>
+      <td>741843.0</td>
+      <td>0.0</td>
+      <td>0.945546</td>
+      <td>256.0</td>
+      <td>POLYGON ((1408692.225 416938.374, 1408734.116 ...</td>
+    </tr>
+    <tr>
+      <th>455</th>
+      <td>741889.0</td>
+      <td>0.0</td>
+      <td>1.244836</td>
+      <td>10.0</td>
+      <td>POLYGON ((1411000.065 417361.617, 1411163.889 ...</td>
+    </tr>
+    <tr>
+      <th>456</th>
+      <td>741903.0</td>
+      <td>0.0</td>
+      <td>0.276574</td>
+      <td>357.0</td>
+      <td>POLYGON ((1410268.46 418944.037, 1410337.877 4...</td>
+    </tr>
+  </tbody>
+</table>
+<p>457 rows × 5 columns</p>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot</span>
+
+<span class="n">cincin_kl_divergence</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Axes: &gt;
+</pre></div>
+</div>
+<img alt="../_images/9dc2920abd08132ab753e34ebab3ac4071ff3f6d70dfd38c2e3b5c9586043572.png" src="../_images/9dc2920abd08132ab753e34ebab3ac4071ff3f6d70dfd38c2e3b5c9586043572.png" />
+</div>
+</div>
+</section>
+<section id="how-the-function-works">
+<h2>How the function works<a class="headerlink" href="#how-the-function-works" title="Link to this heading">¶</a></h2>
+<p>Here the code will be broken down into its constituent parts, in order to explain how it works to create the complete <code class="docutils literal notranslate"><span class="pre">kl_divergence_profile</span></code> function.</p>
+<section id="the-bigger-picture">
+<h3>The bigger picture<a class="headerlink" href="#the-bigger-picture" title="Link to this heading">¶</a></h3>
+<p>The methodology suggested by <a class="reference external" href="https://doi.org/10.1073/pnas.1900192116">Olteanu et al. (2019)</a> inventively calculates consecutive divergence levels in relation to a chosen area within a city.</p>
+<p>To do this, the KL divergence calculations consectively aggregate more and more population. This aggregation starts by including solely the population of this chosen area, then including populations of the closest neighbour to the chosen area, followed by the next closest neighbour, and so on until the population of the whole city is analysed.</p>
+<p>The result is a profile of divergence levels that represents an aggregation of population gradually from this chosen area, showing how the dynamics of a population change as you consider areas covering a larger and larger distance from this chosen area.</p>
+<p>Once this has been undertaken for a single chosen area, it can be repeated for every other area within the city.</p>
+<p>When analysed on this scale, this gives a more nuanced picture of which areas of a city closest represent the total population of the city, and vice versa which areas are most different to the total population of the city; along with their spatial relationships.</p>
+</section>
+<section id="managing-inputs">
+<h3>Managing inputs<a class="headerlink" href="#managing-inputs" title="Link to this heading">¶</a></h3>
+<p>First, as there are different forms of input possible, they need to be managed into a consistent form that will eventually be used to calculate the KL divergence.</p>
+<p>As a reminder, this function currently has three arguments that you can use to tailor it to your own data:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">kl_divergence_profile</span><span class="p">(</span><span class="n">populations</span><span class="p">,</span> <span class="n">coordinates</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">metric</span> <span class="o">=</span> <span class="s1">'euclidean'</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><em><strong>populations</strong></em> - is data regarding each group within the population information to be included in the analysis (in raw numbers, not percentages)</p></li>
+<li><p><em><strong>coordinates</strong></em> - is the spatial information, relating to the population information  inputted within the <em>populations</em> argument</p></li>
+<li><p><em><strong>metric</strong></em> - the style of distance metric to be used in calculating the distances between areas, such that they can be ordered</p></li>
+</ul>
+<section id="storing-indices">
+<h4>Storing indices<a class="headerlink" href="#storing-indices" title="Link to this heading">¶</a></h4>
+<p>If the <em>populations</em> input contains an <a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.set_index.html">index</a>, then it is stored, such that the results can be related to the inputted data more easily. If not, an array is created to take this place.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># Store the observation index to return with the results</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">populations</span><span class="p">,</span> <span class="s1">'index'</span><span class="p">):</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">populations</span><span class="o">.</span><span class="n">index</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">populations</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="creating-coordinates-from-a-geodataframe-input-to-populations">
+<h4>Creating <em>coordinates</em> from a geodataframe input to <em>populations</em><a class="headerlink" href="#creating-coordinates-from-a-geodataframe-input-to-populations" title="Link to this heading">¶</a></h4>
+<p>If the <em>populations</em> input has a geometry attribute, and there is no <em>coordinates</em> input, then the geometry of the <em>populations</em> input is passed as the <em>coordinates</em> input. The <em>populations</em> input is then stripped of its geometry attribute, and converted into an array.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># Check for geometry present in populations argument</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">populations</span><span class="p">,</span> <span class="s1">'geometry'</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">coordinates</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">coordinates</span> <span class="o">=</span> <span class="n">populations</span><span class="o">.</span><span class="n">geometry</span>
+        <span class="n">populations</span> <span class="o">=</span> <span class="n">populations</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">populations</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">populations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">populations</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="ensuring-coordinates-is-centroid-s-coordinates">
+<h4>Ensuring <em>coordinates</em> is centroid’s coordinates<a class="headerlink" href="#ensuring-coordinates-is-centroid-s-coordinates" title="Link to this heading">¶</a></h4>
+<p>Regardless whether the <em>coordinates</em> input has a point or polygon geometry attribute, the <code class="docutils literal notranslate"><span class="pre">centroid</span></code> of each observation is calculated and re-stored as <em>coordinates</em> in a two column array, representing the <em>x</em> and <em>y</em> values.</p>
+<p>A test is inputted into this using a <em>else</em> clause, whereby if the <em>coordinates</em> and <em>populations</em> inputs are not of equal length, then the user is warned of this.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1">#  Creating consistent coordinates - GeoSeries input</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span><span class="s1">'geometry'</span><span class="p">):</span>
+        <span class="n">centroids</span> <span class="o">=</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">centroid</span>
+        <span class="n">coordinates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">centroids</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">centroids</span><span class="o">.</span><span class="n">y</span><span class="p">))</span>
+    <span class="c1">#  Creating consistent coordinates - Array input</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">coordinates</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">populations</span><span class="p">),</span> <span class="s2">"Length of coordinates input needs to be of the same length as populations input"</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="creating-a-distance-matrix">
+<h3>Creating a distance matrix<a class="headerlink" href="#creating-a-distance-matrix" title="Link to this heading">¶</a></h3>
+<p>Having managed the inputs, we have to think about how we want the KL divergence levels to be calculated.</p>
+<p>To create this a divergence profile over space, we first need to be able to sort the inputted data in terms of their proximity to the chosen area of the analysis.</p>
+<p>A distance matrix is therefore created, to store the distances between each observation and every other observation. This uses the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.pdist.html"><code class="docutils literal notranslate"><span class="pre">pdist</span></code></a> function from <em>scipy.spatial.distance</em> to compute this, using the optional <em>metric</em> argument from the input of the function.</p>
+<p>This calculates the Euclidean (also known as Pythagorean) distance between all the points by default, but could be altered as desired by the user using the <em>metric</em> input.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># Creating distance matrix using defined metric (default euclidean distance)</span>
+    <span class="n">dist_matrix</span> <span class="o">=</span> <span class="n">squareform</span><span class="p">(</span><span class="n">pdist</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">metric</span> <span class="o">=</span> <span class="n">metric</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="creating-a-list-for-the-results">
+<h3>Creating a list for the results<a class="headerlink" href="#creating-a-list-for-the-results" title="Link to this heading">¶</a></h3>
+<p>This is purely a piece of admin to open a list, such that the results can be filled into this (currently empty) list later in the function.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># Preparing list for results</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+</pre></div>
+</div>
+</section>
+<section id="undertaking-the-loop">
+<h3>Undertaking the loop<a class="headerlink" href="#undertaking-the-loop" title="Link to this heading">¶</a></h3>
+<section id="part-a-sorting-the-population-information-by-the-distance-matrix">
+<h4>Part A - Sorting the population information by the distance matrix<a class="headerlink" href="#part-a-sorting-the-population-information-by-the-distance-matrix" title="Link to this heading">¶</a></h4>
+<p>In order to undertake all of the statistical work with regards to the <em>populations</em> input, the data must first be ordered by the distance matrix, which has been created above.</p>
+<p>For instance - when the <em>metric</em> is set to Euclidean - for an example observation ‘<em>A</em>’, sorting by the distance matrix will return the <em>populations</em> information ordered from closest observation to the furthest observation, all with respect to observation <em>A</em>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># Loop to calculate KL divergence</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">distances</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dist_matrix</span><span class="p">):</span>
+
+        <span class="c1"># Creating the q and r objects</span>
+        <span class="n">sorted_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">sorted_indices</span></code> can then be used as a method of ordering the <em>populations</em> object, which we will see in the next part of the loop.</p>
+</section>
+<section id="part-b-preparing-the-inputs-to-calculate-the-kl-divergence">
+<h4>Part B - Preparing the inputs to calculate the KL divergence<a class="headerlink" href="#part-b-preparing-the-inputs-to-calculate-the-kl-divergence" title="Link to this heading">¶</a></h4>
+<p>With the end goal of this function being is to calculate the KL divergence - specific inputs for this calculation must be created.</p>
+<p>In the article, Olteanu et al. state that</p>
+<blockquote>
+<div><p><span class="math notranslate nohighlight">\(\text{&quot;}\)</span> The KL divergence between two multinomial distributions (<em><span class="math notranslate nohighlight">\(\space q_1, \space ... \space , q_k\)</span></em> ) , (<em><span class="math notranslate nohighlight">\(\space r_1, \space ... \space , r_k\)</span></em> ) is defined as:
+$<span class="math notranslate nohighlight">\( d_{KL}(q \space|\space r) = \sum_{i=1}^{k} q_i \space ln \space{{q_i} \over {r_i}} \space \space \text{&quot;}  \)</span>$
+<a class="reference external" href="https://doi.org/10.1073/pnas.1900192116">Olteanu et al. (pg. 12250, 2019)</a></p>
+</div></blockquote>
+<p>When applied in practice, we create statistics from the distributions such that</p>
+<div class="math notranslate nohighlight">
+\[ ln \space {{q_i} \over {r_i}} \space = \space ln \space {{{{cumulative \space proportions}\space_i}} \over {{total \space proportions}\space_i}} \]</div>
+<p>The <em>culmulative proportions</em> and <em>total proportions</em> objects are the inputs that will be used to calculate the KL divergence for each area.</p>
+<ul class="simple">
+<li><p><strong>cumulative proportions</strong> - culmulatively aggregating with respect to the chosen area, the proportion (percentage) that each group represents</p></li>
+<li><p><strong>total proportions</strong> - the proportions (percentages) each group represents in the total population, placed into an ordered list</p></li>
+</ul>
+<p>Therefore, to calculate <em>cumulative proportions</em> (<code class="docutils literal notranslate"><span class="pre">q_cumul_proportions</span></code>), the objects representing the culmulative group populations (<code class="docutils literal notranslate"><span class="pre">cumul_pop_by_group</span></code>) and culmulative total populations (<code class="docutils literal notranslate"><span class="pre">obs_cumul_pop</span></code>) are created.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>        <span class="n">cumul_pop_by_group</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">populations</span><span class="p">[</span><span class="n">sorted_indices</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">obs_cumul_pop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">cumul_pop_by_group</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="n">q_cumul_proportions</span> <span class="o">=</span> <span class="n">cumul_pop_by_group</span> <span class="o">/</span> <span class="n">obs_cumul_pop</span>
+</pre></div>
+</div>
+<p>To calculate <em>total proportions</em> (<code class="docutils literal notranslate"><span class="pre">r_total_proportions</span></code>), the objects representing the total group populations (<code class="docutils literal notranslate"><span class="pre">total_pop_by_group</span></code>) and total populations (<code class="docutils literal notranslate"><span class="pre">total_pop</span></code>) are created</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>        <span class="n">total_pop_by_group</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">populations</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">total_pop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">populations</span><span class="p">)</span>
+        <span class="n">r_total_proportions</span> <span class="o">=</span> <span class="n">total_pop_by_group</span> <span class="o">/</span> <span class="n">total_pop</span>
+</pre></div>
+</div>
+</section>
+<section id="part-c-calculating-the-kl-divergence">
+<h4>Part C - Calculating the KL divergence<a class="headerlink" href="#part-c-calculating-the-kl-divergence" title="Link to this heading">¶</a></h4>
+<p>To calculate the KL divergence profile, the two objects created to form the <em>q</em> and <em>r</em> elements of the formula are inputted into the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/reference/generated/scipy.special.rel_entr.html"><code class="docutils literal notranslate"><span class="pre">scipy.special.rel_entr</span></code></a> function.</p>
+<p>While a <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/reference/generated/scipy.special.kl_div.html#scipy.special.kl_div"><code class="docutils literal notranslate"><span class="pre">scipy.special.kl_div</span></code></a> also exists - and might be thought to be the obvious choice - the relative entropy function contains beneficial functionality for this use-case as a result of its handling of <span class="math notranslate nohighlight">\(ln(0)\)</span>, where it bends the rule of mathematics to return <span class="math notranslate nohighlight">\(0\)</span> instead of <span class="math notranslate nohighlight">\(- \infty\)</span>. For measuring population statistics, this makes a lot more logical sense.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>        <span class="c1"># Input q and r objects into relative entropy (KL divergence) function</span>
+        <span class="n">kl_divergence</span> <span class="o">=</span> <span class="n">relative_entropy</span><span class="p">(</span><span class="n">q_cumul_proportions</span><span class="p">,</span>
+                                         <span class="n">r_total_proportions</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="part-d-placing-the-outputs-into-a-dataframe">
+<h4>Part D - Placing the outputs into a dataframe<a class="headerlink" href="#part-d-placing-the-outputs-into-a-dataframe" title="Link to this heading">¶</a></h4>
+<p>Now we have undertaken all the calculations, a dataframe for the outputs can be constructed, returning the four outputs we have <a class="reference internal" href="#1.-kl_divergence_profile(populations-=-geodataframe)"><span class="xref myst">already discussed</span></a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>        <span class="c1"># Creating an output dataframe</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
+            <span class="n">observation</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+            <span class="n">distance</span> <span class="o">=</span> <span class="n">distances</span><span class="p">[</span><span class="n">sorted_indices</span><span class="p">],</span>
+            <span class="n">divergence</span> <span class="o">=</span> <span class="n">kl_divergence</span><span class="p">,</span>
+            <span class="n">population_covered</span> <span class="o">=</span> <span class="n">obs_cumul_pop</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">))</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="bringing-all-the-dataframes-together">
+<h3>Bringing all the dataframes together<a class="headerlink" href="#bringing-all-the-dataframes-together" title="Link to this heading">¶</a></h3>
+<p>Finally, the <em>output</em> dataframes relating to each observation are brought together and concatenated (stacked) using the <a class="reference external" href="https://pandas.pydata.org/docs/reference/api/pandas.concat.html"><code class="docutils literal notranslate"><span class="pre">pandas.concat</span></code></a> function to return our full output. Designed to be deconstructed, broken down and used for visualisations and further analysis.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>        <span class="c1"># Append (bring together) all outputs into results list</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+    <span class="k">return</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">results</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="../_sources/notebooks/kl_divergence_profile_walkthrough.ipynb.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 9.1.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

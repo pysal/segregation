@@ -1,0 +1,22 @@
+﻿segregation.rankorder.RankOrderVarianceRatio
+============================================
+
+.. currentmodule:: segregation.rankorder
+
+.. autoclass:: RankOrderVarianceRatio
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~RankOrderVarianceRatio.__init__
+   
+   
+
+   
+   
+   

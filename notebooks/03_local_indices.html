@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Local Measures of segregation &#8212; segregation v2.5.6.dev83+g2e095ced1 Manual</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css?v=9afac83c" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <script src="../_static/documentation_options.js?v=91d1e54c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="icon" href="../_static/pysal_favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          segregation</a>
+        <span class="navbar-text navbar-version pull-left"><b>2.5.6.dev83+g2e095ced1</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../installation.html">Installation</a></li>
+                <li><a href="../api.html">API</a></li>
+                <li><a href="../tutorial.html">Tutorial</a></li>
+                <li><a href="../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html#building-the-documentation">Building the documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Local Measures of segregation</a><ul>
+<li><a class="reference internal" href="#table-of-contents">Table of Contents</a></li>
+<li><a class="reference internal" href="#location-quotient-lq">Location Quotient (LQ)</a></li>
+<li><a class="reference internal" href="#local-diversity">Local Diversity</a></li>
+<li><a class="reference internal" href="#local-entropy">Local Entropy</a></li>
+<li><a class="reference internal" href="#local-simpson-interaction">Local Simpson Interaction</a></li>
+<li><a class="reference internal" href="#local-simpson-concentration">Local Simpson Concentration</a></li>
+<li><a class="reference internal" href="#local-centralization">Local Centralization</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section class="tex2jax_ignore mathjax_ignore" id="local-measures-of-segregation">
+<h1>Local Measures of segregation<a class="headerlink" href="#local-measures-of-segregation" title="Link to this heading">¶</a></h1>
+<section id="table-of-contents">
+<h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="#Local-Measures-of-segregation"><span class="xref myst">Local Measures of segregation</span></a></p>
+<ul>
+<li><p><a class="reference internal" href="#Location-Quotient-(LQ)"><span class="xref myst">Location Quotient (LQ)</span></a></p></li>
+<li><p><a class="reference internal" href="#Local-Diversity"><span class="xref myst">Local Diversity</span></a></p></li>
+<li><p><a class="reference internal" href="#Local-Entropy"><span class="xref myst">Local Entropy</span></a></p></li>
+<li><p><a class="reference internal" href="#Local-Simpson-Interaction"><span class="xref myst">Local Simpson Interaction</span></a></p></li>
+<li><p><a class="reference internal" href="#Local-Simpson-Concentration"><span class="xref myst">Local Simpson Concentration</span></a></p></li>
+<li><p><a class="reference internal" href="#Local-Centralization"><span class="xref myst">Local Centralization</span></a></p></li>
+</ul>
+</li>
+</ul>
+<p>This is an example notebook of functionalities for local measures of the <em>segregation</em> module. Firstly, we need to import the packages and functions we need:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">libpysal</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">segregation</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">segregation.local</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiLocationQuotient</span><span class="p">,</span> <span class="n">MultiLocalDiversity</span><span class="p">,</span> <span class="n">MultiLocalEntropy</span><span class="p">,</span> <span class="n">MultiLocalSimpsonInteraction</span><span class="p">,</span> <span class="n">MultiLocalSimpsonConcentration</span><span class="p">,</span> <span class="n">LocalRelativeCentralization</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Then it’s time to load some data to estimate segregation. We use the data of 2000 Census Tract Data for the metropolitan area of Sacramento, CA, USA.</p>
+<p>We use a geopandas dataframe available in PySAL examples repository.</p>
+<p>For more information about the data: https://github.com/pysal/libpysal/tree/main/libpysal/examples/sacramento2</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">input_df</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="n">libpysal</span><span class="o">.</span><span class="n">examples</span><span class="o">.</span><span class="n">load_example</span><span class="p">(</span><span class="s2">"Sacramento1"</span><span class="p">)</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s2">"sacramentot2.shp"</span><span class="p">))</span>
+<span class="n">input_df</span> <span class="o">=</span> <span class="n">input_df</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">input_df</span><span class="o">.</span><span class="n">estimate_utm_crs</span><span class="p">())</span>
+<span class="n">input_df</span><span class="o">.</span><span class="n">columns</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Index(['FIPS', 'MSA', 'TOT_POP', 'POP_16', 'POP_65', 'WHITE', 'BLACK', 'ASIAN',
+       'HISP', 'MULTI_RA', 'MALES', 'FEMALES', 'MALE1664', 'FEM1664', 'EMPL16',
+       'EMP_AWAY', 'EMP_HOME', 'EMP_29', 'EMP_30', 'EMP16_2', 'EMP_MALE',
+       'EMP_FEM', 'OCC_MAN', 'OCC_OFF1', 'OCC_INFO', 'HH_INC', 'POV_POP',
+       'POV_TOT', 'HSG_VAL', 'POLYID', 'geometry'],
+      dtype='str')
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Important: all classes that start with “Multi_” expects a specific type of input of multigroups since the index will be calculated using many groups.
+On the other hand, other classes expects a single group for calculation of the metrics.</strong></p>
+<p>The groups of interest are White, Black, Asian and Hispanic population. Therefore, we create an auxiliary list with only the necessary columns for fitting the index.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">groups_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'WHITE'</span><span class="p">,</span> <span class="s1">'BLACK'</span><span class="p">,</span> <span class="s1">'ASIAN'</span><span class="p">,</span><span class="s1">'HISP'</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We also can plot the spatial distribution of the composition of each of these groups over the tracts of Sacramento:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">groups_list</span><span class="p">)):</span>
+    <span class="n">input_df</span><span class="p">[</span><span class="s1">'comp_'</span> <span class="o">+</span> <span class="n">groups_list</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">input_df</span><span class="p">[</span><span class="n">groups_list</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">/</span> <span class="n">input_df</span><span class="p">[</span><span class="s1">'TOT_POP'</span><span class="p">]</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">nrows</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">17</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+
+
+<span class="n">input_df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">column</span> <span class="o">=</span> <span class="s1">'comp_'</span> <span class="o">+</span> <span class="n">groups_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+              <span class="n">cmap</span> <span class="o">=</span> <span class="s1">'OrRd'</span><span class="p">,</span>
+              <span class="n">legend</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Composition of '</span> <span class="o">+</span> <span class="n">groups_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">18</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">'white'</span><span class="p">)</span>
+
+
+<span class="n">input_df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">column</span> <span class="o">=</span> <span class="s1">'comp_'</span> <span class="o">+</span> <span class="n">groups_list</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+              <span class="n">cmap</span> <span class="o">=</span> <span class="s1">'OrRd'</span><span class="p">,</span>
+              <span class="n">legend</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Composition of '</span> <span class="o">+</span> <span class="n">groups_list</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">18</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">'white'</span><span class="p">)</span>
+
+
+<span class="n">input_df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">column</span> <span class="o">=</span> <span class="s1">'comp_'</span> <span class="o">+</span> <span class="n">groups_list</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+              <span class="n">cmap</span> <span class="o">=</span> <span class="s1">'OrRd'</span><span class="p">,</span>
+              <span class="n">legend</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Composition of '</span> <span class="o">+</span> <span class="n">groups_list</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">18</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">'white'</span><span class="p">)</span>
+
+<span class="n">input_df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">column</span> <span class="o">=</span> <span class="s1">'comp_'</span> <span class="o">+</span> <span class="n">groups_list</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+              <span class="n">cmap</span> <span class="o">=</span> <span class="s1">'OrRd'</span><span class="p">,</span>
+              <span class="n">legend</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Composition of '</span> <span class="o">+</span> <span class="n">groups_list</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">18</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">'white'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/2ad5d40ffa2246c62d5c979bf2c0c2ac7c468eca1fbcc933b83d2f8a32cb32a2.png" src="../_images/2ad5d40ffa2246c62d5c979bf2c0c2ac7c468eca1fbcc933b83d2f8a32cb32a2.png" />
+</div>
+</div>
+</section>
+<section id="location-quotient-lq">
+<h2>Location Quotient (LQ)<a class="headerlink" href="#location-quotient-lq" title="Link to this heading">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">index</span> <span class="o">=</span> <span class="n">MultiLocationQuotient</span><span class="p">(</span><span class="n">input_df</span><span class="p">,</span> <span class="n">groups_list</span><span class="p">)</span>
+<span class="n">index</span><span class="o">.</span><span class="n">statistics</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[1.36543221, 0.07478049, 0.16245651, 0.38088068],
+       [1.18002164, 0.        , 0.14836683, 1.18544649],
+       [0.68072696, 0.03534425, 0.        , 3.31119136],
+       ...,
+       [0.99613635, 0.10550213, 0.20912883, 1.86164972],
+       [0.92802194, 0.24709231, 0.47460486, 1.92804399],
+       [1.06821891, 0.07674888, 0.70759745, 1.29220137]], shape=(403, 4))
+</pre></div>
+</div>
+</div>
+</div>
+<p>Important to note that column k has the Location Quotient (LQ) of position k in groups. Therefore, the LQ of the first unit of <code class="docutils literal notranslate"><span class="pre">'WHITE'</span></code> is <code class="docutils literal notranslate"><span class="pre">1.36543221</span></code> and, for example the LQ of <code class="docutils literal notranslate"><span class="pre">'BLACK'</span></code> of the last spatial unit is <code class="docutils literal notranslate"><span class="pre">0.07674888</span></code>. In addition, in this case we can plot the LQ of every group in the dataset similarly the way we did previously with the composition:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">groups_list</span><span class="p">)):</span>
+    <span class="n">input_df</span><span class="p">[</span><span class="s1">'LQ_'</span> <span class="o">+</span> <span class="n">groups_list</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">statistics</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">nrows</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">17</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+
+
+<span class="n">input_df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">column</span> <span class="o">=</span> <span class="s1">'LQ_'</span> <span class="o">+</span> <span class="n">groups_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+              <span class="n">cmap</span> <span class="o">=</span> <span class="s1">'inferno_r'</span><span class="p">,</span>
+              <span class="n">legend</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Location Quotient of '</span> <span class="o">+</span> <span class="n">groups_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">18</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">'white'</span><span class="p">)</span>
+
+
+<span class="n">input_df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">column</span> <span class="o">=</span> <span class="s1">'LQ_'</span> <span class="o">+</span> <span class="n">groups_list</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+              <span class="n">cmap</span> <span class="o">=</span> <span class="s1">'inferno_r'</span><span class="p">,</span>
+              <span class="n">legend</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Location Quotient of '</span> <span class="o">+</span> <span class="n">groups_list</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">18</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">'white'</span><span class="p">)</span>
+
+
+<span class="n">input_df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">column</span> <span class="o">=</span> <span class="s1">'LQ_'</span> <span class="o">+</span> <span class="n">groups_list</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+              <span class="n">cmap</span> <span class="o">=</span> <span class="s1">'inferno_r'</span><span class="p">,</span>
+              <span class="n">legend</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Location Quotient of '</span> <span class="o">+</span> <span class="n">groups_list</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">18</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">'white'</span><span class="p">)</span>
+
+<span class="n">input_df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">column</span> <span class="o">=</span> <span class="s1">'LQ_'</span> <span class="o">+</span> <span class="n">groups_list</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+              <span class="n">cmap</span> <span class="o">=</span> <span class="s1">'inferno_r'</span><span class="p">,</span>
+              <span class="n">legend</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Location Quotient of '</span> <span class="o">+</span> <span class="n">groups_list</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">18</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s1">'white'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/0a555c299a22be6dbd6b9fa624fdb1d50eafa8d914883aafa07427a3e4ba6ef2.png" src="../_images/0a555c299a22be6dbd6b9fa624fdb1d50eafa8d914883aafa07427a3e4ba6ef2.png" />
+</div>
+</div>
+</section>
+<section id="local-diversity">
+<h2>Local Diversity<a class="headerlink" href="#local-diversity" title="Link to this heading">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">index</span> <span class="o">=</span> <span class="n">MultiLocalDiversity</span><span class="p">(</span><span class="n">input_df</span><span class="p">,</span> <span class="n">groups_list</span><span class="p">)</span>
+<span class="n">index</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span> <span class="c1"># Values of first 10 units</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([0.34332326, 0.56109229, 0.70563225, 0.29713472, 0.22386084,
+       0.29742517, 0.12322789, 0.11274579, 0.09402405, 0.25129616])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">input_df</span><span class="p">[</span><span class="s1">'Local_Diversity'</span><span class="p">]</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">statistics</span>
+<span class="n">input_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">input_df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">column</span> <span class="o">=</span> <span class="s1">'Local_Diversity'</span><span class="p">,</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s1">'inferno_r'</span><span class="p">,</span> <span class="n">legend</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Local Diversity"</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">25</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, 'Local Diversity')
+</pre></div>
+</div>
+<img alt="../_images/341856764b23d185b56c0c7afde0325691202138a184d510c6c659c8b4cd166f.png" src="../_images/341856764b23d185b56c0c7afde0325691202138a184d510c6c659c8b4cd166f.png" />
+</div>
+</div>
+</section>
+<section id="local-entropy">
+<h2>Local Entropy<a class="headerlink" href="#local-entropy" title="Link to this heading">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">index</span> <span class="o">=</span> <span class="n">MultiLocalEntropy</span><span class="p">(</span><span class="n">input_df</span><span class="p">,</span> <span class="n">groups_list</span><span class="p">)</span>
+<span class="n">index</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span> <span class="c1"># Values of first 10 units</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([0.24765538, 0.40474253, 0.50900607, 0.21433739, 0.16148146,
+       0.21454691, 0.08889013, 0.08132889, 0.06782401, 0.18127186])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">input_df</span><span class="p">[</span><span class="s1">'Local_Entropy'</span><span class="p">]</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">statistics</span>
+<span class="n">input_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">input_df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">column</span> <span class="o">=</span> <span class="s1">'Local_Entropy'</span><span class="p">,</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s1">'inferno_r'</span><span class="p">,</span> <span class="n">legend</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Local Entropy"</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">25</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, 'Local Entropy')
+</pre></div>
+</div>
+<img alt="../_images/674a4c4b8a2ff35e0f01f1618f58af6cb441e11bd8265047ed5bed281771a0cd.png" src="../_images/674a4c4b8a2ff35e0f01f1618f58af6cb441e11bd8265047ed5bed281771a0cd.png" />
+</div>
+</div>
+</section>
+<section id="local-simpson-interaction">
+<h2>Local Simpson Interaction<a class="headerlink" href="#local-simpson-interaction" title="Link to this heading">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">index</span> <span class="o">=</span> <span class="n">MultiLocalSimpsonInteraction</span><span class="p">(</span><span class="n">input_df</span><span class="p">,</span> <span class="n">groups_list</span><span class="p">)</span>
+<span class="n">index</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span> <span class="c1"># Values of first 10 units</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([0.15435993, 0.33391595, 0.49909747, 0.1299449 , 0.09805056,
+       0.13128178, 0.04447356, 0.0398933 , 0.03723054, 0.11758548])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">input_df</span><span class="p">[</span><span class="s1">'Local_Simpson_Interaction'</span><span class="p">]</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">statistics</span>
+<span class="n">input_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">input_df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">column</span> <span class="o">=</span> <span class="s1">'Local_Simpson_Interaction'</span><span class="p">,</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s1">'inferno_r'</span><span class="p">,</span> <span class="n">legend</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Local Simpson Interaction"</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">25</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, 'Local Simpson Interaction')
+</pre></div>
+</div>
+<img alt="../_images/640d523cc9ee63174ec58bcc55b7356c657d8efdec35183a967d686c41f3222c.png" src="../_images/640d523cc9ee63174ec58bcc55b7356c657d8efdec35183a967d686c41f3222c.png" />
+</div>
+</div>
+</section>
+<section id="local-simpson-concentration">
+<h2>Local Simpson Concentration<a class="headerlink" href="#local-simpson-concentration" title="Link to this heading">¶</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">index</span> <span class="o">=</span> <span class="n">MultiLocalSimpsonConcentration</span><span class="p">(</span><span class="n">input_df</span><span class="p">,</span> <span class="n">groups_list</span><span class="p">)</span>
+<span class="n">index</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span> <span class="c1"># Values of first 10 units</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([0.84564007, 0.66608405, 0.50090253, 0.8700551 , 0.90194944,
+       0.86871822, 0.95552644, 0.9601067 , 0.96276946, 0.88241452])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">input_df</span><span class="p">[</span><span class="s1">'Local_Simpson_Concentration'</span><span class="p">]</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">statistics</span>
+<span class="n">input_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">input_df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">column</span> <span class="o">=</span> <span class="s1">'Local_Simpson_Concentration'</span><span class="p">,</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s1">'inferno_r'</span><span class="p">,</span> <span class="n">legend</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Local Simpson Concentration"</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">25</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, 'Local Simpson Concentration')
+</pre></div>
+</div>
+<img alt="../_images/8075fa98c6c84698a78e950561c2413f04839bf5c9862d95168225e80a67f87c.png" src="../_images/8075fa98c6c84698a78e950561c2413f04839bf5c9862d95168225e80a67f87c.png" />
+</div>
+</div>
+</section>
+<section id="local-centralization">
+<h2>Local Centralization<a class="headerlink" href="#local-centralization" title="Link to this heading">¶</a></h2>
+<p>Let’s assume we want to calculate the Local Centralization to the group <code class="docutils literal notranslate"><span class="pre">'BLACK'</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">index</span> <span class="o">=</span> <span class="n">LocalRelativeCentralization</span><span class="p">(</span><span class="n">input_df</span><span class="p">,</span> <span class="s1">'BLACK'</span><span class="p">,</span> <span class="s1">'TOT_POP'</span><span class="p">)</span>
+<span class="n">index</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span> <span class="c1"># Values of first 10 units</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/segregation/segregation/segregation/local/local_relative_centralization.py:58: FutureWarning: The KDTree class is deprecated and will be removed in a future version of libpysal. Use ``scipy.spatial.KDTree`` directly.
+  kd = lps.cg.kdtree.KDTree(np.array(points))
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([ 0.03443055, -0.29063264, -0.19110976,  0.30243257,  0.03929596,
+        0.16414059,  0.78917647,  0.53129412, -0.12673592, -0.20216325])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">input_df</span><span class="p">[</span><span class="s1">'Local_Centralization'</span><span class="p">]</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">statistics</span>
+<span class="n">input_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">input_df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">column</span> <span class="o">=</span> <span class="s1">'Local_Centralization'</span><span class="p">,</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s1">'inferno_r'</span><span class="p">,</span> <span class="n">legend</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Local Centralization"</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">25</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, 'Local Centralization')
+</pre></div>
+</div>
+<img alt="../_images/fbb3440f93591d8a289911023905526ce222b2bb1804c958f3cd0b1e9c837176.png" src="../_images/fbb3440f93591d8a289911023905526ce222b2bb1804c958f3cd0b1e9c837176.png" />
+</div>
+</div>
+</section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+<div id="sourcelink">
+  <a href="../_sources/notebooks/03_local_indices.ipynb.txt"
+     rel="nofollow">Source</a>
+</div>
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 9.1.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
