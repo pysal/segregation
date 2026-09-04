@@ -42,6 +42,7 @@ def test_batch_single():
             0.2,
             0.0767,
             0.3932,
+            0.0629,
             0.7717,
             0.2283,
             0.4524,
@@ -104,5 +105,5 @@ def test_batch_multiscalar_single():
         seed=1234,
         # loky is slower but more robust in testing
     )
-    assert mfit.shape == (3, 13)
+    assert mfit.shape == (3, 14)
 
