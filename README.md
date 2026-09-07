@@ -19,7 +19,7 @@ Calculate over 40 segregation measures from simple to state-of-the art, includin
 - [single-group segregation indices](https://github.com/pysal/segregation/blob/main/docs/notebooks/01_singlegroup_indices.ipynb)
 - [multi-group segregation indices](https://github.com/pysal/segregation/blob/main/docs/notebooks/02_multigroup_indices.ipynb)
 - spatial segregation indices
-  - [using spatial weights matrices, euclidian distances, or topological relationships](https://github.com/pysal/segregation/blob/main/docs/notebooks/01_singlegroup_indices.ipynb)
+  - [using spatial weights matrices, euclidean distances, or topological relationships](https://github.com/pysal/segregation/blob/main/docs/notebooks/01_singlegroup_indices.ipynb)
   - [using multiscalar definitions](https://github.com/pysal/segregation/blob/main/docs/notebooks/04_multiscalar_example.ipynb)
   - [Kullback-Leiber divergence index](https://github.com/pysal/segregation/blob/main/docs/notebooks/kl_divergence_profile_walkthrough.ipynb)
 - [local segregation indices](https://github.com/pysal/segregation/blob/main/docs/notebooks/03_local_indices.ipynb)
