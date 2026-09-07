@@ -1,5 +1,6 @@
 # Segregation Analysis, Inference, and Decomposition with PySAL
 
+[![Continuous Integration](https://github.com/pysal/segregation/actions/workflows/unittests.yml/badge.svg?branch=main)](https://github.com/pysal/segregation/actions/workflows/unittests.yml)
 [![codecov](https://codecov.io/gh/pysal/segregation/branch/main/graph/badge.svg?token=1ujvZCI9Ce)](https://codecov.io/gh/pysal/segregation)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/segregation)
 ![PyPI](https://img.shields.io/pypi/v/segregation)
