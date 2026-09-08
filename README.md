@@ -67,6 +67,31 @@ conda activate segregation
 pip install -e .
 ```
 
+### Optional dependencies
+
+The core installation covers every segregation index and the inference,
+decomposition, batch, and multiscalar tools. A few features and the example
+notebooks rely on extra packages that are **not** installed automatically:
+
+| Package | Needed for | Install |
+|---------|------------|---------|
+| `pandarm` | the `segregation.network` module: network-based indices, `SpatialMinMax`, and network multiscalar profiles | `pip install pandarm` or `conda install -c conda-forge pandarm` |
+| `quilt3` | downloading the prepackaged OpenStreetMap street networks used in the network examples and tests | `pip install quilt3` or `conda install -c conda-forge quilt3` |
+| `watermark` | the `%load_ext watermark` cell at the top of every example notebook | `pip install watermark` or `conda install -c conda-forge watermark` |
+| `ipywidgets` | progress bars (`tqdm`) rendering inside Jupyter | `pip install ipywidgets` or `conda install -c conda-forge ipywidgets` |
+
+All four are bundled in the `tests` extra:
+
+```bash
+pip install "segregation[tests]"
+```
+
+or, with `conda`:
+
+```bash
+conda install -c conda-forge pandarm quilt3 watermark ipywidgets
+```
+
 ## Getting started
 
 For a complete guide to the `segregation` API, see the online
