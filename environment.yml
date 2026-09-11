@@ -27,3 +27,4 @@ dependencies:
   - numpydoc
   - sphinxcontrib-bibtex
   - sphinx_bootstrap_theme
+  - watermark
