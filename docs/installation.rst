@@ -43,6 +43,9 @@ notebooks rely on extra packages that are **not** installed automatically:
    * - Package
      - Needed for
      - Install
+   * - ``pandana``
+     - the network example notebooks
+     - ``pip install pandana`` or ``conda install -c conda-forge pandana``
    * - ``pandarm``
      - the ``segregation.network`` module: network-based indices,
        ``SpatialMinMax``, and network multiscalar profiles
@@ -58,13 +61,13 @@ notebooks rely on extra packages that are **not** installed automatically:
      - progress bars (``tqdm``) rendering inside Jupyter
      - ``pip install ipywidgets`` or ``conda install -c conda-forge ipywidgets``
 
-All four are bundled in the ``tests`` extra::
+All five are bundled in the ``tests`` extra::
 
 	pip install "segregation[tests]"
 
 or, with ``conda``::
 
-	conda install -c conda-forge pandarm quilt3 watermark ipywidgets
+	conda install -c conda-forge pandana pandarm quilt3 watermark ipywidgets
 
 Building the documentation
 ==========================
