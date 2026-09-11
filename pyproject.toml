@@ -59,6 +59,7 @@ docs = [
     "sphinx",
     "sphinxcontrib-bibtex",
     "sphinx_bootstrap_theme",
+    "watermark",
     "mkdocs-jupyter",
     "myst-parser"
 ]
