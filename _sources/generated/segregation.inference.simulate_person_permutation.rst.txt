@@ -1,0 +1,6 @@
+﻿segregation.inference.simulate\_person\_permutation
+===================================================
+
+.. currentmodule:: segregation.inference
+
+.. autofunction:: simulate_person_permutation

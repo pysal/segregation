@@ -1,0 +1,599 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Simulating Population Groups Distributed Randomly in Space"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "For conducting single-value inference, the `segregation` package offers several techniques for generating random population distributions that respect the characteristics of an input dataset. This notebook walks through the assumptions and outputs of each approach using the Sacramento demonstration dataset bundled with `libpysal`."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## TL;DR\n",
+    "\n",
+    "- evenness includes group-level variation\n",
+    "- systematic includes unit-level variation\n",
+    "- individual permutation includes neither"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "%load_ext watermark\n",
+    "%watermark -a 'eli knaap' -v -d -u -p segregation,geopandas,libpysal"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "import geopandas as gpd\n",
+    "import matplotlib.pyplot as plt\n",
+    "\n",
+    "from libpysal.examples import load_example\n",
+    "from segregation.singlegroup import Gini\n",
+    "from segregation.multigroup import MultiInfoTheory\n",
+    "from segregation.inference import (\n",
+    "    SingleValueTest,\n",
+    "    simulate_evenness,\n",
+    "    simulate_person_permutation,\n",
+    "    simulate_systematic_randomization,\n",
+    "    simulate_null,\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sacramento = gpd.read_file(load_example(\"Sacramento1\").get_path(\"sacramentot2.shp\"))\n",
+    "sacramento = sacramento.to_crs(sacramento.estimate_utm_crs())"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "We focus on the Black population (`BLACK`) relative to the total population (`TOT_POP`) of each tract."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sacramento[\"BLACK\"].sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sacramento[\"TOT_POP\"].sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sacramento[\"BLACK\"].sum() / sacramento[\"TOT_POP\"].sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "gini = Gini(sacramento, group_pop_var=\"BLACK\", total_pop_var=\"TOT_POP\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Evenness"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Evenness takes draws from the population of each unit, with the probability of choosing the focal group equal to its regional share (locations drawing from distributions of population groups)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# the region-wide share of the Black population\n",
+    "sacramento[\"BLACK\"].sum() / sacramento[\"TOT_POP\"].sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sacramento[[\"TOT_POP\"]].reset_index(drop=True).head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "For the first tract, one draw is taken per resident; on each draw the probability that the resident belongs to the focal group equals the region-wide share computed above."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "evenness = simulate_evenness(sacramento, group=\"BLACK\", total=\"TOT_POP\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "evenness"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "evenness.plot(\"BLACK\", scheme=\"quantiles\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "evenness[\"BLACK\"].sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "evenness[\"BLACK\"].sum() == sacramento[\"BLACK\"].sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "evenness[\"BLACK\"].sum() / evenness[\"TOT_POP\"].sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sacramento[\"BLACK\"].sum() / sacramento[\"TOT_POP\"].sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "evenness[\"BLACK\"].sum() / evenness[\"TOT_POP\"].sum() == sacramento[\"BLACK\"].sum() / sacramento[\"TOT_POP\"].sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "evenness[\"TOT_POP\"].sum() == sacramento[\"TOT_POP\"].sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "np.array_equal(evenness[\"TOT_POP\"].values, sacramento[\"TOT_POP\"].values)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "We haven't changed the total population in each unit or in the region, but we have changed the number of people in the focal group marginally."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Systematic Randomization"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The systematic approach takes draws from the regional population of each group, with the probability of choosing a geographic unit equal to the share of the region's population that currently lives there (people drawing from a distribution of locations)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sacramento[\"BLACK\"].sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "(sacramento[\"TOT_POP\"] / sacramento[\"TOT_POP\"].sum()).reset_index(drop=True).head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "For each member of the focal group, the probability of being placed in a given tract equals that tract's share of the total population (shown above for the first few tracts)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "systematic = simulate_systematic_randomization(\n",
+    "    sacramento, group=\"BLACK\", total=\"TOT_POP\"\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "systematic"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "systematic[\"BLACK\"].sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "systematic[\"BLACK\"].sum() == sacramento[\"BLACK\"].sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "systematic[\"BLACK\"].sum() / systematic[\"TOT_POP\"].sum() == sacramento[\"BLACK\"].sum() / sacramento[\"TOT_POP\"].sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "np.array_equal(systematic[\"TOT_POP\"].values, sacramento[\"TOT_POP\"].values)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "We haven't changed the total number of people in each group, but we have changed the total number of people in each unit."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Individual-level Permutation"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Individual-level permutation doesn't take draws from a probability distribution, but instead randomizes which unit each person lives in."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "permutation = simulate_person_permutation(\n",
+    "    sacramento, group=\"BLACK\", total=\"TOT_POP\"\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "permutation[\"BLACK\"].sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "permutation[\"BLACK\"].sum() == sacramento[\"BLACK\"].sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "permutation[\"BLACK\"].sum() / permutation[\"TOT_POP\"].sum() == sacramento[\"BLACK\"].sum() / sacramento[\"TOT_POP\"].sum()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "We haven't changed the total number of people in any group, or the total population in any unit; we've only randomized which unit each person lives in."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Simulating Null Distributions"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "`simulate_null` generates a series of simulated segregation statistics (in parallel) using the randomization functions described above. Those simulated values can then serve as a reference distribution to test the hypothesis of \"no segregation\"."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "groups = [\"BLACK\", \"WHITE\", \"ASIAN\", \"HISP\"]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "G = Gini(sacramento, group_pop_var=\"BLACK\", total_pop_var=\"TOT_POP\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "H = MultiInfoTheory(sacramento, groups=groups)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "G.statistic"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "H.statistic"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Single Group"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "G_even = simulate_null(seg_class=G, sim_func=simulate_evenness)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "G_systematic = simulate_null(seg_class=G, sim_func=simulate_systematic_randomization)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "G_permuted = simulate_null(seg_class=G, sim_func=simulate_person_permutation)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "fig, ax = plt.subplots(figsize=(8, 8))\n",
+    "for series, label in [\n",
+    "    (G_permuted, \"permuted\"),\n",
+    "    (G_systematic, \"systematic\"),\n",
+    "    (G_even, \"evenness\"),\n",
+    "]:\n",
+    "    series.name = label\n",
+    "    series.plot(kind=\"kde\", ax=ax, legend=True)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Multi Group"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "H_even = simulate_null(seg_class=H, sim_func=simulate_evenness)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "H_systematic = simulate_null(seg_class=H, sim_func=simulate_systematic_randomization)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "H_permuted = simulate_null(seg_class=H, sim_func=simulate_person_permutation)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "fig, ax = plt.subplots(figsize=(8, 8))\n",
+    "for series, label in [\n",
+    "    (H_permuted, \"permuted\"),\n",
+    "    (H_systematic, \"systematic\"),\n",
+    "    (H_even, \"evenness\"),\n",
+    "]:\n",
+    "    series.name = label\n",
+    "    series.plot(kind=\"kde\", ax=ax, legend=True)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Despite their different methods, all three approaches simulate similar distributions, but they differ with respect to *how* and in which dimensions the randomization occurs. As with [Boisso et al.](http://dx.doi.org/10.1016/0304-4076(94)90082-5), the distribution is not centered on 0. In other cases, such as when minority populations are small or highly unbalanced among multiple groups, it is possible that the different randomization methods could diverge to simulate different distributions."
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.12"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
