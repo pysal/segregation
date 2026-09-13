@@ -1,0 +1,6 @@
+﻿segregation.network.compute\_travel\_cost\_matrix
+=================================================
+
+.. currentmodule:: segregation.network
+
+.. autofunction:: compute_travel_cost_matrix
