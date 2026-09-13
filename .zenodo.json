@@ -1,0 +1,33 @@
+{
+  "title": "segregation: Segregation Analysis, Inference, and Decomposition in Python",
+  "description": "An open-source Python library for measuring, analyzing, inferring, and decomposing social and spatial segregation. Developed within the PySAL ecosystem.",
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "BSD-3-Clause",
+  "keywords": [
+    "segregation",
+    "spatial analysis",
+    "geographic information science",
+    "demographics",
+    "population",
+    "Python",
+    "PySAL"
+  ],
+  "creators": [
+    {
+      "name": "Cortes, Renan Xavier",
+      "affiliation": "Federal University of Rio Grande do Sul",
+      "orcid": "0000-0002-1889-5282"
+    },
+    {
+      "name": "Knaap, Elijah",
+      "affiliation": "University of California, Irvine",
+      "orcid": "0000-0001-7520-2238"
+    },
+    {
+      "name": "Rey, Sergio J.",
+      "affiliation": "San Diego State University",
+      "orcid": "0000-0001-5857-9762"
+    }
+  ]
+}
