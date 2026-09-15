@@ -81,7 +81,7 @@ These capabilities establish `segregation` as a unified, open-source framework f
 
 `segregation` is part of the PySAL ecosystem, where it provides tools for residential segregation analysis within the **Explore** family of spatial analysis libraries. Unlike desktop GIS software, it supports reproducible, scriptable workflows that integrate naturally with broader Python data science pipelines.
 
-The most closely related tools are the R packages `OasisR` [@tivadar2019oasisr], `seg` [@segrhong2011], and `segregation` [@Elbers2021]. `OasisR` provides a broad catalog of aspatial and spatial evenness indices with simulation-based inference; `seg` targets spatial evenness and exposure measures; and the R `segregation` package focuses on the entropy family (the Mutual Information index and Theil's *H*) with within/between and temporal decomposition and Bayesian bias correction. PySAL's `segregation` is distinguished less by any single index than by combining, in one class-based API, index families that these packages cover separately. These include single-group, multigroup, local, and explicitly spatial measures of evenness, exposure, concentration, clustering, and centralization, together with Monte Carlo inference under several null models, Shapley decomposition of differences into demographic and spatial components, multiscalar profiles, and batch computation. It builds on the open-source Scientific Python and PySAL ecosystems, with no proprietary or desktop-GIS requirements. A native Python implementation, rather than a wrapper around the R packages, keeps these workflows within the PySAL ecosystem and lets them share a common index interface. The package has been under continuous development within PySAL since 2018 [@cortes2020open].
+The most closely related tools are the R packages `OasisR` [@tivadar2019oasisr], `seg` [@segrhong2011], and `segregation` [@Elbers2023]. `OasisR` provides a broad catalog of aspatial and spatial evenness indices with simulation-based inference; `seg` targets spatial evenness and exposure measures; and the R `segregation` package focuses on the entropy family (the Mutual Information index and Theil's *H*) with within/between and temporal decomposition and Bayesian bias correction. PySAL's `segregation` is distinguished less by any single index than by combining, in one class-based API, index families that these packages cover separately. These include single-group, multigroup, local, and explicitly spatial measures of evenness, exposure, concentration, clustering, and centralization, together with Monte Carlo inference under several null models, Shapley decomposition of differences into demographic and spatial components, multiscalar profiles, and batch computation. It builds on the open-source Scientific Python and PySAL ecosystems, with no proprietary or desktop-GIS requirements. A native Python implementation, rather than a wrapper around the R packages, keeps these workflows within the PySAL ecosystem and lets them share a common index interface. The package has been under continuous development within PySAL since 2018 [@cortes2020open].
 
 # Software design
 
@@ -95,18 +95,18 @@ The most closely related tools are the R packages `OasisR` [@tivadar2019oasisr],
 
 Additionally, `segregation` is developed with testing and documentation standards consistent with the Scientific Python ecosystem, ensuring reliability and maintainability.
 
-## Core Functionality
+## Core functionality
 
 `segregation` organizes its functionality around the type of segregation analysis the user is interested in, and each subpackage is explained as follows.
 
 
-### Single and Multigroup Indices
+### Single and multigroup indices
 
 Single-group measures assess segregation between two different groups in a given location (i.e., one group vs. everyone else). Multigroup segregation evaluates the simultaneous separation of all groups in a population (e.g., the distribution of White, Black, Asian, and Hispanic residents) across areas. 
 
 Currently, `segregation` provides 27 single-group and 11 multigroup indices, which together are, to our knowledge, among the most extensive selections in any segregation software, and the `batch` subpackage can fit many of them at once.
 
-### Local Indices
+### Local indices
 
 Unlike global indices that summarize an entire metropolitan area into a single value, local indices decompose segregation to the individual geographic unit level. Using these disaggregated measures helps identify precise spatial clusters where social isolation is most acute, uncovering micro-level dynamics that global metrics often mask. Currently, `segregation` has seven local indices. 
 
@@ -116,7 +116,7 @@ The multiscalar profile [@reardon2008geographic] is a tool for measuring spatial
 
 The wrapper `compute_multiscalar_profile` builds these profiles.
 
-### Simulation-based Inference
+### Simulation-based inference
 
 PySAL's `segregation` module provides Monte Carlo inference for evaluating the statistical significance of segregation indices under different null hypotheses. For single-value inference, it supports resampling approaches such as `bootstrap`, `systematic`, `evenness`, and `geographic_permutation`. For comparative inference, it includes methods such as `bootstrap` and `composition`, which generate synthetic distributions through counterfactual estimates. Because different null hypotheses test distinct assumptions, their specification is critical and can lead to substantially different conclusions. Likewise, not all segregation indices are appropriate for every null hypothesis, particularly in comparative analyses, making careful selection of both the index and inference procedure essential.
 
@@ -168,12 +168,12 @@ No generative AI or LLMs were used for code development in `segregation`. They w
 
 `segregation` is developed as part of the PySAL community, which brings together researchers and developers working on spatial analysis methods and software. The project builds on decades of research in segregation, urban, and spatial data science, and benefits from contributions across the open-source geospatial community.
 
-Funding from National Science Foundation Grants [2345820](https://www.nsf.gov/awardsearch/show-award/?AWD_ID=2345820) and
-[1831615](https://www.nsf.gov/awardsearch/show-award/?AWD_ID=1831615&HistoricalAwards=false) have supported `segregation` development.
+Funding from National Science Foundation grants [2345820](https://www.nsf.gov/awardsearch/show-award/?AWD_ID=2345820) and
+[1831615](https://www.nsf.gov/awardsearch/show-award/?AWD_ID=1831615&HistoricalAwards=false) has supported `segregation` development.
 
 The following acknowledgement applies to Renan X. Cortes:
 
-> Coordenação de Aperfeiçoamento de Pessoal de Nível Superior (CAPES) through process 88881.170553/2018-01 have supported `segregation` development.
+> Coordenação de Aperfeiçoamento de Pessoal de Nível Superior (CAPES), through process 88881.170553/2018-01, has supported `segregation` development.
 
 
 # References
