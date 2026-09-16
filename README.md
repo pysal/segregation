@@ -301,7 +301,24 @@ The project is licensed under the
 Pessoal de Nível Superior - Brazil (CAPES) - Process number 88881.170553/2018-01
 
 ## Citation
-To cite `segregation`, we recommend the following
+To cite the `segregation` paper, please use
+
+```latex
+@article{Cortes2026,
+  doi       = {10.21105/joss.11126},
+  url       = {https://doi.org/10.21105/joss.11126},
+  year      = {2026},
+  publisher = {The Open Journal},
+  volume    = {11},
+  number    = {125},
+  pages     = {11126},
+  author    = {Cortes, Renan X. and Knaap, Elijah and Rey, Sergio J.},
+  title     = {segregation: Segregation Analysis, Inference, and Decomposition in Python},
+  journal   = {Journal of Open Source Software}
+}
+```
+
+To cite the `segregation` software/codebase itself, we recommend the following
 
 ```latex
 @software{renan_xavier_cortes_2020,
