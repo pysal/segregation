@@ -1,0 +1,487 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Single Value and Comparative Inference"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The `segregation` package provides a framework for examining whether segregation index values are statistically significant (whether a single index is far enough away from \"no segregation\" that it could not happen by chance, or whether two indices are different enough from one another). This framework is useful for understanding, for example:\n",
+    "- whether the schools in a district are segregated\n",
+    "- whether segregation in City A is greater than City B\n",
+    "- whether segregation at Time 2 is greater than Time 1\n",
+    "\n",
+    "Depending on the segregation index being examined and the assumptions of the researcher, a variety of estimation techniques are available. This notebook walks through the assumptions and outcomes of each using the Sacramento demonstration dataset bundled with `libpysal`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "%load_ext watermark\n",
+    "%watermark -a 'eli knaap' -v -d -u -p segregation,geopandas,libpysal"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import geopandas as gpd\n",
+    "import matplotlib.pyplot as plt\n",
+    "\n",
+    "from libpysal.examples import load_example\n",
+    "from segregation import singlegroup, inference"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sacramento = gpd.read_file(load_example(\"Sacramento1\").get_path(\"sacramentot2.shp\"))\n",
+    "sacramento = sacramento.to_crs(sacramento.estimate_utm_crs())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sacramento[\"pct_hisp\"] = (sacramento[\"HISP\"] / sacramento[\"TOT_POP\"]).fillna(0)\n",
+    "\n",
+    "fig, ax = plt.subplots(figsize=(8, 8))\n",
+    "sacramento.plot(\"pct_hisp\", scheme=\"quantiles\", cmap=\"Blues\", legend=True, ax=ax)\n",
+    "ax.axis(\"off\")\n",
+    "ax.set_title(\"% Hispanic/Latino, Sacramento region\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Single-Value Inference"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "In many contexts, researchers are interested in whether some measured level of segregation is statistically different from a random process. That is, is the level of segregation we observe in place X greater than we would expect if there were no segregation at all?"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "For single-value inference, the `segregation` package tests whether the observed segregation index differs from the expected value of a segregation index under the null hypothesis of no segregation. As [Boisso et al.](http://dx.doi.org/10.1016/0304-4076(94)90082-5) show, the expected value of \"no segregation\" is not necessarily an index value of 0. The `SingleValueTest` class offers computational inference via a variety of methods for simulating observations under different randomization schemes (see the `05_simulating_random_population` notebook for details)."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Evenness"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "D = singlegroup.Dissim(sacramento, group_pop_var=\"HISP\", total_pop_var=\"TOT_POP\")\n",
+    "D.statistic"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The dissimilarity index is a [measure of evenness](https://www.jstor.org/stable/2579183), so it is reasonable to use the `evenness` null approach in the `SingleValueTest` class."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "test = inference.SingleValueTest(D, null_approach=\"evenness\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "test.p_value"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The `plot` method shows the simulated null distribution in blue and the observed value for the segregation statistic in red."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "test.plot()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "test.est_sim.mean()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The `est_sim` attribute contains the segregation index values calculated for the synthetic datasets. If the population were perfectly even across geographic units, the unequal group totals would still produce a small, barely-above-zero Dissimilarity value, tightly distributed. Since the observed value is far larger, we reject the null of \"no segregation.\""
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Bootstrap"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "As an alternative to simulating a null distribution, another reasonable test for the Dissimilarity index is a bootstrap approach, used to simulate the distribution of the Dissimilarity index itself; a given value for \"no segregation\" can then be tested against this reference distribution. In practical terms, the bootstrapped index value can be tested against 0, or against the value given by a null distribution such as evenness above."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# standard test against D == 0\n",
+    "test_bootstrap = inference.SingleValueTest(D, null_approach=\"bootstrap\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "test_bootstrap.plot()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# test against the mean of the evenness null distribution estimated above\n",
+    "test_bootstrap2 = inference.SingleValueTest(\n",
+    "    D, null_approach=\"bootstrap\", null_value=test.est_sim.mean()\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "test_bootstrap2.plot()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Whether we test against 0 or the simulated value from evenness, the inference is the same: we reject the null."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Random Geographic Permutation"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "We might instead examine a spatial segregation index, such as the Relative Concentration index, for which a different test is appropriate. The random geographic permutation test shuffles the values of tracts in space to create a spatially-random distribution. It leaves the total population of each group in each geographic unit intact, but randomizes where the unit exists in space."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "RCO = singlegroup.RelativeConcentration(\n",
+    "    sacramento, group_pop_var=\"HISP\", total_pop_var=\"TOT_POP\"\n",
+    ")\n",
+    "RCO.statistic"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "rco_test_permutation = inference.SingleValueTest(\n",
+    "    RCO, null_approach=\"geographic_permutation\"\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "rco_test_permutation.p_value"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "rco_test_permutation.plot()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Evenness Geographic Permutation"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "It is also possible to combine the two previous approaches: first generate a simulated population under the assumption of evenness, *then* geographically permute the simulated data."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "rco_test_evenperm = inference.SingleValueTest(\n",
+    "    RCO, null_approach=\"even_permutation\"\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "rco_test_evenperm.plot()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Comparative Inference"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Comparative inference is particularly useful in studying residential segregation because it facilitates both temporal and spatial comparisons, allowing researchers to ask whether one place is more segregated than another, or whether a given place has become more or less segregated over time."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The Sacramento example has no time dimension, so to have two contexts to compare we split the region into a western and an eastern half at the median tract-centroid longitude, and compare Hispanic/Latino Dissimilarity between them. As with single-value inference, the `TwoValueTest` class offers several techniques for conducting the analysis."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sacramento[\"cx\"] = sacramento.geometry.centroid.x\n",
+    "split = sacramento[\"cx\"].median()\n",
+    "\n",
+    "west = sacramento.loc[sacramento[\"cx\"] <= split].copy()\n",
+    "east = sacramento.loc[sacramento[\"cx\"] > split].copy()\n",
+    "\n",
+    "len(west), len(east)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "D_west = singlegroup.Dissim(west, group_pop_var=\"HISP\", total_pop_var=\"TOT_POP\")\n",
+    "D_east = singlegroup.Dissim(east, group_pop_var=\"HISP\", total_pop_var=\"TOT_POP\")\n",
+    "\n",
+    "D_west.statistic, D_east.statistic"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Random Labeling"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Random labelling, based on [Rey and Sastré-Gutiérrez](http://www.tandfonline.com/doi/abs/10.1080/17421772.2010.493955), creates a set of synthetic observations by shuffling geographic units between the two regions, calculates segregation statistics on these synthetic datasets, then takes the difference between the statistics. This produces a distribution of differences under the null that there is no difference between the regions, and we test the observed difference against this distribution."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "test_label = inference.TwoValueTest(D_west, D_east, null_approach=\"random_label\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "test_label.p_value"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "test_label.plot()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Plotting the class shows the distribution of simulated differences in blue and the estimated difference in red."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Bootstrap"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The bootstrap test, based on [Davidson 2009](http://dx.doi.org/10.1016/j.jeconom.2008.11.004), uses bootstrap resampling to estimate a distribution of the segregation index for each region, providing an estimate of each index's variance. A means test then checks whether the mean of each distribution is significantly different from the other."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "test_bootstrap_two = inference.TwoValueTest(D_west, D_east, null_approach=\"bootstrap\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "test_bootstrap_two.p_value"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "test_bootstrap_two.plot()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Note:** the bootstrap test is only appropriate for aspatial segregation indices, first because simple bootstrap techniques do not account for spatial autocorrelation, and second because bootstrapping spatial units results in synthetic regions that have duplicate units (so the data are not planar-enforced and a spatial index cannot be computed)."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "For comparative inference, there are also additional randomization approaches based on counterfactual population generation, described in the `07_decomposition_example` notebook."
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.12"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

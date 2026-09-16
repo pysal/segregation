@@ -1,0 +1,6 @@
+﻿segregation.inference.simulate\_null
+====================================
+
+.. currentmodule:: segregation.inference
+
+.. autofunction:: simulate_null
