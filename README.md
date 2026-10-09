@@ -181,7 +181,6 @@ table:
 | Relative Concentration (RCO)                      | RelativeConcentration           |     Yes      |           -                    |
 | Absolute Centralization (ACE)                     | AbsoluteCentralization          |     Yes      |           -                    |
 | Relative Centralization (RCE)                     | RelativeCentralization          |     Yes      |           -                    |
-| Relative Centralization (RCE)                     | RelativeCentralization          |     Yes      |           -                    |
 | Spatial Minimun-Maximum (SMM)                     | SpatialMinMax                   |     Yes      | network, w, decay, distance, precompute |
 
 ### Multigroup measures
@@ -285,7 +284,7 @@ automatically be added to the
 ## Support
 
 If you are having issues, please talk to us in the
-[gitter room](https://gitter.im/pysal/pysal).
+[PySAL Discord channel](https://discord.gg/BxFTEPFFZn).
 
 ## License
 
