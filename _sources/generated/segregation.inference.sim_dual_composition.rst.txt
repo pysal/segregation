@@ -1,0 +1,6 @@
+﻿segregation.inference.sim\_dual\_composition
+============================================
+
+.. currentmodule:: segregation.inference
+
+.. autofunction:: sim_dual_composition

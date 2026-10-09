@@ -1,0 +1,22 @@
+﻿segregation.rankorder.RankOrderInfoTheory
+=========================================
+
+.. currentmodule:: segregation.rankorder
+
+.. autoclass:: RankOrderInfoTheory
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~RankOrderInfoTheory.__init__
+   
+   
+
+   
+   
+   

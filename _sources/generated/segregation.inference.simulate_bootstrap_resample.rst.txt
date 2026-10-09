@@ -1,0 +1,6 @@
+﻿segregation.inference.simulate\_bootstrap\_resample
+===================================================
+
+.. currentmodule:: segregation.inference
+
+.. autofunction:: simulate_bootstrap_resample
