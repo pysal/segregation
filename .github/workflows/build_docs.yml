@@ -1,63 +1,64 @@
- name: Build Docs
- on:
-   push:
-     branches:
-     - main
-   pull_request:
-     branches:
-     - main
-     - joss_paper
+---
+name: Build Docs
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+    - joss_paper
 
- jobs:
-   docs:
-     name: Build & Push Docs
-     runs-on: ${{ matrix.os }}
-     timeout-minutes: 90
-     strategy:
-       matrix:
-         os: ['ubuntu-latest']
-         environment-file: [ci/314-latest.yaml]
-         experimental: [false]
-     defaults:
-       run:
-         shell: bash -l {0}
+jobs:
+  docs:
+    name: Build & Push Docs
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
+    strategy:
+      matrix:
+        os: ['ubuntu-latest']
+        environment-file: [ci/314-latest.yaml]
+        experimental: [false]
+    defaults:
+      run:
+        shell: bash -l {0}
 
-     steps:
-       - name: Checkout repo
-         uses: actions/checkout@v6
-         with:
-           fetch-depth: 0 # Fetch all history for all branches and tags.
- 
-       - name: Setup micromamba
-         uses: mamba-org/setup-micromamba@v3
-         with:
-           environment-file: ${{ matrix.environment-file }}
-           micromamba-version: 'latest'
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # Fetch all history for all branches and tags.
 
-       - name: Install
-         run: pip install -e . --no-deps --force-reinstall
+      - name: Setup micromamba
+        uses: mamba-org/setup-micromamba@v3
+        with:
+          environment-file: ${{ matrix.environment-file }}
+          micromamba-version: 'latest'
 
-       - name: Make Docs
-         run: cd docs; make html
+      - name: Install
+        run: pip install -e . --no-deps --force-reinstall
 
-       - name: Commit Docs
-         if: github.event_name == 'push'
-         run: |
-           git clone https://github.com/ammaraskar/sphinx-action-test.git --branch gh-pages --single-branch gh-pages
-           cp -r docs/_build/html/* gh-pages/
-           cd gh-pages
-           git config --local user.email "action@github.com"
-           git config --local user.name "GitHub Action"
-           git add .
-           git commit -m "Update documentation" -a || true
-           # The above command will fail if no changes were present,
-           # so we ignore the return code.
+      - name: Make Docs
+        run: cd docs; make html
 
-       - name: Push to gh-pages
-         if: github.event_name == 'push'
-         uses: ad-m/github-push-action@master
-         with:
-            branch: gh-pages
-            directory: gh-pages
-            github_token: ${{ secrets.GITHUB_TOKEN }}
-            force: true
+      - name: Commit Docs
+        if: github.event_name == 'push'
+        run: |
+          git clone https://github.com/ammaraskar/sphinx-action-test.git --branch gh-pages --single-branch gh-pages
+          cp -r docs/_build/html/* gh-pages/
+          cd gh-pages
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "Update documentation" -a || true
+          # The above command will fail if no changes were present,
+          # so we ignore the return code.
+
+      - name: Push to gh-pages
+        if: github.event_name == 'push'
+        uses: ad-m/github-push-action@master
+        with:
+           branch: gh-pages
+           directory: gh-pages
+           github_token: ${{ secrets.GITHUB_TOKEN }}
+           force: true
