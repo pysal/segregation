@@ -1,0 +1,6 @@
+﻿segregation.inference.simulate\_evenness\_geo\_permutation
+==========================================================
+
+.. currentmodule:: segregation.inference
+
+.. autofunction:: simulate_evenness_geo_permutation
