@@ -58,7 +58,7 @@ def _modified_gini(
 
     Reference: :cite:`carrington1997measuring`.
     """
-    if not seed:
+    if seed is None:
         seed = np.random.randint(
             0, 10e6
         )  # is there a better practice for this? I think joblib will fail if None passed
@@ -78,17 +78,18 @@ def _modified_gini(
         n_retries = 5
         try:
             while n_retries > 0:
-                data = i[0]
+                # Each worker copies the frame and uses its own generator.
+                frame = i[0].copy()
                 n = i[1]
                 p = i[2]
-                np.random.seed(i[3])
-                freq_sim = np.random.binomial(
+                rng = np.random.RandomState(i[3])
+                freq_sim = rng.binomial(
                     n=n,
                     p=p,
-                    size=(1, data.shape[0]),
+                    size=(1, frame.shape[0]),
                 ).tolist()[0]
-                data[group_pop_var] = freq_sim
-                aux = _gini_seg(data, group_pop_var, total_pop_var)[0]
+                frame[group_pop_var] = freq_sim
+                aux = _gini_seg(frame, group_pop_var, total_pop_var)[0]
                 return aux
 
         except ValueError:
@@ -136,6 +137,8 @@ class ModifiedGini(SingleGroupIndex, SpatialImplicitIndex):
         name of column on dataframe holding population totals for focal group
     total_pop_var : str, required
         name of column on dataframe holding total overall population
+    seed : int, optional
+        Seed for the evenness simulation. Same seed, same statistic.
     w : libpysal.weights.KernelW, optional
         lipysal spatial kernel weights object used to define an egohood
     network : pandarm.Network
@@ -175,6 +178,7 @@ class ModifiedGini(SingleGroupIndex, SpatialImplicitIndex):
         precompute=None,
         backend="threading",
         n_jobs=-1,
+        seed=None,
         **kwargs
     ):
         """Init."""
@@ -191,6 +195,7 @@ class ModifiedGini(SingleGroupIndex, SpatialImplicitIndex):
             iterations,
             backend=backend,
             n_jobs=n_jobs,
+            seed=seed,
         )
 
         self.statistic = aux[0]
