@@ -41,8 +41,8 @@ def _modified_gini(
     backend : str {'loky', 'threading'}
         backend to pass into joblib's Parallel constructor.
     seed : int
-        random seed passed to np.random inside the parallelization constructor to return
-        consistent results
+        Root seed for the simulation. Each iteration draws from its own stream, and the
+        same root seed returns the same statistic.
 
 
     Returns
@@ -71,6 +71,10 @@ def _modified_gini(
     t = data[total_pop_var].values.astype(int)
 
     p_null = x.sum() / t.sum()
+    iteration_seeds = [
+        int(child.generate_state(1, dtype=np.uint32)[0])
+        for child in np.random.SeedSequence(int(seed)).spawn(iterations)
+    ]
 
     # Ds = np.empty(iterations)
 
@@ -103,7 +107,7 @@ def _modified_gini(
                     data,
                     np.array([t.tolist()]),
                     np.array([[p_null] * data.shape[0]]),
-                    seed,
+                    iteration_seeds[i],
                 )
             )
             for i in range(iterations)
@@ -138,7 +142,8 @@ class ModifiedGini(SingleGroupIndex, SpatialImplicitIndex):
     total_pop_var : str, required
         name of column on dataframe holding total overall population
     seed : int, optional
-        Seed for the evenness simulation. Same seed, same statistic.
+        Root seed for the evenness simulation. Each iteration draws from its own
+        stream, and the same root seed returns the same statistic.
     w : libpysal.weights.KernelW, optional
         lipysal spatial kernel weights object used to define an egohood
     network : pandarm.Network
