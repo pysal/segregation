@@ -14,7 +14,7 @@ class Inference_Tester(unittest.TestCase):
         s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
         s_map[groups_list] = s_map[groups_list].astype(int)
         # note need to recast as datafrme
-        s_map_no_geom = s_map.drop(columns=['geometry'])
+        s_map_no_geom = s_map.drop(columns=["geometry"])
 
         index1 = Dissim(s_map, "HISP", "TOT_POP")
         index2 = Dissim(s_map, "BLACK", "TOT_POP")

@@ -50,9 +50,9 @@ def _decompose_segregation(index1, index2, counterfactual_approach="composition"
     df1 = index1.data.copy()
     df2 = index2.data.copy()
 
-    assert (
-        index1._function == index2._function
-    ), "Segregation indices must be of the same type"
+    assert index1._function == index2._function, (
+        "Segregation indices must be of the same type"
+    )
 
     counterfac_df1, counterfac_df2 = _generate_counterfactual(
         df1,

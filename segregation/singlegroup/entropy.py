@@ -113,7 +113,7 @@ class Entropy(SingleGroupIndex, SpatialImplicitIndex):
         decay=None,
         function="triangular",
         precompute=None,
-        **kwargs
+        **kwargs,
     ):
         """Init."""
 

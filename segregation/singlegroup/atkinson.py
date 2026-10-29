@@ -57,7 +57,7 @@ def _atkinson(data, group_pop_var, total_pop_var, b=0.5):
     pi = np.where(t == 0, 0, x / t)
 
     A = 1 - (P / (1 - P)) * abs(
-        (((1 - pi) ** (1 - b) * pi ** b * t) / (P * T)).sum()
+        (((1 - pi) ** (1 - b) * pi**b * t) / (P * T)).sum()
     ) ** (1 / (1 - b))
 
     return A, data
@@ -110,7 +110,7 @@ class Atkinson(SingleGroupIndex, SpatialImplicitIndex):
         decay=None,
         precompute=None,
         function="triangular",
-        **kwargs
+        **kwargs,
     ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)

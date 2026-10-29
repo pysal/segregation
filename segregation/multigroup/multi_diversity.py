@@ -77,7 +77,7 @@ class MultiDiversity(MultiGroupIndex, SpatialImplicitIndex):
         Whether to precompute the pandarm Network object
     normalized : bool. Default is False.
         Whether the resulting index will be divided by its maximum (natural log of the number of groups)
-    
+
     Attributes
     ----------
     statistic : float
@@ -106,14 +106,16 @@ class MultiDiversity(MultiGroupIndex, SpatialImplicitIndex):
         distance=None,
         decay=None,
         precompute=None,
-        function='triangular',
-        **kwargs
+        function="triangular",
+        **kwargs,
     ):
         """Init."""
         MultiGroupIndex.__init__(self, data, groups)
         self.normalized = normalized
         if any([w, network, distance]):
-            SpatialImplicitIndex.__init__(self, w, network, distance, decay, function, precompute)
+            SpatialImplicitIndex.__init__(
+                self, w, network, distance, decay, function, precompute
+            )
         aux = _multi_diversity(self.data, self.groups, normalized=self.normalized)
 
         self.statistic = aux[0]

@@ -48,7 +48,9 @@ def _multi_squared_coefficient_of_variation(data, groups):
 
     ti = df.sum(axis=1)
     pik = df / ti[:, None]
-    pik = np.nan_to_num(pik)  # Replace NaN from zerodivision when unit has no population
+    pik = np.nan_to_num(
+        pik
+    )  # Replace NaN from zerodivision when unit has no population
     Pk = df.sum(axis=0) / df.sum()
 
     C = ((ti[:, None] * (pik - Pk) ** 2) / (T * (K - 1) * Pk)).sum()
@@ -100,13 +102,15 @@ class MultiSquaredCoefVar(MultiGroupIndex, SpatialImplicitIndex):
         distance=None,
         decay=None,
         precompute=None,
-        function='triangular',
-        **kwargs
+        function="triangular",
+        **kwargs,
     ):
         """Init."""
         MultiGroupIndex.__init__(self, data, groups)
         if any([w, network, distance]):
-            SpatialImplicitIndex.__init__(self, w, network, distance, decay, function, precompute)
+            SpatialImplicitIndex.__init__(
+                self, w, network, distance, decay, function, precompute
+            )
         aux = _multi_squared_coefficient_of_variation(self.data, self.groups)
 
         self.statistic = aux[0]

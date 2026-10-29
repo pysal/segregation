@@ -98,15 +98,17 @@ class MultiInfoTheory(MultiGroupIndex, SpatialImplicitIndex):
         w=None,
         network=None,
         distance=None,
-        decay='linear',
-        function='triangular',
+        decay="linear",
+        function="triangular",
         precompute=False,
-        **kwargs
+        **kwargs,
     ):
         """Init."""
         MultiGroupIndex.__init__(self, data, groups)
         if any([w, network, distance]):
-            SpatialImplicitIndex.__init__(self, w, network, distance, decay, function, precompute)
+            SpatialImplicitIndex.__init__(
+                self, w, network, distance, decay, function, precompute
+            )
         aux = _multi_information_theory(self.data, self.groups)
 
         self.statistic = aux[0]

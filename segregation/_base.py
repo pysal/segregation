@@ -119,14 +119,12 @@ class SingleGroupIndex:
             )
 
         if isinstance(data, gpd.GeoDataFrame):
-            data = _nan_handle(
-                data[[group_pop_var, total_pop_var, data.geometry.name]]
-            )
+            data = _nan_handle(data[[group_pop_var, total_pop_var, data.geometry.name]])
             data = data[[group_pop_var, total_pop_var, data.geometry.name]]
 
         else:
             data = _nan_handle(data[[group_pop_var, total_pop_var]])
-            data =data[[group_pop_var, total_pop_var]]
+            data = data[[group_pop_var, total_pop_var]]
 
         data["group_2_pop_var"] = data[total_pop_var] - data[group_pop_var]
 
@@ -244,7 +242,7 @@ class SpatialImplicitIndex:
         decay="linear",
         function="triangular",
         precompute=False,
-        **kwargs
+        **kwargs,
     ):
         """Initialize spatially implicit index.
 

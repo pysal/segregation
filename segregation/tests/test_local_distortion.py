@@ -484,9 +484,7 @@ def segregated_strip():
     pops["a"][0:2] = per_unit  # total  20
     pops["b"][2:6] = per_unit  # total  40
     pops["c"][6:12] = per_unit  # total  60
-    return gpd.GeoDataFrame(
-        pops, geometry=[Point(i, 0) for i in range(n)], crs=3857
-    )
+    return gpd.GeoDataFrame(pops, geometry=[Point(i, 0) for i in range(n)], crs=3857)
 
 
 def test_normalization_max_is_one(segregated_strip):
@@ -501,7 +499,9 @@ def test_normalization_constant_matches_own_landscape(segregated_strip):
 
     groups_list = ["a", "b", "c"]
     N = _maximal_segregation_distortion(segregated_strip, groups_list)
-    raw = LocalDistortion(segregated_strip, groups=groups_list, normalize=False).statistics
+    raw = LocalDistortion(
+        segregated_strip, groups=groups_list, normalize=False
+    ).statistics
     np.testing.assert_allclose(raw.max(), N, rtol=1e-10)
 
 
@@ -564,9 +564,7 @@ def test_candidate_seeds_handles_collinear_geometry(segregated_strip):
     """Collinear centroids have no convex hull; fall back rather than raise."""
     from segregation.util.normalization import _candidate_seeds
 
-    coords = np.column_stack(
-        (segregated_strip.geometry.x, segregated_strip.geometry.y)
-    )
+    coords = np.column_stack((segregated_strip.geometry.x, segregated_strip.geometry.y))
     seeds = _candidate_seeds(coords, n_seeds=4)
     assert len(seeds) >= 1
     assert np.all((seeds >= 0) & (seeds < len(coords)))
@@ -634,9 +632,7 @@ def test_sparse_distance_matrix_raises(segregated_strip):
     from scipy.spatial.distance import pdist, squareform
     from segregation.util.normalization import _maximal_segregation_distortion
 
-    coords = np.column_stack(
-        (segregated_strip.geometry.x, segregated_strip.geometry.y)
-    )
+    coords = np.column_stack((segregated_strip.geometry.x, segregated_strip.geometry.y))
     dm = csr_array(squareform(pdist(coords)))
     with pytest.raises(TypeError, match="sparse distance matrices"):
         _maximal_segregation_distortion(
@@ -687,9 +683,7 @@ def test_divergence_profile_rejects_sparse_matrix(segregated_strip):
     from scipy.spatial.distance import pdist, squareform
     from segregation.dynamics.divergence_profile import compute_divergence_profiles
 
-    coords = np.column_stack(
-        (segregated_strip.geometry.x, segregated_strip.geometry.y)
-    )
+    coords = np.column_stack((segregated_strip.geometry.x, segregated_strip.geometry.y))
     dense = squareform(pdist(coords))
     for sparse in (csr_matrix(dense), csr_array(dense)):
         with pytest.raises(TypeError, match="sparse distance matrices"):

@@ -47,7 +47,7 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, w, m):
     delta = floyd_warshall(csgraph=w.sparse, directed=False)
     group_vals = data[group_pop_var].to_numpy()
     total_vals = data[total_pop_var].to_numpy()
-    
+
     grid = np.linspace(0, 1, m)
 
     @njit(fastmath=True, error_model="numpy")
@@ -60,7 +60,7 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, w, m):
             sub_delta_ij = delta[g_t_i, :][:, g_t_i]
 
             den = sub_delta_ij.sum()
-            eta_t = (k ** 2 - k) / den
+            eta_t = (k**2 - k) / den
             return eta_t
 
         results = np.empty(len(grid))
@@ -120,7 +120,9 @@ class SpatialProxProf(SingleGroupIndex, SpatialExplicitIndex):
     def __init__(self, data, group_pop_var, total_pop_var, w=None, m=1000, **kwargs):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
-        SpatialExplicitIndex.__init__(self,)
+        SpatialExplicitIndex.__init__(
+            self,
+        )
         self.m = m
         self.w = w
         aux = _spatial_prox_profile(

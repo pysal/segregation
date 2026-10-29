@@ -110,15 +110,27 @@ class DistanceDecayIsolation(SingleGroupIndex, SpatialExplicitIndex):
     """
 
     def __init__(
-        self, data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5, **kwargs,
+        self,
+        data,
+        group_pop_var,
+        total_pop_var,
+        alpha=0.6,
+        beta=0.5,
+        **kwargs,
     ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
-        SpatialExplicitIndex.__init__(self,)
+        SpatialExplicitIndex.__init__(
+            self,
+        )
         self.alpha = alpha
         self.beta = beta
         aux = _distance_decay_isolation(
-            self.data, self.group_pop_var, self.total_pop_var, self.alpha, self.beta,
+            self.data,
+            self.group_pop_var,
+            self.total_pop_var,
+            self.alpha,
+            self.beta,
         )
 
         self.statistic = aux[0]

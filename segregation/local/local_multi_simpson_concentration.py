@@ -17,7 +17,7 @@ def _multi_local_simpson_concentration(data, groups):
     ----------
 
     data   : a pandas DataFrame of n rows
-    
+
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
@@ -26,20 +26,20 @@ def _multi_local_simpson_concentration(data, groups):
 
     statistics : np.array(n)
                  Local Simpson concentration values for each unit
-                
+
     core_data  : a pandas DataFrame
                  A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
     Based on the local version of Equation 1 of page 37 of Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
-    
+
     Simpson's concentration index can be simply interpreted as the probability that two individuals chosen at random and independently from the population will be found to belong to the same group.
 
     Higher values means lesser segregation.
-    
+
     Simpson's Concentration + Simpson's Interaction = 1
-    
+
     Reference: :cite:`reardon2002measures`.
 
     """
@@ -86,7 +86,7 @@ class MultiLocalSimpsonConcentration(MultiGroupIndex, SpatialImplicitIndex):
     Notes
     -----
     Based on Eq. 6 of pg. 139 (individual unit case) of Reardon, Sean F., and David O’Sullivan. "Measures of spatial segregation." Sociological methodology 34.1 (2004): 121-162.
-    
+
     Reference: :cite:`reardon2004measures`.
     """
 
@@ -99,13 +99,15 @@ class MultiLocalSimpsonConcentration(MultiGroupIndex, SpatialImplicitIndex):
         distance=None,
         decay=None,
         precompute=None,
-        function='triangular'
+        function="triangular",
     ):
         """Init."""
 
         MultiGroupIndex.__init__(self, data, groups)
         if any([w, network, distance]):
-            SpatialImplicitIndex.__init__(self, w, network, distance, decay, function, precompute)
+            SpatialImplicitIndex.__init__(
+                self, w, network, distance, decay, function, precompute
+            )
         aux = _multi_local_simpson_concentration(self.data, self.groups)
 
         self.statistics = aux[0]

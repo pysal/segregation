@@ -17,7 +17,7 @@ def _multi_location_quotient(data, groups):
     ----------
 
     data   : a pandas DataFrame of n rows
-    
+
     groups : list of strings of length k.
              The variables names in data of the groups of interest of the analysis.
 
@@ -27,35 +27,35 @@ def _multi_location_quotient(data, groups):
     statistics : np.array(n,k)
                  Location Quotient values for each group and unit.
                  Column k has the Location Quotient of position k in groups.
-                
+
     core_data  : a pandas DataFrame
                  A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
     Based on Isard, Walter. Methods of regional analysis. Vol. 4. Рипол Классик, 1967.
-    
+
     Reference: :cite:`isard1967methods`.
 
     """
-    
+
     core_data = data[groups]
-    
+
     df = np.array(core_data)
-    
+
     n = df.shape[0]
     K = df.shape[1]
-    
+
     T = df.sum()
-    
-    ti = df.sum(axis = 1)
-    Xk = df.sum(axis = 0)
-    
-    multi_LQ = (df / np.repeat(ti, K, axis = 0).reshape(n,K)) / (Xk / T)
-    
+
+    ti = df.sum(axis=1)
+    Xk = df.sum(axis=0)
+
+    multi_LQ = (df / np.repeat(ti, K, axis=0).reshape(n, K)) / (Xk / T)
+
     return multi_LQ, core_data, groups
 
-        
+
 class MultiLocationQuotient(MultiGroupIndex, SpatialImplicitIndex):
     """Multigroup Local Diversity Index.
 
@@ -84,7 +84,7 @@ class MultiLocationQuotient(MultiGroupIndex, SpatialImplicitIndex):
         DataFrame that contains the columns used to perform the estimate.
 
     Notes
-    -----    
+    -----
     Reference: :cite:`isard1967methods`.
     """
 
@@ -97,13 +97,15 @@ class MultiLocationQuotient(MultiGroupIndex, SpatialImplicitIndex):
         distance=None,
         decay=None,
         precompute=None,
-        function='triangular'
+        function="triangular",
     ):
         """Init."""
 
         MultiGroupIndex.__init__(self, data, groups)
         if any([w, network, distance]):
-            SpatialImplicitIndex.__init__(self, w, network, distance, decay, function, precompute)
+            SpatialImplicitIndex.__init__(
+                self, w, network, distance, decay, function, precompute
+            )
         aux = _multi_location_quotient(self.data, self.groups)
 
         self.statistics = aux[0]

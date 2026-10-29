@@ -205,11 +205,17 @@ class AbsoluteCentralization(SingleGroupIndex, SpatialExplicitIndex):
     ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
-        SpatialExplicitIndex.__init__(self,)
+        SpatialExplicitIndex.__init__(
+            self,
+        )
         self.center = center
         self.metric = metric
         aux = _absolute_centralization(
-            self.data, self.group_pop_var, self.total_pop_var, self.center, self.metric,
+            self.data,
+            self.group_pop_var,
+            self.total_pop_var,
+            self.center,
+            self.metric,
         )
 
         self.statistic = aux[0]

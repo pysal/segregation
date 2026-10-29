@@ -125,9 +125,7 @@ def test_neighborhood_division():
 
 def test_zero_population_units():
     """Empty units contribute nothing rather than producing nan."""
-    with_empty = pd.DataFrame(
-        {"group": [30.0, 10.0, 0.0], "total": [100.0, 40.0, 0.0]}
-    )
+    with_empty = pd.DataFrame({"group": [30.0, 10.0, 0.0], "total": [100.0, 40.0, 0.0]})
     without = pd.DataFrame({"group": [30.0, 10.0], "total": [100.0, 40.0]})
     stat = HutchensSqrt(with_empty, "group", "total").statistic
     assert np.isfinite(stat)

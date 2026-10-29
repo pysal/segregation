@@ -342,8 +342,8 @@ def _prepare_random_label(seg_class_1, seg_class_2):
             ]
         ]
         cols = ["group", "total", "grouping_variable"]
-        if hasattr(data_1, "geometry") :
-            cols += 'geometry',
+        if hasattr(data_1, "geometry"):
+            cols += ("geometry",)
         data_1.columns = cols
 
         data_2.loc[:, (seg_class_2.group_pop_var, seg_class_2.total_pop_var)] = (
@@ -387,7 +387,6 @@ def _estimate_random_label_difference(data):
     groups = data[5]
     approach = data[6]
 
-
     if approach == "person_permutation":
         grouping = stacked_data["grouping_variable"].copy().values
         if groups:
@@ -405,8 +404,9 @@ def _estimate_random_label_difference(data):
 
         else:
             # these two cols need to be permuted together to maintain the relationship between group and total population counts
-            stacked_data[['group', 'total']] = stacked_data.iloc[shuffled_indices][['group','total']].values
-
+            stacked_data[["group", "total"]] = stacked_data.iloc[shuffled_indices][
+                ["group", "total"]
+            ].values
 
     stacked_data_1 = stacked_data[stacked_data["grouping_variable"] == "Group_1"]
     stacked_data_2 = stacked_data[stacked_data["grouping_variable"] == "Group_2"]

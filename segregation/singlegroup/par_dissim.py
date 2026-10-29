@@ -123,7 +123,9 @@ class PARDissim(SingleGroupIndex, SpatialExplicitIndex):
     ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
-        SpatialExplicitIndex.__init__(self,)
+        SpatialExplicitIndex.__init__(
+            self,
+        )
         self.standardize = standardize
         aux = _perimeter_area_ratio_spatial_dissim(
             self.data, self.group_pop_var, self.total_pop_var, self.standardize

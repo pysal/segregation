@@ -19,29 +19,29 @@ def _local_relative_centralization(data, group_pop_var, total_pop_var, W=None, k
     ----------
 
     data          : a geopandas DataFrame with a geometry column.
-    
+
     group_pop_var : string
                     The name of variable in data that contains the population size of the group of interest
-                    
+
     total_pop_var : string
                     The name of variable in data that contains the total population of the unit
-    
+
     k_neigh       : integer greater than 0. Default is 5.
                     Number of assumed neighbors for local context (it uses k-nearest algorithm method)
-                    
+
     Returns
     -------
 
     statistics : np.array(n)
                  Local Relative Centralization values for each unit
-                
+
     core_data  : a pandas DataFrame
                  A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
     Based on Folch, David C., and Sergio J. Rey. "The centralization index: A measure of local spatial segregation." Papers in Regional Science 95.3 (2016): 555-576.
-    
+
     Reference: :cite:`folch2016centralization`.
     """
 
@@ -60,7 +60,6 @@ def _local_relative_centralization(data, group_pop_var, total_pop_var, W=None, k
     local_RCEs = np.empty(len(data))
 
     for i in range(len(data)):
-
         x = list(W.neighbors.values())[i]
         x.append(
             list(W.neighbors.keys())[i]
@@ -109,7 +108,7 @@ class LocalRelativeCentralization(MultiGroupIndex, SpatialExplicitIndex):
     Notes
     -----
     Based on Folch, David C., and Sergio J. Rey. "The centralization index: A measure of local spatial segregation." Papers in Regional Science 95.3 (2016): 555-576.
-    
+
     Reference: :cite:`folch2016centralization`.
     """
 

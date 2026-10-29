@@ -57,8 +57,8 @@ def _relative_clustering(data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5
     np.fill_diagonal(dist, val=np.exp(-((alpha * data.area.values) ** (beta))))
 
     c = 1 - dist.copy()  # proximity matrix
-    Pxx = (data.xi.values * data.xi.values * c).sum() / (X ** 2)
-    Pyy = (data.yi.values * data.yi.values * c).sum() / (Y ** 2)
+    Pxx = (data.xi.values * data.xi.values * c).sum() / (X**2)
+    Pyy = (data.yi.values * data.yi.values * c).sum() / (Y**2)
     RCL = (Pxx / Pyy) - 1
 
     if np.isnan(RCL):
@@ -104,15 +104,27 @@ class RelativeClustering(SingleGroupIndex, SpatialExplicitIndex):
     """
 
     def __init__(
-        self, data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5, **kwargs,
+        self,
+        data,
+        group_pop_var,
+        total_pop_var,
+        alpha=0.6,
+        beta=0.5,
+        **kwargs,
     ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
-        SpatialExplicitIndex.__init__(self,)
+        SpatialExplicitIndex.__init__(
+            self,
+        )
         self.alpha = alpha
         self.beta = beta
         aux = _relative_clustering(
-            self.data, self.group_pop_var, self.total_pop_var, self.alpha, self.beta,
+            self.data,
+            self.group_pop_var,
+            self.total_pop_var,
+            self.alpha,
+            self.beta,
         )
 
         self.statistic = aux[0]
