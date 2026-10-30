@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Inspired in giddy documentation build configuration file, created by
 # sphinx-quickstart on Wed Jun  6 15:54:22 2018.
@@ -17,8 +16,8 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import sphinx_bootstrap_theme
-import segregation
 
+import segregation
 
 # -- General configuration ------------------------------------------------
 
@@ -92,7 +91,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "segregation"
-copyright = "2018, pysal developers"
+copyright = "2018, pysal developers"  # noqa: A001
 author = "Renan Xavier Cortes, Sergio Rey, & Elijah Knaap"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -129,7 +128,7 @@ todo_include_todos = False
 # html_theme = 'alabaster'
 html_theme = "bootstrap"
 html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
-html_title = "%s v%s Manual" % (project, version)
+html_title = f"{project} v{version} Manual"
 
 # (Optional) Logo. Should be small enough to fit the navbar (ideally 24x24).
 # Path should be relative to the ``_static`` files directory.
