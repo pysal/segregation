@@ -17,7 +17,7 @@ def _multi_local_entropy(data, groups):
     ----------
 
     data   : a pandas DataFrame of n rows
-    
+
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
@@ -26,14 +26,14 @@ def _multi_local_entropy(data, groups):
 
     statistics : np.array(n)
                  Local Entropy values for each unit
-                
+
     core_data  : a pandas DataFrame
                  A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
     Based on Eq. 6 of pg. 139 (individual unit case) of Reardon, Sean F., and David O’Sullivan. "Measures of spatial segregation." Sociological methodology 34.1 (2004): 121-162.
-    
+
     Reference: :cite:`reardon2004measures`.
 
     """
@@ -82,7 +82,7 @@ class MultiLocalEntropy(MultiGroupIndex, SpatialImplicitIndex):
     Notes
     -----
     Based on Eq. 6 of pg. 139 (individual unit case) of Reardon, Sean F., and David O’Sullivan. "Measures of spatial segregation." Sociological methodology 34.1 (2004): 121-162.
-    
+
     Reference: :cite:`reardon2004measures`.
     """
 
@@ -95,13 +95,15 @@ class MultiLocalEntropy(MultiGroupIndex, SpatialImplicitIndex):
         distance=None,
         decay=None,
         precompute=None,
-        function='triangular'
+        function="triangular",
     ):
         """Init."""
 
         MultiGroupIndex.__init__(self, data, groups)
         if any([w, network, distance]):
-            SpatialImplicitIndex.__init__(self, w, network, distance, decay, function, precompute)
+            SpatialImplicitIndex.__init__(
+                self, w, network, distance, decay, function, precompute
+            )
         aux = _multi_local_entropy(self.data, self.groups)
 
         self.statistics = aux[0]

@@ -366,7 +366,7 @@ def _compare_segregation(
         "bootstrap",
     ]:
         raise ValueError(
-            f"null_approach must one of {list(DUAL_SIMULATORS.keys())+['random_label', 'person_permutation', 'bootstrap']}"
+            f"null_approach must one of {list(DUAL_SIMULATORS.keys()) + ['random_label', 'person_permutation', 'bootstrap']}"
         )
 
     if type(seg_class_1) != type(seg_class_2):

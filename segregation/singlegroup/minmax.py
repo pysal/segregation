@@ -109,7 +109,7 @@ class MinMax(SingleGroupIndex, SpatialImplicitIndex):
         decay=None,
         function="triangular",
         precompute=None,
-        **kwargs
+        **kwargs,
     ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)

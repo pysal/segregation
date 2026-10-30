@@ -22,7 +22,6 @@ def test_batch_single():
         center="mean",
         function="triangular",
         seed=1234,
-
     )
     np.testing.assert_array_almost_equal(
         fit.Statistic,
@@ -69,7 +68,8 @@ def test_batch_multi():
     )
     np.testing.assert_array_almost_equal(
         mfit.Statistic,
-        [   0.0444,
+        [
+            0.0444,
             0.37768411,
             0.11294892,
             0.78242435,
@@ -106,4 +106,3 @@ def test_batch_multiscalar_single():
         # loky is slower but more robust in testing
     )
     assert mfit.shape == (3, 14)
-

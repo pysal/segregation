@@ -175,7 +175,7 @@ class ModifiedGini(SingleGroupIndex, SpatialImplicitIndex):
         precompute=None,
         backend="threading",
         n_jobs=-1,
-        **kwargs
+        **kwargs,
     ):
         """Init."""
 

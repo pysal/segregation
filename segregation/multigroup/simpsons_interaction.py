@@ -17,7 +17,7 @@ def _simpsons_interaction(data, groups):
     ----------
 
     data   : a pandas DataFrame
-    
+
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
@@ -26,20 +26,20 @@ def _simpsons_interaction(data, groups):
 
     statistic  : float
                  Simpson's Interaction Index
-                
+
     core_data  : a pandas DataFrame
                  A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
     Based on Equation 1 of page 37 of Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
-    
+
     Simpson's interaction index (I) can be simply interpreted as the probability that two individuals chosen at random and independently from the population will be found to not belong to the same group.
 
     Higher values means lesser segregation.
-    
+
     Simpson's Concentration + Simpson's Interaction = 1
-    
+
     Reference: :cite:`reardon2002measures`.
 
     """
@@ -85,13 +85,13 @@ class SimpsonsInteraction(MultiGroupIndex, SpatialImplicitIndex):
     Notes
     -----
     Based on Equation 1 of page 37 of Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
-    
+
     Simpson's interaction index (I) can be simply interpreted as the probability that two individuals chosen at random and independently from the population will be found to not belong to the same group.
 
     Higher values means lesser segregation.
-    
+
     Simpson's Concentration + Simpson's Interaction = 1
-    
+
     Reference: :cite:`reardon2002measures`.
     """
 
@@ -105,7 +105,7 @@ class SimpsonsInteraction(MultiGroupIndex, SpatialImplicitIndex):
         decay=None,
         precompute=None,
         function="triangular",
-        **kwargs
+        **kwargs,
     ):
         """Init."""
         MultiGroupIndex.__init__(self, data, groups)

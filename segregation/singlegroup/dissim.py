@@ -49,7 +49,7 @@ def _dissim(data, group_pop_var, total_pop_var):
     # If a unit has zero population, the group of interest frequency is zero
     pi = np.where(t == 0, 0, x / t)
 
-    D = (((t * abs(pi - P))) / (2 * T * P * (1 - P))).sum()
+    D = ((t * abs(pi - P)) / (2 * T * P * (1 - P))).sum()
 
     if not isinstance(data, gpd.GeoDataFrame):
         core_data = data[[group_pop_var, total_pop_var]]
@@ -107,7 +107,7 @@ class Dissim(SingleGroupIndex, SpatialImplicitIndex):
         decay=None,
         function="triangular",
         precompute=None,
-        **kwargs
+        **kwargs,
     ):
         """Init."""
 

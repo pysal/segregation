@@ -132,7 +132,7 @@ class DensityCorrectedDissim(SingleGroupIndex, SpatialImplicitIndex):
         decay="linear",
         precompute=None,
         function="triangular",
-        **kwargs
+        **kwargs,
     ):
         """Init."""
 

@@ -80,12 +80,22 @@ class Delta(SingleGroupIndex, SpatialExplicitIndex):
     """
 
     def __init__(
-        self, data, group_pop_var, total_pop_var, **kwargs,
+        self,
+        data,
+        group_pop_var,
+        total_pop_var,
+        **kwargs,
     ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
-        SpatialExplicitIndex.__init__(self,)
-        aux = _delta(self.data, self.group_pop_var, self.total_pop_var,)
+        SpatialExplicitIndex.__init__(
+            self,
+        )
+        aux = _delta(
+            self.data,
+            self.group_pop_var,
+            self.total_pop_var,
+        )
 
         self.statistic = aux[0]
         self.core_data = aux[1]

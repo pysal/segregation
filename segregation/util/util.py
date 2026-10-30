@@ -24,7 +24,9 @@ def generate_distance_matrix(data):
     numpy.array
         distance matrix
     """
-    assert data.crs.is_projected, "This function can only operate on euclidean coordinates. Please reproject the geodataframe"
+    assert data.crs.is_projected, (
+        "This function can only operate on euclidean coordinates. Please reproject the geodataframe"
+    )
     w = euclidean_distances(
         pd.DataFrame({"x": data.centroid.x.values, "y": data.centroid.y.values})
     )

@@ -133,7 +133,7 @@ class BiasCorrectedDissim(SingleGroupIndex, SpatialImplicitIndex):
         decay=None,
         precompute=None,
         function="triangular",
-        **kwargs
+        **kwargs,
     ):
         """Init."""
 

@@ -96,8 +96,8 @@ def compute_multiscalar_profile(
             distances = np.array(distances).astype(float)
             if check_crs and gdf.crs.equals(CRS(4326)):
                 warn(
-                    "GeoDataFrame is in CRS {gdf.crs}. Ensure your network is also" +
-                    " stored in this system",
+                    "GeoDataFrame is in CRS {gdf.crs}. Ensure your network is also"
+                    + " stored in this system",
                     stacklevel=2,
                 )
             if precompute:

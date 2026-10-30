@@ -231,8 +231,8 @@ latex_documents = [
     (
         master_doc,
         "segregation.tex",
-        u"segregation Documentation",
-        u"segregation developers",
+        "segregation Documentation",
+        "segregation developers",
         "manual",
     ),
 ]
@@ -242,7 +242,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "segregation", u"segregation Documentation", [author], 1)]
+man_pages = [(master_doc, "segregation", "segregation Documentation", [author], 1)]
 
 
 # -- Options for Texinfo output -------------------------------------------
@@ -254,7 +254,7 @@ texinfo_documents = [
     (
         master_doc,
         "segregation",
-        u"segregation Documentation",
+        "segregation Documentation",
         author,
         "segregation",
         "One line description of project.",

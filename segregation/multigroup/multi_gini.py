@@ -44,7 +44,9 @@ def _multi_gini_seg(data, groups):
 
     ti = df.sum(axis=1)
     pik = df / ti[:, None]
-    pik = np.nan_to_num(pik)  # Replace NaN from zerodivision when unit has no population
+    pik = np.nan_to_num(
+        pik
+    )  # Replace NaN from zerodivision when unit has no population
     Pk = df.sum(axis=0) / df.sum()
     Is = (Pk * (1 - Pk)).sum()
 
@@ -55,7 +57,7 @@ def _multi_gini_seg(data, groups):
         ).sum()
         elements_sum[k] = aux
 
-    multi_Gini_Seg = elements_sum.sum() / (2 * (T ** 2) * Is)
+    multi_Gini_Seg = elements_sum.sum() / (2 * (T**2) * Is)
     if isinstance(data, GeoDataFrame):
         core_data = data[[data.geometry.name]].join(core_data)
     return multi_Gini_Seg, core_data, groups
@@ -96,15 +98,17 @@ class MultiGini(MultiGroupIndex, SpatialImplicitIndex):
         w=None,
         network=None,
         distance=None,
-        decay='linear',
-        function='triangular',
+        decay="linear",
+        function="triangular",
         precompute=False,
-        **kwargs
+        **kwargs,
     ):
         """Init."""
         MultiGroupIndex.__init__(self, data, groups)
         if any([w, network, distance]):
-            SpatialImplicitIndex.__init__(self, w, network, distance, decay, function, precompute)
+            SpatialImplicitIndex.__init__(
+                self, w, network, distance, decay, function, precompute
+            )
         aux = _multi_gini_seg(self.data, self.groups)
 
         self.statistic = aux[0]

@@ -60,8 +60,8 @@ def _absolute_clustering(data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5
     np.fill_diagonal(dist, val=np.exp(-((alpha * data.area.values) ** (beta))))
 
     c = 1 - dist.copy()  # proximity matrix
-    ACL = ((((x / X) * (c * x).sum(axis=1)).sum()) - ((X / n ** 2) * c.sum())) / (
-        (((x / X) * (c * t).sum(axis=1)).sum()) - ((X / n ** 2) * c.sum())
+    ACL = ((((x / X) * (c * x).sum(axis=1)).sum()) - ((X / n**2) * c.sum())) / (
+        (((x / X) * (c * t).sum(axis=1)).sum()) - ((X / n**2) * c.sum())
     )
 
     core_data = data[[group_pop_var, total_pop_var, data.geometry.name]]
@@ -106,15 +106,27 @@ class AbsoluteClustering(SingleGroupIndex, SpatialExplicitIndex):
     """
 
     def __init__(
-        self, data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5, **kwargs,
+        self,
+        data,
+        group_pop_var,
+        total_pop_var,
+        alpha=0.6,
+        beta=0.5,
+        **kwargs,
     ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
-        SpatialExplicitIndex.__init__(self,)
+        SpatialExplicitIndex.__init__(
+            self,
+        )
         self.alpha = alpha
         self.beta = beta
         aux = _absolute_clustering(
-            self.data, self.group_pop_var, self.total_pop_var, self.alpha, self.beta,
+            self.data,
+            self.group_pop_var,
+            self.total_pop_var,
+            self.alpha,
+            self.beta,
         )
 
         self.statistic = aux[0]

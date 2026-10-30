@@ -168,7 +168,7 @@ class ModifiedDissim(SingleGroupIndex, SpatialImplicitIndex):
         precompute=None,
         n_jobs=-1,
         backend="threading",
-        **kwargs
+        **kwargs,
     ):
         """Init."""
 

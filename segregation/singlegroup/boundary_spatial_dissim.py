@@ -5,8 +5,7 @@ __author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.ed
 import numpy as np
 from sklearn.metrics.pairwise import manhattan_distances
 
-from .._base import (SingleGroupIndex, SpatialExplicitIndex,
-                     _return_length_weighted_w)
+from .._base import SingleGroupIndex, SpatialExplicitIndex, _return_length_weighted_w
 from .dissim import _dissim
 
 
@@ -106,7 +105,9 @@ class BoundarySpatialDissim(SingleGroupIndex, SpatialExplicitIndex):
     ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
-        SpatialExplicitIndex.__init__(self,)
+        SpatialExplicitIndex.__init__(
+            self,
+        )
         self.standardize = standardize
         aux = _boundary_spatial_dissim(
             self.data, self.group_pop_var, self.total_pop_var, self.standardize

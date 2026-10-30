@@ -18,7 +18,7 @@ def _multi_divergence(data, groups):
     ----------
 
     data   : a pandas DataFrame
-    
+
     groups : list of strings.
              The variables names in data of the groups of interest of the analysis.
 
@@ -27,14 +27,14 @@ def _multi_divergence(data, groups):
 
     statistic : float
                 Multigroup Divergence Index
-                
+
     core_data : a pandas DataFrame
                 A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
     Based on Roberto, Elizabeth. "The Divergence Index: A Decomposable Measure of Segregation and Inequality." arXiv preprint arXiv:1508.01167 (2015).
-    
+
     Reference: :cite:`roberto2015divergence`.
 
     """
@@ -46,7 +46,9 @@ def _multi_divergence(data, groups):
 
     ti = df.sum(axis=1)
     pik = df / ti[:, None]
-    pik = np.nan_to_num(pik)  # Replace NaN from zerodivision when unit has no population
+    pik = np.nan_to_num(
+        pik
+    )  # Replace NaN from zerodivision when unit has no population
     Pk = df.sum(axis=0) / df.sum()
 
     Di = np.nansum(pik * np.log(pik / Pk), axis=1)
@@ -94,14 +96,16 @@ class MultiDivergence(MultiGroupIndex, SpatialImplicitIndex):
         distance=None,
         decay=None,
         precompute=None,
-        function='triangular',
-        **kwargs
+        function="triangular",
+        **kwargs,
     ):
         """Init."""
 
         MultiGroupIndex.__init__(self, data, groups)
         if any([w, network, distance]):
-            SpatialImplicitIndex.__init__(self, w, network, distance, decay, function, precompute)
+            SpatialImplicitIndex.__init__(
+                self, w, network, distance, decay, function, precompute
+            )
         aux = _multi_divergence(self.data, self.groups)
 
         self.statistic = aux[0]
