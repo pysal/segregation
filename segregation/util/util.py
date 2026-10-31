@@ -2,12 +2,17 @@
 Useful functions for segregation metrics
 """
 
-__author__ = "Levi Wolf <levi.john.wolf@gmail.com>, Renan X. Cortes <renanc@ucr.edu>, and Eli Knaap <ek@knaaptime.com>"
+__author__ = (
+    "Levi Wolf <levi.john.wolf@gmail.com>, "
+    "Renan X. Cortes <renanc@ucr.edu>, and "
+    "Eli Knaap <ek@knaaptime.com>"
+)
 
+
+import warnings
 
 import numpy as np
 import pandas as pd
-import warnings
 from sklearn.metrics.pairwise import euclidean_distances
 
 
@@ -25,7 +30,8 @@ def generate_distance_matrix(data):
         distance matrix
     """
     assert data.crs.is_projected, (
-        "This function can only operate on euclidean coordinates. Please reproject the geodataframe"
+        "This function can only operate on euclidean coordinates. "
+        "Please reproject the geodataframe"
     )
     w = euclidean_distances(
         pd.DataFrame({"x": data.centroid.x.values, "y": data.centroid.y.values})
@@ -46,7 +52,9 @@ def _nan_handle(df):
 
     if np.any(np.isnan(values)):
         warnings.warn(
-            "There are NAs present in the input data. NAs should be handled (e.g. dropping or replacing them with values) before using this function."
+            "There are NAs present in the input data. NAs should be handled "
+            "(e.g. dropping or replacing them with values) before using this function.",
+            stacklevel=2,
         )
 
     return df

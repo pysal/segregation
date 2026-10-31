@@ -320,7 +320,8 @@ def _maximal_segregation_distortion(
 
     if n_groups < 2:
         raise ValueError(
-            "Normalization requires at least 2 groups; with 1 group there is no segregation"
+            "Normalization requires at least 2 groups; "
+            "with 1 group there is no segregation"
         )
 
     if n < n_groups:

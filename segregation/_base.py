@@ -1,7 +1,7 @@
 """Base classes for segregation indices."""
 
-from warnings import warn
 import warnings
+from warnings import warn
 
 import geopandas as gpd
 import libpysal
@@ -16,14 +16,14 @@ from .util.util import _nan_handle
 
 def _return_length_weighted_w(data):
     """
-    Returns a PySAL weights object that the weights represent the length of the common boundary of two areal units that share border.
+    Returns a PySAL weights object that the weights represent the length of
+    the common boundary of two areal units that share border.
     Author: Levi Wolf <levi.john.wolf@gmail.com>.
     Thank you, Levi!
 
     Parameters
     ----------
-
-    data          : a geopandas DataFrame with a 'geometry' column.
+    data : a geopandas DataFrame with a 'geometry' column.
 
     Notes
     -----
@@ -38,7 +38,10 @@ def _return_length_weighted_w(data):
     if len(w.islands) == 0:
         w = w
     else:
-        warnings.warn("There are some islands in the GeoDataFrame.")
+        warnings.warn(
+            "There are some islands in the GeoDataFrame.",
+            stacklevel=2,
+        )
         w_aux = libpysal.weights.KNN.from_dataframe(
             data, ids=data.index.tolist(), geom_col=data._geometry_column_name, k=1
         )
@@ -98,7 +101,8 @@ class SingleGroupIndex:
         Parameters
         ----------
         data : pandas.DataFrame or geopandas.GeoDataFrame
-            dataframe or geodataframe if spatial index holding data for location of interest
+            dataframe or geodataframe if spatial index holding
+            data for location of interest
         group_pop_var : str
             name of column on dataframe holding population totals for focal group
         total_pop_var : str
@@ -110,12 +114,14 @@ class SingleGroupIndex:
 
         if any([group_pop_var not in data.columns, total_pop_var not in data.columns]):
             raise ValueError(
-                "group_pop_var and total_pop_var columns must be present on the dataframe"
+                "group_pop_var and total_pop_var columns "
+                "must be present on the dataframe"
             )
 
         if any(data[total_pop_var] < data[group_pop_var]):
             raise ValueError(
-                "Group of interest population must equal or lower than the total population of the units."
+                "Group of interest population must equal or lower "
+                "than the total population of the units."
             )
 
         if isinstance(data, gpd.GeoDataFrame):
@@ -147,9 +153,11 @@ class MultiGroupIndex:
         Parameters
         ----------
         data : pandas.DataFrame or geopandas.GeoDataFrame
-            dataframe or geodataframe if spatial index holding data for location of interest
+            dataframe or geodataframe if spatial index holding
+            data for location of interest
         groups : list-like
-            list of column names on input DataFrame that hold population totals for groups of interest
+            list of column names on input DataFrame that hold
+            population totals for groups of interest
         """
         self.index_type = "multigroup"
         self.data = data.copy()
@@ -172,7 +180,8 @@ class RankOrderIndex(MultiGroupIndex):
         Parameters
         ----------
         data : pandas.DataFrame or geopandas.GeoDataFrame
-            dataframe or geodataframe if spatial index holding data for location of interest
+            dataframe or geodataframe if spatial index holding
+            data for location of interest
         groups : list-like
             names of columns on `data` holding population counts for each
             category of an ordered variable, listed from lowest to highest.
@@ -215,9 +224,14 @@ class RankOrderIndex(MultiGroupIndex):
 
 
 class SpatialExplicitIndex:
-    """Class for estimating segregation indices that are explicitly spatial (have no aspatial version)."""
+    """Class for estimating segregation indices
+    that are explicitly spatial (have no aspatial version).
+    """
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self,
+        **kwargs,  # noqa: ARG002 -- Unused method argument
+    ):
         """Initialize spatially explicit index."""
         if not isinstance(self.data, gpd.GeoDataFrame):
             raise TypeError(
@@ -225,8 +239,11 @@ class SpatialExplicitIndex:
             )
         if self.data.crs.is_geographic:
             warn(
-                "Geometry is in a geographic CRS. Distance and area calculations in this index are likely incorrect. "
-                "Re-project the input data to a projected CRS using `GeoDataFrame.to_crs()` before calculating this index."
+                "Geometry is in a geographic CRS. Distance and area calculations "
+                "in this index are likely incorrect. Re-project the input data to "
+                "a projected CRS using `GeoDataFrame.to_crs()` "
+                "before calculating this index.",
+                stacklevel=2,
             )
         self.spatial_type = "explicit"
 
@@ -242,7 +259,7 @@ class SpatialImplicitIndex:
         decay="linear",
         function="triangular",
         precompute=False,
-        **kwargs,
+        **kwargs,  # noqa: ARG002 -- Unused method argument
     ):
         """Initialize spatially implicit index.
 
@@ -253,12 +270,14 @@ class SpatialImplicitIndex:
         network : pandarm.Network
             pandarm Network object representing the study area
         distance : int
-            Maximum distance (in units of geodataframe CRS) to consider the extent of the egohood
+            Maximum distance (in units of geodataframe CRS)
+            to consider the extent of the egohood
         decay : str
             type of decay function to apply (passed to `pandarm`). Options include
             {'linear', 'exponential', or 'flat'}
         function : str
-            decay function to use in spatial weights object (passed to libpysal.weights.Kernel)
+            decay function to use in spatial weights object
+            (passed to libpysal.weights.Kernel)
             options = {'triangular','uniform','quadratic','quartic','gaussian'}
         precompute : bool
             Whether to precompute the pandarm Network object
@@ -271,7 +290,8 @@ class SpatialImplicitIndex:
 
         if w and network:
             raise AttributeError(
-                "must pass either a pandarm network or a pysal weights object, but not both"
+                "must pass either a pandarm network or "
+                "a pysal weights object, but not both"
             )
         if network:
             access = calc_access(
@@ -318,7 +338,9 @@ def _build_local_environment(
     data = data.copy().reset_index()
     if data.crs.is_geographic:
         warnings.warn(
-            "GeoDataFrame appears to have a geographic coordinate system and likely needs to be reprojected"
+            "GeoDataFrame appears to have a geographic coordinate "
+            "system and likely needs to be reprojected",
+            stacklevel=2,
         )
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
@@ -328,7 +350,7 @@ def _build_local_environment(
         w = fill_diagonal(w)
         for y in data[groups]:
             new_data.append(lag_spatial(w, data[y]))
-        new_data = pd.DataFrame(dict(zip(groups, new_data))).round(0)
+        new_data = pd.DataFrame(dict(zip(groups, new_data, strict=True))).round(0)
         new_data = data.geometry.to_frame().join(new_data.reset_index())
 
         return new_data
