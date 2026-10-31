@@ -22,15 +22,17 @@ for name, obj in inspect.getmembers(multigroup):
 
 implicit_single_indices = {}
 for name, obj in inspect.getmembers(singlegroup):
-    if inspect.isclass(obj):
-        if str(SpatialImplicitIndex) in [str(i) for i in obj.__bases__]:
-            implicit_single_indices[name] = obj
+    if inspect.isclass(obj) and str(SpatialImplicitIndex) in [
+        str(i) for i in obj.__bases__
+    ]:
+        implicit_single_indices[name] = obj
 
 implicit_multi_indices = {}
 for name, obj in inspect.getmembers(multigroup):
-    if inspect.isclass(obj):
-        if str(SpatialImplicitIndex) in [str(i) for i in obj.__bases__]:
-            implicit_multi_indices[name] = obj
+    if inspect.isclass(obj) and str(SpatialImplicitIndex) in [
+        str(i) for i in obj.__bases__
+    ]:
+        implicit_multi_indices[name] = obj
 
 
 def batch_compute_singlegroup(
@@ -43,7 +45,8 @@ def batch_compute_singlegroup(
     gdf : DataFrame or GeoDataFrame
         DataFrame holding demographic data for study region
     group_pop_var : str
-        The name of variable in data that contains the population size of the group of interest
+        The name of variable in data that contains the
+        population size of the group of interest
     total_pop_var : str
         Variable in data that contains the total population count of the unit
     progress_bar: bool
@@ -55,7 +58,8 @@ def batch_compute_singlegroup(
     Returns
     -------
     pandas.DataFrame
-        dataframe with statistic name as dataframe index and statistic value as dataframe values
+        dataframe with statistic name as dataframe index
+        and statistic value as dataframe values
     """
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
@@ -96,7 +100,8 @@ def batch_compute_multigroup(gdf, groups, **kwargs):
     Returns
     -------
     pandas.DataFrame
-        dataframe with statistic name as dataframe index and statistic value as dataframe values
+        dataframe with statistic name as dataframe index
+        and statistic value as dataframe values
     """
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
