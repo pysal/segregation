@@ -236,9 +236,13 @@ class DecomposeSegregation:
                 return f
 
             elif self._counterfactual_approach == "dual_composition":
+                ####################################################################
+                # TODO: Drop `dual_composition` entirely
+                # TODO: See gh#313
                 df["compl"] = 1 - df.group_composition
                 f = sns.ecdfplot(data=df, x="group_composition", hue="Location", ax=ax)
                 f2 = sns.ecdfplot(data=df, x="compl", hue="Location", ax=ax)  # noqa: F841  - Local variable `f2` is assigned to but never used
+                ####################################################################
             if savefig:
                 plt.savefig(savefig, dpi=dpi)
 
