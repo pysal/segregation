@@ -2,13 +2,19 @@
 Decomposition Segregation based Metrics
 """
 
-__author__ = "Renan X. Cortes <renanc@ucr.edu>, Elijah Knaap <elijah.knaap@ucr.edu>, and Sergio J. Rey <sergio.rey@ucr.edu>"
+__author__ = (
+    "Renan X. Cortes <renanc@ucr.edu>, "
+    "Elijah Knaap <elijah.knaap@ucr.edu>, "
+    "and Sergio J. Rey <sergio.rey@ucr.edu>"
+)
 
 
 import warnings
-import seaborn as sns
+
 import matplotlib.pyplot as plt
 import pandas as pd
+import seaborn as sns
+
 from segregation.inference.comparative import _generate_counterfactual
 
 # Including old and new api in __all__ so users can use both
@@ -158,24 +164,30 @@ class DecomposeSegregation:
         savefig=None,
         dpi=300,
     ):
-        """Plot maps or CDFs of urban contexts used in calculating the Decomposition class.
+        """Plot maps or CDFs of urban contexts used
+        in calculating the Decomposition class.
 
         Parameters
         ----------
         plot_type : str, {'cdfs, 'maps'}
-            which type of plot to generate. Options include `cdfs` and `maps` by default "cdfs"
+            which type of plot to generate. Options include `cdfs`
+            and `maps` by default "cdfs"
         figsize : tuple, optional
             figsize parameter passed to matplotlib.pyplot
         city_a : str, optional
-            Name of the first "city" to be used in plotting. If None, defaults to 'City A'
+            Name of the first "city" to be used in plotting.
+            If None, defaults to 'City A'
         city_b : str, optional
-            Name of the second "city" to be used in plotting. If None, defaults to 'City B'
+            Name of the second "city" to be used in plotting.
+            If None, defaults to 'City B'
         cmap : str, optional
             matplotlib colormap used to shade the map, by default "OrRd"
         scheme : str, optional
-            pysal.mapclassify classification scheme used to shade the map, by default "equalinterval"
+            pysal.mapclassify classification scheme used to shade the map,
+            by default "equalinterval"
         k : int, optional
-            number of classes in pysal.mapclassify classification scheme, by default 10
+            number of classes in pysal.mapclassify classification scheme,
+            by default 10
         suptitle_size : int, optional
             size parameter passed to `matplotlib.Figure.suptitle`, by default 16
         title_size : int, optional
@@ -204,7 +216,8 @@ class DecomposeSegregation:
                 size=suptitle_size,
             )
             plt.title(
-                f"Spatial Component = {round(self.c_s, 3)}, Attribute Component: {round(self.c_a, 3)}",
+                f"Spatial Component = {round(self.c_s, 3)}, "
+                f"Attribute Component: {round(self.c_a, 3)}",
                 size=title_size,
             )
 
@@ -223,9 +236,13 @@ class DecomposeSegregation:
                 return f
 
             elif self._counterfactual_approach == "dual_composition":
+                ####################################################################
+                # TODO: Drop `dual_composition` entirely
+                # TODO: See gh#313
                 df["compl"] = 1 - df.group_composition
                 f = sns.ecdfplot(data=df, x="group_composition", hue="Location", ax=ax)
-                f2 = sns.ecdfplot(data=df, x="compl", hue="Location", ax=ax)
+                f2 = sns.ecdfplot(data=df, x="compl", hue="Location", ax=ax)  # noqa: F841  - Local variable `f2` is assigned to but never used
+                ####################################################################
             if savefig:
                 plt.savefig(savefig, dpi=dpi)
 
@@ -238,7 +255,8 @@ class DecomposeSegregation:
                 size=suptitle_size,
             )
             plt.title(
-                f"Spatial Component = {round(self.c_s, 3)}, Attribute Component: {round(self.c_a, 3)}"
+                f"Spatial Component = {round(self.c_s, 3)}, "
+                f"Attribute Component: {round(self.c_a, 3)}"
             )
 
             # Original First Context (Upper Left)

@@ -1,6 +1,10 @@
 """Calculate street network-based segregation measures."""
 
-__author__ = "Elijah Knaap <elijah.knaap@ucr.edu> Renan X. Cortes <renanc@ucr.edu> and Sergio J. Rey <sergio.rey@ucr.edu>"
+__author__ = (
+    "Elijah Knaap <elijah.knaap@ucr.edu>,"
+    "Renan X. Cortes <renanc@ucr.edu>,"
+    "and Sergio J. Rey <sergio.rey@ucr.edu>"
+)
 
 import geopandas as gpd
 import pandas as pd
@@ -78,7 +82,7 @@ def calc_access(
         access_pop = network.aggregate(distance, type="sum", decay=decay, name=variable)
 
         access.append(access_pop)
-    access = pd.DataFrame(dict(zip(variables, access)))
+    access = pd.DataFrame(dict(zip(variables, access, strict=True)))
     if return_node_data:
         return access.round(0)
     access = geodataframe[["node_ids", geodataframe.geometry.name]].merge(
@@ -94,26 +98,28 @@ def compute_travel_cost_matrix(origins, destinations, network, reindex_name=None
     Parameters
     ----------
     origins : geopandas.GeoDataFrame
-        the set of origin geometries. If polygon input, the function will use their centroids
+        the set of origin geometries.
+        If polygon input, the function will use their centroids
     destinations : geopandas.GeoDataFrame
-        the set of destination geometries. If polygon input, the function will use their centroids
+        the set of destination geometries.
+        If polygon input, the function will use their centroids
     network : pandarm.Network
         Initialized pandarm Network object holding a travel network for a study region
     reindex_name : str, optional
-        Name of column on the origin/destinatation dataframe that holds unique index values
-        If none (default), the index of the pandarm Network node will be used
+        Name of column on the origin/destinatation dataframe that holds unique index
+        values If none (default), the index of the pandarm Network node will be used
 
     Returns
     -------
     pandas.DataFrame
-        an origin-destination cost matrix. Rows are origin indices, columns are destination indices,
-        and values are shortest network path cost between the two
+        an origin-destination cost matrix. Rows are origin indices, columns are
+        destination indices, and values are shortest network path cost between the two
     """
     origins = origins.copy()
     destinations = destinations.copy()
 
-    #  Note: these are not necessarily "OSM" ids, they're just the identifiers for each  node.
-    #  with an integrated ped/transit network, these could be bus stops...
+    #  Note: these are not necessarily "OSM" ids, they're just the identifiers for each
+    # node. with an integrated ped/transit network, these could be bus stops...
     origins["osm_ids"] = network.get_node_ids(origins.centroid.x, origins.centroid.y)
 
     destinations["osm_ids"] = network.get_node_ids(
@@ -159,12 +165,12 @@ def project_network(network, output_crs=None, input_crs=4326):
     """
     try:
         import pandarm as pdna
-    except ImportError:
+    except ImportError as err:
         raise ImportError(
             "You need pandarm to work with segregation's network module\n"
             "You can install them with  `pip install urbanaccess pandarm` "
             "or `conda install -c udst pandarm urbanaccess`"
-        )
+        ) from err
 
     assert output_crs, "You must provide an output CRS"
 
