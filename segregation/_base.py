@@ -228,10 +228,7 @@ class SpatialExplicitIndex:
     that are explicitly spatial (have no aspatial version).
     """
 
-    def __init__(
-        self,
-        **kwargs,  # noqa: ARG002 -- Unused method argument
-    ):
+    def __init__(self):
         """Initialize spatially explicit index."""
         if not isinstance(self.data, gpd.GeoDataFrame):
             raise TypeError(
@@ -259,7 +256,6 @@ class SpatialImplicitIndex:
         decay="linear",
         function="triangular",
         precompute=False,
-        **kwargs,  # noqa: ARG002 -- Unused method argument
     ):
         """Initialize spatially implicit index.
 
