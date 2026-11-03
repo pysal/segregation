@@ -1,0 +1,22 @@
+﻿segregation.local.LocalDistortion
+=================================
+
+.. currentmodule:: segregation.local
+
+.. autoclass:: LocalDistortion
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~LocalDistortion.__init__
+   
+   
+
+   
+   
+   
