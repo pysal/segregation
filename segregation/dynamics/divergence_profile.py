@@ -234,7 +234,8 @@ def compute_divergence_profiles(
 ):
     """
     A segregation metric using Kullback-Leiber (KL) divergence to quantify the
-    difference in the population characteristics between (1) an area and (2) the total population.
+    difference in the population characteristics between
+    (1) an area and (2) the total population.
 
     Parameters
     ----------
@@ -254,8 +255,8 @@ def compute_divergence_profiles(
     Returns
     ----------
     aux : geopandas.GeoDataFrame
-        geodataframe of the KL divergence measure, between the aggregated population and the
-        total population, will converge to zero for the final row of each
+        geodataframe of the KL divergence measure, between the aggregated population
+        and the total population, will converge to zero for the final row of each
         observation to represent that the total population is covered.
         population_covered : the population count within the aggregated population.
         Returns a concatenated object of Pandas dataframes. Each dataframe contains a
@@ -298,8 +299,9 @@ def compute_divergence_profiles(
         # --- Network path: dense matrix from pandarm ---
         if metric != "network":
             warn(
-                f"metric set to {metric} but a pandarm.Network object was passed. Using network distances instead"
-                "If you wish to use a scipy distance matrix, do not include a `network` argument`",
+                f"metric set to {metric} but a pandarm.Network object was passed. "
+                "Using network distances instead. If you wish to use a scipy "
+                "distance matrix, do not include a `network` argument`",
                 stacklevel=2,
             )
         dist_matrix = compute_travel_cost_matrix(gdf, gdf, network).values
@@ -319,7 +321,8 @@ def compute_divergence_profiles(
             )
         if metric != "precomputed":
             warn(
-                f"metric set to {metric} but a distance_matrix argument was passed. Using precomputed distances instead",
+                f"metric set to {metric} but a distance_matrix argument was passed. "
+                "Using precomputed distances instead.",
                 stacklevel=2,
             )
         results = _compute_all_profiles(distance_matrix, df, indices)
