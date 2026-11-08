@@ -1,6 +1,10 @@
 """Multigroup dissimilarity index"""
 
-__author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
+__author__ = (
+    "Renan X. Cortes <renanc@ucr.edu>, "
+    "Sergio J. Rey <sergio.rey@ucr.edu>, "
+    "and Elijah Knaap <elijah.knaap@ucr.edu>"
+)
 
 import numpy as np
 
@@ -15,21 +19,19 @@ def _multi_location_quotient(data, groups):
 
     Parameters
     ----------
-
-    data   : a pandas DataFrame of n rows
-
-    groups : list of strings of length k.
-             The variables names in data of the groups of interest of the analysis.
+    data : pandas.DataFrame
+        A pandas DataFrame of n rows.
+    groups : list[str, ...]
+        List of strings of length k.
+        The variables names in data of the groups of interest of the analysis.
 
     Returns
     -------
-
     statistics : np.array(n,k)
-                 Location Quotient values for each group and unit.
-                 Column k has the Location Quotient of position k in groups.
-
-    core_data  : a pandas DataFrame
-                 A pandas DataFrame that contains the columns used to perform the estimate.
+        Location Quotient values for each group and unit.
+        Column k has the Location Quotient of position k in groups.
+    core_data : pandas.DataFrame
+        A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
@@ -70,7 +72,8 @@ class MultiLocationQuotient(MultiGroupIndex, SpatialImplicitIndex):
     network : pandarm.Network
         pandarm Network object representing the study area
     distance : int
-        Maximum distance (in units of geodataframe CRS) to consider the extent of the egohood
+        Maximum distance (in units of geodataframe CRS)
+        to consider the extent of the egohood
     decay : str
         type of decay function to apply. Options include
     precompute : bool
@@ -80,7 +83,7 @@ class MultiLocationQuotient(MultiGroupIndex, SpatialImplicitIndex):
     ----------
     statistic : float
         Multigroup Dissimilarity Index value
-    core_data : a pandas DataFrame
+    core_data : pandas.DataFrame
         DataFrame that contains the columns used to perform the estimate.
 
     Notes
