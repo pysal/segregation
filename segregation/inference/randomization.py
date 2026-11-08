@@ -11,25 +11,27 @@ from joblib import Parallel, delayed
 from tqdm.auto import tqdm
 
 
-def _generate_estimate(input):
-    if hasattr(input[0], "_original_data"):
-        df = input[0]._original_data.copy()
+def _generate_estimate(_input):
+    if hasattr(_input[0], "_original_data"):
+        df = _input[0]._original_data.copy()
     else:
-        df = input[0].data.copy()
-    if input[0].index_type == "singlegroup":
-        df = input[1](
+        df = _input[0].data.copy()
+    if _input[0].index_type == "singlegroup":
+        df = _input[1](
             df,
-            group=input[0].group_pop_var,
-            total=input[0].total_pop_var,
+            group=_input[0].group_pop_var,
+            total=_input[0].total_pop_var,
         )
         estimate = (
-            input[0]
-            .__class__(df, input[0].group_pop_var, input[0].total_pop_var, **input[2])
+            _input[0]
+            .__class__(
+                df, _input[0].group_pop_var, _input[0].total_pop_var, **_input[2]
+            )
             .statistic
         )
     else:
-        df = input[1](df, groups=input[0].groups, verbose=input[3])
-        estimate = input[0].__class__(df, input[0].groups, **input[2]).statistic
+        df = _input[1](df, groups=_input[0].groups, verbose=_input[3])
+        estimate = _input[0].__class__(df, _input[0].groups, **_input[2]).statistic
     return estimate
 
 
@@ -80,7 +82,13 @@ def simulate_null(
     return pd.Series(estimates)
 
 
-def simulate_person_permutation(df, group=None, total=None, groups=None, verbose=False):
+def simulate_person_permutation(
+    df,
+    group=None,
+    total=None,
+    groups=None,
+    verbose=False,  # noqa: ARG001 - Unused function argument
+):
     """Simulate the permutation of individuals across spatial units.
 
     Parameters
@@ -152,7 +160,13 @@ def simulate_person_permutation(df, group=None, total=None, groups=None, verbose
     return gpd.GeoDataFrame(df, geometry=geoms.geometry.name)
 
 
-def simulate_evenness(df, group=None, total=None, groups=None, verbose=True):
+def simulate_evenness(
+    df,
+    group=None,
+    total=None,
+    groups=None,
+    verbose=True,  # noqa: ARG001 - Unused function argument
+):
     """Simulate even redistribution of population groups across spatial units.
 
     Parameters
@@ -237,14 +251,17 @@ def simulate_systematic_randomization(
 
     Notes
     -------
-    Simulates the random allocation of each group across geographic units, given the total population
-    of each group (randomizes location totals for each group). Given the total population of
-    each group in the region, take draws from a multinomial distribution where the probability of
-    choosing each geographic unit is equal to the total regional share currently residing in the unit.
-    Results are guaranteed to respect regional group totals, but will include variation in the total
+    Simulates the random allocation of each group across geographic units, given the
+    total population of each group (randomizes location totals for each group). Given
+    the total population of each group in the region, take draws from a multinomial
+    distribution where the probability of choosing each geographic unit is equal to the
+    total regional share currently residing in the unit. Results are guaranteed to
+    respect regional group totals, but will include variation in the total
     population of each geographic unit.
 
-    For more, see Allen, R., Burgess, S., Davidson, R., & Windmeijer, F. (2015). More reliable inference for the dissimilarity index of segregation. The Econometrics Journal, 18(1), 40–66. https://doi.org/10.1111/ectj.12039
+    For more, see Allen, R., Burgess, S., Davidson, R., & Windmeijer, F. (2015).
+    More reliable inference for the dissimilarity index of segregation.
+    The Econometrics Journal, 18(1), 40–66. https://doi.org/10.1111/ectj.12039
 
     Reference: :cite:`allen2015more`
     """
@@ -259,7 +276,8 @@ def simulate_systematic_randomization(
     if group:
         if not total:
             raise ValueError(
-                "If simulating a single group, you must also supply a total population column"
+                "If simulating a single group, you must "
+                "also supply a total population column"
             )
         df["other_group_pop"] = df[total] - df[group]
         groups = [group, "other_group_pop"]
@@ -278,8 +296,12 @@ def simulate_systematic_randomization(
     return df_aux
 
 
-def simulate_bootstrap_resample(df, **kwargs):
-    """Generate bootstrap replications of the units with replacement of the same size of the original data.
+def simulate_bootstrap_resample(
+    df,
+    **kwargs,  # noqa: ARG001 - Unused function argument
+):
+    """Generate bootstrap replications of the units with replacement
+    of the same size of the original data.
 
     Parameters
     ----------
@@ -294,9 +316,9 @@ def simulate_bootstrap_resample(df, **kwargs):
     Notes
     -------
     Simulate a synthetic dataset by drawing from rows of the input data with replacement
-    until reaching the same number of observations in the original dataframe. Note that if
-    input is a geodataframe, then the output will not be planar-enforced, as more than one of
-    the same unit may appear in the sample.
+    until reaching the same number of observations in the original dataframe. Note that
+    if input is a geodataframe, then the output will not be planar-enforced, as more
+    than one of the same unit may appear in the sample.
     """
     df = df.copy()
     df = df.reset_index(drop=True)
@@ -305,7 +327,10 @@ def simulate_bootstrap_resample(df, **kwargs):
     return df_aux
 
 
-def simulate_geo_permutation(df, **kwargs):
+def simulate_geo_permutation(
+    df,
+    **kwargs,  # noqa: ARG001 - Unused function argument
+):
     """Simulate a synthetic dataset by random permutation of geographic units.
 
     Parameters
@@ -330,9 +355,14 @@ def simulate_geo_permutation(df, **kwargs):
 
 
 def simulate_systematic_geo_permutation(
-    df, group=None, total=None, groups=None, verbose=True
+    df,
+    group=None,
+    total=None,
+    groups=None,
+    verbose=True,
 ):
-    """Simulate systematic redistribution followed by random permutation of geographic units.
+    """Simulate systematic redistribution followed by
+    random permutation of geographic units.
 
     Parameters
     ----------
@@ -361,7 +391,11 @@ def simulate_systematic_geo_permutation(
 
 
 def simulate_evenness_geo_permutation(
-    df, group=None, total=None, groups=None, verbose=True
+    df,
+    group=None,
+    total=None,
+    groups=None,
+    verbose=True,  # noqa: ARG001 - Unused function argument
 ):
     """Simulate evenness followed by random permutation of geographic units.
 
