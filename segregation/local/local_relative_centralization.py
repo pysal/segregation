@@ -55,15 +55,6 @@ def _local_relative_centralization(data, group_pop_var, total_pop_var, W=None, k
 
     core_data = data[[group_pop_var, total_pop_var, data.geometry.name]]
 
-    ################################################################################
-    # this chunk seems to only be related to creating ``kd`` below, which is unused
-    c_lons = data.centroid.map(lambda p: p.x)
-    c_lats = data.centroid.map(lambda p: p.y)
-
-    points = list(zip(c_lons, c_lats, strict=True))
-    kd = lps.cg.kdtree.KDTree(np.array(points))  #  noqa: F841 - unused
-    ################################################################################
-
     local_RCEs = np.empty(len(data))
 
     for i in range(len(data)):
