@@ -16,7 +16,8 @@ def _local_distortion(
 ):
     """
     A segregation metric, using Kullback-Leiber (KL) divergence to quantify the
-    difference in the population characteristics between (1) an area and (2) the total population.
+    difference in the population characteristics between
+    (1) an area and (2) the total population.
 
     This function utilises the methodology proposed in
     Olteanu et al. (2019): 'Segregation through the multiscalar lens'. Which can be
@@ -119,7 +120,8 @@ class LocalDistortion(MultiGroupIndex, SpatialExplicitIndex):
 
     Notes
     -----
-    Olteanu et al. (2019): 'Segregation through the multiscalar lens'.  https://doi.org/10.1073/pnas.1900192116
+    Olteanu et al. (2019): 'Segregation through the multiscalar lens'.
+    https://doi.org/10.1073/pnas.1900192116
 
     """
 
@@ -132,7 +134,6 @@ class LocalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         distance_matrix=None,
         normalize=True,
         n_seeds=4,
-        **kwargs,
     ):
         """Init."""
 
