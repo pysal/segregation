@@ -1,6 +1,10 @@
 """Multigroup dissimilarity index"""
 
-__author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
+__author__ = (
+    "Renan X. Cortes <renanc@ucr.edu>, "
+    "Sergio J. Rey <sergio.rey@ucr.edu>, "
+    "and Elijah Knaap <elijah.knaap@ucr.edu>"
+)
 
 import numpy as np
 
@@ -15,26 +19,29 @@ def _multi_local_simpson_concentration(data, groups):
 
     Parameters
     ----------
-
-    data   : a pandas DataFrame of n rows
-
-    groups : list of strings.
-             The variables names in data of the groups of interest of the analysis.
+    data : pandas.DataFrame
+        A pandas DataFrame of n rows.
+    groups : list[str, ...]
+        List of strings of length k.
+        The variables names in data of the groups of interest of the analysis.
 
     Returns
     -------
 
     statistics : np.array(n)
-                 Local Simpson concentration values for each unit
-
-    core_data  : a pandas DataFrame
-                 A pandas DataFrame that contains the columns used to perform the estimate.
+        Local Simpson concentration values for each unit
+    core_data : pandas.DataFrame
+        A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on the local version of Equation 1 of page 37 of Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
+    Based on the local version of Equation 1 of page 37 of Reardon, Sean F., and
+    Glenn Firebaugh. "Measures of multigroup segregation."
+    Sociological methodology 32.1 (2002): 33-67.
 
-    Simpson's concentration index can be simply interpreted as the probability that two individuals chosen at random and independently from the population will be found to belong to the same group.
+    Simpson's concentration index can be simply interpreted as the probability
+    that two individuals chosen at random and independently from the population
+    will be found to belong to the same group.
 
     Higher values means lesser segregation.
 
@@ -70,7 +77,8 @@ class MultiLocalSimpsonConcentration(MultiGroupIndex, SpatialImplicitIndex):
     network : pandarm.Network
         pandarm Network object representing the study area
     distance : int
-        Maximum distance (in units of geodataframe CRS) to consider the extent of the egohood
+        Maximum distance (in units of geodataframe CRS)
+        to consider the extent of the egohood
     decay : str
         type of decay function to apply. Options include
     precompute : bool
@@ -80,12 +88,14 @@ class MultiLocalSimpsonConcentration(MultiGroupIndex, SpatialImplicitIndex):
     ----------
     statistic : float
         Multigroup Dissimilarity Index value
-    core_data : a pandas DataFrame
+    core_data : pandas.DataFrame
         DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on Eq. 6 of pg. 139 (individual unit case) of Reardon, Sean F., and David O’Sullivan. "Measures of spatial segregation." Sociological methodology 34.1 (2004): 121-162.
+    Based on Eq. 6 of pg. 139 (individual unit case) of Reardon, Sean F., and
+    David O’Sullivan. "Measures of spatial segregation."
+    Sociological methodology 34.1 (2004): 121-162.
 
     Reference: :cite:`reardon2004measures`.
     """
