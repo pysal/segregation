@@ -1,6 +1,11 @@
 """Inference wrapper classes for segregation measures."""
 
-__author__ = "Renan X. Cortes <renanc@ucr.edu> Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
+__author__ = (
+    "Renan X. Cortes <renanc@ucr.edu>, "
+    ", Sergio J. Rey <sergio.rey@ucr.edu>"
+    "and Elijah Knaap <elijah.knaap@ucr.edu>"
+)
+
 
 import multiprocessing
 import warnings
@@ -41,20 +46,22 @@ def _infer_segregation(
     iterations_under_null : int
         number of iterations under null hyphothesis
     null_approach : str
-        Which counterfactual approach to use when generating null hypothesis distribution. See Notes.
+        Which counterfactual approach to use when generating null
+        hypothesis distribution. See Notes.
 
         * ``systematic``:
-        assumes that every group has the same probability with restricted conditional probabilities
-        p_0_j = p_1_j = p_j = n_j/n (multinomial distribution).
+        assumes that every group has the same probability with restricted conditional
+        probabilities p_0_j = p_1_j = p_j = n_j/n (multinomial distribution).
 
         * ``bootstrap``:
-        generates bootstrap replications of the units with replacement of the same size of the
-        original data. This procedure creates a confidence interval for the index statistic to test
-        whether the null value lies within.
+        generates bootstrap replications of the units with replacement of the same size
+        of the original data. This procedure creates a confidence interval for the
+        index statistic to test whether the null value lies within.
 
         * ``evenness``:
-        assumes that each spatial unit has the same global probability of drawing elements from the
-        minority group of the fixed total unit population (binomial distribution).
+        assumes that each spatial unit has the same global probability of drawing
+        elements from the minority group of the fixed total unit population
+        (binomial distribution).
 
         * ``person_permutation``:
         randomly allocates individuals into units keeping the total population of each
@@ -68,17 +75,18 @@ def _infer_segregation(
         space.
 
         * ``even_permutation``:
-        Assumes the same global probability of drawning elements from the minority group in
-        each spatial unit and randomly allocates the units over space.
+        Assumes the same global probability of drawning elements from the minority group
+        in each spatial unit and randomly allocates the units over space.
 
     two_tailed : boolean
-        If True, p_value is two-tailed. Otherwise, it is right one-tailed. The one-tailed p_value attribute
-        might not be appropriate for some measures, as the two-tailed. Therefore, it is better to rely on the
-        est_sim attribute.
+        If True, p_value is two-tailed. Otherwise, it is right one-tailed. The
+        one-tailed p_value attribute might not be appropriate for some measures,
+        as the two-tailed. Therefore, it is better to rely on the est_sim attribute.
     n_jobs: int, optional
         number of cores to use for estimation. If -1 all available cpus will be used
     backend: str, optional
-        which backend to use with joblib. Options include "loky", "multiprocessing", or "threading"
+        which backend to use with joblib. Options include "loky", "multiprocessing",
+        or "threading"
     index_kwargs : dict, optional
         additional keyword arguments passed to the index class
 
@@ -92,7 +100,7 @@ def _infer_segregation(
         The value of the segregation index being tested
 
     """
-    if null_approach not in SIMULATORS.keys():
+    if null_approach not in SIMULATORS:
         raise ValueError(f"null_approach must one of {list(SIMULATORS.keys())}")
 
     if type(two_tailed) is not bool:
@@ -100,8 +108,9 @@ def _infer_segregation(
 
     point_estimation = seg_class.statistic
 
-    # if using the bootstrap test, we're testing the null estimate against the index's distribution
-    # in all other cases, we test the index value against a null distribution
+    # if using the bootstrap test, we're testing the null estimate against
+    # the index's distribution in all other cases, we test the index value
+    # against a null distribution
     if null_approach == "bootstrap":
         point_estimation = null_value
 
@@ -119,11 +128,13 @@ def _infer_segregation(
         backend=backend,
     ).values
 
-    # Check and, if the case, remove iterations_under_null that resulted in nan or infinite values
-    if any((np.isinf(Estimates_Stars) | np.isnan(Estimates_Stars))):
+    # Check and, if the case, remove iterations_under_null that
+    # resulted in nan or infinite values
+    if any(np.isinf(Estimates_Stars) | np.isnan(Estimates_Stars)):
         warnings.warn(
-            "Some estimates resulted in NaN or infinite values for estimations under null hypothesis. "
-            "These values will be removed for the final results."
+            "Some estimates resulted in NaN or infinite values for estimations under "
+            "null hypothesis. These values will be removed for the final results.",
+            stacklevel=2,
         )
         Estimates_Stars = Estimates_Stars[
             ~(np.isinf(Estimates_Stars) | np.isnan(Estimates_Stars))
@@ -149,50 +160,57 @@ class SingleValueTest:
     iterations_under_null : int
         number of iterations under null hyphothesis
     null_approach : str
-        Which counterfactual approach to use when generating null hypothesis distribution. One of the following:.
+        Which counterfactual approach to use when generating null hypothesis
+        distribution. One of the following:.
 
         * ``bootstrap``:
-        Generate bootstrap replications of the units with replacement of the same size of the
-        original data to create a distribution of the segregation index. Then the `null_value` argument
-        is tested against this distribution. The null_value may be 0, or may be estimated empirically using
-        the `simulate_null` function.
+        Generate bootstrap replications of the units with replacement of the same size
+        of the original data to create a distribution of the segregation index. Then
+        the `null_value` argument is tested against this distribution. The null_value
+        may be 0, or may be estimated empirically using the `simulate_null` function.
 
         * ``systematic``:
-        assumes that every group has the same probability with restricted conditional probabilities
-        p_0_j = p_1_j = p_j = n_j/n (multinomial distribution).
+        assumes that every group has the same probability with restricted conditional
+        probabilities p_0_j = p_1_j = p_j = n_j/n (multinomial distribution).
 
         * ``evenness``:
-        Generate a distribution of segregation indices under the assumption of evenness, which
-        assumes that each spatial unit has the same global probability of drawing elements from the
-        minority group of the fixed total unit population (binomial distribution). Then test the observed
+        Generate a distribution of segregation indices under the assumption of
+        evenness, which assumes that each spatial unit has the same global probability
+        of drawing elements from the minority group of the fixed total unit population
+        (binomial distribution). Then test the observed
         segregation index against this distribution
 
         * ``person_permutation``:
-        Generate a distribution of segregation indices under the assumption of individual-level randomization,
-        which randomly allocates individuals into units keeping the total population of each
-        equal to the original.Then test the observed segregation index against this distribution
+        Generate a distribution of segregation indices under the assumption of
+        individual-level randomization, which randomly allocates individuals into units
+        keeping the total population of each equal to the original.Then test the
+        observed segregation index against this distribution
 
         * ``geographic_permutation``:
-        Generate a distribution of segregation indices under the assumption of geographit unit-level randomization,
-        which randomly allocates the units over space keeping the original values. Then test the observed segregation
+        Generate a distribution of segregation indices under the assumption of
+        geographit unit-level randomization, which randomly allocates the units over
+        space keeping the original values. Then test the observed segregation
         index against this distribution
 
         * ``systematic_permutation``:
-        Generate a distribution of segregation indices under the assumption of systemic randomization,
-        then randomly allocate units over space. Then test the observed segregation index against this distribution
+        Generate a distribution of segregation indices under the assumption of systemic
+        randomization, then randomly allocate units over space. Then test the observed
+        segregation index against this distribution
 
         * ``even_permutation``:
-        Generate a distribution of segregation indices under the assumption of evenness, then randomly allocating
-        the units over space. Then test the observed segregation index against this distribution
+        Generate a distribution of segregation indices under the assumption of evenness,
+        then randomly allocating the units over space. Then test the observed
+        segregation index against this distribution
 
     two_tailed : boolean
-        If True, p_value is two-tailed. Otherwise, it is right one-tailed. The one-tailed p_value attribute
-        might not be appropriate for some measures, as the two-tailed. Therefore, it is better to rely on the
-        est_sim attribute.
+        If True, p_value is two-tailed. Otherwise, it is right one-tailed. The
+        one-tailed p_value attribute might not be appropriate for some measures, as the
+        two-tailed. Therefore, it is better to rely on the est_sim attribute.
     n_jobs: int, optional
         number of cores to use for estimation. If -1 all available cpus will be used
     backend: str, optional
-        which backend to use with joblib. Options include "loky", "multiprocessing", or "threading"
+        which backend to use with joblib. Options include "loky", "multiprocessing",
+        or "threading"
     index_kwargs : dict, optional
         additional keyword arguments passed to the index class
 
@@ -207,16 +225,19 @@ class SingleValueTest:
 
     Notes
     -----
-    1) The different approaches for the null hypothesis affect directly the results of the inference depending on the
-    combination of the index type of seg_class and the null_approach chosen. Therefore, the user needs to be aware of
-    how these approaches are affecting the data generation process of the simulations in order to draw meaningful
-    conclusions. For example, the Modified Dissimilarity (ModifiedDissim) and  Modified Gini (ModifiedGiniSeg) indexes,
-    rely exactly on the distance between evenness through sampling which, therefore, the "evenness" value for null
+    1) The different approaches for the null hypothesis affect directly the results of
+    the inference depending on the combination of the index type of seg_class and the
+    null_approach chosen. Therefore, the user needs to be aware of how these approaches
+    are affecting the data generation process of the simulations in order to draw
+    meaningful conclusions. For example, the Modified Dissimilarity (ModifiedDissim)
+    and Modified Gini (ModifiedGiniSeg) indexes, rely exactly on the distance between
+    evenness through sampling which, therefore, the "evenness" value for null
     approach would not be the most appropriate for these indexes.
 
     Examples
     --------
-    Several examples can be found here https://github.com/pysal/segregation/blob/main/docs/notebooks/06_inference.ipynb.
+    Several examples can be found here
+    https://github.com/pysal/segregation/blob/main/docs/notebooks/06_inference.ipynb.
     """
 
     def __init__(
@@ -243,14 +264,16 @@ class SingleValueTest:
         self._class_name = aux[3]
 
     def plot(self, color="darkblue", kde=True, ax=None, **kwargs):
-        """Plot the distribution of simulated values and the observed index being tested.
+        """Plot the distribution of simulated values
+        and the observed index being tested.
 
         Parameters
         ----------
         color : str, optional
             color of histogram, by default 'darkblue'
         kde : bool, optional
-            Whether to plot the kernel density estimate along with the histogram, by default True
+            Whether to plot the kernel density estimate along with the histogram,
+            by default True
         ax : matplotlib.axes, optional
             axes object to plot onto, by default None
         kwargs : seaborn.histplot argument, optional
@@ -265,11 +288,14 @@ class SingleValueTest:
             import matplotlib.pyplot as plt
             import seaborn as sns
         except ImportError:
-            warnings.warn("This method relies on importing `matplotlib` and `seaborn`")
+            warnings.warn(
+                "This method relies on importing `matplotlib` and `seaborn`",
+                stacklevel=2,
+            )
 
         f = sns.histplot(self.est_sim, color=color, kde=kde, ax=ax, **kwargs)
         plt.axvline(self.statistic, color="red")
-        plt.title("{} (Value = {})".format(self._class_name, round(self.statistic, 3)))
+        plt.title(f"{self._class_name} (Value = {round(self.statistic, 3)})")
         return f
 
 
@@ -297,28 +323,31 @@ def _compare_segregation(
         Which type of null hypothesis the inference will iterate. One of the following:
 
         * ``random_label``:
-        Randomly assign each spatial unit to a region then recalculate segregation indices and take the difference
+        Randomly assign each spatial unit to a region then recalculate segregation
+        indices and take the difference
 
         * ``bootstrap``:
-        Use bootstrap resampling to generate distributions of the segregation index for each index in the comparison,
-        then use a two sample t-test to compare differences in the mean of each distribution
+        Use bootstrap resampling to generate distributions of the segregation index for
+        each index in the comparison, then use a two sample t-test to compare
+        differences in the mean of each distribution
 
         * ``composition``:
-        Generate counterfactual estimates for each region using the sim_composition approach.
-        On each iteration, generate a synthetic dataset for each region where each unit has a 50% chance
-        of belonging to the original data or the counterfactual data. Recalculate segregation indices on
-        the synthetic datasets.
+        Generate counterfactual estimates for each region using the sim_composition
+        approach. On each iteration, generate a synthetic dataset for each region where
+        each unit has a 50% chance of belonging to the original data or the
+        counterfactual data. Recalculate segregation indices on the synthetic datasets.
 
         * ``share``:
         Generate counterfactual estimates for each region using the sim_share approach.
-        On each iteration, generate a synthetic dataset for each region where each unit has a 50% chance
-        of belonging to the original data or the counterfactual data. Recalculate segregation indices on
-        the synthetic datasets.
+        On each iteration, generate a synthetic dataset for each region where each unit
+        has a 50% chance of belonging to the original data or the counterfactual data.
+        Recalculate segregation indices on the synthetic datasets.
 
         * ``dual_composition``:
         Generate counterfactual estimates for each region using the sim_dual_composition
-        approach. On each iteration, generate a synthetic dataset for each region where each unit has a 50%
-        chance of belonging to the original data or the counterfactual data. Recalculate segregation
+        approach. On each iteration, generate a synthetic dataset for each region where
+        each unit has a 50% chance of belonging to the original data or the
+        counterfactual data. Recalculate segregation
         indices on the synthetic datasets.
 
         * ``person_permutation``:
@@ -328,7 +357,8 @@ def _compare_segregation(
     n_jobs: int, optional
         number of cores to use for estimation. If -1 all available cpus will be used
     backend: str, optional
-        which backend to use with joblib. Options include "loky", "multiprocessing", or "threading"
+        which backend to use with joblib. Options include "loky", "multiprocessing",
+        or "threading"
     index_kwargs_1 : dict, optional
         extra parameters to pass to segregation index 1.
     index_kwargs_2 : dict, optional
@@ -345,10 +375,13 @@ def _compare_segregation(
 
     Notes
     -----
-    This function performs inference to compare two segregation measures. This can be either two measures of the same locations in two different points in time or it can be two different locations at the same point in time.
+    This function performs inference to compare two segregation measures. This can be
+    either two measures of the same locations in two different points in time or it
+    can be two different locations at the same point in time.
     The null hypothesis is H0: Segregation_1 is not different than Segregation_2.
 
-    Based on Rey, Sergio J., and Myrna L. Sastré-Gutiérrez. "Interregional inequality dynamics in Mexico." Spatial Economic Analysis 5.3 (2010): 277-298.
+    Based on Rey, Sergio J., and Myrna L. Sastré-Gutiérrez. "Interregional inequality
+    dynamics in Mexico." Spatial Economic Analysis 5.3 (2010): 277-298.
 
     """
     if not index_kwargs_1:
@@ -365,11 +398,14 @@ def _compare_segregation(
         "person_permutation",
         "bootstrap",
     ]:
-        raise ValueError(
-            f"null_approach must one of {list(DUAL_SIMULATORS.keys()) + ['random_label', 'person_permutation', 'bootstrap']}"
-        )
+        _null_approachs = list(DUAL_SIMULATORS.keys()) + [
+            "random_label",
+            "person_permutation",
+            "bootstrap",
+        ]
+        raise ValueError(f"null_approach must one of {_null_approachs}")
 
-    if type(seg_class_1) != type(seg_class_2):
+    if type(seg_class_1) is not type(seg_class_2):
         raise TypeError("seg_class_1 and seg_class_2 must be the same type/class.")
 
     point_estimation = seg_class_1.statistic - seg_class_2.statistic
@@ -399,9 +435,10 @@ def _compare_segregation(
             backend=backend,
             **index_kwargs_2,
         ).est_sim
-        # test statistic follows from <http://dx.doi.org/10.1016/j.jeconom.2008.11.004>, page 34
+        # test statistic follows from
+        # <http://dx.doi.org/10.1016/j.jeconom.2008.11.004>, page 34
         tt = (boot1.mean() - boot2.mean()) / np.sqrt(
-            (np.std(boot1) ** 2 + np.std(boot2) ** 2)
+            np.std(boot1) ** 2 + np.std(boot2) ** 2
         )
         # p-value from <https://docs.scipy.org/doc/scipy/reference/tutorial/stats.html>
         p_value = stats.t.sf(np.abs(tt), iterations - 1) * 2
@@ -478,10 +515,11 @@ def _compare_segregation(
         )
     estimates = pd.Series(estimates).dropna()
     if len(estimates) < iterations:
-        warnings.warn("Some observations were removed for NA values")
+        warnings.warn("Some observations were removed for NA values", stacklevel=2)
 
     # Two-Tailed p-value
-    # Obs.: the null distribution can be located far from zero. Therefore, this is the the appropriate way to calculate the two tailed p-value.
+    # Obs.: the null distribution can be located far from zero. Therefore, this is
+    # the appropriate way to calculate the two tailed p-value.
     aux1 = (point_estimation < estimates).sum()
     aux2 = (point_estimation > estimates).sum()
     p_value = 2 * np.array([aux1, aux2]).min() / len(estimates)
@@ -504,30 +542,35 @@ class TwoValueTest:
         Which type of null hypothesis the inference will iterate. One of the following:
 
         * ``random_label``:
-        Randomly assign each spatial unit to a region then recalculate segregation indices and take their
-        difference. Repeat this process `iterations` times to generate a reference distribution. Then test
-        the observed difference aginst this distribution.
+        Randomly assign each spatial unit to a region then recalculate segregation
+        indices and take their difference. Repeat this process `iterations` times
+        to generate a reference distribution. Then test the observed difference
+        aginst this distribution.
 
         * ``bootstrap``:
-        Use bootstrap resampling to generate distributions of each segregation index in the
-        comparison, then use a two sample t-test to compare differences between the distribution means.
+        Use bootstrap resampling to generate distributions of each segregation index in
+        the comparison, then use a two sample t-test to compare differences between
+        the distribution means.
 
         * ``composition``:
-        Generate counterfactual estimates for each region using the sim_composition approach.
-        On each iteration, generate a synthetic dataset for each region where each unit has a 50% chance
-        of belonging to the original data or the counterfactual data. Recalculate segregation indices on
+        Generate counterfactual estimates for each region using the sim_composition
+        approach. On each iteration, generate a synthetic dataset for each region
+        where each unit has a 50% chance of belonging to the original data or the
+        counterfactual data. Recalculate segregation indices on
         the synthetic datasets.
 
         * ``share``:
         Generate counterfactual estimates for each region using the sim_share approach.
-        On each iteration, generate a synthetic dataset for each region where each unit has a 50% chance
-        of belonging to the original data or the counterfactual data. Recalculate segregation indices on
-        the synthetic datasets. Then follow the random labeling method on these synthetic data
+        On each iteration, generate a synthetic dataset for each region where each unit
+        has a 50% chance of belonging to the original data or the counterfactual data.
+        Recalculate segregation indices on the synthetic datasets. Then follow the
+        random labeling method on these synthetic data
 
         * ``dual_composition``:
         Generate counterfactual estimates for each region using the sim_dual_composition
-        approach. On each iteration, generate a synthetic dataset for each region where each unit has a 50%
-        chance of belonging to the original data or the counterfactual data. Then follow the random labeling
+        approach. On each iteration, generate a synthetic dataset for each region where
+        each unit has a 50% chance of belonging to the original data or the
+        counterfactual data. Then follow the random labeling
         method on these synthetic data
 
         * ``person_permutation``:
@@ -537,7 +580,8 @@ class TwoValueTest:
     n_jobs: int, optional
         number of cores to use for estimation. If -1 all available cpus will be used
     backend: str, optional
-        which backend to use with joblib. Options include "loky", "multiprocessing", or "threading"
+        which backend to use with joblib. Options include "loky", "multiprocessing",
+        or "threading"
     index_kwargs_1 : dict, optional
         extra parameters to pass to segregation index 1.
     index_kwargs_2 : dict, optional
@@ -554,15 +598,17 @@ class TwoValueTest:
 
     Notes
     -----
-    This function performs inference to compare two segregation measures. This can be either
-    two measures of the same locations in two different points in time or it can be two
-    different locations at the same point in time. The null hypothesis is H0: Segregation_1
-    is not different than Segregation_2.
-    Based on Rey, Sergio J., and Myrna L. Sastré-Gutiérrez. "Interregional inequality dynamics in Mexico." Spatial Economic Analysis 5.3 (2010): 277-298.
+    This function performs inference to compare two segregation measures. This can be
+    either two measures of the same locations in two different points in time or it can
+    be two different locations at the same point in time. The null hypothesis is H0:
+    Segregation_1 is not different than Segregation_2.
+    Based on Rey, Sergio J., and Myrna L. Sastré-Gutiérrez. "Interregional inequality
+    dynamics in Mexico." Spatial Economic Analysis 5.3 (2010): 277-298.
 
     Examples
     --------
-    Several examples can be found here https://github.com/pysal/segregation/blob/main/docs/notebooks/06_inference.ipynb.
+    Several examples can be found here
+    https://github.com/pysal/segregation/blob/main/docs/notebooks/06_inference.ipynb.
     """
 
     def __init__(
@@ -575,7 +621,6 @@ class TwoValueTest:
         backend="loky",
         index_kwargs_1=None,
         index_kwargs_2=None,
-        **kwargs,
     ):
         aux = _compare_segregation(
             seg_class_1,
@@ -620,7 +665,10 @@ class TwoValueTest:
             import matplotlib.pyplot as plt
             import seaborn as sns
         except ImportError:
-            warnings.warn("This method relies on importing `matplotlib` and `seaborn`")
+            warnings.warn(
+                "This method relies on importing `matplotlib` and `seaborn`",
+                stacklevel=2,
+            )
         if ax is None:
             _, ax = plt.subplots()
 
