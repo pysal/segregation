@@ -27,7 +27,6 @@ def _multi_local_simpson_concentration(data, groups):
 
     Returns
     -------
-
     statistics : np.array(n)
         Local Simpson concentration values for each unit
     core_data : pandas.DataFrame
