@@ -1,6 +1,10 @@
 """Multigroup dissimilarity index"""
 
-__author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
+__author__ = (
+    "Renan X. Cortes <renanc@ucr.edu>, "
+    "Sergio J. Rey <sergio.rey@ucr.edu>, "
+    "and Elijah Knaap <elijah.knaap@ucr.edu>"
+)
 
 import numpy as np
 
@@ -11,27 +15,27 @@ np.seterr(divide="ignore", invalid="ignore")
 
 def _multi_local_diversity(data, groups):
     """
-    Calculation of Local Diversity index for each group and unit
+    Calculation of Local Diversity index for each group and unit.
 
     Parameters
     ----------
-
-    data   : a pandas DataFrame of n rows
-    groups : list of strings of length k.
-             The variables names in data of the groups of interest of the analysis.
+    data : pandas.DataFrame
+        A pandas DataFrame of n rows.
+    groups : list[str, ...]
+        List of strings of length k.
+        The variables names in data of the groups of interest of the analysis.
 
     Returns
     -------
-
     statistics : np.array(n,k)
-                 Local Diversity values for each group and unit
-
-    core_data  : a pandas DataFrame
-                 A pandas DataFrame that contains the columns used to perform the estimate.
+        Local Diversity values for each group and unit
+    core_data : pandas.DataFrame
+        A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on Theil, Henry. Statistical decomposition analysis; with applications in the social and administrative sciences. No. 04; HA33, T4.. 1972.
+    Based on Theil, Henry. Statistical decomposition analysis; with applications
+    in the social and administrative sciences. No. 04; HA33, T4.. 1972.
 
     Reference: :cite:`theil1972statistical`.
 
@@ -63,7 +67,8 @@ class MultiLocalDiversity(MultiGroupIndex, SpatialImplicitIndex):
     network : pandarm.Network
         pandarm Network object representing the study area
     distance : int
-        Maximum distance (in units of geodataframe CRS) to consider the extent of the egohood
+        Maximum distance (in units of geodataframe CRS)
+        to consider the extent of the egohood
     decay : str
         type of decay function to apply. Options include
     precompute : bool
@@ -73,7 +78,7 @@ class MultiLocalDiversity(MultiGroupIndex, SpatialImplicitIndex):
     ----------
     statistic : float
         Multigroup Dissimilarity Index value
-    core_data : a pandas DataFrame
+    core_data : pandas.DataFrame
         DataFrame that contains the columns used to perform the estimate.
     """
 
