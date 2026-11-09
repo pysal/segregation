@@ -44,16 +44,14 @@ def _generate_counterfactual(
     ----------
     data1 : pd.DataFrame or gpd.DataFrame
         Pandas or Geopandas dataframe holding data for context 1
-
     data2 : pd.DataFrame or gpd.DataFrame
         Pandas or Geopandas dataframe holding data for context 2
-
     group_pop_var : str
-        The name of variable in both data that contains the population size of the group of interest
-
+        The name of variable in both data that contains
+        the population size of the group of interest
     total_pop_var : str
-        The name of variable in both data that contains the total population of the unit
-
+        The name of variable in both data that
+        contains the total population of the unit
     approach : str, ["composition", "share", "dual_composition"]
         Which approach to use for generating the counterfactual.
         Options include "composition", "share", or "dual_composition"
@@ -61,7 +59,8 @@ def _generate_counterfactual(
     Returns
     -------
     two DataFrames
-        df1 and df2  with appended columns 'counterfactual_group_pop', 'counterfactual_total_pop', 'group_composition' and 'counterfactual_composition'
+        df1 and df2  with appended columns 'counterfactual_group_pop',
+        'counterfactual_total_pop', 'group_composition' and 'counterfactual_composition'
 
     """
     df1, df2 = DUAL_SIMULATORS[counterfactual_approach](
@@ -96,19 +95,23 @@ def sim_composition(
     group_pop_var2,
     total_pop_var2,
 ):
-    """Simulate the spatial distribution of a population group in a region using the CDF of a comparison region.
+    """Simulate the spatial distribution of a population group
+    in a region using the CDF of a comparison region.
 
-    For each spatial unit i in region 1, take the unit's percentile in the distribution, and swap the group composition
-    with the value of the corresponding percentile in region 2. The composition is the minority population of unit i
-    divided by total population of tract i. This approach will shift the relative composition of each spatial
-    unit without changing its total population.
+    For each spatial unit i in region 1, take the unit's percentile in the distribution,
+    and swap the group composition with the value of the corresponding percentile in
+    region 2. The composition is the minority population of unit i divided by total
+    population of tract i. This approach will shift the relative composition of each
+    spatial unit without changing its total population.
 
     Parameters
     ----------
     df1 : pandas.DataFrame or geopandas.GeoDataFrame
-        dataframe for first dataset with columns holding group and total population counts
+        dataframe for first dataset with columns holding group
+        and total population counts
     df2 : pandas.DataFrame or geopandas.GeoDataFrame
-        dataframe for second dataset with columns holding group and total population counts
+        dataframe for second dataset with columns holding group
+        and total population counts
     group_pop_var1 : str
         column holding population counts for group of interest on input df1
     total_pop_var1 : str
@@ -158,9 +161,11 @@ def sim_dual_composition(
     Parameters
     ----------
     df1 : pandas.DataFrame or geopandas.GeoDataFrame
-        dataframe for first dataset with columns holding group and total population counts
+        dataframe for first dataset with columns holding group
+        and total population counts
     df2 : pandas.DataFrame or geopandas.GeoDataFrame
-        dataframe for second dataset with columns holding group and total population counts
+        dataframe for second dataset with columns holding group
+        and total population counts
     group_pop_var1 : str
         column holding population counts for group of interest on input df1
     total_pop_var1 : str
@@ -225,19 +230,23 @@ def sim_share(
     group_pop_var2,
     total_pop_var2,
 ):
-    """Simulate the spatial population distribution of a region using the CDF of a comparison region.
+    """Simulate the spatial population distribution of a region
+    using the CDF of a comparison region.
 
-    For each spatial unit i in region 1, take the unit's percentile in the distribution, and swap the group share
-    with the value of the corresponding percentile in region 2. The share is the minority population of unit i
-    divided by total population of minority population. This approach will shift the total population of
+    For each spatial unit i in region 1, take the unit's percentile in the distribution,
+    and swap the group share with the value of the corresponding percentile in region 2.
+    The share is the minority population of unit i divided by total population of
+    minority population. This approach will shift the total population of
     each unit without changing the regional proportion of each group
 
     Parameters
     ----------
     df1 : pandas.DataFrame or geopandas.GeoDataFrame
-        dataframe for first dataset with columns holding group and total population counts
+        dataframe for first dataset with columns holding group
+        and total population counts
     df2 : pandas.DataFrame or geopandas.GeoDataFrame
-        dataframe for second dataset with columns holding group and total population counts
+        dataframe for second dataset with columns holding group
+        and total population counts
     group_pop_var1 : str
         column holding population counts for group of interest on input df1
     total_pop_var1 : str
@@ -266,8 +275,8 @@ def sim_share(
     df1["compl_share"] = (df1["compl_pop_var"] / df1["compl_pop_var"].sum()).fillna(0)
     df2["compl_share"] = (df2["compl_pop_var"] / df2["compl_pop_var"].sum()).fillna(0)
 
-    # Rescale due to possibility of the summation of the counterfactual share values being grater or lower than 1
-    # CT stands for Correction Term
+    # Rescale due to possibility of the summation of the counterfactual share values
+    # being grater or lower than 1 - CT stands for Correction Term
     CT1_2_group = df1["share"].rank(pct=True).apply(df2["share"].quantile).sum()
     CT2_1_group = df2["share"].rank(pct=True).apply(df1["share"].quantile).sum()
 
@@ -282,8 +291,8 @@ def sim_share(
         * df2[group_pop_var2].sum()
     )
 
-    # Rescale due to possibility of the summation of the counterfactual share values being grater or lower than 1
-    # CT stands for Correction Term
+    # Rescale due to possibility of the summation of the counterfactual share
+    # values being grater or lower than 1 - CT stands for Correction Term
     CT1_2_compl = (
         df1["compl_share"].rank(pct=True).apply(df2["compl_share"].quantile).sum()
     )
@@ -325,7 +334,8 @@ def _prepare_random_label(seg_class_1, seg_class_2):
     data_2["grouping_variable"] = "Group_2"
 
     if isinstance(seg_class_1, SingleGroupIndex):
-        # This step is just to make sure the each frequency column is integer for the approaches and from the same type in order to be able to stack them
+        # This step is just to make sure the each frequency column is integer for the
+        # approaches and from the same type in order to be able to stack them
         data_1.loc[:, (seg_class_1.group_pop_var, seg_class_1.total_pop_var)] = (
             data_1.loc[:, (seg_class_1.group_pop_var, seg_class_1.total_pop_var)]
             .round(0)
@@ -403,7 +413,8 @@ def _estimate_random_label_difference(data):
             stacked_data[groups] = stacked_data.iloc[shuffled_indices][groups].values
 
         else:
-            # these two cols need to be permuted together to maintain the relationship between group and total population counts
+            # these two cols need to be permuted together to maintain the relationship
+            # between group and total population counts
             stacked_data[["group", "total"]] = stacked_data.iloc[shuffled_indices][
                 ["group", "total"]
             ].values
