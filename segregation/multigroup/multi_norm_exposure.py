@@ -1,6 +1,10 @@
 """Multigroup Normalized Exposure index"""
 
-__author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
+__author__ = (
+    "Renan X. Cortes <renanc@ucr.edu>, "
+    "Sergio J. Rey <sergio.rey@ucr.edu>, "
+    "and Elijah Knaap <elijah.knaap@ucr.edu>"
+)
 
 import numpy as np
 from geopandas import GeoDataFrame
@@ -16,24 +20,22 @@ def _multi_normalized_exposure(data, groups):
 
     Parameters
     ----------
-
-    data   : a pandas DataFrame
-
-    groups : list of strings.
-             The variables names in data of the groups of interest of the analysis.
+    data : pandas.DataFrame
+        A pandas DataFrame
+    groups : liat[str, ...]
+        The variables names in data of the groups of interest of the analysis.
 
     Returns
     -------
-
     statistic : float
-                Multigroup Normalized Exposure Index
-
-    core_data : a pandas DataFrame
-                A pandas DataFrame that contains the columns used to perform the estimate.
+        Multigroup Normalized Exposure Index
+    core_data : pandas.DataFrame
+        A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
+    Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup
+    segregation." Sociological methodology 32.1 (2002): 33-67.
 
     Reference: :cite:`reardon2002measures`.
 
@@ -71,7 +73,8 @@ class MultiNormExposure(MultiGroupIndex, SpatialImplicitIndex):
     network : pandarm.Network
         pandarm Network object representing the study area
     distance : int
-        Maximum distance (in units of geodataframe CRS) to consider the extent of the egohood
+        Maximum distance (in units of geodataframe CRS)
+        to consider the extent of the egohood
     decay : str
         type of decay function to apply. Options include
     precompute : bool
@@ -81,12 +84,13 @@ class MultiNormExposure(MultiGroupIndex, SpatialImplicitIndex):
     ----------
     statistic : float
         Multigroup Dissimilarity Index value
-    core_data : a pandas DataFrame
+    core_data : pandas.DataFrame
         DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
+    Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup
+    segregation." Sociological methodology 32.1 (2002): 33-67.
 
     Reference: :cite:`reardon2002measures`.
     """
@@ -101,7 +105,6 @@ class MultiNormExposure(MultiGroupIndex, SpatialImplicitIndex):
         decay=None,
         precompute=None,
         function="triangular",
-        **kwargs,
     ):
         """Init."""
         MultiGroupIndex.__init__(self, data, groups)
