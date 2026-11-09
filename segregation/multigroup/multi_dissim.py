@@ -1,6 +1,10 @@
 """Multigroup dissimilarity index"""
 
-__author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
+__author__ = (
+    "Renan X. Cortes <renanc@ucr.edu>, "
+    "Sergio J. Rey <sergio.rey@ucr.edu>, "
+    "and Elijah Knaap <elijah.knaap@ucr.edu>"
+)
 
 import numpy as np
 from geopandas import GeoDataFrame
@@ -29,7 +33,8 @@ def _multi_dissim(data, groups):
 
     Notes
     -----
-    Based on Sakoda, James M. "A generalized index of dissimilarity." Demography 18.2 (1981): 245-250.
+    Based on Sakoda, James M. "A generalized index of dissimilarity."
+    Demography 18.2 (1981): 245-250.
 
     Reference: :cite:`sakoda1981generalized`.
 
@@ -75,7 +80,8 @@ class MultiDissim(MultiGroupIndex, SpatialImplicitIndex):
     network : pandarm.Network
         pandarm Network object representing the study area
     distance : int
-        Maximum distance (in units of geodataframe CRS) to consider the extent of the egohood
+        Maximum distance (in units of geodataframe CRS)
+        to consider the extent of the egohood
     decay : str
         type of decay function to apply. Options include
     precompute : bool
@@ -99,7 +105,6 @@ class MultiDissim(MultiGroupIndex, SpatialImplicitIndex):
         decay=None,
         precompute=None,
         function="triangular",
-        **kwargs,
     ):
         """Init."""
 
