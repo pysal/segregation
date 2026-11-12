@@ -49,11 +49,11 @@ def simulate_null(
     Parameters
     ----------
     iterations : int, required
-        Number of iterations to simulate (size of the distribution), by default 1000
+        Number of iterations to simulate (size of the distribution), by default 500
     sim_func : function, required
         population randomization function from segregation.inference to serve as
         the null hypothesis.
-    seg_func : Class from segregation.singlegroup or segregation.singlegroup, required
+    seg_class : Class from segregation.singlegroup or segregation.multigroup, required
         fitted segregation class from which to generate a reference distribution
     n_jobs : int, optional
         number of cpus to initialize for parallelization. If -1, use all available,
