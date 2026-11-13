@@ -16,7 +16,8 @@ def _global_distortion(
 ):
     """
     A segregation metric, using Kullback-Leiber (KL) divergence to quantify the
-    difference in the population characteristics between (1) an area and (2) the total population.
+    difference in the population characteristics between
+    (1) an area and (2) the total population.
 
     This function utilises the methodology proposed in
     Olteanu et al. (2019): 'Segregation through the multiscalar lens'. Which can be
@@ -25,21 +26,22 @@ def _global_distortion(
     Arguments
     ----------
     gdf : geopandas.GeoDataFrame
-        geodataframe with group population counts (not percentages) to be included in the analysis.
+        geodataframe with group population counts (not percentages)
+        to be included in the analysis.
     groups : list
         list of columns on gdf that contain population counts of interest
     metric : str (optional; 'euclidean' by default)
         Distance metric for calculating pairwise distances,
         Accepts any inputs to `scipy.spatial.distance.pdist`.
         Ignored if passing a network or distance matrix
-    network: pandarm.Network object (optional)
+    network : pandarm.Network object (optional)
         A pandarm Network object used to compute distance between observations
     distance_matrix: numpy.array
         numpy array of distances between observations in the dataset
-    normalize: bool
+    normalize : bool
         If True, standardize the measure by the theoretical maximum segregation
         value for this dataset
-    n_seeds: int (optional; 4 by default)
+    n_seeds : int (optional; 4 by default)
         Number of corner positions used to build the maximally-segregated
         reference landscape. The normalization constant is the maximum over all
         of them, so raising this yields a tighter estimate of the theoretical
@@ -86,7 +88,8 @@ def _global_distortion(
         )
         aux["divergence"] = aux["divergence"] / N
 
-    # the global multiplies the population at each location by the distortion coefficient they experience
+    # the global multiplies the population at each location
+    # by the distortion coefficient they experience
     aux["coefs"] = aux["divergence"] * df.sum(axis=1)
     stat = (1 / total_pop) * aux["coefs"].sum()
 
@@ -158,8 +161,9 @@ class GlobalDistortion(MultiGroupIndex, SpatialExplicitIndex):
     normalizing with the global index of the extreme configuration -- that would
     depart from the published definition.
 
-    Based on Bézenac, C., Clark, W. A. V., Olteanu, M., & Randon‐Furling, J. (2022). Measuring and Visualizing Patterns
-    of Ethnic Concentration: The Role of Distortion Coefficients. Geographical Analysis, 54(1), 173–196.
+    Based on Bézenac, C., Clark, W. A. V., Olteanu, M., & Randon‐Furling, J. (2022).
+    Measuring and Visualizing Patterns of Ethnic Concentration: The Role of
+    Distortion Coefficients. Geographical Analysis, 54(1), 173–196.
     https://doi.org/10.1111/gean.12271
 
     Reference: :cite:`debezenac2021`.
@@ -174,7 +178,7 @@ class GlobalDistortion(MultiGroupIndex, SpatialExplicitIndex):
         distance_matrix=None,
         normalize=True,
         n_seeds=4,
-        **kwargs,
+        **kwargs,  # noqa: ARG002 - Unused method argument - fails test_batch_compute.py::test_batch_multi
     ):
         """Init."""
 

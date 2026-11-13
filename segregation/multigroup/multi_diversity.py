@@ -1,6 +1,10 @@
 """Multigroup Diversity index"""
 
-__author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
+__author__ = (
+    "Renan X. Cortes <renanc@ucr.edu>, "
+    "Sergio J. Rey <sergio.rey@ucr.edu>, "
+    "and Elijah Knaap <elijah.knaap@ucr.edu>"
+)
 
 import numpy as np
 from geopandas import GeoDataFrame
@@ -15,25 +19,32 @@ def _multi_diversity(data, groups, normalized=False):
 
     Parameters
     ----------
-    data   : a pandas DataFrame
-    groups : list of strings.
-             The variables names in data of the groups of interest of the analysis.
+    data : pandas.DataFrame
+        A pandas DataFrame
+    groups : list[str, ...]
+        List of strings.
+        The variables names in data of the groups of interest of the analysis.
 
     Returns
     -------
-
-    statistic  : float
-                 Multigroup Diversity Index
-    core_data  : a pandas DataFrame
-                 A pandas DataFrame that contains the columns used to perform the estimate.
-    normalized : bool. Default is False.
-                 Wheter the resulting index will be divided by its maximum (natural log of the number of groups)
+    statistic : float
+        Multigroup Diversity Index
+    core_data : pandas.DataFrame
+        A pandas DataFrame that contains the columns used to perform the estimate.
+    normalized : bool, Default is False
+        Whether the resulting index will be divided by its maximum
+        (natural log of the number of groups)
 
     Notes
     -----
-    Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67 and Theil, Henry. "Statistical decomposition analysis; with applications in the social and administrative sciences". No. 04; HA33, T4.. 1972.
+    Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup
+    segregation." Sociological methodology 32.1 (2002): 33-67 and Theil, Henry.
+    "Statistical decomposition analysis; with applications in the social and
+    administrative sciences". No. 04; HA33, T4.. 1972.
 
-    This is also know as Theil's Entropy Index (Equation 2 of page 37 of Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67)
+    This is also know as Theil's Entropy Index (Equation 2 of page 37 of Reardon,
+    Sean F., and Glenn Firebaugh. "Measures of multigroup segregation."
+    Sociological methodology 32.1 (2002): 33-67)
 
     High diversity means less segregation.
 
@@ -70,26 +81,33 @@ class MultiDiversity(MultiGroupIndex, SpatialImplicitIndex):
     network : pandarm.Network
         pandarm Network object representing the study area
     distance : int
-        Maximum distance (in units of geodataframe CRS) to consider the extent of the egohood
+        Maximum distance (in units of geodataframe CRS)
+        to consider the extent of the egohood
     decay : str
         type of decay function to apply. Options include
     precompute : bool
         Whether to precompute the pandarm Network object
-    normalized : bool. Default is False.
-        Whether the resulting index will be divided by its maximum (natural log of the number of groups)
+    normalized : bool, Default is False
+        Whether the resulting index will be divided by its maximum
+        (natural log of the number of groups)
 
     Attributes
     ----------
     statistic : float
         Multigroup Dissimilarity Index value
-    core_data : a pandas DataFrame
+    core_data : pandas.DataFrame
         DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67 and Theil, Henry. "Statistical decomposition analysis; with applications in the social and administrative sciences". No. 04; HA33, T4.. 1972.
+    Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup
+    segregation." Sociological methodology 32.1 (2002): 33-67 and Theil, Henry.
+    "Statistical decomposition analysis; with applications in the social and
+    administrative sciences". No. 04; HA33, T4.. 1972.
 
-    This is also know as Theil's Entropy Index (Equation 2 of page 37 of Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67)
+    This is also know as Theil's Entropy Index (Equation 2 of page 37 of Reardon,
+    Sean F., and Glenn Firebaugh. "Measures of multigroup segregation."
+    Sociological methodology 32.1 (2002): 33-67)
 
     High diversity means less segregation.
 
@@ -107,7 +125,6 @@ class MultiDiversity(MultiGroupIndex, SpatialImplicitIndex):
         decay=None,
         precompute=None,
         function="triangular",
-        **kwargs,
     ):
         """Init."""
         MultiGroupIndex.__init__(self, data, groups)

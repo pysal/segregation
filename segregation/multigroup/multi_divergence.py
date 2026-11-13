@@ -1,6 +1,10 @@
 """Multigroup Divergence index"""
 
-__author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
+__author__ = (
+    "Renan X. Cortes <renanc@ucr.edu>, "
+    "Sergio J. Rey <sergio.rey@ucr.edu>, "
+    "and Elijah Knaap <elijah.knaap@ucr.edu>"
+)
 
 import numpy as np
 from geopandas import GeoDataFrame
@@ -16,24 +20,23 @@ def _multi_divergence(data, groups):
 
     Parameters
     ----------
-
-    data   : a pandas DataFrame
-
-    groups : list of strings.
-             The variables names in data of the groups of interest of the analysis.
+    data : pandas.DataFrame
+        A pandas DataFrame
+    groups : list[str, ...]
+        list of strings.
+        The variables names in data of the groups of interest of the analysis.
 
     Returns
     -------
-
     statistic : float
-                Multigroup Divergence Index
-
-    core_data : a pandas DataFrame
-                A pandas DataFrame that contains the columns used to perform the estimate.
+        Multigroup Divergence Index
+    core_data : pandas.DataFrame
+        A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on Roberto, Elizabeth. "The Divergence Index: A Decomposable Measure of Segregation and Inequality." arXiv preprint arXiv:1508.01167 (2015).
+    Based on Roberto, Elizabeth. "The Divergence Index: A Decomposable Measure of
+    Segregation and Inequality." arXiv preprint arXiv:1508.01167 (2015).
 
     Reference: :cite:`roberto2015divergence`.
 
@@ -73,7 +76,8 @@ class MultiDivergence(MultiGroupIndex, SpatialImplicitIndex):
     network : pandarm.Network
         pandarm Network object representing the study area
     distance : int
-        Maximum distance (in units of geodataframe CRS) to consider the extent of the egohood
+        Maximum distance (in units of geodataframe CRS)
+        to consider the extent of the egohood
     decay : str
         type of decay function to apply. Options include
     precompute : bool
@@ -83,7 +87,7 @@ class MultiDivergence(MultiGroupIndex, SpatialImplicitIndex):
     ----------
     statistic : float
         Multigroup Dissimilarity Index value
-    core_data : a pandas DataFrame
+    core_data : pandas.DataFrame
         DataFrame that contains the columns used to perform the estimate.
     """
 
@@ -97,7 +101,6 @@ class MultiDivergence(MultiGroupIndex, SpatialImplicitIndex):
         decay=None,
         precompute=None,
         function="triangular",
-        **kwargs,
     ):
         """Init."""
 

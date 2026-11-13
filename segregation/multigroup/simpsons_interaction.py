@@ -1,9 +1,14 @@
 """Multigroup Simpson's Concentration index"""
 
-__author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
+__author__ = (
+    "Renan X. Cortes <renanc@ucr.edu>, "
+    "Sergio J. Rey <sergio.rey@ucr.edu>, "
+    "and Elijah Knaap <elijah.knaap@ucr.edu>"
+)
 
 import numpy as np
 from geopandas import GeoDataFrame
+
 from .._base import MultiGroupIndex, SpatialImplicitIndex
 
 np.seterr(divide="ignore", invalid="ignore")
@@ -15,26 +20,26 @@ def _simpsons_interaction(data, groups):
 
     Parameters
     ----------
-
-    data   : a pandas DataFrame
-
-    groups : list of strings.
-             The variables names in data of the groups of interest of the analysis.
+    data : pandas.DataFrame
+        A pandas DataFrame
+    groups : list[str, ...]
+        The variables names in data of the groups of interest of the analysis.
 
     Returns
     -------
-
-    statistic  : float
-                 Simpson's Interaction Index
-
-    core_data  : a pandas DataFrame
-                 A pandas DataFrame that contains the columns used to perform the estimate.
+    statistic : float
+        Simpson's Interaction Index
+    core_data : pandas.DataFrame
+        A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on Equation 1 of page 37 of Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
+    Based on Equation 1 of page 37 of Reardon, Sean F., and Glenn Firebaugh. "Measures
+    of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
 
-    Simpson's interaction index (I) can be simply interpreted as the probability that two individuals chosen at random and independently from the population will be found to not belong to the same group.
+    Simpson's interaction index (I) can be simply interpreted as the probability that
+    two individuals chosen at random and independently from the population will be
+    found to not belong to the same group.
 
     Higher values means lesser segregation.
 
@@ -49,7 +54,7 @@ def _simpsons_interaction(data, groups):
 
     Pk = df.sum(axis=0) / df.sum()
 
-    I = (Pk * (1 - Pk)).sum()
+    I = (Pk * (1 - Pk)).sum()  # noqa: E741 - Ambiguous variable name
     if isinstance(data, GeoDataFrame):
         core_data = data[[data.geometry.name]].join(core_data)
     return I, core_data, groups
@@ -69,7 +74,8 @@ class SimpsonsInteraction(MultiGroupIndex, SpatialImplicitIndex):
     network : pandarm.Network
         pandarm Network object representing the study area
     distance : int
-        Maximum distance (in units of geodataframe CRS) to consider the extent of the egohood
+        Maximum distance (in units of geodataframe CRS)
+        to consider the extent of the egohood
     decay : str
         type of decay function to apply. Options include
     precompute : bool
@@ -79,14 +85,17 @@ class SimpsonsInteraction(MultiGroupIndex, SpatialImplicitIndex):
     ----------
     statistic : float
         Multigroup Dissimilarity Index value
-    core_data : a pandas DataFrame
+    core_data : pandas.DataFrame
         DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on Equation 1 of page 37 of Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
+    Based on Equation 1 of page 37 of Reardon, Sean F., and Glenn Firebaugh.
+    "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
 
-    Simpson's interaction index (I) can be simply interpreted as the probability that two individuals chosen at random and independently from the population will be found to not belong to the same group.
+    Simpson's interaction index (I) can be simply interpreted as the probability that
+    two individuals chosen at random and independently from the population will be
+    found to not belong to the same group.
 
     Higher values means lesser segregation.
 
@@ -105,7 +114,6 @@ class SimpsonsInteraction(MultiGroupIndex, SpatialImplicitIndex):
         decay=None,
         precompute=None,
         function="triangular",
-        **kwargs,
     ):
         """Init."""
         MultiGroupIndex.__init__(self, data, groups)

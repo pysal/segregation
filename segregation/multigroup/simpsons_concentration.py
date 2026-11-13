@@ -1,6 +1,10 @@
 """Multigroup Simpson's Concentration index"""
 
-__author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
+__author__ = (
+    "Renan X. Cortes <renanc@ucr.edu>, "
+    "Sergio J. Rey <sergio.rey@ucr.edu>, "
+    "and Elijah Knaap <elijah.knaap@ucr.edu>"
+)
 
 import numpy as np
 from geopandas import GeoDataFrame
@@ -16,26 +20,25 @@ def _simpsons_concentration(data, groups):
 
     Parameters
     ----------
-
-    data   : a pandas DataFrame
-
-    groups : list of strings.
-             The variables names in data of the groups of interest of the analysis.
+    data : pandas.DataFrame
+        A pandas DataFrame
+    groups : list[str, ...]
+        The variables names in data of the groups of interest of the analysis.
 
     Returns
     -------
-
-    statistic  : float
-                 Simpson's Concentration Index
-
-    core_data  : a pandas DataFrame
-                 A pandas DataFrame that contains the columns used to perform the estimate.
+    statistic : float
+        Simpson's Concentration Index
+    core_data : pandas.DataFrame
+        A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
     Based on Simpson, Edward H. "Measurement of diversity." nature 163.4148 (1949): 688.
 
-    Simpson's concentration index (Lambda) can be simply interpreted as the probability that two individuals chosen at random and independently from the population will be found to belong to the same group.
+    Simpson's concentration index (Lambda) can be simply interpreted as the probability
+    that two individuals chosen at random and independently from the population will be
+    found to belong to the same group.
 
     Higher values means higher segregation.
 
@@ -70,7 +73,8 @@ class SimpsonsConcentration(MultiGroupIndex, SpatialImplicitIndex):
     network : pandarm.Network
         pandarm Network object representing the study area
     distance : int
-        Maximum distance (in units of geodataframe CRS) to consider the extent of the egohood
+        Maximum distance (in units of geodataframe CRS)
+        to consider the extent of the egohood
     decay : str
         type of decay function to apply. Options include
     precompute : bool
@@ -80,12 +84,13 @@ class SimpsonsConcentration(MultiGroupIndex, SpatialImplicitIndex):
     ----------
     statistic : float
         Multigroup Dissimilarity Index value
-    core_data : a pandas DataFrame
+    core_data : pandas.DataFrame
         DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup segregation." Sociological methodology 32.1 (2002): 33-67.
+    Based on Reardon, Sean F., and Glenn Firebaugh. "Measures of multigroup
+    segregation." Sociological methodology 32.1 (2002): 33-67.
 
     Reference: :cite:`reardon2002measures`.
     """
@@ -100,7 +105,6 @@ class SimpsonsConcentration(MultiGroupIndex, SpatialImplicitIndex):
         decay=None,
         precompute=None,
         function="triangular",
-        **kwargs,
     ):
         """Init."""
         MultiGroupIndex.__init__(self, data, groups)
