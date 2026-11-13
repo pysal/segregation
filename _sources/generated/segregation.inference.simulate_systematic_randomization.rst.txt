@@ -1,0 +1,6 @@
+﻿segregation.inference.simulate\_systematic\_randomization
+=========================================================
+
+.. currentmodule:: segregation.inference
+
+.. autofunction:: simulate_systematic_randomization
