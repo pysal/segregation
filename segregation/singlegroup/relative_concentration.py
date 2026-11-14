@@ -123,7 +123,7 @@ class RelativeConcentration(SingleGroupIndex, SpatialExplicitIndex):
         data,
         group_pop_var,
         total_pop_var,
-        **kwargs,
+        **kwargs,  # noqa: ARG002 - Unused method argument - fails test_batch_compute.py::test_batch_single
     ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
