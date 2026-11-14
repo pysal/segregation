@@ -1,6 +1,10 @@
 """Spatial Dissimilarity Index."""
 
-__author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
+__author__ = (
+    "Renan X. Cortes <renanc@ucr.edu>, "
+    "Sergio J. Rey <sergio.rey@ucr.edu>, "
+    "and Elijah Knaap <elijah.knaap@ucr.edu>"
+)
 
 import libpysal
 import numpy as np
@@ -15,31 +19,37 @@ def _spatial_dissim(data, group_pop_var, total_pop_var, w=None, standardize=Fals
 
     Parameters
     ----------
-    data : a geopandas DataFrame with a geometry column.
-    group_pop_var : string
-        The name of variable in data that contains the population size of the group of interest
-    total_pop_var : string
+    data : pandas.DataFrame or geopandas.GeoDataFrame
+        dataframe or geodataframe if spatial index holding data for location of interest
+    group_pop_var : str
+        The name of variable in data that contains
+        the population size of the group of interest
+    total_pop_var : str
         The name of variable in data that contains the total population of the unit
     w : W
         A PySAL weights object. If not provided, Queen contiguity matrix is used.
-    standardize  : boolean
-        A condition for row standardisation of the weights matrices. If True, the values of cij in the formulas gets row standardized.
-        For the sake of comparison, the seg R package of Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
-        works by default with row standardization.
+    standardize : bool
+        A condition for row standardisation of the weights matrices.
+        If True, the values of cij in the formulas gets row standardized.
+        For the sake of comparison, the seg R package of Hong, Seong-Yun
+        David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation
+        measures in R." PloS one 9.11 (2014): e113767.
+        works by default without row standardization.
+
 
     Returns
     ----------
     statistic : float
         Spatial Dissimilarity Index
-    core_data : a geopandas DataFrame
+    core_data : geopandas.GeoDataFrame
         A geopandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on Morrill, R. L. (1991) "On the Measure of Geographic Segregation". Geography Research Forum.
+    Based on Morrill, R. L. (1991) "On the Measure of Geographic Segregation".
+    Geography Research Forum.
 
     Reference: :cite:`morrill1991measure`.
-
     """
     if type(standardize) is not bool:
         raise TypeError("std is not a boolean object")
@@ -66,7 +76,8 @@ def _spatial_dissim(data, group_pop_var, total_pop_var, w=None, standardize=Fals
         cij = w_object.sparse.toarray()
         cij = cij / cij.sum(axis=1).reshape((cij.shape[0], 1))
 
-    # Inspired in (second solution): https://stackoverflow.com/questions/22720864/efficiently-calculating-a-euclidean-distance-matrix-using-numpy
+    # Inspired in (second solution):
+    # https://stackoverflow.com/questions/22720864/efficiently-calculating-a-euclidean-distance-matrix-using-numpy  # noqa: E501 - line too long
     # Distance Matrix
     abs_dist = abs(pi[..., np.newaxis] - pi)
 
@@ -92,23 +103,28 @@ class SpatialDissim(SingleGroupIndex, SpatialExplicitIndex):
         name of column on dataframe holding population totals for focal group
     total_pop_var : str, required
         name of column on dataframe holding total overall population
-    w: libpysal.weights.W
-        pysal spatial weights object measuring connectivity between geographic units. If nNne, a Queen object will be created
-    standardize : boolean
-        A condition for row standardisation of the weights matrices. If True, the values of cij in the formulas gets row standardized.
-        For the sake of comparison, the seg R package of Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
-        works by default with row standardization.
+    w : libpysal.weights.W
+        pysal spatial weights object measuring connectivity between geographic units.
+        If None, a Queen object will be created
+    standardize : bool
+        A condition for row standardisation of the weights matrices.
+        If True, the values of cij in the formulas gets row standardized.
+        For the sake of comparison, the seg R package of Hong, Seong-Yun
+        David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation
+        measures in R." PloS one 9.11 (2014): e113767.
+        works by default without row standardization.
 
     Attributes
     ----------
     statistic : float
         SpatialDissim Index
-    core_data : a pandas DataFrame
+    core_data : pandas.DataFrame
         A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on Morrill, R. L. (1991) "On the Measure of Geographic Segregation". Geography Research Forum.
+    Based on Morrill, R. L. (1991) "On the Measure of Geographic Segregation".
+    Geography Research Forum.
 
     Reference: :cite:`morrill1991measure`.
     """

@@ -1,6 +1,10 @@
 """Spatial Proximity Profile Segregation Index."""
 
-__author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
+__author__ = (
+    "Renan X. Cortes <renanc@ucr.edu>, "
+    "Sergio J. Rey <sergio.rey@ucr.edu>, "
+    "and Elijah Knaap <elijah.knaap@ucr.edu>"
+)
 
 import numpy as np
 from libpysal.weights import Queen
@@ -15,17 +19,20 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, w, m):
     Parameters
     ----------
     data : geopandas.GeoDataFrame (required)
-        GeoDataFrame with valid geometry column and columns for group population and total population
-    group_pop_var : string
-        The name of variable in data that contains the population size of the group of interest
-    total_pop_var : string
+        GeoDataFrame with valid geometry column and columns
+        for group population and total population
+    group_pop_var : str
+        The name of variable in data that contains
+        the population size of the group of interest
+    total_pop_var : str
         The name of variable in data that contains the total population of the unit
-    w: libpysal.weights.W
-        pysal spatial weights object measuring connectivity between geographic units. If nNne, a Queen object will be created
+    w : libpysal.weights.W
+        pysal spatial weights object measuring connectivity between geographic units.
+        If None, a Queen object will be created
     m : int
-        a numeric value indicating the number of thresholds to be used. Default value is 1000.
-        A large value of m creates a smoother-looking graph and a more precise spatial proximity profile value but slows down the calculation speed.
-
+        a numeric value indicating the number of thresholds to be used. Default value
+        is 1000. A large value of m creates a smoother-looking graph and a more precise
+        spatial proximity profile value but slows down the calculation speed.
     Returns
     ----------
     statistic : float
@@ -35,10 +42,10 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, w, m):
 
     Notes
     -----
-    Based on Hong, Seong-Yun, and Yukio Sadahiro. "Measuring geographic segregation: a graph-based approach." Journal of Geographical Systems 16.2 (2014): 211-231.
+    Based on Hong, Seong-Yun, and Yukio Sadahiro. "Measuring geographic segregation:
+    a graph-based approach." Journal of Geographical Systems 16.2 (2014): 211-231.
 
     Reference: :cite:`hong2014measuring`.
-
     """
     # Create the shortest distance path between two pair of units using Shimbel matrix.
     # This step was well discussed in https://github.com/pysal/segregation/issues/5.
@@ -56,7 +63,8 @@ def _spatial_prox_profile(data, group_pop_var, total_pop_var, w, m):
             g_t_i = np.where(np.divide(group_vals, total_vals) >= t, True, False)
             k = g_t_i.sum()
 
-            # i and j only varies in the units subset within the threshold in eta_t of Hong (2014).
+            # i and j only varies in the units subset
+            # within the threshold in eta_t of Hong (2014).
             sub_delta_ij = delta[g_t_i, :][:, g_t_i]
 
             den = sub_delta_ij.sum()
@@ -96,23 +104,25 @@ class SpatialProxProf(SingleGroupIndex, SpatialExplicitIndex):
         name of column on dataframe holding population totals for focal group
     total_pop_var : str, required
         name of column on dataframe holding total overall population
-    w: libpysal.weights.W
-        pysal spatial weights object measuring connectivity between geographic units. If nNne, a Queen object will be created
+    w : libpysal.weights.W
+        pysal spatial weights object measuring connectivity between geographic units.
+        If None, a Queen object will be created
     m : int
-        a numeric value indicating the number of thresholds to be used. Default value is 1000.
-        A large value of m creates a smoother-looking graph and a more precise spatial proximity
-        profile value but slows down the calculation speed.
+        a numeric value indicating the number of thresholds to be used. Default value
+        is 1000. A large value of m creates a smoother-looking graph and a more precise
+        spatial proximity profile value but slows down the calculation speed.
 
     Attributes
     ----------
     statistic : float
         Spatial Prox Profile Index
-    core_data : a pandas DataFrame
+    core_data : pandas.DataFrame
         A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on Hong, Seong-Yun, and Yukio Sadahiro. "Measuring geographic segregation: a graph-based approach." Journal of Geographical Systems 16.2 (2014): 211-231.
+    Based on Hong, Seong-Yun, and Yukio Sadahiro. "Measuring geographic segregation:
+    a graph-based approach." Journal of Geographical Systems 16.2 (2014): 211-231.
 
     Reference: :cite:`hong2014measuring`.
     """

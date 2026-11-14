@@ -1,6 +1,10 @@
 """Boundary Spatial Dissimilarity Index."""
 
-__author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
+__author__ = (
+    "Renan X. Cortes <renanc@ucr.edu>, "
+    "Sergio J. Rey <sergio.rey@ucr.edu>, "
+    "and Elijah Knaap <elijah.knaap@ucr.edu>"
+)
 
 import numpy as np
 from sklearn.metrics.pairwise import manhattan_distances
@@ -14,31 +18,38 @@ def _boundary_spatial_dissim(data, group_pop_var, total_pop_var, standardize=Fal
 
     Parameters
     ----------
-    data : a geopandas DataFrame with a geometry column.
-    group_pop_var : string
-        The name of variable in data that contains the population size of the group of interest
-    total_pop_var : string
+    data : geopandas.GeoDataFrame
+        a geopandas DataFrame with a geometry column.
+    group_pop_var : str
+        The name of variable in data that contains
+        the population size of the group of interest
+    total_pop_var : str
         The name of variable in data that contains the total population of the unit
-    standardize : boolean
-        A condition for row standardisation of the weights matrices. If True, the values of cij in the formulas gets row standardized.
-        For the sake of comparison, the seg R package of Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
-        works by default without row standardization. That is, directly with border length.
+    standardize : bool
+        A condition for row standardisation of the weights matrices.
+        If True, the values of cij in the formulas gets row standardized.
+        For the sake of comparison, the seg R package of Hong, Seong-Yun
+        David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation
+        measures in R." PloS one 9.11 (2014): e113767.
+        works by default without row standardization.
+        That is, directly with border length.
 
     Returns
     ----------
     statistic : float
-                Boundary Spatial Dissimilarity Index
-    core_data : a geopandas DataFrame
-                A geopandas DataFrame that contains the columns used to perform the estimate.
+        Boundary Spatial Dissimilarity Index
+    core_data : geopandas.GeoDataFrame
+        A geopandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    The formula is based on Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
+    The formula is based on Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro.
+    "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
 
-    Original paper by Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
+    Original paper by Wong, David WS. "Spatial indices of segregation."
+    Urban studies 30.3 (1993): 559-572.
 
     References: :cite:`hong2014implementing` and :cite:`wong1993spatial`.
-
     """
     if type(standardize) is not bool:
         raise TypeError("std is not a boolean object")
@@ -79,23 +90,28 @@ class BoundarySpatialDissim(SingleGroupIndex, SpatialExplicitIndex):
         name of column on dataframe holding population totals for focal group
     total_pop_var : str, required
         name of column on dataframe holding total overall population
-    standardize : boolean
-        A condition for row standardisation of the weights matrices. If True, the values of cij in the formulas gets row standardized.
-        For the sake of comparison, the seg R package of Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
-        works by default with row standardization.
+    standardize : bool
+        A condition for row standardisation of the weights matrices.
+        If True, the values of cij in the formulas gets row standardized.
+        For the sake of comparison, the seg R package of Hong, Seong-Yun
+        David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation
+        measures in R." PloS one 9.11 (2014): e113767.
+        works by default without row standardization.
 
     Attributes
     ----------
     statistic : float
         Boundary Area Index
-    core_data : a pandas DataFrame
+    core_data : pandas.DataFrame
         A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    The formula is based on Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
+    The formula is based on Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro.
+    "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
 
-    Original paper by Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
+    Original paper by Wong, David WS. "Spatial indices of segregation."
+    Urban studies 30.3 (1993): 559-572.
 
     References: :cite:`hong2014implementing` and :cite:`wong1993spatial`.
     """

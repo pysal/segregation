@@ -1,6 +1,10 @@
 """MinMax Segregation Index."""
 
-__author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
+__author__ = (
+    "Renan X. Cortes <renanc@ucr.edu>, "
+    "Sergio J. Rey <sergio.rey@ucr.edu>, "
+    "and Elijah Knaap <elijah.knaap@ucr.edu>"
+)
 
 import geopandas as gpd
 import numpy as np
@@ -15,9 +19,9 @@ def _min_max(data, group_pop_var, total_pop_var):
     ----------
     data : pandas.DataFrame or geopandas.GeoDataFrame
         Dataframe or geodataframe if spatial index holding data for location of interest
-    group_pop_var : string
+    group_pop_var : str
         Variable containing the population count of the group of interest
-    total_pop_var : string
+    total_pop_var : str
         Variable in data that contains the total population count of the unit
 
     Returns
@@ -29,13 +33,13 @@ def _min_max(data, group_pop_var, total_pop_var):
 
     Notes
     -----
-    Based on O'Sullivan & Wong (2007). A Surface‐Based Approach to Measuring Spatial Segregation.
-    Geographical Analysis 39 (2). https://doi.org/10.1111/j.1538-4632.2007.00699.x
+    Based on O'Sullivan & Wong (2007). A Surface‐Based Approach to
+    Measuring Spatial Segregation. Geographical Analysis 39 (2).
+    https://doi.org/10.1111/j.1538-4632.2007.00699.x
 
     Reference: :cite:`osullivanwong2007surface`.
 
     We'd like to thank @AnttiHaerkoenen for this contribution!
-
     """
     data["group_1_pop_var_norm"] = data[group_pop_var] / data[group_pop_var].sum()
     data["group_2_pop_var_norm"] = (
@@ -75,7 +79,8 @@ class MinMax(SingleGroupIndex, SpatialImplicitIndex):
     network : pandarm.Network
         pandarm Network object representing the study area
     distance : int
-        Maximum distance (in units of geodataframe CRS) to consider the extent of the egohood
+        Maximum distance (in units of geodataframe CRS)
+        to consider the extent of the egohood
     decay : str
         type of decay function to apply. Options include
     precompute : bool
@@ -84,14 +89,15 @@ class MinMax(SingleGroupIndex, SpatialImplicitIndex):
     Attributes
     ----------
     statistic : float
-                MinMax Index
-    core_data : a pandas DataFrame
-                A pandas DataFrame that contains the columns used to perform the estimate.
+        MinMax Index
+    core_data : pandas.DataFrame
+        A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on O'Sullivan & Wong (2007). A Surface‐Based Approach to Measuring Spatial Segregation.
-    Geographical Analysis 39 (2). https://doi.org/10.1111/j.1538-4632.2007.00699.x
+    Based on O'Sullivan & Wong (2007). A Surface‐Based Approach to
+    Measuring Spatial Segregation. Geographical Analysis 39 (2).
+    https://doi.org/10.1111/j.1538-4632.2007.00699.x
 
     Reference: :cite:`osullivanwong2007surface`.
 

@@ -1,6 +1,10 @@
 """Bias Corrected Dissimilarity index."""
 
-__author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
+__author__ = (
+    "Renan X. Cortes <renanc@ucr.edu>, "
+    "Sergio J. Rey <sergio.rey@ucr.edu>, "
+    "and Elijah Knaap <elijah.knaap@ucr.edu>"
+)
 
 import geopandas as gpd
 import numpy as np
@@ -16,28 +20,33 @@ def _bias_corrected_dissim(data, group_pop_var, total_pop_var, B=500):
 
     Parameters
     ----------
-
     data : pandas.DataFrame or geopandas.GeoDataFrame
         DataFrame holding necessary data
-    group_pop_var : string
-        The name of variable in data that contains the population size of the group of interest
-    total_pop_var : string
-        The name of variable in data that contains the total population of the unit
+    group_pop_var : str
+        The name of variable in data that contains
+        the population size of the group of interest
+    total_pop_var : str
+        The name of variable in data that contains
+        the total population of the unit
     B : int
-       The number of iterations to calculate Dissimilarity simulating randomness with multinomial distributions. Default value is 500.
+       The number of iterations to calculate Dissimilarity
+       simulating randomness with multinomial distributions. Default value is 500.
 
     Returns
     ----------
     statistic : float
-        Dissimilarity with Bias-Correction (bias correction from Allen, Rebecca et al. (2015))
-    core_data : a pandas DataFrame
+        Dissimilarity with Bias-Correction
+        (bias correction from Allen, Rebecca et al. (2015))
+    core_data : pandas.DataFrame
         A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on Allen, Rebecca, et al. "More reliable inference for the dissimilarity index of segregation." The econometrics journal 18.1 (2015): 40-66.
+    Based on Carrington, William J., and Kenneth R. Troske.
+    "On measuring segregation in samples with small units."
+    Journal of Business & Economic Statistics 15.4 (1997): 402-409.
 
-    Reference: :cite:`allen2015more`.
+    Reference: :cite:`carrington1997measuring`.
     """
     assert type(B) is int, "B must be an integer"
 
@@ -95,13 +104,15 @@ class BiasCorrectedDissim(SingleGroupIndex, SpatialImplicitIndex):
     total_pop_var : str, required
         name of column on dataframe holding total overall population
     B : int
-       The number of iterations to calculate Dissimilarity simulating randomness with multinomial distributions. Default value is 500.
+       The number of iterations to calculate Dissimilarity simulating
+       randomness with multinomial distributions. Default value is 500.
     w : libpysal.weights.KernelW, optional
         lipysal spatial kernel weights object used to define an egohood
     network : pandarm.Network
         pandarm Network object representing the study area
     distance : int
-        Maximum distance (in units of geodataframe CRS) to consider the extent of the egohood
+        Maximum distance (in units of geodataframe CRS)
+        to consider the extent of the egohood
     decay : str
         type of decay function to apply. Options include
     precompute : bool
@@ -110,13 +121,15 @@ class BiasCorrectedDissim(SingleGroupIndex, SpatialImplicitIndex):
     Attributes
     ----------
     statistic : float
-                BiasCorrectedDissim Index
+        BiasCorrectedDissim Index
     core_data : a pandas DataFrame
-                A pandas DataFrame that contains the columns used to perform the estimate.
+        A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on Carrington, William J., and Kenneth R. Troske. "On measuring segregation in samples with small units." Journal of Business & Economic Statistics 15.4 (1997): 402-409.
+    Based on Carrington, William J., and Kenneth R. Troske.
+    "On measuring segregation in samples with small units."
+    Journal of Business & Economic Statistics 15.4 (1997): 402-409.
 
     Reference: :cite:`carrington1997measuring`.
     """

@@ -1,6 +1,10 @@
 """Absolute Clustering Index."""
 
-__author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
+__author__ = (
+    "Renan X. Cortes <renanc@ucr.edu>, "
+    "Sergio J. Rey <sergio.rey@ucr.edu>, "
+    "and Elijah Knaap <elijah.knaap@ucr.edu>"
+)
 
 import numpy as np
 import pandas as pd
@@ -15,10 +19,10 @@ def _absolute_clustering(data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5
     ----------
     data : geopandas.GeoDataFrame
         a GeoDataFrame with a geometry column
-    group_pop_var : string
+    group_pop_var : str
         The name of variable in data that contains the population size of the
         group of interest
-    total_pop_var : string
+    total_pop_var : str
         The name of variable in data that contains the total population of the
         unit
     alpha : float
@@ -32,17 +36,17 @@ def _absolute_clustering(data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5
     ----------
     statistic : float
         Absolute Clustering Index
-    core_data : a geopandas DataFrame
+    core_data : geopandas.GeoDataFrame
         A geopandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
+    Based on Massey, Douglas S., and Nancy A. Denton.
+    "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
 
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
 
     Reference: :cite:`massey1988dimensions`.
-
     """
     if alpha < 0:
         raise ValueError("alpha must be greater than zero.")
@@ -88,17 +92,17 @@ class AbsoluteClustering(SingleGroupIndex, SpatialExplicitIndex):
         A parameter that estimates the extent of the proximity within the same unit.
         Default value is 0.5
 
-
     Attributes
     ----------
     statistic : float
         AbsolutecClustering Index
-    core_data : a pandas DataFrame
+    core_data : pandas.DataFrame
         A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
+    Based on Massey, Douglas S., and Nancy A. Denton.
+    "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
 
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
 

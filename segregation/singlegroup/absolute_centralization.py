@@ -1,6 +1,10 @@
 """Absolute Centralization Index."""
 
-__author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
+__author__ = (
+    "Renan X. Cortes <renanc@ucr.edu>, "
+    "Sergio J. Rey <sergio.rey@ucr.edu>, "
+    "and Elijah Knaap <elijah.knaap@ucr.edu>"
+)
 
 import numpy as np
 from scipy.ndimage import shift
@@ -15,42 +19,57 @@ def _absolute_centralization(
 
     Parameters
     ----------
-    data : a geopandas DataFrame with a geometry column.
-    group_pop_var : string
-        The name of variable in data that contains the population size of the group of interest
-    total_pop_var : string
+    data : geopandas.GeoDataFrame
+        A geopandas DataFrame with a geometry column.
+    group_pop_var : str
+        The name of variable in data that contains
+        the population size of the group of interest
+    total_pop_var : str
         The name of variable in data that contains the total population of the unit
-    center : string, two-dimension values (tuple, list, array) or integer.
-        This defines what is considered to be the center of the spatial context under study.
-        If string, this can be set to:
-
-            "mean": the center longitude/latitude is the mean of longitudes/latitudes of all units.
-            "median": the center longitude/latitude is the median of longitudes/latitudes of all units.
-            "population_weighted_mean": the center longitude/latitude is the mean of longitudes/latitudes of all units weighted by the total population.
-            "largest_population": the center longitude/latitude is the centroid of the unit with largest total population. If there is a tie in the maximum population, the mean of all coordinates will be taken.
-
-        If tuple, list or array, this argument should be the coordinates of the desired center assuming longitude as first value and latitude second value. Therefore, in the form (longitude, latitude), if tuple, or [longitude, latitude] if list or numpy array.
-
-        If integer, the center will be the centroid of the polygon from data corresponding to the integer interpreted as index.
-        For example, if `center = 0` the centroid of the first row of data is used as center, if `center = 1` the second row will be used, and so on.
-    metric : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
+    center : str
+        Two-dimension values (tuple, list, array) or integer.
+        This defines what is considered to be the center of the spatial
+        context under study. If string, this can be set to:
+            "mean" - the center longitude/latitude is the mean of
+                longitudes/latitudes of all units.
+            "median" - the center longitude/latitude is the median of
+                longitudes/latitudes of all units.
+            "population_weighted_mean" - the center longitude/latitude is the mean of
+                longitudes/latitudes of all units weighted by the total population.
+            "largest_population" - the center longitude/latitude is the centroid of
+                the unit with largest total population. If there is a tie in
+                the maximum population, the mean of all coordinates will be taken.
+        If tuple, list or array, this argument should be the coordinates of the
+        desired center assuming longitude as first value and latitude second value.
+        Therefore, in the form (longitude, latitude), if tuple, or
+        [longitude, latitude] if list or numpy array.
+        If integer, the center will be the centroid of the polygon from data
+        corresponding to the integer interpreted as index.
+        For example, if `center = 0` the centroid of the first row of data is used
+        as center, if `center = 1` the second row will be used, and so on.
+    metric : str
+        Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
         The metric used for the distance between spatial units.
-        If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
+        If the projection of the CRS of the geopandas DataFrame field is in degrees,
+        this should be set to 'haversine'.
 
     Returns
     ----------
-    statistic     : float
+    statistic : float
         Absolute Centralization Index
-    core_data     : a geopandas DataFrame
+    core_data : geopandas.GeoDataFrame
         A geopandas DataFrame that contains the columns used to perform the estimate.
     center_values : list
-        The center, in the form [longitude, latitude], values used for the calculation of the centralization distances.
+        The center, in the form [longitude, latitude], values used
+        for the calculation of the centralization distances.
 
     Notes
     -----
-    Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
+    Based on Massey, Douglas S., and Nancy A. Denton.
+    "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
 
-    A discussion of defining the center in this function can be found in https://github.com/pysal/segregation/issues/18.
+    A discussion of defining the center in this function can be found in
+    https://github.com/pysal/segregation/issues/18.
 
     Reference: :cite:`massey1988dimensions`.
     """
@@ -63,7 +82,8 @@ def _absolute_centralization(
 
     if any(t < x):
         raise ValueError(
-            "Group of interest population must equal or lower than the total population of the units."
+            "Group of interest population must equal or"
+            "lower than the total population of the units."
         )
 
     area = np.array(data.area)
@@ -79,7 +99,8 @@ def _absolute_centralization(
             "largest_population",
         ]:
             raise ValueError(
-                "The center string must one of 'mean', 'median', 'population_weighted_mean', 'largest_population'"
+                "The center string must one of 'mean', 'median', "
+                "'population_weighted_mean', 'largest_population'"
             )
 
         if center == "mean":
@@ -135,7 +156,9 @@ def _absolute_centralization(
 
     if np.isnan(center_dist).sum() > 0:
         raise ValueError(
-            "It not possible to determine the center distance for, at least, one unit. This is probably due to the magnitude of the number of the centroids. We recommend to reproject the geopandas DataFrame."
+            "It not possible to determine the center distance for, at least, "
+            "one unit. This is probably due to the magnitude of the number of "
+            "the centroids. We recommend to reproject the geopandas DataFrame."
         )
 
     asc_ind = center_dist.argsort()
@@ -165,31 +188,38 @@ class AbsoluteCentralization(SingleGroupIndex, SpatialExplicitIndex):
         name of column on dataframe holding population totals for focal group
     total_pop_var : str, required
         name of column on dataframe holding total overall population
-    center  : string, two-dimension values (tuple, list, array) or integer.
-        This defines what is considered to be the center of the spatial context under study.
-        If string, this can be set to:
-
-            "mean": the center longitude/latitude is the mean of longitudes/latitudes of all units.
-            "median": the center longitude/latitude is the median of longitudes/latitudes of all units.
-            "population_weighted_mean": the center longitude/latitude is the mean of longitudes/latitudes of all units weighted by the total population.
-            "largest_population": the center longitude/latitude is the centroid of the unit with largest total population. If there is a tie in the maximum population, the mean of all coordinates will be taken.
+    center : str
+        Two-dimension values (tuple, list, array) or integer.
+        This defines what is considered to be the center of the spatial
+        context under study. If string, this can be set to:
+            "mean" - the center longitude/latitude is the mean of
+                longitudes/latitudes of all units.
+            "median" - the center longitude/latitude is the median of
+                longitudes/latitudes of all units.
+            "population_weighted_mean" - the center longitude/latitude is the mean of
+                longitudes/latitudes of all units weighted by the total population.
+            "largest_population" - the center longitude/latitude is the centroid of
+                the unit with largest total population. If there is a tie in
+                the maximum population, the mean of all coordinates will be taken.
     metric : str
         The metric used for the distance between spatial units.
-        If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
-
+        If the projection of the CRS of the geopandas DataFrame field
+        is in degrees, this should be set to 'haversine'.
 
     Attributes
     ----------
     statistic : float
         AbsoluteCentralization Index
-    core_data : a pandas DataFrame
+    core_data : pandas.DataFrame
         A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
+    Based on Massey, Douglas S., and Nancy A. Denton.
+    "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
 
-    A discussion of defining the center in this function can be found in https://github.com/pysal/segregation/issues/18.
+    A discussion of defining the center in this function can be found in
+    https://github.com/pysal/segregation/issues/18.
 
     Reference: :cite:`massey1988dimensions`.
     """

@@ -1,6 +1,10 @@
 """Perimeter-Area Ratio Dissimilarity Index."""
 
-__author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
+__author__ = (
+    "Renan X. Cortes <renanc@ucr.edu>, "
+    "Sergio J. Rey <sergio.rey@ucr.edu>, "
+    "and Elijah Knaap <elijah.knaap@ucr.edu>"
+)
 
 import numpy as np
 from sklearn.metrics.pairwise import manhattan_distances
@@ -16,32 +20,38 @@ def _perimeter_area_ratio_spatial_dissim(
 
     Parameters
     ----------
-    data          : a geopandas DataFrame with a geometry column.
-    group_pop_var : string
-                    The name of variable in data that contains the population size of the group of interest
-    total_pop_var : string
-                    The name of variable in data that contains the total population of the unit
-    standardize   : boolean
-                    A condition for standardisation of the weights matrices.
-                    If True, the values of cij in the formulas gets standardized and the overall sum is 1.
+    data : geopandas.GeoDataFrame
+        A geopandas DataFrame with a geometry column.
+    group_pop_var : str
+        The name of variable in data that contains
+        the population size of the group of interest
+    total_pop_var : str
+        The name of variable in data that contains the total population of the unit
+    standardize : bool
+        A condition for standardisation of the weights matrices. If True, the
+        values of cij in the formulas gets standardized and the overall sum is 1.
 
     Returns
     ----------
     statistic : float
-                Perimeter/Area Ratio Spatial Dissimilarity Index
-    core_data : a geopandas DataFrame
-                A geopandas DataFrame that contains the columns used to perform the estimate.
+        Perimeter/Area Ratio Spatial Dissimilarity Index
+    core_data : geopandas.GeoDataFrame
+        A geopandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Originally based on Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
+    Originally based on Wong, David WS. "Spatial indices of segregation."
+    Urban studies 30.3 (1993): 559-572.
 
-    However, Tivadar, Mihai. "OasisR: An R Package to Bring Some Order to the World of Segregation Measurement." Journal of Statistical Software 89.1 (2019): 1-39.
-    points out that in Wong’s original there is an issue with the formula which is an extra division by 2 in the spatial interaction component.
-    This function follows the formula present in the first Appendix of Tivadar, Mihai. "OasisR: An R Package to Bring Some Order to the World of Segregation Measurement." Journal of Statistical Software 89.1 (2019): 1-39.
+    However, Tivadar, Mihai. "OasisR: An R Package to Bring Some Order to the World
+    of Segregation Measurement." Journal of Statistical Software 89.1 (2019): 1-39.
+    points out that in Wong’s original there is an issue with the formula which is
+    an extra division by 2 in the spatial interaction component. This function follows
+    the formula present in the first Appendix of Tivadar, Mihai. "OasisR: An R Package
+    to Bring Some Order to the World of Segregation Measurement."
+    Journal of Statistical Software 89.1 (2019): 1-39.
 
     References: :cite:`wong1993spatial` and :cite:`tivadar2019oasisr`.
-
     """
     if type(standardize) is not bool:
         raise TypeError("std is not a boolean object")
@@ -95,25 +105,32 @@ class PARDissim(SingleGroupIndex, SpatialExplicitIndex):
         name of column on dataframe holding population totals for focal group
     total_pop_var : str, required
         name of column on dataframe holding total overall population
-    standardize : boolean
-        A condition for row standardisation of the weights matrices. If True, the values of cij in the formulas gets row standardized.
-        For the sake of comparison, the seg R package of Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro. "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
+    standardize : bool
+        A condition for row standardisation of the weights matrices. If True, the
+        values of cij in the formulas gets row standardized. For the sake of comparison,
+        the seg R package of Hong, Seong-Yun, David O'Sullivan, and Yukio Sadahiro.
+        "Implementing spatial segregation measures in R." PloS one 9.11 (2014): e113767.
         works by default with row standardization.
 
     Attributes
     ----------
     statistic : float
         PARDissim Index
-    core_data : a pandas DataFrame
+    core_data : pandas.DataFrame
         A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Originally based on Wong, David WS. "Spatial indices of segregation." Urban studies 30.3 (1993): 559-572.
+    Originally based on Wong, David WS. "Spatial indices of segregation."
+    Urban studies 30.3 (1993): 559-572.
 
-    However, Tivadar, Mihai. "OasisR: An R Package to Bring Some Order to the World of Segregation Measurement." Journal of Statistical Software 89.1 (2019): 1-39.
-    points out that in Wong’s original there is an issue with the formula which is an extra division by 2 in the spatial interaction component.
-    This function follows the formula present in the first Appendix of Tivadar, Mihai. "OasisR: An R Package to Bring Some Order to the World of Segregation Measurement." Journal of Statistical Software 89.1 (2019): 1-39.
+    However, Tivadar, Mihai. "OasisR: An R Package to Bring Some Order to the World
+    of Segregation Measurement." Journal of Statistical Software 89.1 (2019): 1-39.
+    points out that in Wong’s original there is an issue with the formula which is
+    an extra division by 2 in the spatial interaction component. This function follows
+    the formula present in the first Appendix of Tivadar, Mihai. "OasisR: An R Package
+    to Bring Some Order to the World of Segregation Measurement."
+    Journal of Statistical Software 89.1 (2019): 1-39.
 
     References: :cite:`wong1993spatial` and :cite:`tivadar2019oasisr`.
     """

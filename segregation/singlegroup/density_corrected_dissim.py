@@ -1,6 +1,10 @@
 """Density-Corrected Dissim Segregation Index."""
 
-__author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
+__author__ = (
+    "Renan X. Cortes <renanc@ucr.edu>, "
+    "Sergio J. Rey <sergio.rey@ucr.edu>, "
+    "and Elijah Knaap <elijah.knaap@ucr.edu>"
+)
 
 import geopandas as gpd
 import numpy as np
@@ -36,9 +40,10 @@ def _density_corrected_dissim(
     ----------
     data :  pandas.DataFrame
         DataFrame storing necessary data
-    group_pop_var : string
-        The name of variable in data that contains the population size of the group of interest
-    total_pop_var : string
+    group_pop_var : str
+        The name of variable in data that contains
+        the population size of the group of interest
+    total_pop_var : str
         The name of variable in data that contains the total population of the unit
     xtol : float
         The degree of tolerance in the optimization process of returning optimal theta_j
@@ -46,13 +51,15 @@ def _density_corrected_dissim(
     Returns
     ----------
     statistic : float
-        Dissimilarity with Density-Correction (density correction from Allen, Rebecca et al. (2015))
+        Dissimilarity with Density-Correction
+        (density correction from Allen, Rebecca et al. (2015))
     core_data : pandas.DataFrame
         A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on Allen, Rebecca, et al. "More reliable inference for the dissimilarity index of segregation." The econometrics journal 18.1 (2015): 40-66.
+    Based on Allen, Rebecca, et al. "More reliable inference for the dissimilarity
+    index of segregation." The econometrics journal 18.1 (2015): 40-66.
 
     Reference: :cite:`allen2015more`.
     """
@@ -101,7 +108,8 @@ class DensityCorrectedDissim(SingleGroupIndex, SpatialImplicitIndex):
     network : pandarm.Network
         pandarm Network object representing the study area
     distance : int
-        Maximum distance (in units of geodataframe CRS) to consider the extent of the egohood
+        Maximum distance (in units of geodataframe CRS)
+        to consider the extent of the egohood
     decay : str
         type of decay function to apply. Options include
     precompute : bool
@@ -111,12 +119,13 @@ class DensityCorrectedDissim(SingleGroupIndex, SpatialImplicitIndex):
     ----------
     statistic : float
         Segregation Index
-    core_data : a pandas DataFrame
+    core_data : pandas.DataFrame
         A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on Allen, Rebecca, et al. "More reliable inference for the dissimilarity index of segregation." The econometrics journal 18.1 (2015): 40-66.
+    Based on Allen, Rebecca, et al. "More reliable inference for the dissimilarity
+    index of segregation." The econometrics journal 18.1 (2015): 40-66.
 
     Reference: :cite:`allen2015more`.
     """

@@ -1,6 +1,10 @@
 """ConProf Segregation Index."""
 
-__author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
+__author__ = (
+    "Renan X. Cortes <renanc@ucr.edu>, "
+    "Sergio J. Rey <sergio.rey@ucr.edu>, "
+    "and Elijah Knaap <elijah.knaap@ucr.edu>"
+)
 
 import geopandas as gpd
 import numpy as np
@@ -16,9 +20,9 @@ def _conprof(data, group_pop_var, total_pop_var, m=1000):
     ----------
     data : pandas.DataFrame or geopandas.GeoDataFrame
         Dataframe or geodataframe if spatial index holding data for location of interest
-    group_pop_var : string
+    group_pop_var : str
         Variable containing the population count of the group of interest
-    total_pop_var : string
+    total_pop_var : str
         Variable in data that contains the total population count of the unit
 
     Returns
@@ -30,10 +34,11 @@ def _conprof(data, group_pop_var, total_pop_var, m=1000):
 
     Notes
     -----
-    Based on Hong, Seong-Yun, and Yukio Sadahiro. "Measuring geographic segregation: a graph-based approach." Journal of Geographical Systems 16.2 (2014): 211-231.
+    Based on Hong, Seong-Yun, and Yukio Sadahiro.
+    "Measuring geographic segregation: a graph-based approach."
+    Journal of Geographical Systems 16.2 (2014): 211-231.
 
     Reference: :cite:`hong2014measuring`.
-
     """
     if type(m) is not int:
         raise TypeError("m must be a string.")
@@ -46,7 +51,8 @@ def _conprof(data, group_pop_var, total_pop_var, m=1000):
 
     if any(t < x):
         raise ValueError(
-            "Group of interest population must equal or lower than the total population of the units."
+            "Group of interest population must equal or lower "
+            "than the total population of the units."
         )
 
     def calculate_vt(th):
@@ -82,7 +88,8 @@ class ConProf(SingleGroupIndex, SpatialImplicitIndex):
     network : pandarm.Network
         pandarm Network object representing the study area
     distance : int
-        Maximum distance (in units of geodataframe CRS) to consider the extent of the egohood
+        Maximum distance (in units of geodataframe CRS)
+        to consider the extent of the egohood
     decay : str
         type of decay function to apply. Options include
     precompute : bool
@@ -91,13 +98,15 @@ class ConProf(SingleGroupIndex, SpatialImplicitIndex):
     Attributes
     ----------
     statistic : float
-                ConProf Index
-    core_data : a pandas DataFrame
-                A pandas DataFrame that contains the columns used to perform the estimate.
+        ConProf Index
+    core_data : pandas.DataFrame
+        A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on Hong, Seong-Yun, and Yukio Sadahiro. "Measuring geographic segregation: a graph-based approach." Journal of Geographical Systems 16.2 (2014): 211-231.
+    Based on Hong, Seong-Yun, and Yukio Sadahiro.
+    "Measuring geographic segregation: a graph-based approach."
+    Journal of Geographical Systems 16.2 (2014): 211-231.
 
     Reference: :cite:`hong2014measuring`.
     """

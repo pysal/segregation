@@ -1,6 +1,10 @@
 """Distance Decay Isolation Index."""
 
-__author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
+__author__ = (
+    "Renan X. Cortes <renanc@ucr.edu>, "
+    "Sergio J. Rey <sergio.rey@ucr.edu>, "
+    "and Elijah Knaap <elijah.knaap@ucr.edu>"
+)
 
 import numpy as np
 import pandas as pd
@@ -14,33 +18,38 @@ def _distance_decay_isolation(data, group_pop_var, total_pop_var, alpha=0.6, bet
 
     Parameters
     ----------
-    data          : a geopandas DataFrame with a geometry column.
-    group_pop_var : string
-                    The name of variable in data that contains the population size of the group of interest
-    total_pop_var : string
-                    The name of variable in data that contains the total population of the unit
-    alpha         : float
-                    A parameter that estimates the extent of the proximity within the same unit. Default value is 0.6
-    beta          : float
-                    A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
+    data : geopandas.GeoDataFrame
+        A geopandas DataFrame with a geometry column.
+    group_pop_var : str
+        The name of variable in data that contains
+        the population size of the group of interest
+    total_pop_var : str
+        The name of variable in data that contains the total population of the unit
+    alpha : float
+        A parameter that estimates the extent of the proximity within the same unit.
+        Default value is 0.6
+    beta : float
+        A parameter that estimates the extent of the proximity within the same unit.
+        Default value is 0.5
 
     Returns
     ----------
     statistic : float
-                Distance Decay Isolation Index
-    core_data : a geopandas DataFrame
-                A geopandas DataFrame that contains the columns used to perform the estimate.
+        Distance Decay Isolation Index
+    core_data : a geopandas.GeoDataFrame
+        A geopandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    It may be interpreted as the probability that the next person a group member meets anywhere in space is from the same group.
+    It may be interpreted as the probability that the next person a group member
+    meets anywhere in space is from the same group.
 
-    Based on Morgan, Barrie S. "A distance-decay based interaction index to measure residential segregation." Area (1983): 211-217.
+    Based on Morgan, Barrie S. "A distance-decay based interaction index to
+    measure residential segregation." Area (1983): 211-217.
 
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
 
     Reference: :cite:`morgan1983distance`.
-
     """
     if alpha < 0:
         raise ValueError("alpha must be greater than zero.")
@@ -53,7 +62,8 @@ def _distance_decay_isolation(data, group_pop_var, total_pop_var, alpha=0.6, bet
 
     if any(t < x):
         raise ValueError(
-            "Group of interest population must equal or lower than the total population of the units."
+            "Group of interest population must equal or lower "
+            "than the total population of the units."
         )
 
     X = x.sum()
@@ -86,23 +96,27 @@ class DistanceDecayIsolation(SingleGroupIndex, SpatialExplicitIndex):
         name of column on dataframe holding population totals for focal group
     total_pop_var : str, required
         name of column on dataframe holding total overall population
-    alpha  : float
-        A parameter that estimates the extent of the proximity within the same unit. Default value is 0.6
+    alpha : float
+        A parameter that estimates the extent of the proximity within the same unit.
+        Default value is 0.6
     beta : float
-        A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
+        A parameter that estimates the extent of the proximity within the same unit.
+        Default value is 0.5
 
     Attributes
     ----------
     statistic : float
         Distance Decay Isolation Index
-    core_data : a pandas DataFrame
+    core_data : pandas.DataFrame
         A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    It may be interpreted as the probability that the next person a group member meets anywhere in space is from the same group.
+    It may be interpreted as the probability that the next person a group member
+    meets anywhere in space is from the same group.
 
-    Based on Morgan, Barrie S. "A distance-decay based interaction index to measure residential segregation." Area (1983): 211-217.
+    Based on Morgan, Barrie S. "A distance-decay based interaction index to
+    measure residential segregation." Area (1983): 211-217.
 
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
 

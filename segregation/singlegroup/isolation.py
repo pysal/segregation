@@ -1,6 +1,10 @@
 """Isolation Segregation Index."""
 
-__author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
+__author__ = (
+    "Renan X. Cortes <renanc@ucr.edu>, "
+    "Sergio J. Rey <sergio.rey@ucr.edu>, "
+    "and Elijah Knaap <elijah.knaap@ucr.edu>"
+)
 
 import geopandas as gpd
 import numpy as np
@@ -15,9 +19,9 @@ def _isolation(data, group_pop_var, total_pop_var):
     ----------
     data : pandas.DataFrame or geopandas.GeoDataFrame
         Dataframe or geodataframe if spatial index holding data for location of interest
-    group_pop_var : string
+    group_pop_var : str
         Variable containing the population count of the group of interest
-    total_pop_var : string
+    total_pop_var : str
         Variable in data that contains the total population count of the unit
 
     Returns
@@ -29,7 +33,8 @@ def _isolation(data, group_pop_var, total_pop_var):
 
     Notes
     -----
-    Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
+    Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of
+    residential segregation." Social forces 67.2 (1988): 281-315.
 
     Reference: :cite:`massey1988dimensions`.
     """
@@ -38,7 +43,8 @@ def _isolation(data, group_pop_var, total_pop_var):
 
     if any(t < x):
         raise ValueError(
-            "Group of interest population must equal or lower than the total population of the units."
+            "Group of interest population must equal or lower "
+            "than the total population of the units."
         )
 
     X = x.sum()
@@ -69,7 +75,8 @@ class Isolation(SingleGroupIndex, SpatialImplicitIndex):
     network : pandarm.Network
         pandarm Network object representing the study area
     distance : int
-        Maximum distance (in units of geodataframe CRS) to consider the extent of the egohood
+        Maximum distance (in units of geodataframe CRS)
+        to consider the extent of the egohood
     decay : str
         type of decay function to apply. Options include
     precompute : bool
@@ -78,13 +85,14 @@ class Isolation(SingleGroupIndex, SpatialImplicitIndex):
     Attributes
     ----------
     statistic : float
-                Isolation Index
-    core_data : a pandas DataFrame
-                A pandas DataFrame that contains the columns used to perform the estimate.
+        Isolation Index
+    core_data : pandas.DataFrame
+        A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
+    Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of
+    residential segregation." Social forces 67.2 (1988): 281-315.
 
     Reference: :cite:`massey1988dimensions`.
     """

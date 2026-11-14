@@ -1,6 +1,10 @@
 """Spatial Proximity Index."""
 
-__author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
+__author__ = (
+    "Renan X. Cortes <renanc@ucr.edu>, "
+    "Sergio J. Rey <sergio.rey@ucr.edu>, "
+    "and Elijah Knaap <elijah.knaap@ucr.edu>"
+)
 
 import numpy as np
 from ..util import generate_distance_matrix
@@ -11,36 +15,42 @@ from .._base import SingleGroupIndex, SpatialExplicitIndex
 def _spatial_proximity(data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5):
     """Calculate Spatial Proximity index.
 
-     Parameters
-     ----------
-     data          : a geopandas DataFrame with a geometry column.
-     group_pop_var : string
-                     The name of variable in data that contains the population size of the group of interest
-     total_pop_var : string
-                     The name of variable in data that contains the total population of the unit
-     alpha         : float
-                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.6
-     beta          : float
-                     A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
-     metric        : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
-                     The metric used for the distance between spatial units.
-                     If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
+    Parameters
+    ----------
+    data : pandas.DataFrame or geopandas.GeoDataFrame
+        dataframe or geodataframe if spatial index holding data for location of interest
+    group_pop_var : str
+        The name of variable in data that
+        contains the population size of the group of interest
+    total_pop_var : str
+        The name of variable in data that contains the total population of the unit
+    alpha : float
+        A parameter that estimates the extent of the proximity within the same unit.
+        Default value is 0.6
+    beta : float
+        A parameter that estimates the extent of the proximity within the same unit.
+        Default value is 0.5
+    metric : str
+        Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
+        The metric used for the distance between spatial units.
+        If the projection of the CRS of the geopandas DataFrame
+        field is in degrees, this should be set to 'haversine'.
 
      Returns
      ----------
      statistic : float
-                 Spatial Proximity Index
-     core_data : a geopandas DataFrame
-                 A geopandas DataFrame that contains the columns used to perform the estimate.
+        Spatial Proximity Index
+     core_data : geopandas.GeoDataFrame
+        A geopandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
-     -----
-     Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
+    -----
+    Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential
+    segregation." Social forces 67.2 (1988): 281-315.
 
-     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
+    The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
 
-     Reference: :cite:`massey1988dimensions`.
-
+    Reference: :cite:`massey1988dimensions`.
     """
     if alpha < 0:
         raise ValueError("alpha must be greater than zero.")
@@ -86,25 +96,29 @@ class SpatialProximity(SingleGroupIndex, SpatialExplicitIndex):
         name of column on dataframe holding population totals for focal group
     total_pop_var : str, required
         name of column on dataframe holding total overall population
-    alpha  : float
-        A parameter that estimates the extent of the proximity within the same unit. Default value is 0.6
+    alpha : float
+        A parameter that estimates the extent of the proximity within the same unit.
+        Default value is 0.6
     beta : float
-        A parameter that estimates the extent of the proximity within the same unit. Default value is 0.5
-    metric : string. Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
+        A parameter that estimates the extent of the proximity within the same unit.
+        Default value is 0.5
+    metric : str
+        Can be 'euclidean' or 'haversine'. Default is 'euclidean'.
         The metric used for the distance between spatial units.
-        If the projection of the CRS of the geopandas DataFrame field is in degrees, this should be set to 'haversine'.
-
+        If the projection of the CRS of the geopandas DataFrame
+        field is in degrees, this should be set to 'haversine'.
 
     Attributes
     ----------
     statistic : float
         Spatial Proximity Index
-    core_data : a pandas DataFrame
+    core_data : pandas.DataFrame
         A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
+    Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential
+    segregation." Social forces 67.2 (1988): 281-315.
 
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
 

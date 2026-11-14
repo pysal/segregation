@@ -1,6 +1,10 @@
 """Absolute Concentration Index."""
 
-__author__ = "Renan X. Cortes <renanc@ucr.edu>, Sergio J. Rey <sergio.rey@ucr.edu> and Elijah Knaap <elijah.knaap@ucr.edu>"
+__author__ = (
+    "Renan X. Cortes <renanc@ucr.edu>, "
+    "Sergio J. Rey <sergio.rey@ucr.edu>, "
+    "and Elijah Knaap <elijah.knaap@ucr.edu>"
+)
 
 import numpy as np
 import pandas as pd
@@ -13,35 +17,35 @@ def _absolute_concentration(data, group_pop_var, total_pop_var):
 
     Parameters
     ----------
-    data          : a geopandas DataFrame with a geometry column.
-
-    group_pop_var : string
-                    The name of variable in data that contains the population size of the group of interest
-
-    total_pop_var : string
-                    The name of variable in data that contains the total population of the unit
+    data : geopandas.GeoDataFrame
+        A geopandas DataFrame with a geometry column.
+    group_pop_var : str
+        The name of variable in data that contains
+        the population size of the group of interest
+    total_pop_var : str
+        The name of variable in data that contains the total population of the unit.
 
     Returns
     ----------
     statistic : float
-                Absolute Concentration Index
-
-    core_data : a geopandas DataFrame
-                A geopandas DataFrame that contains the columns used to perform the estimate.
+        Absolute Concentration Index
+    core_data : geopandas.GeoDataFrame
+        A geopandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
+    Based on Massey, Douglas S., and Nancy A. Denton.
+    "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
 
     Reference: :cite:`massey1988dimensions`.
-
     """
     x = np.array(data[group_pop_var])
     t = np.array(data[total_pop_var])
 
     if any(t < x):
         raise ValueError(
-            "Group of interest population must equal or lower than the total population of the units."
+            "Group of interest population must equal or lower "
+            "than the total population of the units."
         )
 
     area = np.array(data.area)
@@ -53,7 +57,8 @@ def _absolute_concentration(data, group_pop_var, total_pop_var):
     des_ind = (-area).argsort()
     asc_ind = area.argsort()
 
-    # A discussion about the extraction of n1 and n2 can be found in https://github.com/pysal/segregation/issues/43
+    # A discussion about the extraction of n1 and n2
+    # can be found in https://github.com/pysal/segregation/issues/43
     n1 = np.where(~((np.cumsum(t[asc_ind]) / T) < X / T))[0][0] + 1
     n2_aux = np.where(~((np.cumsum(t[des_ind]) / T) < X / T))[0][0] + 1
     n2 = len(data) - n2_aux
@@ -94,12 +99,13 @@ class AbsoluteConcentration(SingleGroupIndex, SpatialExplicitIndex):
     ----------
     statistic : float
         AbsoluteConcentration Index
-    core_data : a pandas DataFrame
+    core_data : pandas.DataFrame
         A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
-    Based on Massey, Douglas S., and Nancy A. Denton. "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
+    Based on Massey, Douglas S., and Nancy A. Denton.
+    "The dimensions of residential segregation." Social forces 67.2 (1988): 281-315.
 
     The pairwise distance between unit i and itself is (alpha * area_of_unit_i) ^ beta.
 

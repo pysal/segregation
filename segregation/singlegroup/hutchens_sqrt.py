@@ -15,9 +15,9 @@ def _hutchens_sqrt(data, group_pop_var, total_pop_var):
     ----------
     data : pandas.DataFrame or geopandas.GeoDataFrame
         Dataframe or geodataframe if spatial index holding data for location of interest
-    group_pop_var : string
+    group_pop_var : str
         Variable containing the population count of the group of interest
-    total_pop_var : string
+    total_pop_var : str
         Variable in data that contains the total population count of the unit
 
     Returns
@@ -61,7 +61,8 @@ def _hutchens_sqrt(data, group_pop_var, total_pop_var):
     # machinery, which bypasses SingleGroupIndex validation, so re-check here
     if any(t < x1):
         raise ValueError(
-            "Group of interest population must equal or lower than the total population of the units."
+            "Group of interest population must equal or lower "
+            "than the total population of the units."
         )
 
     N1 = x1.sum()
@@ -99,7 +100,8 @@ class HutchensSqrt(SingleGroupIndex, SpatialImplicitIndex):
     network : pandarm.Network
         pandarm Network object representing the study area
     distance : int
-        Maximum distance (in units of geodataframe CRS) to consider the extent of the egohood
+        Maximum distance (in units of geodataframe CRS)
+        to consider the extent of the egohood
     decay : str
         type of decay function to apply. Options include
     precompute : bool
@@ -108,9 +110,9 @@ class HutchensSqrt(SingleGroupIndex, SpatialImplicitIndex):
     Attributes
     ----------
     statistic : float
-                Hutchens Square Root Index
-    core_data : a pandas DataFrame
-                A pandas DataFrame that contains the columns used to perform the estimate.
+        Hutchens Square Root Index
+    core_data : pandas.DataFrame
+        A pandas DataFrame that contains the columns used to perform the estimate.
 
     Notes
     -----
