@@ -119,11 +119,7 @@ def _absolute_centralization(
             center_lon = c_lons[np.where(t == t.max())].mean()
             center_lat = c_lats[np.where(t == t.max())].mean()
 
-    if (
-        isinstance(center, tuple)
-        or isinstance(center, list)
-        or isinstance(center, np.ndarray)
-    ):
+    if isinstance(center, (tuple, list, np.ndarray)):
         if np.array(center).shape != (2,):
             raise ValueError("The center tuple/list/array must have length 2.")
 

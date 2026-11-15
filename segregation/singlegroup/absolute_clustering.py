@@ -8,8 +8,9 @@ __author__ = (
 
 import numpy as np
 import pandas as pd
-from ..util import generate_distance_matrix
+
 from .._base import SingleGroupIndex, SpatialExplicitIndex
+from ..util import generate_distance_matrix
 
 
 def _absolute_clustering(data, group_pop_var, total_pop_var, alpha=0.6, beta=0.5):

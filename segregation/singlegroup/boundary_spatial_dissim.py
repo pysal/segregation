@@ -117,7 +117,13 @@ class BoundarySpatialDissim(SingleGroupIndex, SpatialExplicitIndex):
     """
 
     def __init__(
-        self, data, group_pop_var, total_pop_var, w=None, standardize=True, **kwargs
+        self,
+        data,
+        group_pop_var,
+        total_pop_var,
+        w=None,
+        standardize=True,
+        **kwargs,
     ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)

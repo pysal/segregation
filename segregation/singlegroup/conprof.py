@@ -144,6 +144,6 @@ class ConProf(SingleGroupIndex, SpatialImplicitIndex):
         try:
             import matplotlib.pyplot as plt
         except ImportError:
-            raise ImportError("plotting requires `matplotlib`")
+            raise ImportError("plotting requires `matplotlib`") from None
         graph = plt.scatter(self.grid, self.curve, s=0.1)
         return graph

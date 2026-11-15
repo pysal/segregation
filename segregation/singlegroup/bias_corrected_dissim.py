@@ -80,8 +80,8 @@ def _bias_corrected_dissim(data, group_pop_var, total_pop_var, B=500):
 
     Db = Dbcs.mean()
 
+    # It expected to be lower than D, because D is upwarded biased
     Dbc = 2 * D - Db
-    Dbc  # It expected to be lower than D, because D is upwarded biased
 
     if isinstance(data, gpd.GeoDataFrame):
         core_data = data[[group_pop_var, total_pop_var, data.geometry.name]]
