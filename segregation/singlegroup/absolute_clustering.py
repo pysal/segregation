@@ -117,7 +117,7 @@ class AbsoluteClustering(SingleGroupIndex, SpatialExplicitIndex):
         total_pop_var,
         alpha=0.6,
         beta=0.5,
-        **kwargs,
+        **kwargs,  # noqa: ARG002 - Unused method argument - fails multiple tests
     ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
