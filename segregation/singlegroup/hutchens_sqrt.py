@@ -3,9 +3,9 @@
 import geopandas as gpd
 import numpy as np
 
-np.seterr(divide="ignore", invalid="ignore")
-
 from .._base import SingleGroupIndex, SpatialImplicitIndex
+
+np.seterr(divide="ignore", invalid="ignore")
 
 
 def _hutchens_sqrt(data, group_pop_var, total_pop_var):
