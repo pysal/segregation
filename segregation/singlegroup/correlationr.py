@@ -108,7 +108,7 @@ class CorrelationR(SingleGroupIndex, SpatialImplicitIndex):
         decay=None,
         function="triangular",
         precompute=None,
-        **kwargs,
+        **kwargs,  # noqa: ARG002 - Unused method argument - fails multiple tests
     ):
         """Init."""
 
