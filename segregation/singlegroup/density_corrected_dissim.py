@@ -141,7 +141,7 @@ class DensityCorrectedDissim(SingleGroupIndex, SpatialImplicitIndex):
         decay="linear",
         precompute=None,
         function="triangular",
-        **kwargs,
+        **kwargs,  # noqa: ARG002 - Unused method argument - fails multiple tests
     ):
         """Init."""
 
