@@ -3,9 +3,9 @@
 import geopandas as gpd
 import numpy as np
 
-np.seterr(divide="ignore", invalid="ignore")
-
 from .._base import SingleGroupIndex, SpatialImplicitIndex
+
+np.seterr(divide="ignore", invalid="ignore")
 
 
 def _hutchens_sqrt(data, group_pop_var, total_pop_var):
@@ -138,7 +138,7 @@ class HutchensSqrt(SingleGroupIndex, SpatialImplicitIndex):
         decay=None,
         function="triangular",
         precompute=None,
-        **kwargs,
+        **kwargs,  # noqa: ARG002 - Unused method argument - fails multiple tests
     ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)

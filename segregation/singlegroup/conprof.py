@@ -122,7 +122,7 @@ class ConProf(SingleGroupIndex, SpatialImplicitIndex):
         decay=None,
         function="triangular",
         precompute=None,
-        **kwargs,
+        **kwargs,  # noqa: ARG002 - Unused method argument - fails multiple tests
     ):
         """Init."""
 
@@ -144,6 +144,6 @@ class ConProf(SingleGroupIndex, SpatialImplicitIndex):
         try:
             import matplotlib.pyplot as plt
         except ImportError:
-            raise ImportError("plotting requires `matplotlib`")
+            raise ImportError("plotting requires `matplotlib`") from None
         graph = plt.scatter(self.grid, self.curve, s=0.1)
         return graph

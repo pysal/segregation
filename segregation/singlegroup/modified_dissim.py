@@ -6,13 +6,15 @@ __author__ = (
     "and Elijah Knaap <elijah.knaap@ucr.edu>"
 )
 
+import multiprocessing
+
 import geopandas as gpd
 import numpy as np
 import pandas as pd
+from joblib import Parallel, delayed
+
 from .._base import SingleGroupIndex, SpatialImplicitIndex
 from .dissim import _dissim
-from joblib import Parallel, delayed
-import multiprocessing
 
 
 def _modified_dissim(
@@ -62,10 +64,10 @@ def _modified_dissim(
 
     Reference: :cite:`carrington1997measuring`.
     """
+
+    # is there a better practice for this? I think joblib will fail if None passed
     if not seed:
-        seed = np.random.randint(
-            0, 10e6
-        )  # is there a better practice for this? I think joblib will fail if None passed
+        seed = np.random.randint(0, 10e6)
     if n_jobs == -1:
         n_jobs = multiprocessing.cpu_count()
     if type(iterations) is not int:
@@ -111,7 +113,7 @@ def _modified_dissim(
     )
     D_star = Ds.mean()
 
-    if D >= D_star:
+    if D_star <= D:  # noqa SIM108 - Use ternary operator (much more readable now)
         Dct = (D - D_star) / (1 - D_star)
     else:
         Dct = (D - D_star) / D_star
@@ -178,7 +180,7 @@ class ModifiedDissim(SingleGroupIndex, SpatialImplicitIndex):
         precompute=None,
         n_jobs=-1,
         backend="threading",
-        **kwargs,
+        **kwargs,  # noqa: ARG002 - Unused method argument - fails multiple tests
     ):
         """Init."""
 

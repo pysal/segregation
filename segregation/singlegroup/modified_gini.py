@@ -6,15 +6,17 @@ __author__ = (
     "and Elijah Knaap <elijah.knaap@ucr.edu>"
 )
 
+import multiprocessing
+from warnings import warn
+
 import geopandas as gpd
 import numpy as np
 import pandas as pd
+from joblib import Parallel, delayed
+from tqdm.auto import tqdm
+
 from .._base import SingleGroupIndex, SpatialImplicitIndex
 from .gini import _gini_seg
-from tqdm.auto import tqdm
-from joblib import Parallel, delayed
-import multiprocessing
-from warnings import warn
 
 
 def _modified_gini(
@@ -98,7 +100,7 @@ def _modified_gini(
                 return aux
 
         except ValueError:
-            warn("Simulator generated invalid data. Redrawing")
+            warn("Simulator generated invalid data. Redrawing", stacklevel=2)
             n_retries -= 1
 
     Ds = pd.Series(
@@ -117,7 +119,7 @@ def _modified_gini(
 
     D_star = Ds.mean()
 
-    if D >= D_star:
+    if D_star <= D:  # noqa SIM108 - Use ternary operator (much more readable now)
         Dct = (D - D_star) / (1 - D_star)
     else:
         Dct = (D - D_star) / D_star
@@ -184,7 +186,7 @@ class ModifiedGini(SingleGroupIndex, SpatialImplicitIndex):
         precompute=None,
         backend="threading",
         n_jobs=-1,
-        **kwargs,
+        **kwargs,  # noqa: ARG002 - Unused method argument - fails multiple tests
     ):
         """Init."""
 

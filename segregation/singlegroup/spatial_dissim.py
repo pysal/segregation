@@ -54,10 +54,7 @@ def _spatial_dissim(data, group_pop_var, total_pop_var, w=None, standardize=Fals
     if type(standardize) is not bool:
         raise TypeError("std is not a boolean object")
 
-    if w is None:
-        w_object = Queen.from_dataframe(data)
-    else:
-        w_object = w
+    w_object = Queen.from_dataframe(data) if w is None else w
 
     if not issubclass(type(w_object), libpysal.weights.W):
         raise TypeError("w is not a PySAL weights object")
@@ -85,7 +82,6 @@ def _spatial_dissim(data, group_pop_var, total_pop_var, w=None, standardize=Fals
     num = np.multiply(abs_dist, cij).sum()
     den = cij.sum()
     SD = D - num / den
-    SD
 
     core_data = data[[group_pop_var, total_pop_var, data.geometry.name]]
 
@@ -130,7 +126,13 @@ class SpatialDissim(SingleGroupIndex, SpatialExplicitIndex):
     """
 
     def __init__(
-        self, data, group_pop_var, total_pop_var, w=None, standardize=False, **kwargs
+        self,
+        data,
+        group_pop_var,
+        total_pop_var,
+        w=None,
+        standardize=False,
+        **kwargs,  # noqa: ARG002 - Unused method argument - fails test_batch_compute.py::test_batch_single
     ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)

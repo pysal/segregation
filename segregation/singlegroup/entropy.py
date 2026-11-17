@@ -9,9 +9,9 @@ __author__ = (
 import geopandas as gpd
 import numpy as np
 
-np.seterr(divide="ignore", invalid="ignore")
-
 from .._base import SingleGroupIndex, SpatialImplicitIndex
+
+np.seterr(divide="ignore", invalid="ignore")
 
 
 def _entropy(data, group_pop_var, total_pop_var):
@@ -120,7 +120,7 @@ class Entropy(SingleGroupIndex, SpatialImplicitIndex):
         decay=None,
         function="triangular",
         precompute=None,
-        **kwargs,
+        **kwargs,  # noqa: ARG002 - Unused method argument - fails test_batch_compute.py::test_batch_single
     ):
         """Init."""
 

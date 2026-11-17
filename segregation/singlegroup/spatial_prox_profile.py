@@ -8,8 +8,9 @@ __author__ = (
 
 import numpy as np
 from libpysal.weights import Queen
-from scipy.sparse.csgraph import floyd_warshall
 from numba import njit
+from scipy.sparse.csgraph import floyd_warshall
+
 from .._base import SingleGroupIndex, SpatialExplicitIndex
 
 
@@ -127,7 +128,15 @@ class SpatialProxProf(SingleGroupIndex, SpatialExplicitIndex):
     Reference: :cite:`hong2014measuring`.
     """
 
-    def __init__(self, data, group_pop_var, total_pop_var, w=None, m=1000, **kwargs):
+    def __init__(
+        self,
+        data,
+        group_pop_var,
+        total_pop_var,
+        w=None,
+        m=1000,
+        **kwargs,  # noqa: ARG002 - Unused method argument - fails test_batch_compute.py::test_batch_single
+    ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
         SpatialExplicitIndex.__init__(
@@ -150,6 +159,6 @@ class SpatialProxProf(SingleGroupIndex, SpatialExplicitIndex):
         try:
             import matplotlib.pyplot as plt
         except ImportError:
-            raise ImportError("This method relies on importing `matplotlib`")
+            raise ImportError("This method relies on importing `matplotlib`") from None
         graph = plt.scatter(self.grid, self.curve, s=0.1)
         return graph

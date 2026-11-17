@@ -75,8 +75,8 @@ def _perimeter_area_ratio_spatial_dissim(
     ai = data.area
 
     aux_sum = np.add(
-        np.array(list((peri / ai))),
-        np.array(list((peri / ai))).reshape((len(list((peri / ai))), 1)),
+        np.array(list(peri / ai)),
+        np.array(list(peri / ai)).reshape((len(list((peri / ai))), 1)),
     )
 
     max_pa = max(peri / ai)
@@ -87,7 +87,6 @@ def _perimeter_area_ratio_spatial_dissim(
     den = 2 * max_pa
 
     PARD = D - (num / den)
-    PARD
 
     core_data = data[[group_pop_var, total_pop_var, data.geometry.name]]
 
@@ -136,7 +135,12 @@ class PARDissim(SingleGroupIndex, SpatialExplicitIndex):
     """
 
     def __init__(
-        self, data, group_pop_var, total_pop_var, w=None, standardize=True, **kwargs
+        self,
+        data,
+        group_pop_var,
+        total_pop_var,
+        standardize=True,
+        **kwargs,  # noqa: ARG002 - Unused method argument - fails test_batch_compute.py::test_batch_single
     ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)

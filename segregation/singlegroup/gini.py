@@ -22,12 +22,12 @@ try:
     from numba import boolean, jit, njit, prange
 except (ImportError, ModuleNotFoundError):
 
-    def jit(*dec_args, **dec_kwargs):
+    def jit(*dec_args, **dec_kwargs):  # noqa: ARG001 - unused args
         """
         decorator mimicking numba.jit
         """
 
-        def intercepted_function(f, *f_args, **f_kwargs):
+        def intercepted_function(f, *f_args, **f_kwargs):  # noqa: ARG001 - unused args
             return f
 
         return intercepted_function
@@ -169,7 +169,7 @@ class Gini(SingleGroupIndex, SpatialImplicitIndex):
         decay=None,
         function="triangular",
         precompute=None,
-        **kwargs,
+        **kwargs,  # noqa: ARG002 - Unused method argument - fails multiple tests
     ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)

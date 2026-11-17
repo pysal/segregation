@@ -117,7 +117,13 @@ class BoundarySpatialDissim(SingleGroupIndex, SpatialExplicitIndex):
     """
 
     def __init__(
-        self, data, group_pop_var, total_pop_var, w=None, standardize=True, **kwargs
+        self,
+        data,
+        group_pop_var,
+        total_pop_var,
+        w=None,
+        standardize=True,
+        **kwargs,  # noqa: ARG002 - Unused method argument - fails test_batch_compute.py::test_batch_single
     ):
         """Init."""
         SingleGroupIndex.__init__(self, data, group_pop_var, total_pop_var)
