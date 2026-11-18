@@ -5,17 +5,8 @@ from libpysal.examples import load_example
 from segregation.dynamics import compute_multiscalar_profile
 from segregation.multigroup import MultiDissim
 
-# -- open issue see GH#323
-# import pandarm as pdna
-# import quilt3
-
 
 def test_multiscalar():
-
-    # -- open issue see GH#323
-    # p = quilt3.Package.browse("osm/metro_networks_8k", "s3://spatial-ucr/")
-    # p["40900.h5"].fetch()
-    # net = pdna.Network.from_hdf5("40900.h5")
 
     s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
     df = s_map.to_crs(s_map.estimate_utm_crs())
@@ -31,11 +22,6 @@ def test_multiscalar():
 
 
 def test_multiscalar_network():
-
-    # -- open issue see GH#323
-    # p = quilt3.Package.browse("osm/metro_networks_8k", "s3://spatial-ucr/")
-    # p["40900.h5"].fetch()
-    # net = pdna.Network.from_hdf5("40900.h5")
 
     s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
     df = s_map.to_crs(s_map.estimate_utm_crs())
