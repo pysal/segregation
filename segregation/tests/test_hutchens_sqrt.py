@@ -26,7 +26,7 @@ def _reardon_s(x, t):
     return 1 - np.sum((t / T) * np.sqrt(p * (1 - p)) / np.sqrt(P * (1 - P)))
 
 
-def test_HutchensSqrt():
+def test_hutchens_sqrt():
     index = HutchensSqrt(df, "HISP", "TOT_POP")
     np.testing.assert_almost_equal(index.statistic, 0.07847550)
 
