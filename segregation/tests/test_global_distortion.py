@@ -2,6 +2,7 @@ import geopandas as gpd
 import numpy as np
 import pytest
 from libpysal.examples import load_example
+
 from segregation.local import LocalDistortion
 from segregation.multigroup import GlobalDistortion
 from segregation.multigroup.multi_global_distortion import _global_distortion
@@ -28,7 +29,7 @@ def segregated_strip():
     return gpd.GeoDataFrame(pops, geometry=[Point(i, 0) for i in range(n)], crs=3857)
 
 
-def test_GlobalDistortion(s_map):
+def test_global_distortion(s_map):
     """Regression value for the unnormalized global index."""
     index = GlobalDistortion(s_map, groups=GROUPS, normalize=False)
     np.testing.assert_almost_equal(index.statistic, 15.28564652573017, decimal=7)
