@@ -1,10 +1,9 @@
-from libpysal.examples import load_example
 import geopandas as gpd
 import pandarm as pdna
-from segregation.network import calc_access
-
-
 import quilt3 as q3
+from libpysal.examples import load_example
+
+from segregation.network import calc_access
 
 b = q3.Bucket("s3://spatial-ucr")
 b.fetch("osm/metro_networks_8k/40900.h5", "./40900.h5")
