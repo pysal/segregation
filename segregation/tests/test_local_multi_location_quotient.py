@@ -1,12 +1,12 @@
-import unittest
-from libpysal.examples import load_example
 import geopandas as gpd
 import numpy as np
+from libpysal.examples import load_example
+
 from segregation.local import MultiLocationQuotient
 
 
-class Multi_Location_Quotient_Tester(unittest.TestCase):
-    def test_Multi_Location_Quotient(self):
+class TestMultiLocationQuotient:
+    def test(self):
         s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
         groups_list = ["WHITE", "BLACK", "ASIAN", "HISP"]
         df = s_map[groups_list]
@@ -21,7 +21,3 @@ class Multi_Location_Quotient_Tester(unittest.TestCase):
                 ]
             ),
         )
-
-
-if __name__ == "__main__":
-    unittest.main()
