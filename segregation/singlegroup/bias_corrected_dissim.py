@@ -42,11 +42,10 @@ def _bias_corrected_dissim(data, group_pop_var, total_pop_var, B=500):
 
     Notes
     -----
-    Based on Carrington, William J., and Kenneth R. Troske.
-    "On measuring segregation in samples with small units."
-    Journal of Business & Economic Statistics 15.4 (1997): 402-409.
+    Based on Allen, Rebecca, et al. "More reliable inference for the dissimilarity
+    index of segregation." The econometrics journal 18.1 (2015): 40-66.
 
-    Reference: :cite:`carrington1997measuring`.
+    Reference: :cite:`allen2015more`.
     """
     assert type(B) is int, "B must be an integer"
 
@@ -127,11 +126,10 @@ class BiasCorrectedDissim(SingleGroupIndex, SpatialImplicitIndex):
 
     Notes
     -----
-    Based on Carrington, William J., and Kenneth R. Troske.
-    "On measuring segregation in samples with small units."
-    Journal of Business & Economic Statistics 15.4 (1997): 402-409.
+    Based on Allen, Rebecca, et al. "More reliable inference for the dissimilarity
+    index of segregation." The econometrics journal 18.1 (2015): 40-66.
 
-    Reference: :cite:`carrington1997measuring`.
+    Reference: :cite:`allen2015more`.
     """
 
     def __init__(
