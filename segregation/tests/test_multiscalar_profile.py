@@ -1,11 +1,13 @@
-from libpysal.examples import load_example
 import geopandas as gpd
 import numpy as np
-from segregation.multigroup import MultiDissim
+from libpysal.examples import load_example
+
 from segregation.dynamics import compute_multiscalar_profile
+from segregation.multigroup import MultiDissim
 
 
 def test_multiscalar():
+
     s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
     df = s_map.to_crs(s_map.estimate_utm_crs())
     profile = compute_multiscalar_profile(
@@ -20,6 +22,7 @@ def test_multiscalar():
 
 
 def test_multiscalar_network():
+
     s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
     df = s_map.to_crs(s_map.estimate_utm_crs())
     profile = compute_multiscalar_profile(

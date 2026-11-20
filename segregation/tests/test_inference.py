@@ -1,15 +1,15 @@
-import unittest
-import pandas as pd
 import geopandas as gpd
 import numpy as np
+import pandas as pd
 from libpysal.examples import load_example
+
 from segregation.inference import SingleValueTest, TwoValueTest
 from segregation.multigroup import MultiDissim
 from segregation.singlegroup import Dissim
 
 
-class Inference_Tester(unittest.TestCase):
-    def test_Inference(self):
+class TestInference:
+    def test(self):
         groups_list = ["WHITE", "BLACK", "ASIAN", "HISP"]
         s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
         s_map[groups_list] = s_map[groups_list].astype(int)
@@ -171,7 +171,3 @@ class Inference_Tester(unittest.TestCase):
             iterations_under_null=50,
         )
         np.testing.assert_almost_equal(res.est_sim.mean(), 0.0, decimal=2)
-
-
-if __name__ == "__main__":
-    unittest.main()

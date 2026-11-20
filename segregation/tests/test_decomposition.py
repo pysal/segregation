@@ -1,13 +1,13 @@
-import unittest
-from libpysal.examples import load_example
 import geopandas as gpd
 import numpy as np
-from segregation.singlegroup import Dissim
+from libpysal.examples import load_example
+
 from segregation.decomposition import DecomposeSegregation
+from segregation.singlegroup import Dissim
 
 
-class Decomposition_Tester(unittest.TestCase):
-    def test_Decomposition(self):
+class TestDecomposition:
+    def test(self):
         s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
         index1 = Dissim(s_map, "HISP", "TOT_POP")
         index2 = Dissim(s_map, "BLACK", "TOT_POP")
@@ -32,7 +32,3 @@ class Decomposition_Tester(unittest.TestCase):
         np.testing.assert_almost_equal(res.c_s, -0.004897572242559378)
         res.plot(plot_type="cdfs")
         res.plot(plot_type="maps")
-
-
-if __name__ == "__main__":
-    unittest.main()

@@ -1,12 +1,14 @@
 from tkinter import N
+
 import geopandas as gpd
 import numpy as np
 from libpysal.examples import load_example
+
 from segregation.batch import (
     batch_compute_multigroup,
     batch_compute_singlegroup,
-    batch_multiscalar_singlegroup,
     batch_multiscalar_multigroup,
+    batch_multiscalar_singlegroup,
 )
 
 s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))

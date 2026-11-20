@@ -1,13 +1,12 @@
-import unittest
-
 import geopandas as gpd
 import numpy as np
 from libpysal.examples import load_example
+
 from segregation.local import LocalRelativeCentralization
 
 
-class Local_Relative_Centralization_Tester(unittest.TestCase):
-    def test_Local_Relative_Centralization(self):
+class TestLocalRelativeCentralization:
+    def test(self):
         s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
         df = s_map[["geometry", "BLACK", "TOT_POP"]]
         index = LocalRelativeCentralization(df, "BLACK", "TOT_POP")
@@ -28,7 +27,3 @@ class Local_Relative_Centralization_Tester(unittest.TestCase):
                 ]
             ),
         )
-
-
-if __name__ == "__main__":
-    unittest.main()

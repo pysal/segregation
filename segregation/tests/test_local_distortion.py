@@ -2,10 +2,11 @@ import geopandas as gpd
 import numpy as np
 import pytest
 from libpysal.examples import load_example
+
 from segregation.local import LocalDistortion
 
 
-def test_LocalDiversity():
+def test_local_diversity():
     s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
     s_map = s_map.to_crs(s_map.estimate_utm_crs())
     groups_list = ["WHITE", "BLACK", "ASIAN", "HISP"]
@@ -573,6 +574,7 @@ def test_candidate_seeds_handles_collinear_geometry(segregated_strip):
 def test_normalization_requires_units_for_every_group():
     """Fewer units than groups must raise, not silently drop a group."""
     from shapely.geometry import Point
+
     from segregation.util.normalization import _maximal_segregation_distortion
 
     gdf = gpd.GeoDataFrame(
@@ -605,6 +607,7 @@ def test_block_boundaries_never_empty():
 def test_ordering_covers_disconnected_geography():
     """A disconnected study region must still order every unit exactly once."""
     from shapely.geometry import Point
+
     from segregation.util.normalization import _ordering_for_normalization
 
     pts = [Point(x, y) for x in range(4) for y in range(4)]
@@ -630,6 +633,7 @@ def test_sparse_distance_matrix_raises(segregated_strip):
     """Sparse distance matrices are unsupported and must say so clearly."""
     from scipy.sparse import csr_array
     from scipy.spatial.distance import pdist, squareform
+
     from segregation.util.normalization import _maximal_segregation_distortion
 
     coords = np.column_stack((segregated_strip.geometry.x, segregated_strip.geometry.y))
@@ -643,6 +647,7 @@ def test_sparse_distance_matrix_raises(segregated_strip):
 def test_normalization_with_precomputed_matrix(s_map):
     """A precomputed euclidean matrix should reproduce the euclidean result."""
     from scipy.spatial.distance import pdist, squareform
+
     from segregation.util.normalization import _maximal_segregation_distortion
 
     groups_list = ["WHITE", "BLACK", "ASIAN", "HISP"]
@@ -681,6 +686,7 @@ def test_divergence_profile_rejects_sparse_matrix(segregated_strip):
     """The rejection belongs upstream, so every caller gets a clear error."""
     from scipy.sparse import csr_array, csr_matrix
     from scipy.spatial.distance import pdist, squareform
+
     from segregation.dynamics.divergence_profile import compute_divergence_profiles
 
     coords = np.column_stack((segregated_strip.geometry.x, segregated_strip.geometry.y))

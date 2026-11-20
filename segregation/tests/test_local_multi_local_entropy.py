@@ -1,12 +1,12 @@
-import unittest
-from libpysal.examples import load_example
 import geopandas as gpd
 import numpy as np
+from libpysal.examples import load_example
+
 from segregation.local import MultiLocalEntropy
 
 
-class Multi_Local_Entropy_Tester(unittest.TestCase):
-    def test_Multi_Local_Entropy(self):
+class TestMultiLocalEntropy:
+    def test(self):
         s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
         groups_list = ["WHITE", "BLACK", "ASIAN", "HISP"]
         df = s_map[groups_list]
@@ -28,7 +28,3 @@ class Multi_Local_Entropy_Tester(unittest.TestCase):
                 ]
             ),
         )
-
-
-if __name__ == "__main__":
-    unittest.main()
