@@ -1,0 +1,6 @@
+﻿segregation.inference.simulate\_evenness
+========================================
+
+.. currentmodule:: segregation.inference
+
+.. autofunction:: simulate_evenness

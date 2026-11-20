@@ -1,0 +1,22 @@
+﻿segregation.rankorder.RankOrderSqrt
+===================================
+
+.. currentmodule:: segregation.rankorder
+
+.. autoclass:: RankOrderSqrt
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~RankOrderSqrt.__init__
+   
+   
+
+   
+   
+   

@@ -1,0 +1,6 @@
+﻿segregation.inference.simulate\_systematic\_geo\_permutation
+============================================================
+
+.. currentmodule:: segregation.inference
+
+.. autofunction:: simulate_systematic_geo_permutation
