@@ -7,9 +7,10 @@ __author__ = (
 )
 
 import numpy as np
+from libpysal.graph import Graph
 from sklearn.metrics.pairwise import manhattan_distances
 
-from .._base import SingleGroupIndex, SpatialExplicitIndex, _return_length_weighted_w
+from .._base import SingleGroupIndex, SpatialExplicitIndex
 from .dissim import _dissim
 
 
@@ -65,10 +66,13 @@ def _perimeter_area_ratio_spatial_dissim(
         )
     )
 
+    # weights represent the length of the boundary shared by two units
+    w = Graph.build_contiguity(data, rook=True, by_perimeter=True)
+
     if not standardize:
-        cij = _return_length_weighted_w(data).sparse.toarray()
+        cij = w.sparse.toarray()
     else:
-        cij = _return_length_weighted_w(data).sparse.toarray()
+        cij = w.sparse.toarray()
         cij = cij / cij.sum()
 
     peri = data.length
