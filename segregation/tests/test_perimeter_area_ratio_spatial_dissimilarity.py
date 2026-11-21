@@ -12,3 +12,10 @@ class TestPerimeterAreaRatioSpatialDissim:
         df = df.to_crs(df.estimate_utm_crs())
         index = PARDissim(df, "HISP", "TOT_POP")
         np.testing.assert_almost_equal(index.statistic, 0.3112698489030527, decimal=4)
+
+    def test_not_standardized(self):
+        s_map = gpd.read_file(load_example("Sacramento1").get_path("sacramentot2.shp"))
+        df = s_map[["geometry", "HISP", "TOT_POP"]]
+        df = df.to_crs(df.estimate_utm_crs())
+        index = PARDissim(df, "HISP", "TOT_POP", standardize=False)
+        assert np.isfinite(index.statistic)

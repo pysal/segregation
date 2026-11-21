@@ -7,9 +7,10 @@ __author__ = (
 )
 
 import numpy as np
+from libpysal.graph import Graph
 from sklearn.metrics.pairwise import manhattan_distances
 
-from .._base import SingleGroupIndex, SpatialExplicitIndex, _return_length_weighted_w
+from .._base import SingleGroupIndex, SpatialExplicitIndex
 from .dissim import _dissim
 
 
@@ -63,10 +64,13 @@ def _boundary_spatial_dissim(data, group_pop_var, total_pop_var, standardize=Fal
         )
     )
 
+    # weights represent the length of the boundary shared by two units
+    w = Graph.build_contiguity(data, rook=True, by_perimeter=True)
+
     if not standardize:
-        cij = _return_length_weighted_w(data).sparse.todense()
+        cij = w.sparse.todense()
     else:
-        cij = _return_length_weighted_w(data).sparse.todense()
+        cij = w.sparse.todense()
         cij = cij / cij.sum(axis=1).reshape((cij.shape[0], 1))
 
     # manhattan_distances used to compute absolute distances
