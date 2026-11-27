@@ -143,10 +143,14 @@ def _absolute_centralization(
         center_dist = np.sqrt((dlon) ** 2 + (dlat) ** 2)
 
     if metric == "haversine":
+        # centroids are in degrees; the haversine formula needs radians
+        dlon, dlat = np.radians(dlon), np.radians(dlat)
         center_dist = 2 * np.arcsin(
             np.sqrt(
                 np.sin(dlat / 2) ** 2
-                + np.cos(center_lat) * np.cos(c_lats) * np.sin(dlon / 2) ** 2
+                + np.cos(np.radians(center_lat))
+                * np.cos(np.radians(c_lats))
+                * np.sin(dlon / 2) ** 2
             )
         )
 
